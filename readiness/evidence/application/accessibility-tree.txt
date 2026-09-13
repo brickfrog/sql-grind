@@ -104,20 +104,21 @@
   - complementary "Goal":
     - text: Goal
     - button "Goal panel actions": ▾
+    - button "Pop out Goal panel": ⇲
     - button "Hide Goal panel": ×
     - text: CHALLENGE basics.01 · SQL basics
     - heading "Customer identities" [level=2]
-    - paragraph: Identify customers without confusing shared names with shared identities.
+    - paragraph: Customers are told apart by identity, not by name. Two readers called Ari are still two readers.
     - list:
-      - listitem: Return every customer identity and name. Keep separate identities even when names match.
-      - listitem: Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit.
+      - listitem: Return every customer identity with its name. Rows sharing a name stay separate; I will not merge people for you.
+      - listitem: Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed.
     - heading "Expected shape" [level=3]
     - code: customer_id
     - text: BIGINT not null
     - code: customer_name
     - text: VARCHAR not null
     - paragraph: "Ordering: customer_id ASC NULLS LAST. Equal ordering keys may appear in either order."
-    - paragraph: This starter exposes customer_id,customer_name,email from customers without solving customer identities.
+    - paragraph: The starter reads customer_id, customer_name and email out of customers. It runs. It does not answer the question.
     - heading "Scorecard · no submission" [level=3]
     - term: Correctness
     - definition: Not submitted
@@ -142,7 +143,7 @@
   - button "Show desktop"
   - button "DuckDB Docs — opens in a new tab"
   - button "SQL Grind - basics.01.sql * · running"
-  - button "Patchouli — watching"
+  - button "Patchouli — reading"
   - 'button "SQL engine: initializing"'
   - 'button "Patchouli: hidden"'
-  - time: 09:23 PM
+  - time: 11:41 PM
