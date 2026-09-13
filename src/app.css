@@ -243,6 +243,16 @@ small,
   height: auto;
   z-index: 2;
 }
+/* .ide isolates its own stacking context, so an in-IDE popup can never paint
+   above a floating judge or goal window (z-index 5) no matter how high its own
+   z-index is: z-index only orders siblings inside one context. While a menubar
+   or panel popup is open, lift the whole workbench above those windows so the
+   popup is clickable instead of having its lower half swallowed. Still below
+   the taskbar (12) and dialogs (30). */
+.ide.popup-open,
+.ide.maximized.popup-open {
+  z-index: 6;
+}
 .titlebar {
   height: 26px;
   flex: 0 0 26px;

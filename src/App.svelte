@@ -552,6 +552,8 @@
       // CSS px inside the zoomed body, so both bounds must be app px.
       const anchorLeft = toAppPx(anchor.left);
       const anchorBottom = toAppPx(anchor.bottom);
+      // Height and scrolling come from .menu-popup's max-height rule, which is
+      // already expressed in app px via --view-height.
       menuPosition = {
         left: Math.max(
           4,
@@ -2929,6 +2931,7 @@
   {#if ideVisible}
     <main
       class:maximized
+      class:popup-open={!!menu || explorerMenu || goalMenu}
       class="ide window"
       aria-label="SQL Grind workbench"
       style:left={!maximized && !settings.readingLayout
