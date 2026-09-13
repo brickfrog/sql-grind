@@ -14,3 +14,4 @@ tmp/
 # public/assets is provisioned from claude-design by scripts/setup.mjs.
 public/assets/
 *.zip
+dist-subpath/

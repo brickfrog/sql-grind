@@ -1,0 +1,13 @@
+{
+  "date": "2026-09-13T03:40:31.538Z",
+  "base": "/sql-grind/",
+  "headers": "none, as GitHub Pages serves them",
+  "status": "passed",
+  "checks": [
+    "Subpath build starts the pinned engine without a site root",
+    "Every portrait and icon resolves under the base path",
+    "Asset Credits shows real attribution, not a fetched error page",
+    "Grading loads every dataset and expected asset under the base path",
+    "No failed request and no page error under the base path"
+  ]
+}

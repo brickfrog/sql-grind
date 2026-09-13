@@ -165,6 +165,15 @@ With the built application served on port 4173, also run:
 APP_URL=http://127.0.0.1:4173 node scripts/deployment-smoke.mjs
 ```
 
+To verify a subpath deployment, run this suite. It builds with
+`BASE_PATH=/sql-grind/` into its own output directory, serves that build with no
+custom headers, and requires a working engine, unbroken images, real asset
+credits, a graded submission, and zero failed requests:
+
+```sh
+node scripts/subpath-smoke.mjs
+```
+
 The browser runners use actual DuckDB workers, native IndexedDB, and the application surface.
 The engine runner covers exact values, admission, isolated grading, cancellation, limits, timeout, recovery, and profiles.
 The storage runner covers transactions, migration, conflicts, backups, rejected imports, rollback, and attempt deletion.
@@ -192,6 +201,7 @@ Post-cutover evidence:
 - [Desktop workflow checks](readiness/evidence/application/workflows-smoke.json)
 - [Recovery and cross-tab conflicts](readiness/evidence/application/ui-recovery-smoke.json)
 - [Deployment headers, ranges, and offline runtime](readiness/evidence/application/deployment-smoke.json)
+- [Subpath deployment under a base path](readiness/evidence/application/subpath-smoke.json)
 - [Selected-content loading](readiness/evidence/application/catalog-loading-smoke.json)
 
 Earlier files under `readiness/evidence/` retain their historical scope.
