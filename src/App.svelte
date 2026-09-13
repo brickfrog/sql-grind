@@ -25,6 +25,7 @@
     type Attempt,
   } from "./lib/types";
   import {
+    assetUrl,
     ChallengeCatalog,
     sameIdentity,
     type ContentIdentity,
@@ -3847,7 +3848,12 @@
         aria-label={`Patchouli: ${settings.judgeVisible ? "visible" : "hidden"}${settings.hush ? ", hushed" : ""}`}
         title={`Patchouli: ${settings.judgeVisible ? "visible" : "hidden"}${settings.hush ? ", hushed" : ""}`}
       >
-        <img src="/assets/patchouli-tray.png" alt="" width="16" height="16" />
+        <img
+          src={assetUrl("/assets/patchouli-tray.png")}
+          alt=""
+          width="16"
+          height="16"
+        />
       </button>
       <time title={clock.toString()} datetime={clock.toISOString()}
         >{clock.toLocaleTimeString([], {
@@ -3912,7 +3918,7 @@
     <div class="judge-body">
       <img
         class="portrait"
-        src="/assets/patchouli.webp"
+        src={assetUrl("/assets/patchouli.webp")}
         alt="Patchouli Knowledge"
         width={docked ? 40 : 72}
         height={docked ? 40 : 72}

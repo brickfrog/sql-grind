@@ -166,6 +166,16 @@ export function assetPath(input: unknown): asserts input is string {
   )
     fail(`Unsafe asset path ${input}.`);
 }
+/**
+ * Deployment prefix for fetching a manifest asset. Manifest paths stay
+ * root-absolute identities — they are hashed and validated as written — so a
+ * subpath deployment (a GitHub project page at /<repo>/) only changes the URL
+ * used to fetch them. BASE_URL is "/" at a site root.
+ */
+export function assetUrl(path: string): string {
+  assetPath(path);
+  return import.meta.env.BASE_URL.replace(/\/+$/, "") + path;
+}
 export function validateIdentity(input: unknown): ContentIdentity {
   const value = record(input, "Identity");
   for (const key of IDENTITY_KEYS) text(value[key], key);
@@ -437,7 +447,7 @@ export class VerifiedAssets {
     signal?: AbortSignal,
   ): Promise<Response> {
     assetPath(path);
-    const response = await fetch(path, {
+    const response = await fetch(assetUrl(path), {
       signal: signal ?? AbortSignal.timeout(30_000),
       credentials: "same-origin",
       redirect: "error",

@@ -10,11 +10,7 @@ public/extensions/
 public/data/
 public/bundle/
 tmp/
-# Portrait bytes are not cleared for redistribution: creator identity, source,
-# and exact-file permission are unknown (readiness/product.md, D-portrait row).
-# Keep every copy out of version control until rights are resolved.
-public/assets/patchouli.webp
-public/assets/patchouli-tray.png
-claude-design/**/patchouli*.webp
-claude-design/**/patchouli*.png
+# Portrait bytes are tracked: Touhou derivative work, published on the fan wiki.
+# public/assets is provisioned from claude-design by scripts/setup.mjs.
+public/assets/
 *.zip

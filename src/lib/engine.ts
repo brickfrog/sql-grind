@@ -18,6 +18,7 @@ import {
   validateExpected,
 } from "./engine-results";
 import {
+  assetUrl,
   sameIdentity,
   type ChallengeCatalog,
   type DatasetDefinition,
@@ -38,6 +39,8 @@ import {
   type ReconciliationAssessment,
 } from "./reconciliation";
 
+// Manifest keys: verified and hashed as root-absolute paths. assetUrl() turns a
+// key into a fetchable URL, which differs under a subpath deployment.
 const WORKER = "/engine/duckdb-browser-eh.worker.js";
 const WASM = "/engine/duckdb-eh.wasm";
 const EXTENSIONS = ["icu", "json", "parquet"].map(
@@ -255,7 +258,7 @@ export class EngineCoordinator {
             [WORKER, WASM, ...EXTENSIONS].map((path) => assets.bytes(path)),
           ),
         );
-        const worker = new Worker(WORKER);
+        const worker = new Worker(assetUrl(WORKER));
         const { promise: failure, reject } = Promise.withResolvers<never>();
         void failure.catch(() => {});
         const db = new duckdb.AsyncDuckDB(
@@ -284,7 +287,7 @@ export class EngineCoordinator {
           this.terminate(slot);
         });
         try {
-          await work.wait(db.instantiate(WASM), slot);
+          await work.wait(db.instantiate(assetUrl(WASM)), slot);
           await work.wait(
             db.open({
               maximumThreads: 1,
@@ -299,7 +302,7 @@ export class EngineCoordinator {
           slot.conn = await work.wait(db.connect(), slot);
           const query = (sql: string) => work.wait(slot.conn!.query(sql), slot);
           await query(
-            `SET memory_limit='512MB'; SET threads=1; SET custom_extension_repository=${quote(location.origin + "/extensions")}; SET TimeZone='UTC'; LOAD json; LOAD parquet`,
+            `SET memory_limit='512MB'; SET threads=1; SET custom_extension_repository=${quote(location.origin + assetUrl("/extensions"))}; SET TimeZone='UTC'; LOAD json; LOAD parquet`,
           );
           const version = await work.wait(db.getVersion(), slot);
           if (version !== "v1.5.4")

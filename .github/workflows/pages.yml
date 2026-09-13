@@ -1,0 +1,49 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Provisions the pinned DuckDB runtime, extensions and the verified
+      # content bundle into public/. These are generated, never committed.
+      - run: npm run setup
+      - run: npm run check
+      # A project page serves from /<repo>/; a user or organisation page and a
+      # custom domain both serve from the root.
+      - name: Build
+        run: npm run build
+        env:
+          BASE_PATH: ${{ endsWith(github.repository, format('{0}.github.io', github.repository_owner)) && '/' || format('/{0}/', github.event.repository.name) }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

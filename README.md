@@ -25,6 +25,30 @@ No public deployment or external runtime service is necessary. The application d
 Different origins and browser profiles have separate practice records.
 Before you change origins or clear browser storage, export a backup through File → Export Backup.
 
+## Deploy as a static site
+
+The build is static files. `dist/` needs no server-side code.
+
+```sh
+npm ci && npm run setup
+BASE_PATH=/sql-grind/ npm run build   # omit BASE_PATH to serve from a site root
+```
+
+Set `BASE_PATH` to the URL prefix the site is served from. A GitHub **project**
+page serves from `/<repo>/`; a user or organisation page and a custom domain
+both serve from `/`. `.github/workflows/pages.yml` selects the correct value and
+publishes `dist/` to GitHub Pages on every push to `main`.
+
+Manifest asset paths stay root-absolute identities; they are hashed and verified
+as written, and only their fetch URLs carry the prefix.
+
+Hosts that read `public/_headers` (Netlify, Cloudflare Pages, and
+`npm run serve`) apply the full response-header policy, including
+`X-Content-Type-Options`, `Referrer-Policy`, and the content types for WebAssembly
+and Parquet. GitHub Pages serves no custom headers, so the built document carries
+the document-level Content Security Policy in a `<meta>` element instead. Prefer
+a host that honours `_headers` when the complete policy matters.
+
 ## Practice and completion
 
 Fresh profiles open `basics.01`. Each challenge has its own draft, starter, output contract, and three persistent hints.

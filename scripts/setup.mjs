@@ -1,4 +1,5 @@
 import { mkdir, readFile, writeFile, copyFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -80,10 +81,18 @@ await writeFile(
   ) + "\n",
 );
 await mkdir(resolve(root, "public/assets"), { recursive: true });
-await copyFile(
-  resolve(root, "claude-design/design_handoff_sql_grind/assets/patchouli.webp"),
-  resolve(root, "public/assets/patchouli.webp"),
+// The portrait is a design-handoff input, not a generated asset. Provision it
+// when present; a checkout without it still builds and runs.
+const portrait = resolve(
+  root,
+  "claude-design/design_handoff_sql_grind/assets/patchouli.webp",
 );
+if (existsSync(portrait))
+  await copyFile(portrait, resolve(root, "public/assets/patchouli.webp"));
+else
+  console.warn(
+    "Portrait source missing; the judge window will show a broken image until claude-design/design_handoff_sql_grind/assets/patchouli.webp is restored.",
+  );
 console.log(
   `Provisioned ${assets.length} verified assets. Runtime requires only the local server, not internet access.`,
 );
