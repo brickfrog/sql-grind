@@ -102,6 +102,7 @@ export interface RunResult {
     candidateMad: number;
     pairs: number;
     ratio: number;
+    ratioMad: number;
     /** Separated so a learner reads work done, not a raw profile dump. */
     referenceScans: ProfileSummary[];
     candidateScans: ProfileSummary[];

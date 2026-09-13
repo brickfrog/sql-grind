@@ -20,7 +20,7 @@
           "challengeId": "basics.01",
           "path": "/bundle/challenges/basics.01/challenge.json",
           "title": "Customer identities",
-          "brief": "Customers are told apart by identity, not by name. Two readers called Ari are still two readers.",
+          "brief": "Customers are told apart by identity, not by name. Two customers who share a name are still two customers.",
           "displayNumber": "basics.01",
           "identity": {
             "challengeId": "basics.01",

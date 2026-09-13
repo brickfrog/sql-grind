@@ -997,12 +997,14 @@ small,
   color: #216224;
   font-weight: bold;
 }
-.fixture-results {
+.fixture-results,
+.scan-list {
   font-size: 10px;
   padding-left: 14px;
   overflow-wrap: anywhere;
 }
-.fixture-results li {
+.fixture-results li,
+.scan-list li {
   margin: 4px 0;
 }
 .reference-boxes {

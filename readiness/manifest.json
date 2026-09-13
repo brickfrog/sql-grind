@@ -279,9 +279,9 @@
     },
     {
       "path": "../../readiness/challenges/basics.01/challenge.json",
-      "bytes": 2362,
-      "gzipBytes": 933,
-      "sha256": "91e7503832cf33bcf840844bf807876b8bef3c6a805f31abb74ff2e40e9615d7"
+      "bytes": 2372,
+      "gzipBytes": 931,
+      "sha256": "1b23faee8f7ca2dc387c30ee96feb283f50f2eae08c15125be797f57bc2111cd"
     },
     {
       "path": "../../readiness/challenges/basics.01/checks.json",
@@ -2751,9 +2751,9 @@
     },
     {
       "path": "../../readiness/curriculum.json",
-      "bytes": 45107,
-      "gzipBytes": 5592,
-      "sha256": "d20c58821ede341c7aca39e2ce25807e818ae17fc3653d5479e38f99ea1408b0"
+      "bytes": 45117,
+      "gzipBytes": 5590,
+      "sha256": "598dc1457480b2404f9de7a844f60a1b1723be5955fdbba335b20b5cf07cf74f"
     },
     {
       "path": "../../readiness/data/small-v1/categories.parquet",

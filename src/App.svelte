@@ -615,20 +615,13 @@
       } as Record<string, string>
     )[state ?? "locked"];
   }
-  // A ratio inside the combined dispersion of both medians is noise, not a
-  // result. Saying "faster" there would read as a finding the data cannot
-  // support.
-  function comparisonVerdict(comparison: {
-    ratio: number;
-    referenceMs: number;
-    candidateMs: number;
-    referenceMad: number;
-    candidateMad: number;
-  }) {
-    const separated =
-      Math.abs(comparison.candidateMs - comparison.referenceMs) >
-      comparison.referenceMad + comparison.candidateMad;
-    if (!separated) return "no measurable difference";
+  // Direction and significance must come from the same statistic. Testing
+  // separation on the two medians while taking direction from the paired
+  // ratio can print "0.950× — your SQL ran slower", which is the exact
+  // contradiction this panel exists to avoid. Both read the ratio series.
+  function comparisonVerdict(comparison: { ratio: number; ratioMad: number }) {
+    if (Math.abs(comparison.ratio - 1) <= comparison.ratioMad)
+      return "no measurable difference";
     return comparison.ratio < 1 ? "your SQL ran faster" : "your SQL ran slower";
   }
   const guidedSummary = $derived.by(() => {
@@ -2389,11 +2382,17 @@
       }
       case "view-tab": {
         const tab = target.dataset.view;
-        label = tab === "map" ? "Skill Map tab" : "Schema tab";
+        label =
+          tab === "map"
+            ? "Skill Map tab"
+            : tab === "schema"
+              ? "Schema tab"
+              : "Diagram tab";
         items = [
           contextAction("Close", () => {
             if (tab === "map") mapTabOpen = false;
-            else schemaTabOpen = false;
+            else if (tab === "schema") schemaTabOpen = false;
+            else erdTabOpen = false;
             if (view === tab) view = "sql";
             void tick().then(() =>
               document
@@ -3964,7 +3963,7 @@
                     </p>
                     {#each [{ title: "Reference scans", scans: result.comparison.referenceScans }, { title: "Your scans", scans: result.comparison.candidateScans }] as side}
                       <h3>{side.title} — separate execution, not timed</h3>
-                      {#if side.scans.length}<ul class="fixture-results">
+                      {#if side.scans.length}<ul class="scan-list">
                           {#each side.scans as scan}<li>
                               {scan.table ?? scan.operator}
                               {#if scan.rowsScanned !== undefined}· {formatCount(

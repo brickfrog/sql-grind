@@ -6,7 +6,7 @@
   "bundleVersion": "basics.01-bundle-v1",
   "assessmentVersion": "exact-v1",
   "title": "Customer identities",
-  "brief": "Customers are told apart by identity, not by name. Two readers called Ari are still two readers.",
+  "brief": "Customers are told apart by identity, not by name. Two customers who share a name are still two customers.",
   "instructions": [
     "Return every customer identity with its name. Rows sharing a name stay separate; I will not merge people for you.",
     "Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed."

@@ -1068,6 +1068,7 @@ export class EngineCoordinator {
         [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)];
       const referenceMs = median(references),
         candidateMs = median(candidates);
+      const ratioMedian = median(ratios);
       const summarize = (profile: unknown): ProfileSummary[] =>
         normalizeProfile(profile).scans.map((scan) => ({
           operator: scan.operator,
@@ -1092,8 +1093,12 @@ export class EngineCoordinator {
           ),
           pairs: 9,
           // Paired ratios cancel per-pair machine noise, so this is the
-          // estimator, not candidateMs / referenceMs.
-          ratio: median(ratios),
+          // estimator, not candidateMs / referenceMs. Its own MAD is what
+          // decides whether the difference is measurable at all.
+          ratio: ratioMedian,
+          ratioMad: median(
+            ratios.map((value) => Math.abs(value - ratioMedian)),
+          ),
           referenceScans: summarize(referenceProfile),
           candidateScans: summarize(candidateProfile),
         },
