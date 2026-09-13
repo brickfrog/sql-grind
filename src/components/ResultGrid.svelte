@@ -11,6 +11,7 @@
   }: { result: ResultHandle | null; stale: boolean; busy: boolean } = $props();
   let viewport = $state<HTMLDivElement>();
   let grid = $state<HTMLDivElement>();
+  let panel = $state<HTMLElement>();
   let paginated = $state(false);
   let page = $state(0);
   let row = $state(0);
@@ -34,9 +35,18 @@
   });
   const count = $derived(result?.count ?? 0);
   const columns = $derived(result?.columns ?? []);
-  // Per-column widths, seeded from the SQL type so timestamps are readable
-  // without a drag. A new result starts from the type-derived defaults.
+  // Per-column widths, seeded from the widest sampled value so real data is
+  // readable without a drag. `defaultWidth(type)` is the floor; an explicit
+  // drag, arrow-key nudge or double-click wins until the next result arrives.
   let widths = $state<number[]>([]);
+  const SEED_SAMPLE_ROWS = 100;
+  const SEED_MAX_WIDTH = 420;
+  // 12px header padding + 2px borders + the 7px resize grip.
+  const HEADER_CHROME = 21;
+  // 12px cell padding + the 1px separator, plus 2px of slack so a value that
+  // exactly fills its column is not rendered with a needless ellipsis.
+  const BODY_CHROME = 15;
+  let measureContext: CanvasRenderingContext2D | null = null;
   const defaultWidth = (type: string) =>
     /TIMESTAMP/i.test(type) ? 220 : /DATE|TIME/i.test(type) ? 120 : 160;
   const columnWidth = (index: number) =>
@@ -84,11 +94,65 @@
       cellMenu = null;
       if (nextResult && viewport) viewport.scrollTop = 0;
       widths = [];
+      if (nextResult) void tick().then(seedWidths);
     });
   });
 
   function cellText(cell: string | null | undefined): string {
     return cell === null ? "NULL" : (cell ?? "");
+  }
+
+  // The grid is virtualized, so CSS content sizing is impossible: measure the
+  // rendered font on a canvas instead of guessing an average character width.
+  function resolvedFont(selector: string, fallback: string): string {
+    const sample = panel?.querySelector<HTMLElement>(selector);
+    if (!sample) return fallback;
+    const style = getComputedStyle(sample);
+    if (!style.fontSize || !style.fontFamily) return fallback;
+    return `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+  }
+
+  function seedWidths() {
+    const handle = result;
+    if (!handle || !columns.length) return;
+    measureContext ??= document.createElement("canvas").getContext("2d");
+    const ctx = measureContext;
+    if (!ctx) return;
+    const headerFont = resolvedFont(
+      ".grid-header > div, thead th",
+      "bold 11px Tahoma, sans-serif",
+    );
+    const bodyFont = resolvedFont(
+      ".grid-row > div:not(.row-number), .table-value",
+      '11px "DejaVu Sans Mono", Consolas, monospace',
+    );
+    ctx.font = headerFont;
+    const widest = columns.map(
+      (col) =>
+        Math.max(
+          ctx.measureText(col.name).width,
+          ctx.measureText(col.type).width,
+        ) + HEADER_CHROME,
+    );
+    ctx.font = bodyFont;
+    // Sampling the leading rows keeps this cheap; the whole result is never
+    // walked just to pick a width.
+    const sampled = Math.min(handle.count, SEED_SAMPLE_ROWS);
+    for (let index = 0; index < sampled; index++) {
+      const cells = handle.getRow(index);
+      for (let col = 0; col < columns.length; col++) {
+        const text = cellText(cells[col]);
+        if (!text) continue;
+        const width = ctx.measureText(text).width + BODY_CHROME;
+        if (width > widest[col]) widest[col] = width;
+      }
+    }
+    widths = columns.map((col, index) =>
+      Math.min(
+        SEED_MAX_WIDTH,
+        Math.max(defaultWidth(col.type), Math.ceil(widest[index])),
+      ),
+    );
   }
 
   function tsvField(value: string): string {
@@ -341,7 +405,12 @@
   }
 </script>
 
-<section class="result-panel" aria-label="Query results" aria-busy={busy}>
+<section
+  bind:this={panel}
+  class="result-panel"
+  aria-label="Query results"
+  aria-busy={busy}
+>
   <div class="result-tools">
     <span
       >{result
@@ -442,6 +511,7 @@
                         ? "Empty string"
                         : undefined}
                     aria-haspopup="menu"
+                    title={cellText(values[colIndex])}
                     onkeydown={navigate}
                     onfocus={() => {
                       row = index;
@@ -451,9 +521,8 @@
                       row = index;
                       column = colIndex;
                     }}
-                    >{values[colIndex] === null
-                      ? "NULL"
-                      : values[colIndex]}</button
+                    ><span class="table-clip">{cellText(values[colIndex])}</span
+                    ></button
                   >
                 </td>
               {/each}
@@ -534,6 +603,7 @@
                     : values[colIndex] === ""
                       ? "Empty string"
                       : undefined}
+                  title={cellText(values[colIndex])}
                   oncontextmenu={(event) =>
                     openCellMenu(event, item.index, colIndex)}
                   onfocus={() => {
@@ -554,7 +624,7 @@
                     grid?.focus({ preventScroll: true });
                   }}
                 >
-                  {values[colIndex] === null ? "NULL" : values[colIndex]}
+                  {cellText(values[colIndex])}
                 </div>
               {/each}
             </div>
@@ -657,18 +727,26 @@
     border: 1px solid;
     border-color: #fff #808080 #808080 #fff;
     overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .grid-header > div.resizable {
     position: relative;
+    /* Keep the label clear of the grip's hit area. */
+    padding-right: 12px;
   }
+  /* Win2k bevel, vertical: a shadow line with a highlight beside it, drawn at
+     rest so the resize affordance is discoverable without hovering. */
   .column-grip {
     border: 0;
+    border-left: 1px solid #808080;
+    box-shadow: inset 1px 0 0 #fff;
     padding: 0;
     border-radius: 0;
     position: absolute;
     top: 0;
     right: 0;
-    width: 5px;
+    width: 7px;
     height: 100%;
     cursor: col-resize;
     background: transparent;
@@ -676,7 +754,8 @@
   }
   .column-grip:hover,
   .column-grip:focus-visible {
-    background: #0a246a;
+    border-left-color: #0a246a;
+    box-shadow: inset 2px 0 0 #0a246a;
     outline: none;
   }
   small {
@@ -684,6 +763,8 @@
     font-size: 10px;
     color: #484848;
     font-weight: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .virtual-body {
     position: relative;
@@ -700,7 +781,10 @@
     border-right: 1px solid #d4d0c8;
     border-bottom: 1px solid #e4e0d8;
     overflow: hidden;
+    /* `pre`, not `nowrap`: exact spacing stays visible, and the value is
+       still single-line so the ellipsis marks any truncation. */
     white-space: pre;
+    text-overflow: ellipsis;
     font-family: "DejaVu Sans Mono", Consolas, monospace;
     color: #111;
   }
@@ -761,15 +845,27 @@
     width: 100%;
     text-align: left;
     min-height: 24px;
-    white-space: pre;
     border: 0;
     background: transparent;
     color: inherit;
     font-family: "DejaVu Sans Mono", Consolas, monospace;
   }
+  /* The cap lives on the text, not the button: the column stays bounded while
+     the whole cell remains a click target. */
+  .table-clip {
+    display: block;
+    max-width: 420px;
+    white-space: pre;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   @media (forced-colors: active) {
     .selected {
       outline: 2px solid Highlight;
+    }
+    .column-grip {
+      border-left-color: ButtonText;
+      box-shadow: none;
     }
   }
 </style>

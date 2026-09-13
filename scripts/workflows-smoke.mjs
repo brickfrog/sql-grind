@@ -468,9 +468,14 @@ try {
     .getByRole("button", { name: "Compare with Reference", exact: true })
     .click();
   await confirm();
+  // The comparison panel reports both sides as summarized scan lists now, so
+  // wait for the two rendered sides instead of two raw JSON blocks.
   await page.waitForFunction(
     () =>
-      document.querySelectorAll(".plan-view pre").length === 2 &&
+      document.querySelectorAll(".plan-view h3").length === 3 &&
+      /Paired ratio/.test(
+        document.querySelector(".plan-view")?.textContent ?? "",
+      ) &&
       !document.querySelector(".toolbar .execute")?.disabled,
     null,
     { timeout: 120000 },

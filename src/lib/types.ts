@@ -102,9 +102,17 @@ export interface RunResult {
     candidateMad: number;
     pairs: number;
     ratio: number;
-    referencePlan: string;
-    candidatePlan: string;
+    /** Separated so a learner reads work done, not a raw profile dump. */
+    referenceScans: ProfileSummary[];
+    candidateScans: ProfileSummary[];
   };
+}
+export interface ProfileSummary {
+  operator: string;
+  table?: string;
+  rowsScanned?: number;
+  accessPath: "index" | "sequential" | "not-reported";
+  filtered: boolean;
 }
 export interface QueryDocument {
   id: string;
@@ -161,6 +169,9 @@ export interface Settings {
     goalX?: number | null;
     goalY?: number | null;
     selectedSkill: string;
+    mapTabOpen?: boolean;
+    schemaTabOpen?: boolean;
+    erdTabOpen?: boolean;
   };
 }
 export interface Session {

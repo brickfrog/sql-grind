@@ -31,12 +31,12 @@
     - button "Parse" [disabled]
     - button "Cancel"
     - combobox "Database" [disabled]:
-      - option "commerce-ranking · immutable"
-      - option "commerce-practice · immutable" [selected]
-      - option "workshop · immutable"
-      - option "graphs · immutable"
-      - option "index-lab · immutable"
-      - option "reconciliation · immutable"
+      - option "commerce-ranking"
+      - option "commerce-practice" [selected]
+      - option "workshop"
+      - option "graphs"
+      - option "index-lab"
+      - option "reconciliation"
     - button "Show Plan" [disabled]
     - button "Patchouli"
     - text: SQL basics · 0/5 Completed
@@ -119,7 +119,12 @@
     - text: VARCHAR not null
     - paragraph: "Ordering: customer_id ASC NULLS LAST. Equal ordering keys may appear in either order."
     - paragraph: The starter reads customer_id, customer_name and email out of customers. It runs. It does not answer the question.
-    - heading "Scorecard · no submission" [level=3]
+    - heading "Challenge status" [level=3]
+    - term: Completion
+    - definition: Available
+    - term: Hints revealed
+    - definition: 0 of 3
+    - heading "This run · nothing run yet" [level=3]
     - term: Correctness
     - definition: Not submitted
     - term: Runtime
@@ -128,8 +133,6 @@
     - definition: No result
     - term: Style and syntax notes
     - definition: 0 notes for this revision
-    - term: Completion
-    - definition: Available
     - heading "Compare with Reference" [level=3]
     - text: runtime Unavailable reference Not collected lines 1
     - paragraph: Submit a correct answer for the current SQL to enable Compare with Reference. Speed and hints never reduce correctness credit.
@@ -146,4 +149,4 @@
   - button "Patchouli — reading"
   - 'button "SQL engine: initializing"'
   - 'button "Patchouli: hidden"'
-  - time: 01:03 PM
+  - time: 04:26 PM

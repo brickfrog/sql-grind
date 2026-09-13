@@ -929,12 +929,17 @@ function validateSettings(value: unknown): asserts value is Settings {
         "goalHeight",
         "goalX",
         "goalY",
+        "mapTabOpen",
+        "schemaTabOpen",
+        "erdTabOpen",
       ],
     );
     for (const key of ["showExplorer", "showGoal", "goalCollapsed"])
       bool(value.layout[key]);
     if (value.layout.goalFloating !== undefined)
       bool(value.layout.goalFloating);
+    for (const key of ["mapTabOpen", "schemaTabOpen", "erdTabOpen"])
+      if (value.layout[key] !== undefined) bool(value.layout[key]);
     number(value.layout.editorHeight, 120, 650, false);
     for (const key of ["explorerWidth", "goalWidth"])
       if (value.layout[key] !== undefined)

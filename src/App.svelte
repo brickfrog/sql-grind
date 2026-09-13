@@ -443,7 +443,9 @@
       ? "Skill Map.dag"
       : view === "schema"
         ? "schema.ref"
-        : (activeDoc?.name ?? "SQL Grind"),
+        : view === "erd"
+          ? "schema.dgm"
+          : (activeDoc?.name ?? "SQL Grind"),
   );
   const judgeState = $derived(
     settings.hush ? "hushed" : running ? "reading your query" : "reading",
@@ -612,6 +614,22 @@
         "needs-review": "Needs review",
       } as Record<string, string>
     )[state ?? "locked"];
+  }
+  // A ratio inside the combined dispersion of both medians is noise, not a
+  // result. Saying "faster" there would read as a finding the data cannot
+  // support.
+  function comparisonVerdict(comparison: {
+    ratio: number;
+    referenceMs: number;
+    candidateMs: number;
+    referenceMad: number;
+    candidateMad: number;
+  }) {
+    const separated =
+      Math.abs(comparison.candidateMs - comparison.referenceMs) >
+      comparison.referenceMad + comparison.candidateMad;
+    if (!separated) return "no measurable difference";
+    return comparison.ratio < 1 ? "your SQL ran faster" : "your SQL ran slower";
   }
   const guidedSummary = $derived.by(() => {
     const output = result?.result;
@@ -894,6 +912,9 @@
       goalHeight = settings.layout?.goalHeight ?? 420;
       goalFloating = settings.layout?.goalFloating ?? false;
       selectedSkill = settings.layout?.selectedSkill ?? "basics";
+      mapTabOpen = settings.layout?.mapTabOpen ?? true;
+      schemaTabOpen = settings.layout?.schemaTabOpen ?? true;
+      erdTabOpen = settings.layout?.erdTabOpen ?? false;
       judgeZoom = clampJudgeZoom(settings.layout?.judgeZoom ?? 1);
       const restoredX = settings.layout?.judgeX ?? null;
       const restoredY = settings.layout?.judgeY ?? null;
@@ -1784,6 +1805,9 @@
       goalX,
       goalY,
       selectedSkill,
+      mapTabOpen,
+      schemaTabOpen,
+      erdTabOpen,
     };
   }
   async function updateSettings() {
@@ -3300,11 +3324,19 @@
         <span class="separator"></span>
         <select
           aria-label="Database"
+          class="dataset-select"
           value={activeDoc?.datasetId ?? ""}
           onchange={(event) => changeDataset(event.currentTarget.value)}
           disabled={busy || !!activeDoc?.challenge || !activeDoc}
+          title={activeDoc?.challenge
+            ? "A challenge grades against its own dataset, so this stays fixed. Open a scratch query to choose one."
+            : !activeDoc
+              ? "Open a query to choose a dataset."
+              : busy
+                ? "Wait for the running query to finish."
+                : "Every dataset is an immutable snapshot."}
           >{#each catalog?.curriculum.datasets ?? [] as dataset}<option
-              value={dataset.id}>{dataset.id} · immutable</option
+              value={dataset.id}>{dataset.id}</option
             >{/each}</select
         >
         <button
@@ -3627,7 +3659,7 @@
                     <span class="tree-toggle" aria-hidden="true"
                       >{expanded[mapSkill.id] ? "−" : "+"}</span
                     >
-                    {mapSkill.label}
+                    <span class="tree-label">{mapSkill.label}</span>
                     <small
                       >{stateLabel(
                         progression.skills[mapSkill.id]?.state,
@@ -3644,8 +3676,10 @@
                         disabled={!progression.skills[mapSkill.id]?.accessible}
                         onclick={() => openChallenge(objective.id)}
                       >
-                        {summaries[objective.id]?.displayNumber}
-                        {objective.title}
+                        <span class="tree-label"
+                          >{summaries[objective.id]?.displayNumber}
+                          {objective.title}</span
+                        >
                         <small
                           >{stateLabel(
                             progression.challenges[objective.id]?.state,
@@ -3901,22 +3935,50 @@
                       {result.comparison.pairs} alternating pairs; bootstrap excluded.
                       Median ± MAD.
                     </p>
-                    <p>
-                      Reference: {result.comparison.referenceMs.toFixed(1)} ± {result.comparison.referenceMad.toFixed(
-                        1,
-                      )} ms<br />Your SQL: {result.comparison.candidateMs.toFixed(
-                        1,
-                      )} ± {result.comparison.candidateMad.toFixed(1)} ms<br
-                      />Ratio: {result.comparison.ratio.toFixed(3)}× reference.
-                      No correctness penalty for speed.
+                    <dl class="status-card">
+                      <dt>Reference</dt>
+                      <dd>
+                        {result.comparison.referenceMs.toFixed(1)} ± {result.comparison.referenceMad.toFixed(
+                          1,
+                        )} ms
+                      </dd>
+                      <dt>Your SQL</dt>
+                      <dd>
+                        {result.comparison.candidateMs.toFixed(1)} ± {result.comparison.candidateMad.toFixed(
+                          1,
+                        )} ms
+                      </dd>
+                      <dt>Paired ratio</dt>
+                      <dd>
+                        {result.comparison.ratio.toFixed(3)}× — {comparisonVerdict(
+                          result.comparison,
+                        )}
+                      </dd>
+                    </dl>
+                    <p class="quiet">
+                      The ratio is the median of the {result.comparison.pairs} per-pair
+                      ratios of your SQL to the reference, so it cancels per-pair
+                      machine noise and need not equal the two medians divided. Below
+                      1 is faster than the reference; above 1 is slower. Speed never
+                      affects correctness.
                     </p>
-                    <h3>
-                      Reference execution profile — JSON, separate execution
-                    </h3>
-                    <pre>{result.comparison.referencePlan}</pre>
-                    <h3>Your execution profile — JSON, separate execution</h3>
-                    <pre>{result.comparison
-                        .candidatePlan}</pre>{:else if result?.plan}<pre>{result.plan}</pre>{:else}<p
+                    {#each [{ title: "Reference scans", scans: result.comparison.referenceScans }, { title: "Your scans", scans: result.comparison.candidateScans }] as side}
+                      <h3>{side.title} — separate execution, not timed</h3>
+                      {#if side.scans.length}<ul class="fixture-results">
+                          {#each side.scans as scan}<li>
+                              {scan.table ?? scan.operator}
+                              {#if scan.rowsScanned !== undefined}· {formatCount(
+                                  scan.rowsScanned,
+                                  "row",
+                                )} scanned{/if}
+                              {#if scan.accessPath !== "not-reported"}· {scan.accessPath}
+                                scan{/if}
+                              {#if scan.filtered}· filter pushed down{/if}
+                            </li>{/each}
+                        </ul>{:else}<p class="quiet">
+                          No scan operators reported.
+                        </p>{/if}
+                    {/each}{:else if result?.plan}<pre>{result.plan}</pre>{:else}<p
                     >
                       No plan collected. Show Plan uses non-executing EXPLAIN.
                     </p>
@@ -4466,12 +4528,27 @@
             </p>
           </div>
           <p class="quiet">{challenge.starterExplanation}</p>
+          <h3>Challenge status</h3>
+          <dl class="status-card">
+            <dt>Completion</dt>
+            <dd>
+              {completed
+                ? "Completed"
+                : stateLabel(
+                    progression.challenges[challenge.challengeId]?.state,
+                  )}
+            </dd>
+            <dt>Hints revealed</dt>
+            <dd>{hints} of 3</dd>
+          </dl>
           <h3>
-            Scorecard · {activeSlot
+            {activeSlot
               ? activeSlot.kind === "submit"
-                ? "last submission"
-                : "last run"
-              : "no submission"}
+                ? "This run · graded submission"
+                : activeSlot.kind === "compare"
+                  ? "This run · comparison, not a submission"
+                  : "This run · not a submission"
+              : "This run · nothing run yet"}
           </h3>
           <dl class="scorecard">
             <dt>Correctness</dt>
@@ -4485,9 +4562,11 @@
                     : "Not submitted"}
             </dd>
             <dt>
-              {resultKind === "submit" || resultKind === "compare"
+              {resultKind === "submit"
                 ? "Graded SQL time"
-                : "Runtime"}
+                : resultKind === "compare"
+                  ? "Comparison run time"
+                  : "Runtime"}
             </dt>
             <dd>
               {result ? result.elapsedMs.toFixed(1) + " ms" : "Not measured"}
@@ -4503,14 +4582,6 @@
             <dt>Style and syntax notes</dt>
             <dd>
               {formatCount(currentDiagnostics.length, "note")} for this revision
-            </dd>
-            <dt>Completion</dt>
-            <dd>
-              {completed
-                ? "Completed"
-                : stateLabel(
-                    progression.challenges[challenge.challengeId]?.state,
-                  )}
             </dd>
           </dl>
           {#if result?.fixtureResults && resultBelongsHere}<ul

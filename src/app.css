@@ -670,9 +670,21 @@ small,
   font-size: 10px;
   color: #555;
 }
+.tree-row {
+  overflow: hidden;
+}
+/* The state badge states whether the row is reachable, so the title yields
+   space to it rather than pushing it out of the row. */
+.tree-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
 .tree-row small {
   font-size: 9px;
   margin-left: auto;
+  flex: 0 0 auto;
 }
 .tree-empty {
   display: block;
@@ -942,6 +954,29 @@ small,
 }
 .shape > p {
   overflow-wrap: anywhere;
+}
+.status-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px 8px;
+  margin: 3px 0;
+}
+.status-card dt {
+  font-size: 11px;
+}
+.status-card dd {
+  margin: 0;
+  font-size: 10px;
+  text-align: right;
+  max-width: 145px;
+}
+.dataset-select:disabled {
+  color: #808080;
+  background: #d4d0c8;
+  cursor: not-allowed;
+}
+.dataset-select {
+  min-width: 150px;
 }
 .scorecard {
   display: grid;

@@ -1060,11 +1060,29 @@ try {
             value.comparison[name] >= 0,
           `${name}: ${value.comparison[name]}`,
         );
-      for (const name of ["referencePlan", "candidatePlan"]) {
-        const profile = JSON.parse(value.comparison[name]);
+      // The comparison now reports summarized scans instead of a raw profile
+      // dump, so assert the measured content a learner actually reads.
+      for (const name of ["referenceScans", "candidateScans"]) {
+        const scans = value.comparison[name];
         assert.ok(
-          Array.isArray(profile.children),
-          `${name} must contain actual measured profile operators`,
+          Array.isArray(scans) && scans.length,
+          `${name} must contain actual measured scan operators`,
+        );
+        assert.ok(
+          scans.some(
+            (scan) =>
+              typeof scan.operator === "string" &&
+              scan.operator &&
+              Number.isSafeInteger(scan.rowsScanned) &&
+              scan.rowsScanned > 0,
+          ),
+          `${name} must report measured scanned rows: ${JSON.stringify(scans)}`,
+        );
+        assert.ok(
+          scans.every((scan) =>
+            ["index", "sequential", "not-reported"].includes(scan.accessPath),
+          ),
+          `${name} must report a known access path`,
         );
       }
       return value; // Report measured values unchanged; no speed threshold or invented samples.

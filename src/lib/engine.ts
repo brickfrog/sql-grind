@@ -5,6 +5,7 @@ import {
   type EngineState,
   type ParseResult,
   type RunRequest,
+  type ProfileSummary,
   type RunResult,
   type SchemaReference,
   type SchemaTable,
@@ -40,6 +41,7 @@ import {
   type LabRequest,
   type IndexCatalogEntry,
 } from "./engine-labs";
+import { normalizeProfile } from "./engine-profile";
 import {
   assessReconciliation,
   validateReconciliationTruth,
@@ -1066,6 +1068,16 @@ export class EngineCoordinator {
         [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)];
       const referenceMs = median(references),
         candidateMs = median(candidates);
+      const summarize = (profile: unknown): ProfileSummary[] =>
+        normalizeProfile(profile).scans.map((scan) => ({
+          operator: scan.operator,
+          ...(scan.table === undefined ? {} : { table: scan.table }),
+          ...(scan.rowsScanned === undefined
+            ? {}
+            : { rowsScanned: scan.rowsScanned }),
+          accessPath: scan.accessPath,
+          filtered: scan.filters !== undefined,
+        }));
       return {
         ...base,
         elapsedMs: work.sqlElapsedMs,
@@ -1079,9 +1091,11 @@ export class EngineCoordinator {
             candidates.map((value) => Math.abs(value - candidateMs)),
           ),
           pairs: 9,
+          // Paired ratios cancel per-pair machine noise, so this is the
+          // estimator, not candidateMs / referenceMs.
           ratio: median(ratios),
-          referencePlan: JSON.stringify(referenceProfile),
-          candidatePlan: JSON.stringify(candidateProfile),
+          referenceScans: summarize(referenceProfile),
+          candidateScans: summarize(candidateProfile),
         },
         message:
           "Equivalent complete answers. Nine alternating fresh-snapshot pairs with one warmup each; median and MAD exclude bootstrap. Separate profiles are not timed samples. No speed threshold awards completion.",
@@ -1518,7 +1532,10 @@ export class EngineCoordinator {
       for (const slot of work.slots) this.terminate(slot);
       work.finish();
       if (this.active === work) this.active = undefined;
-      if (!this.disposed) this.onState("ready");
+      // Without a settled message the status line keeps the in-progress
+      // "Reading…" text after the read has finished.
+      if (!this.disposed)
+        this.onState("ready", "Local catalog metadata read. Engine ready.");
     }
   }
 
