@@ -1011,6 +1011,12 @@ export class EngineCoordinator {
         candidates: number[] = [],
         ratios: number[] = [];
       for (let pair = 0; pair < 9; pair++) {
+        // Nine pairs are known before the loop starts, so the UI's determinate
+        // bar is honest. timedQuery runs invisibly, so this is the only signal.
+        this.onState(
+          "running",
+          `Comparison ${pair + 1}/9 · timing your SQL and the reference on the same snapshot.`,
+        );
         let referenceMs: number, candidateMs: number;
         if (pair % 2) {
           candidateMs = await this.timedQuery(

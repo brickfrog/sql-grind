@@ -39,7 +39,7 @@
       - option "reconciliation"
     - button "Show Plan" [disabled]
     - button "Patchouli"
-    - text: SQL basics · 0/5 Completed
+    - text: SQL basics · 0/5
   - complementary "Object Explorer":
     - text: Object Explorer
     - button "Object Explorer actions": ▾
@@ -149,4 +149,4 @@
   - button "Patchouli — reading"
   - 'button "SQL engine: initializing"'
   - 'button "Patchouli: hidden"'
-  - time: 05:00 PM
+  - time: 06:59 PM

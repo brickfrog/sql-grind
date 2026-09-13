@@ -962,8 +962,18 @@ function validateSession(
   value: unknown,
   legacy = false,
 ): asserts value is Session {
-  object(value, ["openIds", "activeId", ...(legacy ? [] : ["openedSkillIds"])]);
-  if (!legacy) stringList(value.openedSkillIds, true);
+  // Optional, not required: a backup written before practise-ahead existed has no
+  // such field and must still restore. Unknown keys are rejected, so it is declared.
+  object(
+    value,
+    ["openIds", "activeId", ...(legacy ? [] : ["openedSkillIds"])],
+    legacy ? [] : ["exploredSkillIds"],
+  );
+  if (!legacy) {
+    stringList(value.openedSkillIds, true);
+    if (value.exploredSkillIds !== undefined)
+      stringList(value.exploredSkillIds, true);
+  }
   text(value.activeId, 512, true);
   if (!Array.isArray(value.openIds) || value.openIds.length > 100000)
     invalid("session document identifiers are invalid");
@@ -1351,7 +1361,10 @@ function migrateV1(input: unknown): Payload {
     })[];
     settings: (
       | { id: "preferences"; value: Settings }
-      | { id: "session"; value: Omit<Session, "openedSkillIds"> }
+      | {
+          id: "session";
+          value: Omit<Session, "openedSkillIds" | "exploredSkillIds">;
+        }
     )[];
   };
   const queries = legacy.queries.map(migrateLegacyQuery);
@@ -1389,7 +1402,10 @@ function migrateV1(input: unknown): Payload {
   const settings: SettingRecord[] = legacy.settings.map((setting) =>
     setting.id === "preferences"
       ? setting
-      : { id: "session", value: { ...setting.value, openedSkillIds } },
+      : {
+          id: "session",
+          value: { ...setting.value, openedSkillIds, exploredSkillIds: [] },
+        },
   );
   if (
     openedSkillIds.length &&
@@ -1397,7 +1413,12 @@ function migrateV1(input: unknown): Payload {
   )
     settings.push({
       id: "session",
-      value: { openIds: [], activeId: "", openedSkillIds },
+      value: {
+        openIds: [],
+        activeId: "",
+        openedSkillIds,
+        exploredSkillIds: [],
+      },
     });
   const result: Payload = {
     meta: legacy.meta.map(({ contentVersions: _contentVersions, ...meta }) => ({
@@ -1578,6 +1599,7 @@ export class PracticeStore {
               ? savedSession.value.activeId
               : (openIds[0] ?? ""),
           openedSkillIds: [...(savedSession?.value.openedSkillIds ?? [])],
+          exploredSkillIds: [...(savedSession?.value.exploredSkillIds ?? [])],
         },
       };
     });
@@ -1673,6 +1695,9 @@ export class PracticeStore {
             ...captured.openedSkillIds,
           ]),
         ];
+        // Opening is monotonic, so it unions. Practising ahead is reversible:
+        // unioning would resurrect a skill the learner just returned to the path.
+        captured.exploredSkillIds = [...new Set(captured.exploredSkillIds)];
         await this.metadata(transaction);
         await request(
           transaction
@@ -1696,9 +1721,39 @@ export class PracticeStore {
           openIds: [],
           activeId: "",
           openedSkillIds: [],
+          exploredSkillIds: [],
         };
         if (value.openedSkillIds.includes(skillId)) return;
         value.openedSkillIds.push(skillId);
+        await this.metadata(transaction);
+        await request(
+          store.put({ id: "session", value } satisfies SettingRecord),
+        );
+      },
+    );
+  }
+  /** Practising ahead is a reversible choice, so this both records and clears it. */
+  async setSkillExplored(skillId: string, explored: boolean): Promise<void> {
+    text(skillId);
+    return this.transaction(
+      ["meta", "settings"],
+      "readwrite",
+      async (transaction) => {
+        const store = transaction.objectStore("settings");
+        const row = await request<
+          Extract<SettingRecord, { id: "session" }> | undefined
+        >(store.get("session"));
+        const value = row?.value ?? {
+          openIds: [],
+          activeId: "",
+          openedSkillIds: [],
+          exploredSkillIds: [],
+        };
+        const current = value.exploredSkillIds ?? [];
+        if (current.includes(skillId) === explored) return;
+        value.exploredSkillIds = explored
+          ? [...current, skillId]
+          : current.filter((id) => id !== skillId);
         await this.metadata(transaction);
         await request(
           store.put({ id: "session", value } satisfies SettingRecord),
@@ -2074,6 +2129,7 @@ export class PracticeStore {
                   ? queryIds.get(setting.value.activeId)!
                   : "",
                 openedSkillIds: [...setting.value.openedSkillIds],
+                exploredSkillIds: [...(setting.value.exploredSkillIds ?? [])],
               },
             });
           }
@@ -2089,6 +2145,13 @@ export class PracticeStore {
           ...new Set([
             ...mergedSession.value.openedSkillIds,
             ...incomingSession.value.openedSkillIds,
+          ]),
+        ];
+        // An import carries choices, not removals, so union is the safe merge.
+        mergedSession.value.exploredSkillIds = [
+          ...new Set([
+            ...(mergedSession.value.exploredSkillIds ?? []),
+            ...(incomingSession.value.exploredSkillIds ?? []),
           ]),
         ];
         mergedSession.value.openIds = [

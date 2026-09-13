@@ -17,6 +17,7 @@
   import {
     defaultSettings,
     formatCount,
+    formatProgress,
     type QueryDocument,
     type Settings,
     type RunResult,
@@ -57,11 +58,15 @@
   >({});
   let definitions = $state<Record<string, LoadedChallenge>>({});
   let openedSkillIds = $state<string[]>([]);
+  let exploredSkillIds = $state<string[]>([]);
   let hintLevels = $state<Record<string, number>>({});
   let contentError = $state("");
   let contentLoading = $state(false);
   let preparedDocumentId = $state("");
   let historicalNotice = $state("");
+  // Leaving a hard challenge should not feel like forfeiting it. The status bar
+  // is transient and the engine overwrites it, so the guarantee gets a panel.
+  let retentionNotice = $state("");
   let navigationSequence = 0;
   let contentLoadSequence = 0;
   let contentRetryChallengeId: string | null = null;
@@ -287,6 +292,7 @@
           identities,
           attempts,
           openedSkillIds,
+          exploredSkillIds,
         )
       : { skills: {}, challenges: {} },
   );
@@ -615,6 +621,43 @@
       } as Record<string, string>
     )[state ?? "locked"];
   }
+  // "Complete the prerequisite skills" leaves the learner to work out which
+  // ones. Name them wherever a lock is shown.
+  function blockingSkills(skillId: string) {
+    return (skills.find((entry) => entry.id === skillId)?.requires ?? [])
+      .filter((id) => !progression.skills[id]?.completed)
+      .map((id) => skills.find((entry) => entry.id === id)?.label ?? id);
+  }
+  function joinNames(names: string[]) {
+    return names.length > 1
+      ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`
+      : (names[0] ?? "");
+  }
+  function blockedByText(skillId: string) {
+    const names = blockingSkills(skillId);
+    return names.length ? `Locked by ${joinNames(names)}.` : "Locked.";
+  }
+  // Practising ahead grants access, never availability: a prerequisite is still
+  // only ever satisfied by completing it. The choice is reversible on purpose.
+  async function setPracticeAhead(skillId: string, ahead: boolean) {
+    if (!skillId || progression.skills[skillId]?.available) return;
+    const label =
+      skills.find((entry) => entry.id === skillId)?.label ?? skillId;
+    exploredSkillIds = ahead
+      ? [...new Set([...exploredSkillIds, skillId])]
+      : exploredSkillIds.filter((id) => id !== skillId);
+    try {
+      await store?.setSkillExplored(skillId, ahead);
+    } catch (e) {
+      fail(e, "storage");
+      return;
+    }
+    announce(
+      ahead
+        ? `Practising ahead in ${label}. Its challenges are open now. Finishing them counts for good; they do not complete its prerequisites.`
+        : `${label} is back on the recommended path. Anything you completed there is kept.`,
+    );
+  }
   // Direction and significance must come from the same statistic. Testing
   // separation on the two medians while taking direction from the paired
   // ratio can print "0.950× — your SQL ran slower", which is the exact
@@ -894,6 +937,7 @@
     attempts = profile.attempts;
     hintLevels = profile.hints;
     openedSkillIds = profile.session.openedSkillIds;
+    exploredSkillIds = profile.session.exploredSkillIds ?? [];
     if (!preserveCurrent) {
       settings = { ...defaultSettings, ...profile.settings };
       showExplorer = settings.layout?.showExplorer ?? true;
@@ -940,6 +984,7 @@
           openIds: [...openIds],
           activeId,
           openedSkillIds: [...openedSkillIds],
+          exploredSkillIds: [...exploredSkillIds],
         });
       } catch (e) {
         fail(e, "storage");
@@ -1273,7 +1318,7 @@
     }
     if (!progression.skills[summary.skillId]?.accessible) {
       announce(
-        "Complete the prerequisite skills before opening this challenge.",
+        `${blockedByText(summary.skillId)} Complete the prerequisites, or choose Practice ahead on this skill to open it now.`,
       );
       return;
     }
@@ -1284,6 +1329,7 @@
       snapshot === catalog &&
       activeId === sourceDocumentId;
     contentRetryChallengeId = null;
+    retentionNotice = "";
     let content: LoadedChallenge;
     try {
       content = await snapshot.load(id);
@@ -1298,6 +1344,19 @@
       return;
     }
     selectedSkill = summary.skillId;
+    // Leaving a hard challenge should not feel like forfeiting it. Set the
+    // guarantee before the navigation awaits: activate() and prepareDocument()
+    // both advance navigationSequence, so a post-await staleness guard on it
+    // can never be true. A superseding navigation clears this at its own start.
+    const leaving = activeDoc?.challenge?.challengeId;
+    if (
+      leaving &&
+      leaving !== id &&
+      !progression.challenges[leaving]?.completed
+    ) {
+      retentionNotice = `${summaries[leaving]?.displayNumber ?? leaving} is kept exactly as you left it — draft SQL and any revealed hints. Reopen it from the tab strip or the map whenever you want.`;
+      announce(retentionNotice);
+    }
     try {
       const doc = docs.find(
         (doc) =>
@@ -2405,6 +2464,34 @@
         ];
         break;
       }
+      case "skill": {
+        const node = skills.find((entry) => entry.id === target.dataset.skill);
+        if (!node) return false;
+        const state = progression.skills[node.id];
+        selectedSkill = node.id;
+        label = `${node.label} skill`;
+        items = [
+          contextAction(
+            "Open Next Challenge",
+            () =>
+              openChallenge(
+                state?.nextChallengeId ?? node.objectives[0]?.challengeId,
+              ),
+            !state?.accessible || !storageReady,
+          ),
+          contextAction(
+            "Practice Ahead",
+            () => setPracticeAhead(node.id, true),
+            !!state?.available || !!state?.ahead,
+          ),
+          contextAction(
+            "Return to the Recommended Path",
+            () => setPracticeAhead(node.id, false),
+            !state?.ahead,
+          ),
+        ];
+        break;
+      }
       case "schema":
         label = "Database schema";
         items = [
@@ -3351,12 +3438,24 @@
         >
         <span class="skill-tag"
           >{#if view === "map"}<b
-              >{Object.values(progression.skills).filter(
-                (skill) => skill.completed,
-              ).length} / {skills.length} completed</b
+              >{formatProgress(
+                Object.values(progression.skills).filter(
+                  (skill) => skill.completed,
+                ).length,
+                skills.length,
+                "skill",
+              )}</b
             >{:else}<b
               >{challenge
-                ? `${skills.find((skill) => skill.id === challenge.skillId)?.label ?? challenge.skillId} · ${progression.skills[challenge.skillId].objectives.reduce((count, objective) => count + Number(objective.completed), 0)}/${progression.skills[challenge.skillId].objectives.length} Completed`
+                ? `${skills.find((skill) => skill.id === challenge.skillId)?.label ?? challenge.skillId} · ${formatProgress(
+                    progression.skills[challenge.skillId].objectives.reduce(
+                      (count, objective) => count + Number(objective.completed),
+                      0,
+                    ),
+                    progression.skills[challenge.skillId].objectives.length,
+                    "challenge",
+                    "badge",
+                  )}${progression.skills[challenge.skillId].ahead ? " · ahead" : ""}`
                 : "Scratch · no completion credit"}</b
             >{/if}</span
         >
@@ -3400,6 +3499,10 @@
                 >{/each}
             </select></label
           >
+        </div>{/if}
+      {#if retentionNotice}<div class="notice" role="status">
+          {retentionNotice}
+          <button onclick={() => (retentionNotice = "")}>Dismiss</button>
         </div>{/if}
       {#if error}<div class="error-banner" role="alert">
           <span>{error}</span>
@@ -3665,6 +3768,12 @@
                       )}</small
                     >
                   </button>
+                  {#if expanded[mapSkill.id] && !progression.skills[mapSkill.id]?.accessible}
+                    <p class="tree-note" role="note">
+                      {blockedByText(mapSkill.id)} Right-click the skill on the map
+                      to practise ahead.
+                    </p>
+                  {/if}
                   {#if expanded[mapSkill.id]}{#each mapSkill.objectives as objective}
                       <button
                         class="tree-row level3 challenge-row"
@@ -3673,6 +3782,9 @@
                         aria-selected={activeDoc?.challenge?.challengeId ===
                           objective.id}
                         disabled={!progression.skills[mapSkill.id]?.accessible}
+                        title={progression.skills[mapSkill.id]?.accessible
+                          ? undefined
+                          : blockedByText(mapSkill.id)}
                         onclick={() => openChallenge(objective.id)}
                       >
                         <span class="tree-label"
@@ -4455,9 +4567,13 @@
           <h2>{skill.label}</h2>
           <p>{skill.description}</p>
           <p>
-            {progression.skills[skill.id]?.objectives.filter(
-              (objective) => objective.completed,
-            ).length ?? 0} / {skill.objectives.length} completed
+            {formatProgress(
+              progression.skills[skill.id]?.objectives.filter(
+                (objective) => objective.completed,
+              ).length ?? 0,
+              skill.objectives.length,
+              "challenge",
+            )}
           </p>
           <h3>Requires</h3>
           {#if skill.requires.length}<ul class="requirements">
@@ -4488,10 +4604,30 @@
                 <p>{objective.description}</p>
               </li>{/each}
           </ol>
-          {#if !progression.skills[skill.id]?.accessible}<p>
-              Complete every required challenge in each prerequisite skill to
-              unlock these challenges.
-            </p>{/if}
+          {#if !progression.skills[skill.id]?.accessible}
+            <div class="ahead-offer">
+              <p><strong>{blockedByText(skill.id)}</strong></p>
+              <button onclick={() => setPracticeAhead(skill.id, true)}
+                >Practice ahead anyway</button
+              >
+              <p>
+                Practising ahead opens these five challenges now. It does not
+                mark the prerequisites complete. Anything you finish here counts
+                for good.
+              </p>
+            </div>
+          {:else if progression.skills[skill.id]?.ahead}
+            <div class="ahead-offer">
+              <p>
+                <strong>Practising ahead.</strong> You opened this before
+                {joinNames(blockingSkills(skill.id))}. Completions here count
+                for good.
+              </p>
+              <button onclick={() => setPracticeAhead(skill.id, false)}
+                >Return to the recommended path</button
+              >
+            </div>
+          {/if}
         {:else if challenge}
           <div class="eyebrow">
             CHALLENGE {activeSummary?.displayNumber} · {skills.find(
@@ -5128,7 +5264,7 @@
       <p>
         {formatCount(skills.length, "skill")} · {formatCount(
           Object.keys(summaries).length,
-          "complete exercise",
+          "authored exercise",
         )}. Correct current outcomes unlock later skills.
       </p>
     {/if}

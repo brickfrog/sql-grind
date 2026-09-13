@@ -650,6 +650,14 @@ small,
 .tree-row.level3 {
   padding-left: 32px;
 }
+.tree-note {
+  margin: 0;
+  padding: 3px 8px 3px 32px;
+  background: #ffffe1;
+  border-top: 1px solid #e0dcd0;
+  border-bottom: 1px solid #e0dcd0;
+  line-height: 1.35;
+}
 .tree-row.level4 {
   padding-left: 49px;
 }
@@ -1047,6 +1055,19 @@ small,
   outline: 1px solid #000;
   outline-offset: 1px;
   min-width: 70px;
+}
+.ahead-offer {
+  margin-top: 10px;
+  padding: 8px;
+  background: #ffffe1;
+  border: 1px solid #c0bcb4;
+}
+.ahead-offer p {
+  margin: 0 0 6px;
+  line-height: 1.4;
+}
+.ahead-offer p:last-child {
+  margin: 6px 0 0;
 }
 .requirements {
   padding-left: 16px;
@@ -1800,8 +1821,19 @@ small,
   height: 350px;
   flex: 0 0 auto;
 }
+/* Prose only: unbounded reading measure runs ~390 characters at 2560px, which
+   is unreadable. Tabular and code regions keep their own scroll behaviour. */
 .reading .goal-content {
   overflow: visible;
+}
+.reading .goal-content > h2,
+.reading .goal-content > h3,
+.reading .goal-content > p,
+.reading .goal-content > ol,
+.reading .goal-content > ul,
+.reading .judge-speech > p,
+.reading .linear-skills > li > p {
+  max-width: 72ch;
 }
 .reading .goal {
   min-height: 0;

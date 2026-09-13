@@ -136,6 +136,45 @@ try {
       false,
     );
   }
+  // Practising ahead grants access, never availability. The escape hatch must
+  // not become a cheat code: an unfinished explored skill unlocks nothing.
+  const none = [];
+  state = deriveProgression(curriculum, identities, none, [], ["b"]);
+  assert.equal(state.skills.b.available, false, "explored is not available");
+  assert.equal(state.skills.b.accessible, true, "explored grants access");
+  assert.equal(state.skills.b.ahead, true, "explored reports ahead");
+  assert.equal(
+    state.skills.b.state,
+    "in-progress",
+    "explored is in progress, not needs-review",
+  );
+  assert.notEqual(
+    state.challenges["b.1"].state,
+    "locked",
+    "explored objectives are selectable",
+  );
+  assert.equal(
+    deriveProgression(curriculum, identities, none, [], []).skills.b.accessible,
+    false,
+    "access needs the explicit choice",
+  );
+  // Work finished ahead is an ordinary current completion and does unlock.
+  state = deriveProgression(curriculum, identities, attempts, [], ["b"]);
+  assert.equal(
+    state.skills.a.completed,
+    true,
+    "completions earned while ahead still count",
+  );
+  assert.equal(
+    state.skills.b.available,
+    true,
+    "real completion supersedes the ahead flag",
+  );
+  assert.equal(
+    state.skills.b.ahead,
+    false,
+    "the ahead badge clears once prerequisites are genuinely met",
+  );
   const cycle = structuredClone(curriculum);
   cycle.skills[0].requires = ["b"];
   assert.throws(() => validateCurriculum(cycle));

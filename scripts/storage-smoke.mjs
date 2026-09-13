@@ -335,6 +335,7 @@ try {
     openIds: [],
     activeId: "",
     openedSkillIds: [],
+    exploredSkillIds: [],
   });
   record(currentCase, fresh);
 
@@ -391,6 +392,7 @@ try {
     openIds: ["query-draft", "query-primary"],
     activeId: "query-primary",
     openedSkillIds: ["window"],
+    exploredSkillIds: [],
   });
   for (const document of [saved.first, saved.second]) {
     assert.deepEqual(
@@ -1214,9 +1216,11 @@ try {
     ],
     3,
   );
+  // A v1 profile predates practise-ahead, so migration supplies an empty set.
   assert.deepEqual(legacyMigration.profile.session, {
     ...legacyMigration.source.settings[1].value,
     openedSkillIds: ["window"],
+    exploredSkillIds: [],
   });
   assert.equal(JSON.parse(legacyMigration.exported).formatVersion, 2);
   record(currentCase, legacyMigration);

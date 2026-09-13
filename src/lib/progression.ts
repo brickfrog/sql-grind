@@ -23,6 +23,8 @@ export interface SkillProgress {
   completed: boolean;
   available: boolean;
   accessible: boolean;
+  /** Reachable only because the learner chose to practise ahead of its prerequisites. */
+  ahead: boolean;
   objectives: ChallengeProgress[];
   nextChallengeId: string | null;
 }
@@ -45,12 +47,19 @@ export function challengeCompleted(
   );
 }
 
-/** Opened skills retain review access; they do not bypass completion prerequisites for later skills. */
+/**
+ * Opened skills retain review access; they do not bypass completion prerequisites
+ * for later skills. Explored skills are opened ahead of their prerequisites by an
+ * explicit learner choice: they grant access only. Availability stays derived from
+ * completion alone, so practising ahead can never forge a prerequisite — but work
+ * finished there is an ordinary current completion and does unlock what follows.
+ */
 export function deriveProgression(
   curriculum: Curriculum,
   identities: Readonly<Record<string, ContentIdentity>>,
   attempts: readonly Attempt[],
   openedSkillIds: readonly string[],
+  exploredSkillIds: readonly string[] = [],
 ): Progression {
   const skills: Record<string, SkillProgress> = {};
   const challenges: Record<string, ChallengeProgress> = {};
@@ -92,6 +101,7 @@ export function deriveProgression(
     }
   }
   const opened = new Set(openedSkillIds);
+  const explored = new Set(exploredSkillIds);
   for (const skill of curriculum.skills) {
     const objectives = skill.requiredChallengeIds.map((id) => challenges[id]);
     const completed = objectives.every((objective) => objective.completed);
@@ -104,7 +114,8 @@ export function deriveProgression(
         )
       );
     });
-    const accessible = available || opened.has(skill.id);
+    const ahead = !available && explored.has(skill.id);
+    const accessible = available || opened.has(skill.id) || ahead;
     const review =
       objectives.some(
         (objective) => objective.historical && !objective.completed,
@@ -117,6 +128,7 @@ export function deriveProgression(
         : !accessible
           ? "locked"
           : opened.has(skill.id) ||
+              ahead ||
               objectives.some(
                 (objective) =>
                   objective.state === "in-progress" || objective.completed,
@@ -133,6 +145,7 @@ export function deriveProgression(
       completed,
       available,
       accessible,
+      ahead,
       objectives,
       nextChallengeId: accessible
         ? (objectives.find((objective) => !objective.completed)?.id ?? null)

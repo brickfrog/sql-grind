@@ -179,6 +179,8 @@ export interface Session {
   openIds: string[];
   activeId: string;
   openedSkillIds: string[];
+  /** Skills opened ahead of their prerequisites. Access only: never completion. */
+  exploredSkillIds: string[];
 }
 export interface StoredProfile {
   documents: QueryDocument[];
@@ -205,4 +207,17 @@ export function formatCount(
   plural = `${singular}s`,
 ): string {
   return `${count.toLocaleString()} ${count === 1 ? singular : plural}`;
+}
+
+// One quantity, one rendering. The badge form is dense enough for a map node;
+// the long form carries the noun so a screen reader is not left with "3/5".
+export function formatProgress(
+  done: number,
+  total: number,
+  noun: string,
+  form: "badge" | "long" = "long",
+): string {
+  return form === "badge"
+    ? `${done.toLocaleString()}/${total.toLocaleString()}`
+    : `${done.toLocaleString()} of ${formatCount(total, noun)} completed`;
 }

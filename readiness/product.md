@@ -175,15 +175,15 @@ Evidence: specification lines 40–69. Prototype lines 73–165 and 176–244.
 | W15  | Challenge chips, expected shape, scorecard, reference boxes | Informational only. Correctness shows pass/fail or no submission. Performance shows measured values or unavailable reasons.                                                                                    |
 | W16  | Hint and remaining count                                    | Reveals the next authored hint. Three levels exist per challenge. Revealed hints remain readable without another attempt or penalty. A completed challenge reads Review hints and reopens the revealed hints without consuming a level.  |
 | W17  | Submit                                                      | Runs full grading for the current revision and approved challenge data. It records success, mismatch, error, timeout, cancellation, or incomplete status.                                                      |
-| W17a | Busy indicator on Execute, Submit and Compare               | Marks the running action and names it: Submitting…, Comparing…. Reduced motion keeps the marker and the text, without rotation.                                                                                |
+| W17a | Busy indicator on Execute, Submit and Compare               | Marks the running action and names it: Submitting…, Comparing…. Reduced motion keeps the marker and the text, without rotation. Compare reports determinate progress over its nine measured pairs and states no time estimate, because per-pair duration varies.  |
 | W17b | Completion celebration (SQL basics only)                    | A first correct submission shows decorative confetti and a modal. The modal opens the next challenge or dismisses without leaving the current one. The Goal panel then offers Next challenge alongside Submit. |
-| W18  | Map legend                                                  | Explains Completed, In progress, Available, Locked, and Needs review through text and symbols.                                                                                                                 |
+| W18  | Map legend                                                  | Explains Completed, In progress, Available, Locked, and Needs review through text and symbols. Each legend swatch renders the same fill as the node state it names, and Locked carries the padlock that locked nodes themselves display.                        |
 | W19  | Map Zoom percentage                                         | Opens map scale choices 75%, 100%, 125%, 150%, and Fit. The map opens at Fit so every node is reachable without scrolling; an explicit choice persists for the session. Browser zoom remains independent and is never intercepted. |
-| W20  | Map skill and completion counts                             | Show thirteen skills and the derived completed count. A fresh profile has zero completions.                                                                                                                    |
-| W21  | Thirteen skill nodes                                        | Select the skill and show its prerequisites and five required challenges. Locked nodes remain inspectable.                                                                                                     |
-| W22  | Map edges and progress bars                                 | Edges are decorative SVG. Requirements also exist as text links. Progress bars expose completed count and total.                                                                                               |
+| W20  | Map skill and completion counts                             | Show thirteen skills and the derived completed count. A fresh profile has zero completions. Every surface states a completion ratio in one shared format.                                                                                                       |
+| W21  | Thirteen skill nodes                                        | Select the skill and show its prerequisites and five required challenges. Locked nodes remain inspectable, name the skills that block them, and offer Practice ahead through their context menu.                                                                |
+| W22  | Map edges and progress bars                                 | Edges are decorative SVG. Requirements also exist as text links. Progress bars expose completed count and total.                                                                                                                 |
 | W23  | Requires links                                              | Select each prerequisite skill. The list identifies which requirements remain incomplete.                                                                                                                      |
-| W24  | Skill challenge rows                                        | Open any challenge in an accessible skill with its own current-version draft. Locked rows explain unmet prerequisites.                                                                                         |
+| W24  | Skill challenge rows                                        | Open any challenge in an accessible skill with its own current-version draft. Locked rows name the specific unmet prerequisite skills and offer Practice ahead.                                                                                                 |
 | W25  | Open next challenge                                         | Opens the first challenge without current completion, in authored order. Previously opened skills retain review access.                                                                                        |
 | W26  | Status bar cells                                            | Show real engine/version/thread state, elapsed interval, result count, and caret location. They are information, not inert buttons. Its square reports the displayed message's outcome — neutral, working, success, or error — not merely engine readiness.       |
 
@@ -288,6 +288,7 @@ Prose and dialogs reflow at 320 CSS pixels without horizontal page scrolling.
 Only SQL, result tables, and the graph retain justified two-dimensional scroll regions.
 The map also supplies an equivalent linear skill list in Reading Layout.
 This alternative preserves the desktop rather than pretending that a fixed-width IDE satisfies reflow by itself.
+Reading Layout limits prose to a bounded measure so wide viewports do not produce unreadable line lengths. SQL, result tables, and the graph keep their justified scroll regions and are never clamped.
 
 Acceptance includes 100%, 125%, 200%, and 400% browser zoom, plus text-only enlargement to 200% where available.
 At each size, all commands remain reachable, focus stays visible, and dialogs fit the visible viewport.
@@ -384,6 +385,15 @@ Open next challenge uses authored order and skips current completions.
 Opening an available challenge records its skill in `openedSkillIds`. Selecting a locked map node does not record an opening.
 Previously opened skills remain accessible for review after prerequisite completion disappears through a version change or attempt deletion.
 Review access does not complete prerequisites or unlock further skills by itself.
+
+A locked skill can be opened early through Practice ahead, from its map context menu or its detail panel.
+Practising ahead is recorded in `exploredSkillIds`. It grants access only: the skill stays unavailable, and it reads In progress with an ahead marker.
+Availability is still derived from completion alone, so practising ahead never satisfies a prerequisite and never unlocks a later skill by itself.
+A challenge completed while practising ahead is an ordinary current completion. It counts toward its own skill and unlocks what that skill gates.
+Practising ahead is reversible. Returning to the recommended path re-locks the skill and retains every completion already earned.
+Open next challenge continues to follow the recommended path and never retargets to a skill opened ahead.
+Every surface that shows a lock names the specific prerequisite skills that remain incomplete.
+Leaving an unfinished challenge retains its draft SQL and revealed hints, and the application states that guarantee when the learner navigates away.
 
 A later failed submission never erases an earlier current-identity pass.
 Deleting an accepted attempt recomputes completion from the remaining nondeleted attempts.
@@ -527,7 +537,7 @@ The persistent stores are:
 | `drafts`   | Query identifier plus session identifier, complete document snapshot, and persistence time. Drafts preserve conflicting edits from multiple tabs.             |
 | `attempts` | Run identifier, immutable SQL snapshot, full content identity, dataset ID, revision, outcome, hints, and discriminated assessment evidence.                   |
 | `progress` | Challenge ID plus bundle version, accepted attempt identifier, completion date, assistance label, and review status. This derived index is not authoritative. |
-| `settings` | Judge and editor settings, panel dimensions, reading layout, open and active document identifiers, and `openedSkillIds`.                                      |
+| `settings` | Judge and editor settings, panel dimensions, reading layout, open and active document identifiers, `openedSkillIds`, and `exploredSkillIds`.                  |
 
 Attempt identity comes from the captured run result, never from the currently selected document or fixed global content metadata.
 Assessment evidence distinguishes exact fixture outcomes, measured labs, and reconciliation metrics.

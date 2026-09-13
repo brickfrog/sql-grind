@@ -7,7 +7,7 @@
   import { onMount, tick } from "svelte";
   import { icons, type Skill } from "../lib/catalog";
   import type { Progression, ProgressState } from "../lib/progression";
-  import { formatCount } from "../lib/types";
+  import { formatCount, formatProgress } from "../lib/types";
 
   let {
     selected,
@@ -129,8 +129,18 @@
       ).length ?? 0
     );
   }
+  // Locked without a reason is a dead end: name the skills that block it.
+  function blockedBy(skill: Skill) {
+    if (progression.skills[skill.id]?.accessible) return "";
+    const names = skill.requires
+      .filter((id) => !progression.skills[id]?.completed)
+      .map((id) => skills.find((entry) => entry.id === id)?.label ?? id);
+    return names.length
+      ? ` Locked by ${names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0]}.`
+      : "";
+  }
   function status(skill: Skill) {
-    return `${stateLabel(progression.skills[skill.id]?.state)} · ${count(skill)}/${skill.objectives.length}`;
+    return `${stateLabel(progression.skills[skill.id]?.state)} · ${formatProgress(count(skill), skill.objectives.length, "challenge", "badge")}`;
   }
 </script>
 
@@ -138,9 +148,12 @@
   <header class="map-toolbar">
     <strong>Skill Map.dag</strong>
     <span
-      >{formatCount(skills.length, "skill")} · {Object.values(
-        progression.skills,
-      ).filter((skill) => skill.completed).length} completed</span
+      >{formatProgress(
+        Object.values(progression.skills).filter((skill) => skill.completed)
+          .length,
+        skills.length,
+        "skill",
+      )}</span
     >
     <label
       >Zoom
@@ -167,7 +180,8 @@
   </div>
   <p class="preview-note">
     Complete all five current challenges to complete a skill. Previously opened
-    skills remain accessible for review.
+    skills remain accessible for review. A locked skill can be opened early with
+    Practice ahead: right-click its node. That grants access, not completion.
   </p>
   <div bind:this={viewport} class="map-viewport" onscroll={rememberCanvas}>
     {#if readingLayout}
@@ -197,10 +211,11 @@
                   >{/each}{:else}None{/if}
             </p>
             <p>
-              {count(skill)} of {formatCount(
+              {formatProgress(
+                count(skill),
                 skill.objectives.length,
-                "objective",
-              )} completed.
+                "challenge",
+              )}.{blockedBy(skill)}
             </p>
           </li>
         {/each}
@@ -281,7 +296,11 @@
                 "completed"}
               class:review={progression.skills[skill.id]?.state ===
                 "needs-review"}
+              class:locked={!progression.skills[skill.id]?.accessible}
+              class:ahead={progression.skills[skill.id]?.ahead}
               class:selected={selected === skill.id}
+              data-context="skill"
+              data-skill={skill.id}
               style:left={`${skill.x}px`}
               style:top={`${skill.y}px`}
               tabindex={selected === skill.id ||
@@ -289,12 +308,33 @@
                 ? 0
                 : -1}
               aria-pressed={selected === skill.id}
-              aria-label={`${skill.label}. ${status(skill)} objectives completed.`}
+              aria-label={`${skill.label}. ${status(skill)}.${blockedBy(skill)}${progression.skills[skill.id]?.ahead ? " Practising ahead." : ""}`}
               onkeydown={(event) => navigate(event, skill)}
               onclick={() => selectSkill(skill.id)}
             >
               <strong>{skill.label}</strong>
-              <span class="node-state">{status(skill)}</span>
+              <span class="node-state"
+                >{#if !progression.skills[skill.id]?.accessible}<svg
+                    class="node-lock"
+                    viewBox="0 0 12 12"
+                    width="12"
+                    height="12"
+                    aria-hidden="true"
+                    focusable="false"
+                    ><path
+                      d="M3.4 5.4V3.6a2.6 2.6 0 0 1 5.2 0v1.8"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.2"
+                    /><rect
+                      x="2.4"
+                      y="5.4"
+                      width="7.2"
+                      height="5.2"
+                      fill="currentColor"
+                    /></svg
+                  >{/if}{status(skill)}</span
+              >
               <span
                 class="node-progress"
                 role="progressbar"
@@ -306,6 +346,9 @@
                   style:width={`${(100 * count(skill)) / skill.objectives.length}%`}
                 ></span></span
               >
+              {#if progression.skills[skill.id]?.ahead}<span class="node-ahead"
+                  >ahead</span
+                >{/if}
             </button>
           {/each}
         </div>
@@ -321,6 +364,12 @@
 
 <style>
   .skill-map {
+    /* One source of truth: a legend swatch is definitionally its node fill. */
+    --state-completed: #d0e8d0;
+    --state-progress: #ffd966;
+    --state-available: #fff;
+    --state-review: #fff0c0;
+    --state-locked: #c0bcb4;
     height: 100%;
     min-height: 300px;
     display: flex;
@@ -375,16 +424,16 @@
     height: 16px;
   }
   .completed {
-    background: #286b28;
+    background: var(--state-completed);
   }
   .progress {
-    background: #ffd966;
+    background: var(--state-progress);
   }
   .available {
-    background: #fff;
+    background: var(--state-available);
   }
   .review {
-    background: #c0bcb4;
+    background: var(--state-review);
   }
   .preview-note {
     margin: 0;
@@ -410,7 +459,8 @@
     transform-origin: top left;
     position: absolute;
   }
-  svg {
+  /* The edge layer only: node marks are inline SVG and must stay in flow. */
+  .canvas > svg {
     position: absolute;
     inset: 0;
     pointer-events: none;
@@ -422,7 +472,7 @@
     box-sizing: border-box;
     padding: 4px 7px;
     text-align: left;
-    background: #c0bcb4;
+    background: var(--state-locked);
     color: #303030;
     border: 1px solid;
     border-color: #fff #707070 #707070 #fff;
@@ -439,20 +489,24 @@
     line-height: 13px;
   }
   .skill-node.progress {
-    background: #ffd966;
+    background: var(--state-progress);
     color: #282000;
   }
   .skill-node.available {
-    background: #fff;
+    background: var(--state-available);
     color: #000;
   }
   .skill-node.completed {
-    background: #d0e8d0;
+    background: var(--state-completed);
     color: #153d15;
   }
   .skill-node.review {
-    background: #fff0c0;
+    background: var(--state-review);
     color: #493800;
+  }
+  .skill-node.locked {
+    background: var(--state-locked);
+    color: #303030;
   }
   .skill-node.selected {
     box-shadow:
@@ -464,10 +518,27 @@
     outline-offset: -4px;
   }
   .node-state {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 3px;
     font-size: 10px;
     line-height: 13px;
     margin-top: 2px;
+  }
+  .node-lock {
+    /* Authored vector, not a manifest icon: the canvas is transform-scaled, so
+       a raster glyph inside it could never keep its native pixel size. */
+    flex-shrink: 0;
+  }
+  .node-ahead {
+    position: absolute;
+    top: 3px;
+    right: 4px;
+    font-size: 9px;
+    line-height: 11px;
+    padding: 0 3px;
+    background: #0a246a;
+    color: #fff;
   }
   .node-progress {
     display: block;
