@@ -390,8 +390,8 @@ A locked skill can be opened early through Practice ahead, from its map context 
 Practising ahead is recorded in `exploredSkillIds`. It grants access only: the skill stays unavailable, and it reads In progress with an ahead marker.
 Availability is still derived from completion alone, so practising ahead never satisfies a prerequisite and never unlocks a later skill by itself.
 A challenge completed while practising ahead is an ordinary current completion. It counts toward its own skill and unlocks what that skill gates.
-Practising ahead is reversible. Returning to the recommended path re-locks the skill and retains every completion already earned.
-A skill that earned any completion while opened ahead keeps review access on return, through `openedSkillIds`. Its passes never become unreachable.
+Practising ahead is reversible while the skill holds no completion. Returning to the recommended path re-locks it.
+Once any challenge there is completed, the skill stays open and the reversal is withdrawn with its reason. Dropping access would re-lock that skill's own unfinished objectives and strand the passes beside them, and it never reports Needs review, because nothing has regressed.
 Open next challenge continues to follow the recommended path and never retargets to a skill opened ahead.
 Every surface that shows a lock names the specific prerequisite skills that remain incomplete.
 Leaving an unfinished challenge retains its draft SQL and revealed hints. The application states that guarantee once per session, on the first such departure, and withdraws it when that challenge is the open document.

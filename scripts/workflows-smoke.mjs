@@ -345,7 +345,11 @@ try {
   );
   for (const id of ["rec", "pivot"]) {
     const skill = curriculum.skills.find((skill) => skill.id === id);
-    await page.getByRole("treeitem", { name: new RegExp(skill.label) }).click();
+    // Anchored: a locked row's accessible name embeds its blocker's label, so
+    // an unanchored label matches every skill that names this one.
+    await page
+      .getByRole("treeitem", { name: new RegExp(`^${skill.label}`) })
+      .click();
     assert.equal(
       await page.locator("#skill-map-" + id).getAttribute("aria-pressed"),
       "true",

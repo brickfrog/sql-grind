@@ -191,17 +191,22 @@ try {
     true,
     "the next skill unlocks from real completions, however they were earned",
   );
-  // Un-exploring must not strand those passes: review access is retained.
-  state = deriveProgression(curriculum, identities, aheadAttempts, ["b"], []);
+  // Dropping access after work landed would strand those passes, so the app
+  // withholds the reversal. Routing it through openedSkillIds instead would
+  // report a regression that never happened, which this pins.
+  const partial = aheadAttempts.slice(0, 3);
+  state = deriveProgression(curriculum, identities, partial, [], ["b"]);
+  assert.equal(state.skills.b.accessible, true);
   assert.equal(
-    state.skills.b.accessible,
-    true,
-    "a skill completed ahead stays reachable after returning to the path",
+    state.skills.b.state,
+    "in-progress",
+    "a skill with passes earned ahead is in progress, never needs-review",
   );
   assert.equal(
-    state.skills.c.available,
-    true,
-    "returning to the recommended path does not revoke what was earned",
+    deriveProgression(curriculum, identities, partial, ["b"], []).skills.b
+      .state,
+    "needs-review",
+    "opened access is the mechanism that does claim review, so it stays distinct",
   );
   // Completions earned on the recommended path are unaffected by the flag.
   state = deriveProgression(curriculum, identities, attempts, [], ["b"]);

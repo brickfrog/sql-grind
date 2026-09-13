@@ -639,26 +639,31 @@
     const names = blockingSkills(skillId);
     return names.length ? `Locked by ${joinNames(names)}.` : "Locked.";
   }
+  function earnedAhead(skillId: string) {
+    return !!progression.skills[skillId]?.objectives.some(
+      (objective) => objective.completed,
+    );
+  }
   // Practising ahead grants access, never availability: a prerequisite is still
-  // only ever satisfied by completing it. The choice is reversible on purpose.
+  // only ever satisfied by completing it. The choice is reversible until work
+  // lands here. Dropping access afterwards would re-lock this skill's own
+  // unfinished objectives and strand the passes beside them, and routing that
+  // through openedSkillIds would report "Needs review" — a regression claim
+  // about a learner who has regressed nothing.
   async function setPracticeAhead(skillId: string, ahead: boolean) {
     if (!skillId || progression.skills[skillId]?.available) return;
     const label =
       skills.find((entry) => entry.id === skillId)?.label ?? skillId;
-    // Dropping access outright would strand passes earned here: a locked skill
-    // reports its unfinished objectives as locked. Anything already completed
-    // keeps review access through the mechanism that exists for exactly that.
-    const earned =
-      !ahead &&
-      !!progression.skills[skillId]?.objectives.some(
-        (objective) => objective.completed,
-      ) &&
-      !openedSkillIds.includes(skillId);
+    if (!ahead && earnedAhead(skillId)) {
+      announce(
+        `${label} stays open: you have completed challenges here, and they keep their place. It still does not complete its prerequisites.`,
+      );
+      return;
+    }
     // Write first, then reflect: a failed write must not leave the learner
     // looking at a skill that reopens locked.
     try {
       await store?.setSkillExplored(skillId, ahead);
-      if (earned) await store?.markSkillOpened(skillId);
     } catch (e) {
       fail(e, "storage");
       return;
@@ -666,13 +671,10 @@
     exploredSkillIds = ahead
       ? [...new Set([...exploredSkillIds, skillId])]
       : exploredSkillIds.filter((id) => id !== skillId);
-    if (earned) openedSkillIds = [...openedSkillIds, skillId];
     announce(
       ahead
         ? `Practising ahead in ${label}. Its challenges are open now. Finishing them counts for good; they do not complete its prerequisites.`
-        : earned
-          ? `${label} is back on the recommended path. What you completed there is kept, and those challenges stay open for review.`
-          : `${label} is back on the recommended path.`,
+        : `${label} is back on the recommended path.`,
     );
   }
   // Direction and significance must come from the same statistic. Testing
@@ -2508,7 +2510,7 @@
           contextAction(
             "Return to the Recommended Path",
             () => setPracticeAhead(node.id, false),
-            !state?.ahead,
+            !state?.ahead || earnedAhead(node.id),
           ),
         ];
         break;
@@ -4647,9 +4649,16 @@
                 {joinNames(blockingSkills(skill.id))}. Completions here count
                 for good.
               </p>
-              <button onclick={() => setPracticeAhead(skill.id, false)}
-                >Return to the recommended path</button
-              >
+              {#if earnedAhead(skill.id)}
+                <p>
+                  This stays open now: you have completed challenges here, and
+                  they keep their place.
+                </p>
+              {:else}
+                <button onclick={() => setPracticeAhead(skill.id, false)}
+                  >Return to the recommended path</button
+                >
+              {/if}
             </div>
           {/if}
         {:else if challenge}

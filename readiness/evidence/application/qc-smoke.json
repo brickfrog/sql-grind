@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-13T23:09:11.189Z",
+  "date": "2026-09-13T23:26:20.057Z",
   "checks": [
     "Pinned Hint/Submit are visible and unobstructed with the default floating judge at five desktop sizes",
     "Escape closes hints and reset confirmation; focus returns to the persistent opener",
