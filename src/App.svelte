@@ -67,6 +67,8 @@
   // Leaving a hard challenge should not feel like forfeiting it. The status bar
   // is transient and the engine overwrites it, so the guarantee gets a panel.
   let retentionNotice = $state("");
+  let retentionChallengeId = $state("");
+  let toldRetention = false;
   let navigationSequence = 0;
   let contentLoadSequence = 0;
   let contentRetryChallengeId: string | null = null;
@@ -643,19 +645,34 @@
     if (!skillId || progression.skills[skillId]?.available) return;
     const label =
       skills.find((entry) => entry.id === skillId)?.label ?? skillId;
-    exploredSkillIds = ahead
-      ? [...new Set([...exploredSkillIds, skillId])]
-      : exploredSkillIds.filter((id) => id !== skillId);
+    // Dropping access outright would strand passes earned here: a locked skill
+    // reports its unfinished objectives as locked. Anything already completed
+    // keeps review access through the mechanism that exists for exactly that.
+    const earned =
+      !ahead &&
+      !!progression.skills[skillId]?.objectives.some(
+        (objective) => objective.completed,
+      ) &&
+      !openedSkillIds.includes(skillId);
+    // Write first, then reflect: a failed write must not leave the learner
+    // looking at a skill that reopens locked.
     try {
       await store?.setSkillExplored(skillId, ahead);
+      if (earned) await store?.markSkillOpened(skillId);
     } catch (e) {
       fail(e, "storage");
       return;
     }
+    exploredSkillIds = ahead
+      ? [...new Set([...exploredSkillIds, skillId])]
+      : exploredSkillIds.filter((id) => id !== skillId);
+    if (earned) openedSkillIds = [...openedSkillIds, skillId];
     announce(
       ahead
         ? `Practising ahead in ${label}. Its challenges are open now. Finishing them counts for good; they do not complete its prerequisites.`
-        : `${label} is back on the recommended path. Anything you completed there is kept.`,
+        : earned
+          ? `${label} is back on the recommended path. What you completed there is kept, and those challenges stay open for review.`
+          : `${label} is back on the recommended path.`,
     );
   }
   // Direction and significance must come from the same statistic. Testing
@@ -1347,13 +1364,17 @@
     // Leaving a hard challenge should not feel like forfeiting it. Set the
     // guarantee before the navigation awaits: activate() and prepareDocument()
     // both advance navigationSequence, so a post-await staleness guard on it
-    // can never be true. A superseding navigation clears this at its own start.
+    // can never be true. Said once per session: a learner browsing the map
+    // does not need the same reassurance on every hop.
     const leaving = activeDoc?.challenge?.challengeId;
     if (
       leaving &&
       leaving !== id &&
+      !toldRetention &&
       !progression.challenges[leaving]?.completed
     ) {
+      toldRetention = true;
+      retentionChallengeId = leaving;
       retentionNotice = `${summaries[leaving]?.displayNumber ?? leaving} is kept exactly as you left it — draft SQL and any revealed hints. Reopen it from the tab strip or the map whenever you want.`;
       announce(retentionNotice);
     }
@@ -3500,7 +3521,10 @@
             </select></label
           >
         </div>{/if}
-      {#if retentionNotice}<div class="notice" role="status">
+      {#if retentionNotice && retentionChallengeId !== activeDoc?.challenge?.challengeId}<div
+          class="notice"
+          role="status"
+        >
           {retentionNotice}
           <button onclick={() => (retentionNotice = "")}>Dismiss</button>
         </div>{/if}
@@ -3752,6 +3776,12 @@
                     aria-selected={view === "map" &&
                       selectedSkill === mapSkill.id}
                     aria-expanded={!!expanded[mapSkill.id]}
+                    aria-label={progression.skills[mapSkill.id]?.accessible
+                      ? undefined
+                      : `${mapSkill.label}. ${blockedByText(mapSkill.id)} Right-click the skill on the map to practise ahead.`}
+                    title={progression.skills[mapSkill.id]?.accessible
+                      ? undefined
+                      : blockedByText(mapSkill.id)}
                     onclick={() => {
                       selectedSkill = mapSkill.id;
                       expanded[mapSkill.id] = !expanded[mapSkill.id];
@@ -3768,12 +3798,6 @@
                       )}</small
                     >
                   </button>
-                  {#if expanded[mapSkill.id] && !progression.skills[mapSkill.id]?.accessible}
-                    <p class="tree-note" role="note">
-                      {blockedByText(mapSkill.id)} Right-click the skill on the map
-                      to practise ahead.
-                    </p>
-                  {/if}
                   {#if expanded[mapSkill.id]}{#each mapSkill.objectives as objective}
                       <button
                         class="tree-row level3 challenge-row"

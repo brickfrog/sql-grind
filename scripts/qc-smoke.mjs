@@ -320,6 +320,21 @@ try {
     .getByRole("button", { name: "Continue", exact: true })
     .click();
   await page.locator(".comparison-progress").waitFor();
+  // The bar is determinate because the pair count is known before the loop
+  // starts. It was markup-only until the engine emitted the step it parses.
+  const bar = page.locator(".comparison-progress progress");
+  assert.equal(await bar.getAttribute("max"), "9");
+  await page.waitForFunction(
+    () =>
+      Number(document.querySelector(".comparison-progress progress")?.value),
+    null,
+    { timeout: 60000 },
+  );
+  assert.match(
+    await page.locator(".comparison-progress [role='status']").textContent(),
+    /Comparison \d+\/9/,
+    "the comparison names the pair it is measuring",
+  );
   await page
     .getByRole("button", { name: "Cancel comparison", exact: true })
     .click();

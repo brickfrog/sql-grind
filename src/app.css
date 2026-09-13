@@ -650,14 +650,6 @@ small,
 .tree-row.level3 {
   padding-left: 32px;
 }
-.tree-note {
-  margin: 0;
-  padding: 3px 8px 3px 32px;
-  background: #ffffe1;
-  border-top: 1px solid #e0dcd0;
-  border-bottom: 1px solid #e0dcd0;
-  line-height: 1.35;
-}
 .tree-row.level4 {
   padding-left: 49px;
 }

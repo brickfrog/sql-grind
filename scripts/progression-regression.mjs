@@ -46,11 +46,14 @@ try {
     assessmentVersion: "exact-v1",
     engineVersion: "v1.5.4",
   });
-  const skills = ["a", "b"].map((id, i) => ({
+  // Three skills in a chain: a → b → c. The third exists so "work finished
+  // ahead unlocks what follows" can be tested on a skill whose own
+  // prerequisite was never completed.
+  const skills = ["a", "b", "c"].map((id, i) => ({
     id,
     label: id,
     brief: id,
-    requires: i ? ["a"] : [],
+    requires: i ? [["a", "b"][i - 1]] : [],
     x: 0,
     y: 0,
     requiredChallengeIds: Array.from({ length: 5 }, (_, j) => `${id}.${j + 1}`),
@@ -158,7 +161,49 @@ try {
     false,
     "access needs the explicit choice",
   );
-  // Work finished ahead is an ordinary current completion and does unlock.
+  // The linchpin: five passes earned inside a skill opened ahead, whose own
+  // prerequisite was never completed. Those passes must complete that skill and
+  // unlock the next one, while the skipped prerequisite stays incomplete.
+  const aheadAttempts = skills[1].requiredChallengeIds.map((id, i) => ({
+    id: `ahead-${i}`,
+    challenge: identities[id],
+    outcome: "complete",
+    correctness: "correct",
+  }));
+  state = deriveProgression(curriculum, identities, aheadAttempts, [], ["b"]);
+  assert.equal(
+    state.skills.a.completed,
+    false,
+    "the skipped skill stays unmet",
+  );
+  assert.equal(
+    state.skills.b.completed,
+    true,
+    "work finished ahead completes its own skill",
+  );
+  assert.equal(
+    state.skills.b.available,
+    false,
+    "completing a skill early never back-fills its prerequisite",
+  );
+  assert.equal(
+    state.skills.c.available,
+    true,
+    "the next skill unlocks from real completions, however they were earned",
+  );
+  // Un-exploring must not strand those passes: review access is retained.
+  state = deriveProgression(curriculum, identities, aheadAttempts, ["b"], []);
+  assert.equal(
+    state.skills.b.accessible,
+    true,
+    "a skill completed ahead stays reachable after returning to the path",
+  );
+  assert.equal(
+    state.skills.c.available,
+    true,
+    "returning to the recommended path does not revoke what was earned",
+  );
+  // Completions earned on the recommended path are unaffected by the flag.
   state = deriveProgression(curriculum, identities, attempts, [], ["b"]);
   assert.equal(
     state.skills.a.completed,

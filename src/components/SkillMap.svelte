@@ -5,9 +5,9 @@
 
 <script lang="ts">
   import { onMount, tick } from "svelte";
-  import { icons, type Skill } from "../lib/catalog";
+  import { type Skill } from "../lib/catalog";
   import type { Progression, ProgressState } from "../lib/progression";
-  import { formatCount, formatProgress } from "../lib/types";
+  import { formatProgress } from "../lib/types";
 
   let {
     selected,
@@ -171,11 +171,35 @@
       </select>
     </label>
   </header>
+  {#snippet lockMark()}
+    <svg
+      class="node-lock"
+      viewBox="0 0 12 12"
+      width="12"
+      height="12"
+      aria-hidden="true"
+      focusable="false"
+      ><path
+        d="M3.4 5.4V3.6a2.6 2.6 0 0 1 5.2 0v1.8"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.2"
+      /><rect
+        x="2.4"
+        y="5.4"
+        width="7.2"
+        height="5.2"
+        fill="currentColor"
+      /></svg
+    >
+  {/snippet}
   <div class="legend" aria-label="Map legend">
     <span><i class="completed"></i>Completed</span>
     <span><i class="progress"></i>In progress</span>
     <span><i class="available"></i>Available</span>
-    <span><img src={icons.lock} alt="" />Locked</span>
+    <span class="legend-locked"
+      ><i class="locked"></i>{@render lockMark()}Locked</span
+    >
     <span><i class="review"></i>Needs review</span>
   </div>
   <p class="preview-note">
@@ -308,32 +332,21 @@
                 ? 0
                 : -1}
               aria-pressed={selected === skill.id}
-              aria-label={`${skill.label}. ${status(skill)}.${blockedBy(skill)}${progression.skills[skill.id]?.ahead ? " Practising ahead." : ""}`}
+              aria-label={`${skill.label}. ${stateLabel(
+                progression.skills[skill.id]?.state,
+              )}. ${formatProgress(
+                count(skill),
+                skill.objectives.length,
+                "challenge",
+              )}.${blockedBy(skill)}${progression.skills[skill.id]?.ahead ? " Practising ahead." : ""}`}
               onkeydown={(event) => navigate(event, skill)}
               onclick={() => selectSkill(skill.id)}
             >
               <strong>{skill.label}</strong>
               <span class="node-state"
-                >{#if !progression.skills[skill.id]?.accessible}<svg
-                    class="node-lock"
-                    viewBox="0 0 12 12"
-                    width="12"
-                    height="12"
-                    aria-hidden="true"
-                    focusable="false"
-                    ><path
-                      d="M3.4 5.4V3.6a2.6 2.6 0 0 1 5.2 0v1.8"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.2"
-                    /><rect
-                      x="2.4"
-                      y="5.4"
-                      width="7.2"
-                      height="5.2"
-                      fill="currentColor"
-                    /></svg
-                  >{/if}{status(skill)}</span
+                >{#if !progression.skills[skill.id]?.accessible}{@render lockMark()}{/if}{status(
+                  skill,
+                )}</span
               >
               <span
                 class="node-progress"
@@ -419,9 +432,12 @@
     height: 10px;
     border: 1px solid #555;
   }
-  .legend img {
-    width: 16px;
-    height: 16px;
+  .legend-locked {
+    gap: 2px;
+  }
+  .legend-locked .node-lock {
+    margin-left: 2px;
+    color: #303030;
   }
   .completed {
     background: var(--state-completed);
@@ -434,6 +450,9 @@
   }
   .review {
     background: var(--state-review);
+  }
+  .locked {
+    background: var(--state-locked);
   }
   .preview-note {
     margin: 0;

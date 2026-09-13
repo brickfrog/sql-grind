@@ -962,8 +962,10 @@ function validateSession(
   value: unknown,
   legacy = false,
 ): asserts value is Session {
-  // Optional, not required: a backup written before practise-ahead existed has no
-  // such field and must still restore. Unknown keys are rejected, so it is declared.
+  // Optional, not required: a backup written before practise-ahead existed has
+  // no such field and must still restore. Unknown keys are rejected, so it is
+  // declared. The reverse is not claimed: an older build's allow-list has no
+  // entry for it and rejects a session that carries one.
   object(
     value,
     ["openIds", "activeId", ...(legacy ? [] : ["openedSkillIds"])],
@@ -971,8 +973,10 @@ function validateSession(
   );
   if (!legacy) {
     stringList(value.openedSkillIds, true);
-    if (value.exploredSkillIds !== undefined)
-      stringList(value.exploredSkillIds, true);
+    // Fill rather than tolerate: the assertion claims a full Session, so every
+    // read site would otherwise need `?? []` to avoid a crash on old profiles.
+    if (value.exploredSkillIds === undefined) value.exploredSkillIds = [];
+    else stringList(value.exploredSkillIds, true);
   }
   text(value.activeId, 512, true);
   if (!Array.isArray(value.openIds) || value.openIds.length > 100000)

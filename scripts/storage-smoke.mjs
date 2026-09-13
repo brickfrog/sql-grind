@@ -367,6 +367,7 @@ try {
       openIds: [h.second.id, h.first.id],
       activeId: h.first.id,
       openedSkillIds: [],
+      exploredSkillIds: [],
     });
     return {
       first: h.first,
@@ -406,6 +407,49 @@ try {
     assert.deepEqual(draft.document.selection, document.selection);
     assert.equal(draft.document.scrollTop, document.scrollTop);
   }
+
+  currentCase = "practising ahead persists, and reversing it survives a save";
+  const explored = await evaluate(page, async () => {
+    const h = storageSmoke;
+    const session = (exploredSkillIds) => ({
+      openIds: [h.second.id, h.first.id],
+      activeId: h.first.id,
+      openedSkillIds: [],
+      exploredSkillIds,
+    });
+    await h.store.setSkillExplored("ahead-skill", true);
+    const recorded = (await h.store.load()).session.exploredSkillIds;
+    await h.store.saveSession(session(["ahead-skill"]));
+    const carried = (await h.store.load()).session.exploredSkillIds;
+    await h.store.setSkillExplored("ahead-skill", false);
+    const dropped = (await h.store.load()).session.exploredSkillIds;
+    // Opening is append-only and unions on save. Practising ahead is
+    // reversible, so saving an empty set must clear it rather than resurrect
+    // the id the learner just gave up.
+    await h.store.saveSession(session([]));
+    const after = await h.store.load();
+    return {
+      recorded,
+      carried,
+      dropped,
+      cleared: after.session.exploredSkillIds,
+      openedStillUnioned: after.session.openedSkillIds,
+    };
+  });
+  assert.deepEqual(explored.recorded, ["ahead-skill"]);
+  assert.deepEqual(explored.carried, ["ahead-skill"]);
+  assert.deepEqual(explored.dropped, []);
+  assert.deepEqual(
+    explored.cleared,
+    [],
+    "returning to the recommended path survives the next session save",
+  );
+  assert.deepEqual(
+    explored.openedStillUnioned,
+    ["window"],
+    "opened access remains append-only across the same saves",
+  );
+  record(currentCase, explored);
   // Close all module instances, then actually reload the page and module.
   await evaluate(page, () => storageSmoke.closeStores());
   await page.reload({ waitUntil: "domcontentloaded" });

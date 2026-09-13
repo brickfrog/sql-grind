@@ -10,6 +10,7 @@ public/extensions/
 public/data/
 public/bundle/
 tmp/
+.omp/
 # Portrait bytes are tracked: Touhou derivative work, published on the fan wiki.
 # public/assets is provisioned from claude-design by scripts/setup.mjs.
 public/assets/

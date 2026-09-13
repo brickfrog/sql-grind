@@ -64,18 +64,18 @@
       - treeitem "Indexes / ART" [level=2]
       - treeitem "Challenges" [expanded] [level=1]
       - treeitem "SQL basics In progress" [level=2]
-      - treeitem "Aggregation Locked" [level=2]
-      - treeitem "Joins Locked" [level=2]
-      - treeitem "Subqueries & EXISTS Locked" [level=2]
-      - treeitem "Set operations Locked" [level=2]
-      - treeitem "CTEs Locked" [level=2]
-      - treeitem "Window functions Locked" [level=2]
-      - treeitem "Date / time Locked" [level=2]
-      - treeitem "Recursive CTEs Locked" [level=2]
-      - treeitem "Pivot / unpivot Locked" [level=2]
-      - treeitem "Plans & indexing Locked" [level=2]
-      - treeitem "Cleaning & strings Locked" [level=2]
-      - treeitem "Reconciliation Locked" [level=2]
+      - treeitem "Aggregation. Locked by SQL basics. Right-click the skill on the map to practise ahead." [level=2]: Aggregation Locked
+      - treeitem "Joins. Locked by SQL basics. Right-click the skill on the map to practise ahead." [level=2]: Joins Locked
+      - treeitem "Subqueries & EXISTS. Locked by SQL basics. Right-click the skill on the map to practise ahead." [level=2]: Subqueries & EXISTS Locked
+      - treeitem "Set operations. Locked by Aggregation. Right-click the skill on the map to practise ahead." [level=2]: Set operations Locked
+      - treeitem "CTEs. Locked by Aggregation, Joins and Subqueries & EXISTS. Right-click the skill on the map to practise ahead." [level=2]: CTEs Locked
+      - treeitem "Window functions. Locked by Aggregation and Joins. Right-click the skill on the map to practise ahead." [level=2]: Window functions Locked
+      - treeitem "Date / time. Locked by Joins. Right-click the skill on the map to practise ahead." [level=2]: Date / time Locked
+      - treeitem "Recursive CTEs. Locked by CTEs. Right-click the skill on the map to practise ahead." [level=2]: Recursive CTEs Locked
+      - treeitem "Pivot / unpivot. Locked by CTEs and Window functions. Right-click the skill on the map to practise ahead." [level=2]: Pivot / unpivot Locked
+      - treeitem "Plans & indexing. Locked by Window functions and Joins. Right-click the skill on the map to practise ahead." [level=2]: Plans & indexing Locked
+      - treeitem "Cleaning & strings. Locked by Date / time and Subqueries & EXISTS. Right-click the skill on the map to practise ahead." [level=2]: Cleaning & strings Locked
+      - treeitem "Reconciliation. Locked by CTEs, Window functions, Set operations and Cleaning & strings. Right-click the skill on the map to practise ahead." [level=2]: Reconciliation Locked
     - text: Local data · 8 tables commerce-practice · immutable snapshots
   - slider "Object Explorer width": "220"
   - region "Documents":
@@ -149,4 +149,4 @@
   - button "Patchouli — reading"
   - 'button "SQL engine: initializing"'
   - 'button "Patchouli: hidden"'
-  - time: 06:59 PM
+  - time: 07:14 PM

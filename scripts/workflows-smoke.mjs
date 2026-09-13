@@ -388,7 +388,7 @@ try {
     await page.getByRole("button", { name: "Submit", exact: true }).isEnabled(),
     true,
   );
-  await page.getByRole("treeitem", { name: /SQL basics/ }).click();
+  await page.getByRole("treeitem", { name: /^SQL basics/ }).click();
   await page
     .getByRole("treeitem", {
       name: new RegExp(`^${definition.displayNumber.replace(".", "\\.")} `),
