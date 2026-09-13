@@ -548,14 +548,18 @@
         ?.getBoundingClientRect();
       const popup = document.querySelector<HTMLElement>(".menu-popup");
       if (!anchor || !popup) return;
+      // The anchor rect is viewport px; menuPosition is consumed as pre-zoom
+      // CSS px inside the zoomed body, so both bounds must be app px.
+      const anchorLeft = toAppPx(anchor.left);
+      const anchorBottom = toAppPx(anchor.bottom);
       menuPosition = {
         left: Math.max(
           4,
-          Math.min(anchor.left, viewWidth() - popup.offsetWidth - 4),
+          Math.min(anchorLeft, viewWidth() - popup.offsetWidth - 4),
         ),
         top: Math.max(
           4,
-          Math.min(anchor.bottom, viewHeight() - popup.offsetHeight - 36),
+          Math.min(anchorBottom, viewHeight() - popup.offsetHeight - 36),
         ),
       };
     });

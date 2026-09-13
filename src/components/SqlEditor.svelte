@@ -133,6 +133,13 @@
           borderRight: "1px solid #c0bcb4",
         },
         ".cm-activeLine": { backgroundColor: "#ffffe5" },
+        // CodeMirror paints the selection layer at z-index -2, behind the line
+        // boxes, and drawSelection() clears the native ::selection colour. An
+        // opaque active-line fill therefore hides the selection on the very
+        // line being edited, so drop the fill while a range is selected.
+        "&.cm-has-selection .cm-activeLine": {
+          backgroundColor: "transparent",
+        },
         ".cm-activeLineGutter": { backgroundColor: "#e4e0d8" },
         "&.cm-focused .cm-selectionBackground, .cm-selectionBackground, ::selection":
           { backgroundColor: "#b8d4f3 !important" },
@@ -166,6 +173,13 @@
       history(),
       drawSelection(),
       highlightActiveLine(),
+      // Marks the editor while any range is non-empty, so the theme can clear
+      // the active-line fill that would otherwise cover the selection.
+      EditorView.editorAttributes.of((view) =>
+        view.state.selection.ranges.some((range) => !range.empty)
+          ? { class: "cm-has-selection" }
+          : null,
+      ),
       language.of(
         sql({
           dialect: PostgreSQL,
