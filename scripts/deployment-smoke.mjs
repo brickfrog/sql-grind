@@ -1,6 +1,6 @@
 import { chromium } from "playwright";
 import assert from "node:assert/strict";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 const origin = new URL(process.env.APP_URL ?? "http://127.0.0.1:4173").origin;
 const evidence = {
   date: new Date().toISOString(),
@@ -17,6 +17,27 @@ assert.ok(
   js.startsWith("/assets/"),
   "Verify the built application, not the Vite development server",
 );
+// Subpath deployments (a GitHub project page at /<repo>/) break on any
+// root-absolute runtime URL that skips assetUrl(). Manifest identities are
+// allowed: they are looked up, not fetched.
+{
+  const files = ["src/App.svelte", "src/lib/catalog.ts"];
+  for (const file of files) {
+    // Drop assetUrl(...) call sites: those literals are resolved correctly.
+    const remainder = (await readFile(file, "utf8")).replaceAll(
+      /assetUrl\(\s*[^)]*\)/g,
+      "",
+    );
+    const offender = remainder.match(
+      /(["'`])(\/(?:assets|icons|bundle|data)\/[^"'`]*|\/icon-credits\.txt)\1/,
+    );
+    assert.equal(
+      offender,
+      null,
+      `${file} uses ${offender?.[2]} without assetUrl(); a subpath deployment would 404`,
+    );
+  }
+}
 const assets = await (await fetch(origin + "/bundle/assets.json")).json();
 const parquetPath = "/bundle/data/small-v1/orders.parquet";
 const paths = [

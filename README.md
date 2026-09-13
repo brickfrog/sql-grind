@@ -43,11 +43,18 @@ Manifest asset paths stay root-absolute identities; they are hashed and verified
 as written, and only their fetch URLs carry the prefix.
 
 Hosts that read `public/_headers` (Netlify, Cloudflare Pages, and
-`npm run serve`) apply the full response-header policy, including
-`X-Content-Type-Options`, `Referrer-Policy`, and the content types for WebAssembly
-and Parquet. GitHub Pages serves no custom headers, so the built document carries
-the document-level Content Security Policy in a `<meta>` element instead. Prefer
-a host that honours `_headers` when the complete policy matters.
+`npm run serve`) apply the full response-header policy.
+
+GitHub Pages sends no custom headers, so `_headers` has no effect there. The
+built document carries the Content Security Policy in a `<meta>` element, which
+is not equivalent:
+
+- `frame-ancestors` is ignored in a meta policy, so framing is not restricted.
+- `X-Content-Type-Options: nosniff` and `Referrer-Policy: no-referrer` cannot be
+  expressed in a meta element and are absent.
+- Parquet and WebAssembly rely on the host's own content types.
+
+Choose a host that honours `_headers` when the complete policy matters.
 
 ## Practice and completion
 

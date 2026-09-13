@@ -2577,7 +2577,16 @@
           );
           break;
         case "Asset Credits":
-          credits = await fetch("/icon-credits.txt").then((r) => r.text());
+          {
+            // A 404 body would otherwise be shown as the attribution text.
+            const response = await fetch(assetUrl("/icon-credits.txt"), {
+              credentials: "same-origin",
+              redirect: "error",
+            });
+            credits = response.ok
+              ? await response.text()
+              : `Asset credits are unavailable: HTTP ${response.status}. Fugue Icons © 2013 Yusuke Kamiyamane, licensed under Creative Commons Attribution 3.0.`;
+          }
           showModal("credits", "Asset Credits");
           break;
         case "About":
