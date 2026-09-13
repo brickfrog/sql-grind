@@ -1,0 +1,20 @@
+{
+  "date": "2026-09-13",
+  "origin": "https://brickfrog.github.io/sql-grind/",
+  "host": "GitHub Pages, GitHub Actions source",
+  "status": "passed",
+  "engine": { "readySeconds": 4, "cspViolations": 0, "gradedVariants": 3, "celebration": true },
+  "mediaTypes": {
+    "index.html": "text/html; charset=utf-8",
+    "index.js": "application/javascript; charset=utf-8",
+    "index.css": "text/css; charset=utf-8",
+    "duckdb-eh.wasm": "application/wasm",
+    "orders.parquet": "application/octet-stream",
+    "assets.json": "application/json; charset=utf-8",
+    "icon-credits.txt": "text/plain; charset=utf-8",
+    "patchouli.webp": "image/webp"
+  },
+  "ranges": { "acceptRanges": "bytes", "status": 206, "bytes": 16, "magic": "PAR1" },
+  "headerGap": "GitHub Pages sends no X-Content-Type-Options, Referrer-Policy, or header CSP. The document meta CSP applies; frame-ancestors cannot be expressed in it.",
+  "note": "scripts/deployment-smoke.mjs derives every URL from the origin alone, so it cannot target a subpath deployment. Media types and ranges above were verified directly against the live origin."
+}
