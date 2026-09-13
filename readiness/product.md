@@ -93,16 +93,16 @@ Evidence: specification line 23 and prototype lines 36–38 and 306.
 These are complete menu contents for the planned desktop release, not speculative empty menus.
 Repeated names invoke the corresponding inventory action.
 
-| ID  | Menu   | Items and meaning                                                                                                                                                                                  |
-| --- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M01 | File   | New Query, Open, Save, Save As, Export SQL, Export Practice Backup, Import Practice Backup, Close Document, Close Window.                                                                          |
-| M02 | Edit   | Undo, Redo, Cut, Copy, Paste, Select All, Find, Replace, Go to Line. They act on the focused editable document or selection.                                                                       |
-| M03 | View   | Object Explorer, Goal / Skill Details, Judge, Results, Messages, Execution Plan, Judge Notes, Reading Layout, Zoom In, Zoom Out, Actual Size, Reset Layout. Visibility items expose checked state. |
-| M04 | Query  | Execute, Parse, Cancel, Show Plan, Compare with Reference, Submit, Reset Challenge SQL. Reset restores authored starter SQL after explicit acceptance.                                             |
-| M05 | Skills | Skill Map, Current Skill, Open Next Challenge, Practice Records. Current Skill selects the skill associated with the active challenge.                                                             |
-| M06 | Tools  | Settings, Storage, Schema Reference, Refresh Schema, Reset Practice Sandbox. Sandbox reset never deletes saved queries or progress.                                                                |
-| M07 | Window | Minimize IDE, Maximize / Restore IDE, Close IDE, Show Desktop, Dock / Float Judge, Move Judge, Reset Judge Position and Size, Dock / Float Goal, Move Goal, and open documents.                    |
-| M08 | Help   | Keyboard Shortcuts, Challenge Rules, DuckDB Docs, Asset Credits, About. About shows real application and engine versions.                                                                          |
+| ID  | Menu   | Items and meaning                                                                                                                                                               |
+| --- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M01 | File   | New Query, Open, Save, Save As, Export SQL, Export Practice Backup, Import Practice Backup, Close Document, Close Window.                                                       |
+| M02 | Edit   | Undo, Redo, Cut, Copy, Paste, Select All, Find, Replace, Go to Line. They act on the focused editable document or selection.                                                    |
+| M03 | View   | Object Explorer, Goal / Skill Details, Judge, Results, Messages, Execution Plan, Judge Notes, Reading Layout, Reset Layout. Visibility items expose checked state.              |
+| M04 | Query  | Execute, Parse, Cancel, Show Plan, Compare with Reference, Submit, Reset Challenge SQL. Reset restores authored starter SQL after explicit acceptance.                          |
+| M05 | Skills | Skill Map, Current Skill, Open Next Challenge, Practice Records. Current Skill selects the skill associated with the active challenge.                                          |
+| M06 | Tools  | Settings, Storage, Schema Reference, Refresh Schema, Reset Practice Sandbox. Sandbox reset never deletes saved queries or progress.                                             |
+| M07 | Window | Minimize IDE, Maximize / Restore IDE, Close IDE, Show Desktop, Dock / Float Judge, Move Judge, Reset Judge Position and Size, Dock / Float Goal, Move Goal, and open documents. |
+| M08 | Help   | Keyboard Shortcuts, Challenge Rules, DuckDB Docs, Asset Credits, About. About shows real application and engine versions.                                                       |
 
 Save As creates a new saved query and preserves the original.
 Close Document retains a persisted draft and offers recovery through My Queries.
@@ -237,7 +237,7 @@ References: [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [ARIA patterns](https:
 - Editor Escape followed by Tab leaves CodeMirror without inserting indentation. Keyboard Shortcuts explains this escape route.
 - F5 runs SQL only while an editable SQL document has focus. Elsewhere, the browser retains its F5 behavior.
 - Ctrl+Enter also runs SQL in the editor. Ctrl+S saves while the IDE has focus.
-- macOS uses Command+Enter and Command+S equivalents. No application shortcut captures browser close-tab, reload, or zoom shortcuts. View zoom uses Ctrl+Alt+= / Ctrl+Alt+- / Ctrl+Alt+0, which do not collide with browser zoom.
+- macOS uses Command+Enter and Command+S equivalents. No application shortcut captures browser close-tab, reload, or zoom shortcuts. The application has no zoom of its own: the browser's own zoom scales the whole interface.
 - Submit has no global Enter binding. The default-button bevel does not authorize accidental grading from unrelated controls.
 - Cancel remains reachable through Tab and Query → Cancel during a run.
 
@@ -260,9 +260,9 @@ Reset Judge Position and Size restores the specified lower-right position at 100
 The judge never changes position or docking state in response to focus. Only explicit movement, docking, or reset commands change its placement.
 Judge docking and goal floating are independent. The docked judge rides in the Goal panel whether it is docked or floating, and docking or floating one never toggles the other.
 The Goal / Skill Details panel pops out as a floating window through its `⇲` button, its header menu, or Window → Dock / Float Goal. The floating window keeps the panel's content, hint and submit controls, and a docked judge. Its title bar drags with the pointer; Window → Move Goal enters the same keyboard movement mode as Move Judge. A bottom-right grip resizes the window between 180–480 by 160–1200 CSS pixels; with the grip focused, arrow keys change width and height in 10-pixel steps. The width is shared with the docked panel width. Position, size, and floating state persist with the layout, and Reset Layout docks the panel again.
-View → Zoom In / Zoom Out / Actual Size scales the whole desktop (windows, judge, dialogs, and menus) through 67%–200% in fixed steps. The desktop still fits the viewport at every step; pointer dragging and window clamps stay exact under zoom; positioned windows are re-clamped into the visible area when zoom increases. The zoom persists with the layout, the status bar shows it when it is not 100%, and Reset Layout does not change it.
+The application scales through the browser's own zoom, which already scales the document, pointer coordinates, and viewport units together. It carries no zoom control of its own, so layout state and pointer events share one coordinate space. A stored layout.viewZoom from an earlier build is a retired key: it is tolerated on validation and dropped when the profile loads.
 The main window title bar supports pointer dragging when the window is not maximized or in Reading Layout.
-Maximize/restore retains the previous dragged position. Reset Layout restores the default window position, the default judge position and size (100%), and the docked goal panel; it does not change the view zoom.
+Maximize/restore retains the previous dragged position. Reset Layout restores the default window position, the default judge position and size (100%), and the docked goal panel.
 Each window has an isolated paint layer, so IDE menus cannot overlap the floating judge's text.
 
 Every independent pointer target has at least a 24-by-24 CSS-pixel hit area or sufficient non-overlapping target spacing.
