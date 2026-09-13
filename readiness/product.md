@@ -25,7 +25,7 @@ Static information has no button role, pointer cursor, or misleading hover effec
 Design changes are explicit:
 
 1. Execute runs SQL. It never switches to the skill map.
-2. Local practice records replace public ranking. The Leaderboard icon remains a trophy and retains its label.
+2. Local practice records replace public ranking. The surface is named Practice Records everywhere — desktop icon, Skills menu and dialog title. The icon remains the trophy from the pinned icon set, whose provenance is recorded; the dialog states that these records are not a verified public ranking.
 3. Real counts and measured metrics replace sample scores, row counts, thread counts, and completion marks.
 4. Accessible hit areas can exceed the small visible bevels. A separate reading layout supports high zoom.
 5. Native icon sizes replace fractional scaling. The icon section records the small geometry changes.
@@ -61,25 +61,25 @@ Evidence: specification lines 14–26 and 71–76. Prototype lines 12–35 and 2
 | --- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | D01 | My Queries, yellow folder                 | Opens the local query library. It supports name search, challenge filters, recent order, Open, Rename, Duplicate, Delete, and SQL export.              |
 | D02 | DuckDB Docs, globe                        | Opens `https://duckdb.org/docs/` in a new tab. Its accessible name includes “opens in a new tab”. It uses `noopener noreferrer`.                       |
-| D03 | Schema Reference, document                | Opens `schema_notes.txt`, a read-only reference for the selected dataset version. It shows types, keys, relationships, definitions, and actual counts. |
+| D03 | Schema Reference, document                | Opens `schema.ref`, a read-only reference for the selected dataset version. It shows types, keys, relationships, definitions, and actual counts. |
 | D04 | Skill Map                                 | Opens or activates `Skill Map.dag`. It retains the last selected skill and canvas position.                                                            |
-| D05 | Leaderboard, gold trophy                  | Opens “Leaderboard — this device”. It shows local practice records and the trust notice defined below.                                                 |
+| D05 | Practice Records, gold trophy             | Opens “Practice Records — this device”. It shows local practice records and the trust notice defined below.                                                 |
 | D06 | Recycle Bin                               | Opens deleted queries with deletion dates. Restore preserves identity and SQL. Delete permanently and Empty Bin require explicit acceptance.           |
 | D07 | Start                                     | Opens a menu with SQL Grind, all six desktop destinations, Settings, and About. SQL Grind restores the IDE. No fake operating-system shutdown exists.  |
 | D08 | First quick-launch button, blue rectangle | “Show desktop” hides application windows without closing documents. A second activation restores their previous visibility.                            |
 | D09 | Second quick-launch button, blue globe    | Opens DuckDB Docs with D02 behavior. Its tooltip and accessible name identify the destination.                                                         |
 | D10 | SQL Grind taskbar button                  | Restores or activates the IDE. If it is already active, the button minimizes it. It shows the active document and unsaved status.                      |
-| D11 | Patchouli taskbar button                  | Restores the judge in its saved dock state. If the judge is visible, it receives focus. It does not silently hush the judge.                           |
-| D12 | IDE minimize `_`                          | Hides the IDE. Focus moves to D10. The query engine continues, and the taskbar shows its run state.                                                    |
-| D13 | IDE maximize/restore `□`                  | Toggles between the specified desktop bounds and all available desktop space above the taskbar. Browser fullscreen is not involved.                    |
-| D14 | IDE close `×`                             | Closes the IDE window, not the browser tab. Pending writes finish first. A failed save offers Export, Keep open, or Discard unsaved changes.           |
+| D11 | Patchouli taskbar button                  | Restores Patchouli in its saved dock state. If Patchouli is visible, it receives focus. It does not silently hush Patchouli.                           |
+| D12 | Workbench minimize `_`                    | Named “Minimize Workbench”. Hides the workbench window. Focus moves to D10. The query engine continues, and the taskbar shows its run state.                                                    |
+| D13 | Workbench maximize/restore `□`            | Named “Maximize or restore Workbench”. Toggles between the specified desktop bounds and all available desktop space above the taskbar. Browser fullscreen is not involved.                    |
+| D14 | Workbench close `×`                       | Named “Close Workbench”. Closes the workbench window, not the browser tab. Pending writes finish first. A failed save offers Export, Keep open, or Discard unsaved changes.           |
 | D15 | IDE title and application glyph           | Identify the window. They are not draggable controls. A Window menu supplies all window actions.                                                       |
-| D16 | Judge floating title                      | Identifies a modeless window. Pointer dragging moves it within desktop bounds. Window → Move Judge supplies a keyboard equivalent.                     |
-| D17 | Judge dock `⇲`                            | Moves the judge into the Goal / Skill Details panel, wherever that panel is. A hidden panel reopens. Focus moves to the docked judge heading.          |
-| D18 | Judge float `⇱`                           | Restores the last floating position. An invalid position resets above the taskbar. Focus moves to the floating heading.                                |
-| D19 | Judge close `×`, either location          | Hides the judge without disabling diagnostics, grading, or Hush state. Focus returns to the invoking control, or toolbar Judge.                        |
+| D16 | Patchouli floating title                  | Identifies a modeless window. Pointer dragging moves it within desktop bounds. Window → Move Patchouli supplies a keyboard equivalent.                     |
+| D17 | Patchouli dock `⇲`                        | Moves Patchouli into the Goal / Skill Details panel, wherever that panel is. A hidden panel reopens. Focus moves to the docked heading.          |
+| D18 | Patchouli float `⇱`                       | Restores the last floating position. An invalid position resets above the taskbar. Focus moves to the floating heading.                                |
+| D19 | Patchouli close `×`, either location      | Hides Patchouli without disabling diagnostics, grading, or Hush state. Focus returns to the invoking control, or toolbar Patchouli.                                  |
 | D20 | Engine tray square                        | Static status with text equivalent: loading, ready, busy, recovering, or error. Green means ready, not proof of a successful query.                    |
-| D21 | Judge tray dot                            | Static status with text equivalent: visible, hidden, or hushed. Its purple color never carries the state alone.                                        |
+| D21 | Patchouli tray dot                        | Static status with text equivalent: visible, hidden, or hushed. Its purple color never carries the state alone.                                        |
 | D22 | Tray clock                                | Shows the device time and exposes the full local date and timezone. It is not a fake calendar button.                                                  |
 
 The IDE close action retains the session after successful persistence.
@@ -97,13 +97,14 @@ Repeated names invoke the corresponding inventory action.
 | --- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | M01 | File   | New Query, Open, Save, Save As, Export SQL, Export Practice Backup, Import Practice Backup, Close Document, Close Window.                                                       |
 | M02 | Edit   | Undo, Redo, Cut, Copy, Paste, Select All, Find, Replace, Go to Line. They act on the focused editable document or selection.                                                    |
-| M03 | View   | Object Explorer, Goal / Skill Details, Judge, Results, Messages, Execution Plan, Judge Notes, Reading Layout, Reset Layout. Visibility items expose checked state.              |
-| M04 | Query  | Execute, Parse, Cancel, Show Plan, Compare with Reference, Submit, Reset Challenge SQL. Reset restores authored starter SQL after explicit acceptance.                          |
+| M03 | View   | Object Explorer, Patchouli, Goal / Skill Details, then Results, Messages, Execution Plan, Patchouli’s Notes, then Reading Layout, Reset Layout. Separators divide those three groups, and visibility items expose checked state. |
+| M04 | Query  | Execute, Parse, Cancel, Show Plan, Compare with Reference, Submit, Hint, Reset Challenge SQL. Hint reveals the next hint, or reopens revealed hints once the challenge is complete. Reset restores authored starter SQL after explicit acceptance. |
 | M05 | Skills | Skill Map, Current Skill, Open Next Challenge, Practice Records. Current Skill selects the skill associated with the active challenge.                                          |
 | M06 | Tools  | Settings, Storage, Schema Reference, Refresh Schema, Reset Index Lab Session. The index lab reset never deletes saved queries or progress.                                      |
-| M07 | Window | Minimize IDE, Maximize / Restore IDE, Close IDE, Show Desktop, Dock / Float Judge, Move Judge, Reset Judge Position and Size, Dock / Float Goal, Move Goal, and open documents. |
+| M07 | Window | Minimize Workbench, Maximize / Restore Workbench, Close Workbench, Show Desktop, Dock / Float Patchouli, Move Patchouli, Reset Patchouli Position and Size, Dock / Float Goal, Move Goal, Close All Documents, then every open tab. The maximize item shows the action it performs, Maximize Workbench or Restore Workbench. Open documents and the `Skill Map.dag`, `schema.ref` and `schema.dgm` tabs are listed after a separator, numbered from 1 for the first nine, and the active one is marked with `role="menuitemradio"` and `aria-checked`. |
 | M08 | Help   | Keyboard Shortcuts, Challenge Rules, DuckDB Docs, Asset Credits, About. About shows real application and engine versions.                                                       |
 
+Every menubar menu groups its items with `role="separator"` dividers, and each menu title exposes an Alt mnemonic on its first letter, which is unique across the eight menus. Item-level access letters are not assigned; first-letter typeahead inside an open popup remains the in-menu affordance.
 Save As creates a new saved query and preserves the original.
 Close Document retains a persisted draft and offers recovery through My Queries.
 If a draft is unsaved, Close Document uses the same failed-save choices as D14.
@@ -130,7 +131,7 @@ Evidence: specification lines 24 and 28–38. Prototype lines 40–70 and 309–
 | T06 | Cancel                                  | Cancels the active run through the recovery contract. It is disabled without a cancellable run. Repeated clicks do not start repeated recovery.          |
 | T07 | Dataset selector and arrow              | Shows the selected document's dataset. The index lab identifies its separate disposable sandbox. No external connection dialog exists.                   |
 | T08 | Show Plan                               | Requests a non-executing plan for the active SQL and opens Execution Plan. A measured profile is a separate, explicitly labeled execution.               |
-| T09 | Judge                                   | Toggles judge visibility in its previous dock state. Its pressed state reports visibility, not whether grading is active.                                |
+| T09 | Patchouli                               | Toggles Patchouli's visibility in its previous dock state. Its pressed state reports visibility, not whether grading is active.                                |
 | T10 | Skill tag                               | Shows the active skill and its actual completed count. The map shows completed skills, not technique mastery.                                            |
 | T11 | Grippers and toolbar separators         | Decorative only. They have no drag cursor, focus stop, or action.                                                                                        |
 | O01 | Object Explorer header arrow            | Opens Show all / Collapse all / Refresh / Hide panel actions. It is not an unimplemented arrow.                                                          |
@@ -139,8 +140,8 @@ Evidence: specification lines 24 and 28–38. Prototype lines 40–70 and 309–
 | O04 | Mini-toolbar document `▤`               | Opens schema details for the selected object. Without a selection, it opens the database overview.                                                       |
 | O05 | Mini-toolbar filter `▽`                 | Opens a named object filter field with Clear. Filtering preserves ancestors and announces the matching count.                                            |
 | O06 | Database and Tables expanders           | Expand or collapse their children. Selection does not expand a branch implicitly.                                                                        |
-| O07 | Dataset table leaves                    | Select the table. Enter or double-click opens its schema section. Tables and counts come from the selected dataset.                                      |
-| O08 | Views / Macros / Indexes / ART branches | Show actual registered objects. An empty branch shows “No objects”. A leaf opens its definition and ownership.                                           |
+| O07 | Dataset table nodes                     | Select the table and expand it. Enter or double-click opens its schema section. Tables and counts come from the selected dataset. An expanded table exposes Columns, Keys and Indexes children built from the loaded schema, and each child leaf opens the same schema section. |
+| O08 | Views / Macros / Indexes / ART branches | Show actual registered objects. An empty branch, including an expanded table's empty Columns, Keys or Indexes group, shows “No objects”. A leaf opens its definition and ownership.                                                        |
 | O09 | Challenges branch                       | Expands the authored challenge list. Each entry shows its real state and stable challenge identity.                                                      |
 | O10 | Prototype `01–06 complete` group        | Becomes an expandable list of real challenge records. It never implies six passes on a new installation.                                                 |
 | O11 | Authored challenge entries              | Open the selected available challenge. Display aliases 07, 08, and 09 never redirect to another objective.                                               |
@@ -156,9 +157,10 @@ Evidence: specification lines 40–69. Prototype lines 73–165 and 176–244.
 
 | ID   | Visible control or information                              | Required behavior                                                                                                                                                                                              |
 | ---- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| W01  | SQL document tab                                            | Activates that document and its definition-based Goal sidebar. It retains that document's SQL, results, and hints.                                                                                             |
+| W01  | SQL document tab                                            | Activates that document and its definition-based Goal sidebar. It retains that document's own SQL, results, and hints. Run evidence is keyed by document, so another document's result, run identity or fixture list never renders under it. |
 | W02  | `Skill Map.dag` tab                                         | Activates the skill map and Skill Details sidebar. Query execution continues independently.                                                                                                                    |
-| W03  | `schema_notes.txt` tab                                      | Activates the read-only schema reference. Internal table links select the corresponding reference heading.                                                                                                     |
+| W03  | `schema.ref` tab                                            | Activates the read-only schema reference. Internal table links select the corresponding reference heading.                                                                                                     |
+| W03a | `schema.dgm` tab                                            | Activates the relationship diagram. Nodes are the dataset's tables; edges are typed foreign keys drawn from a table to the table it references, with a `self` badge where a table references itself. Right-click ▸ View Diagram on a table in the explorer or the reference opens it. Reading layout replaces the canvas with a linear list of the same references. |
 | W04  | SQL editor                                                  | Supports text editing, selection, completion, search, and undo through CodeMirror. A named editor exposes its language and challenge.                                                                          |
 | W05  | Line gutter and diagnostic highlights                       | Line numbers are informational. A diagnostic list entry selects its current source range and focuses the editor. Stale entries cannot select unrelated text.                                                   |
 | W06  | Editor/results splitter                                     | Resizes the panes without hiding either pane. It supports keyboard adjustment and the limits below.                                                                                                            |
@@ -166,17 +168,17 @@ Evidence: specification lines 40–69. Prototype lines 73–165 and 176–244.
 | W08  | Messages tab                                                | Shows syntax, execution, cancellation, recovery, and grading messages for the selected run. Messages contain plain text, not imported HTML.                                                                    |
 | W09  | Execution plan tab                                          | Shows the available plan with query revision and collection method. It never invents a plan before collection.                                                                                                 |
 | W10  | `Patchouli's notes` tab and count                           | Shows current deterministic diagnostics, severity, evidence, and source ranges. The count excludes discarded stale diagnostics.                                                                                |
-| W11  | Grid headers and row numbers                                | Identify columns, types, and absolute row positions. They do not sort output or alter the grading order.                                                                                                       |
-| W12  | Grid cells and selected row                                 | Support keyboard cell navigation and exact-value copy. Arrow keys move cells. Home/End move across a row. Copy preserves decimal and integer text.                                                             |
+| W11  | Grid headers and row numbers                                | Identify columns, types, and absolute row positions. They do not sort output or alter the grading order. Each header exposes a resize grip: pointer drag, Left/Right arrow adjustment, and double-click reset to the type-derived default width. |
+| W12  | Grid cells and selected row                                 | Support keyboard cell navigation and exact-value copy. Arrow keys move cells. Home/End move across a row. Copy preserves decimal and integer text. The cell menu also copies the whole result with headers, and Export CSV writes `result.csv` as RFC 4180 text. Both reuse the cell rendering, so a NULL leaves as the text `NULL` and an empty string leaves empty. |
 | W13  | Goal / Skill Details header arrow                           | Opens Collapse content / Expand content / Pop out / Hide panel actions. Collapse retains its header and restore action.                                                                                        |
-| W14  | Goal / Skill Details header `⇲` and `×`                     | `⇲` pops the panel out as a floating window; `×` hides the panel. View restores it. A docked judge hides with the panel but remains available through Judge.                                                   |
+| W14  | Goal / Skill Details header `⇲` and `×`                     | `⇲` pops the panel out as a floating window; `×` hides the panel. View restores it. Docked Patchouli hides with the panel but remains available through View → Patchouli.                                                   |
 | W15  | Challenge chips, expected shape, scorecard, reference boxes | Informational only. Correctness shows pass/fail or no submission. Performance shows measured values or unavailable reasons.                                                                                    |
-| W16  | Hint and remaining count                                    | Reveals the next authored hint. Three levels exist per challenge. Revealed hints remain readable without another attempt or penalty.                                                                           |
+| W16  | Hint and remaining count                                    | Reveals the next authored hint. Three levels exist per challenge. Revealed hints remain readable without another attempt or penalty. A completed challenge reads Review hints and reopens the revealed hints without consuming a level.  |
 | W17  | Submit                                                      | Runs full grading for the current revision and approved challenge data. It records success, mismatch, error, timeout, cancellation, or incomplete status.                                                      |
 | W17a | Busy indicator on Execute, Submit and Compare               | Marks the running action and names it: Submitting…, Comparing…. Reduced motion keeps the marker and the text, without rotation.                                                                                |
 | W17b | Completion celebration (SQL basics only)                    | A first correct submission shows decorative confetti and a modal. The modal opens the next challenge or dismisses without leaving the current one. The Goal panel then offers Next challenge alongside Submit. |
 | W18  | Map legend                                                  | Explains Completed, In progress, Available, Locked, and Needs review through text and symbols.                                                                                                                 |
-| W19  | Map Zoom percentage                                         | Opens map scale choices 75%, 100%, 125%, 150%, and Fit. Browser zoom remains independent and is never intercepted.                                                                                             |
+| W19  | Map Zoom percentage                                         | Opens map scale choices 75%, 100%, 125%, 150%, and Fit. The map opens at Fit so every node is reachable without scrolling; an explicit choice persists for the session. Browser zoom remains independent and is never intercepted. |
 | W20  | Map skill and completion counts                             | Show thirteen skills and the derived completed count. A fresh profile has zero completions.                                                                                                                    |
 | W21  | Thirteen skill nodes                                        | Select the skill and show its prerequisites and five required challenges. Locked nodes remain inspectable.                                                                                                     |
 | W22  | Map edges and progress bars                                 | Edges are decorative SVG. Requirements also exist as text links. Progress bars expose completed count and total.                                                                                               |
@@ -253,10 +255,10 @@ Widths range from 180 to 480 CSS pixels and persist with the layout. Reset Layou
 Middle-click closes SQL, map, and schema tabs. Closing a SQL tab preserves its saved draft in My Queries.
 Judge dragging captures the pointer and prevents text selection until release or cancellation.
 
-Window → Move Judge enters movement mode with a visible instruction.
+Window → Move Patchouli enters movement mode with a visible instruction.
 Arrow keys move 10 CSS pixels. Enter accepts the position. Escape restores its starting position.
 The floating judge has a bottom-right grip. Dragging it scales the window and its portrait between 75% and 300%, keeping the top-left corner fixed; with the grip focused, arrow keys change the size in 10% steps and the current percentage is exposed as its slider value. The size persists with the layout. The docked judge is never scaled.
-Reset Judge Position and Size restores the specified lower-right position at 100%.
+Reset Patchouli Position and Size restores the specified lower-right position at 100%.
 The judge never changes position or docking state in response to focus. Only explicit movement, docking, or reset commands change its placement.
 Judge docking and goal floating are independent. The docked judge rides in the Goal panel whether it is docked or floating, and docking or floating one never toggles the other.
 The Goal / Skill Details panel pops out as a floating window through its `⇲` button, its header menu, or Window → Dock / Float Goal. The floating window keeps the panel's content, hint and submit controls, and a docked judge. Its title bar drags with the pointer; Window → Move Goal enters the same keyboard movement mode as Move Judge. A bottom-right grip resizes the window between 180–480 by 160–1200 CSS pixels; with the grip focused, arrow keys change width and height in 10-pixel steps. The width is shared with the docked panel width. Position, size, and floating state persist with the layout, and Reset Layout docks the panel again.
@@ -480,11 +482,11 @@ Generic speed comparison is unavailable for the capstone because valid outputs c
 Synthetic truth assets are locally inspectable, not secret examination infrastructure.
 Successful completion establishes outcome quality on these fixtures, not a production matching guarantee.
 
-## Leaderboard, accounts, and trust
+## Practice Records, accounts, and trust
 
 Decision: local practice records only. Public rankings, accounts, synchronization, and a submission backend are excluded from the planned release.
-The gold trophy and “Leaderboard” desktop label remain.
-The destination title is “Leaderboard — this device”, not a misleading public list.
+The gold trophy remains; its desktop label is “Practice Records”.
+The destination title is “Practice Records — this device”, not a misleading public list.
 It includes this notice: “These practice records belong to this browser. They are not verified public rankings.”
 
 The view groups records by challenge and content version.
@@ -707,7 +709,7 @@ Archive inspection established the following filenames and PNG dimensions. No ic
 | DuckDB Docs                          | `bonus/icons-24/globe.png`                                                        | 24 × 24           |
 | Schema Reference                     | `bonus/icons-32/document-text.png`                                                | 32 × 32           |
 | Skill Map                            | `bonus/icons-32/map.png`                                                          | 32 × 32           |
-| Leaderboard                          | `icons/trophy.png`                                                                | 16 × 16           |
+| Practice Records                     | `icons/trophy.png`                                                                | 16 × 16           |
 | Recycle Bin                          | `bonus/icons-24/bin.png`                                                          | 24 × 24           |
 | Folder / document / database / table | `icons/folder.png`, `icons/document.png`, `icons/database.png`, `icons/table.png` | Each 16 × 16      |
 | View / macro / index                 | `icons/table-select.png`, `icons/script.png`, `icons/key.png`                     | Each 16 × 16      |

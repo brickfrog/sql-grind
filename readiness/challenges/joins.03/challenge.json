@@ -32,6 +32,14 @@
       "text": "Customer 10002 has an order but only a pending order."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (count(*) FILTER (WHERE status = 'pending'))::VARCHAR || '/' || count(*)::VARCHAR FROM orders WHERE customer_id = 10002",
+      "equals": "1/1",
+      "claim": "hints[2]: customer 10002 has exactly one order and it is pending"
+    }
+  ],
   "output": {
     "columns": [
       {

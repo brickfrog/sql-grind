@@ -31,6 +31,14 @@
       "text": "Order 1 has a NULL timestamp and a tied latest timestamp. Non-NULL time wins first, larger identity breaks its tie."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT string_agg(coalesce(strftime(paid_at AT TIME ZONE 'UTC', '%Y-%m-%d %H:%M'), 'NULL'), ',' ORDER BY payment_id) FROM payments WHERE order_id = 1",
+      "equals": "2024-01-01 00:01,2024-01-01 00:02,NULL,2024-01-01 00:02",
+      "claim": "hints[2]: order 1 has a NULL payment timestamp and a tied latest timestamp"
+    }
+  ],
   "output": {
     "columns": [
       {

@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { onMount, tick } from "svelte";
+  import { onMount, tick, untrack } from "svelte";
   import SqlEditor from "./components/SqlEditor.svelte";
   import ResultGrid from "./components/ResultGrid.svelte";
   import SkillMap from "./components/SkillMap.svelte";
+  import SchemaDiagram from "./components/SchemaDiagram.svelte";
   import ContextMenu, {
     type ContextMenuItem,
   } from "./components/ContextMenu.svelte";
@@ -85,7 +86,7 @@
   let docs = $state<QueryDocument[]>([]);
   let activeId = $state("");
   let openIds = $state<string[]>([]);
-  let view = $state<"sql" | "map" | "schema">("sql");
+  let view = $state<"sql" | "map" | "schema" | "erd">("sql");
   let settings = $state<Settings>({ ...defaultSettings });
   let attempts = $state<Attempt[]>([]);
   let engineState = $state<EngineState>("loading");
@@ -104,8 +105,32 @@
     indexes: { name: string; definition: string }[];
   }>({ views: [], macros: [], indexes: [] });
   let domain = $state<"challenge" | "sandbox">("challenge");
-  let result = $state.raw<RunResult | null>(null);
-  let resultKind = $state<RunKind>("execute");
+  // Run evidence is keyed by document: a result only ever describes the
+  // document it ran for, so switching tabs can never attach one to another.
+  type RunSlot = { run: RunResult; kind: RunKind };
+  const INDEX_LAB_DATASET = "index-lab";
+  let runs = $state.raw<Record<string, RunSlot>>({});
+  const activeSlot = $derived(activeId ? (runs[activeId] ?? null) : null);
+  const result = $derived(activeSlot?.run ?? null);
+  const resultKind = $derived(activeSlot?.kind ?? "execute");
+  // The kind of the run currently in flight. Distinct from resultKind, which
+  // describes the last completed run of the active document.
+  let runningKind = $state<RunKind>("execute");
+  // Sandbox databases are disposable, so their evidence dies with the session.
+  // Guarded: this is read from an effect, and an unconditional rewrite would
+  // retrigger it forever.
+  function clearSandboxRuns() {
+    const kept = Object.entries(runs).filter(
+      ([, slot]) => slot.run.datasetId !== INDEX_LAB_DATASET,
+    );
+    if (kept.length !== Object.keys(runs).length)
+      runs = Object.fromEntries(kept);
+  }
+  function dropRun(id: string) {
+    if (!Object.hasOwn(runs, id)) return;
+    const { [id]: _dropped, ...rest } = runs;
+    runs = rest;
+  }
   let diagnostics = $state<Diagnostic[]>([]);
   let parseInfo = $state("Parser starting…");
   let outputTab = $state("Results");
@@ -117,6 +142,7 @@
   const shortcutHints: Record<string, string> = {
     Execute: "F5 / Ctrl+Enter",
     Save: "Ctrl+S",
+    "Save As": "Ctrl+Shift+S",
     Undo: "Ctrl+Z",
     Redo: "Ctrl+Shift+Z",
     Cut: "Ctrl+X",
@@ -154,12 +180,16 @@
   let goalWidth = $state(280);
   let mapTabOpen = $state(true);
   let schemaTabOpen = $state(true);
+  let erdTabOpen = $state(false);
   $effect(() => {
     if (view === "map") mapTabOpen = true;
     if (view === "schema") schemaTabOpen = true;
+    if (view === "erd") erdTabOpen = true;
     if (view !== "sql") {
-      if (running && resultKind === "lab") engine?.cancel();
+      if (running && runningKind === "lab") engine?.cancel();
       void engine?.resetSandbox();
+      // Untracked: this effect must depend on the view, not on run evidence.
+      untrack(clearSandboxRuns);
     }
   });
   let judgeX = $state<number | null>(null);
@@ -341,6 +371,45 @@
   const visibleTables = $derived(
     schema.filter((t) => t.name.includes(objectFilter.toLowerCase())),
   );
+  // Index records carry no owning-table column, so the DDL is matched instead.
+  function indexTargetsTable(definition: string, table: string) {
+    return new RegExp(
+      `\\bON\\s+"?${table.replaceAll(/[.*+?^${}()|[\]\\]/g, "\\$&")}"?\\b`,
+      "i",
+    ).test(definition);
+  }
+  // Explorer children of a table. Every field is already loaded with the
+  // schema, so expanding a table fetches nothing.
+  function tableGroups(table: SchemaTable) {
+    return [
+      {
+        key: `cols:${table.name}`,
+        name: "Columns",
+        items: table.columns.map(
+          (column) =>
+            `${column.name} ${column.type}${column.nullable ? "" : " NOT NULL"}`,
+        ),
+      },
+      {
+        key: `keys:${table.name}`,
+        name: "Keys",
+        items: [
+          ...new Set(
+            table.columns.flatMap((column) =>
+              column.key ? column.key.split("; ") : [],
+            ),
+          ),
+        ],
+      },
+      {
+        key: `idx:${table.name}`,
+        name: "Indexes",
+        items: objects.indexes
+          .filter((index) => indexTargetsTable(index.definition, table.name))
+          .map((index) => index.name),
+      },
+    ];
+  }
   const library = $derived(
     docs
       .filter(
@@ -373,7 +442,7 @@
     view === "map"
       ? "Skill Map.dag"
       : view === "schema"
-        ? "schema_notes.txt"
+        ? "schema.ref"
         : (activeDoc?.name ?? "SQL Grind"),
   );
   const judgeState = $derived(
@@ -384,13 +453,19 @@
       ? "Hushed. I keep reading — diagnostics and grading continue without me saying so."
       : running
         ? "Running. I dislike waiting, so let us both be patient."
-        : (currentFailure ||
-          currentDiagnostics[0]?.message ||
-          (solvedNow
-            ? "Solved. The result agreed with the contract on every dataset; that is the only proof I accept."
-            : completed
-              ? "You completed this challenge before. Submit this draft to check it."
-              : "I am reading your query. Correctness is what I check; style and speed are separate notes.")),
+        : view === "map"
+          ? "Reading the skill map. Choose a challenge and I will read its SQL."
+          : view === "schema"
+            ? "Reading the schema reference. Table shapes, not opinions."
+            : view === "erd"
+              ? "Reading the relationship diagram. Keys, not opinions."
+              : currentFailure ||
+                currentDiagnostics[0]?.message ||
+                (solvedNow
+                  ? "Solved. The result agreed with the contract on every dataset; that is the only proof I accept."
+                  : completed
+                    ? "You completed this challenge before. Submit this draft to check it."
+                    : "I am reading your query. Correctness is what I check; style and speed are separate notes."),
   );
   // Celebration for the first skill only, to see how it feels.
   const CELEBRATED_SKILL = "basics";
@@ -414,37 +489,46 @@
       ? (progression.skills[celebration.skillId]?.nextChallengeId ?? null)
       : null,
   );
+  // "-" is a separator sentinel. Every other string is simultaneously the
+  // display text, the command() key, the disabled() key and the shortcut key.
   const menuItems: Record<string, string[]> = {
     File: [
       "New Query",
       "Open",
+      "-",
       "Save",
       "Save As",
       "Export SQL",
+      "-",
       "Export Practice Backup",
       "Import Practice Backup",
+      "-",
       "Close Document",
       "Close Window",
     ],
     Edit: [
       "Undo",
       "Redo",
+      "-",
       "Cut",
       "Copy",
       "Paste",
       "Select All",
+      "-",
       "Find",
       "Replace",
       "Go to Line",
     ],
     View: [
       "Object Explorer",
+      "Patchouli",
       "Goal / Skill Details",
-      "Judge",
+      "-",
       "Results",
       "Messages",
       "Execution Plan",
-      "Judge Notes",
+      "Patchouli’s Notes",
+      "-",
       "Reading Layout",
       "Reset Layout",
     ],
@@ -452,40 +536,54 @@
       "Execute",
       "Parse",
       "Cancel",
+      "-",
       "Show Plan",
       "Compare with Reference",
+      "-",
       "Submit",
+      "Hint",
+      "-",
       "Reset Challenge SQL",
     ],
     Skills: [
       "Skill Map",
       "Current Skill",
       "Open Next Challenge",
+      "-",
       "Practice Records",
     ],
     Tools: [
       "Settings",
       "Storage",
+      "-",
       "Schema Reference",
       "Refresh Schema",
+      "-",
       "Reset Index Lab Session",
     ],
     Window: [
-      "Minimize IDE",
-      "Maximize / Restore IDE",
-      "Close IDE",
+      "Minimize Workbench",
+      "Maximize / Restore Workbench",
+      "Close Workbench",
+      "-",
       "Show Desktop",
-      "Dock / Float Judge",
-      "Move Judge",
-      "Reset Judge Position and Size",
+      "-",
+      "Dock / Float Patchouli",
+      "Move Patchouli",
+      "Reset Patchouli Position and Size",
+      "-",
       "Dock / Float Goal",
       "Move Goal",
+      "-",
+      "Close All Documents",
     ],
     Help: [
       "Keyboard Shortcuts",
       "Challenge Rules",
+      "-",
       "DuckDB Docs",
       "Asset Credits",
+      "-",
       "About",
     ],
   };
@@ -494,7 +592,7 @@
     { name: "DuckDB Docs", icon: "globeDesktop" },
     { name: "Schema Reference", icon: "documentDesktop" },
     { name: "Skill Map", icon: "map" },
-    { name: "Leaderboard", icon: "trophy" },
+    { name: "Practice Records", icon: "trophy" },
     { name: "Recycle Bin", icon: "bin" },
   ];
   const BASE_OUTPUT_TABS = [
@@ -554,6 +652,17 @@
       result.datasetId === activeDoc.datasetId &&
       sameIdentity(result.challenge, activeDoc.challenge),
   );
+  // The same test for evidence that also exists on scratch documents, where
+  // both identities are absent and sameIdentity is false by definition.
+  const resultIsForActiveDocument = $derived(
+    resultBelongsHere ||
+      (!!result &&
+        !!activeDoc &&
+        !result.challenge &&
+        !activeDoc.challenge &&
+        result.documentId === activeDoc.id &&
+        result.datasetId === activeDoc.datasetId),
+  );
   // The Assessment tab exists only where the authored challenge has an
   // assessment panel. Empty panels are not created to justify a tab.
   const assessmentAvailable = $derived(
@@ -584,11 +693,38 @@
     ];
   }
   function menuChecked(item: string): boolean | undefined {
-    if (item === "Judge") return settings.judgeVisible;
+    if (item === "Patchouli") return settings.judgeVisible;
     if (item === "Reading Layout") return settings.readingLayout;
     if (item === "Object Explorer") return showExplorer;
     if (item === "Goal / Skill Details") return showGoal;
     return undefined;
+  }
+  // The Window menu lists everything the tab strip can show, not only SQL
+  // documents: the map, reference and diagram are views, not documents.
+  type WindowEntry = { key: string; name: string; active: boolean };
+  const windowEntries = $derived<WindowEntry[]>([
+    ...openIds.map((id) => ({
+      key: "doc:" + id,
+      name: docs.find((d) => d.id === id)?.name ?? "",
+      active: view === "sql" && activeId === id,
+    })),
+    ...(mapTabOpen
+      ? [{ key: "view:map", name: "Skill Map.dag", active: view === "map" }]
+      : []),
+    ...(schemaTabOpen
+      ? [{ key: "view:schema", name: "schema.ref", active: view === "schema" }]
+      : []),
+    ...(erdTabOpen
+      ? [{ key: "view:erd", name: "schema.dgm", active: view === "erd" }]
+      : []),
+  ]);
+  // One command key, two labels: the item reports the action it will perform.
+  function menuLabel(item: string) {
+    return item === "Maximize / Restore Workbench"
+      ? maximized
+        ? "Restore Workbench"
+        : "Maximize Workbench"
+      : item;
   }
   $effect(() => {
     const selected = menu;
@@ -628,7 +764,7 @@
     announce(error, "error");
   }
   function isDirty(doc: QueryDocument) {
-    return !doc.saved || committedRevisions[doc.id] !== doc.revision;
+    return committedRevisions[doc.id] !== doc.revision;
   }
   async function initializeStorage() {
     store?.close();
@@ -935,7 +1071,7 @@
   async function activate(id: string) {
     const sequence = ++navigationSequence;
     contentRetryChallengeId = null;
-    if (activeId !== id && running && resultKind === "lab") engine.cancel();
+    if (activeId !== id && running && runningKind === "lab") engine.cancel();
     activeId = id;
     view = "sql";
     ideVisible = true;
@@ -1227,7 +1363,7 @@
     let doc = activeDoc;
     if (as || !doc.saved) {
       const name = await promptText(
-        as ? "Save SQL As" : "Save Query",
+        as ? "Save a Copy As" : "Name This Query",
         "Query name",
         doc.name,
       );
@@ -1306,6 +1442,7 @@
     }
   }
   async function execute(kind: RunKind = "execute") {
+    editor?.dismissCompletion();
     if (
       !activeDoc ||
       busy ||
@@ -1340,7 +1477,7 @@
     const submittedHintLevel = hints;
     running = true;
     comparisonRunning = kind === "compare";
-    resultKind = kind;
+    runningKind = kind;
     error = "";
     outputTab =
       kind === "lab" ||
@@ -1367,8 +1504,7 @@
         lab: doc.lab,
         labEvidence: labEvidence[doc.id],
       });
-      result = run;
-      resultKind = kind;
+      runs = { ...runs, [run.documentId]: { run, kind } };
       if (
         run.outcome === "engine-error" &&
         run.message.includes("Content error:")
@@ -1485,6 +1621,12 @@
     await persistDocument(doc);
     await prepareDocument();
     announce(`Using immutable dataset ${datasetId}. SQL is unchanged.`);
+  }
+  function showDiagram(name = "") {
+    view = "erd";
+    erdTabOpen = true;
+    ideVisible = true;
+    if (name) selectedObject = name;
   }
   // Notes render after the view switches, so the heading only exists one tick
   // plus one frame later. A stale callback must not scroll a newer request.
@@ -1700,6 +1842,7 @@
       d.id === doc.id ? { ...d, deletedAt: Date.now() } : d,
     );
     openIds = openIds.filter((id) => id !== doc.id);
+    dropRun(doc.id);
     if (activeId === doc.id) activeId = openIds[0] ?? "";
     await persistSession();
     await prepareDocument();
@@ -1734,6 +1877,7 @@
       )
     ) {
       await store.permanentlyDeleteDocument(doc.id);
+      dropRun(doc.id);
       await reloadProfile(true);
       announce("Query permanently deleted.");
       showModal("bin", "Recycle Bin");
@@ -1776,6 +1920,7 @@
     await flush();
     const index = openIds.indexOf(id);
     openIds = openIds.filter((openId) => openId !== id);
+    dropRun(id);
     if (activeId === id)
       activeId = openIds[Math.min(index, openIds.length - 1)] ?? "";
     await persistSession();
@@ -1785,9 +1930,10 @@
   function closeTab(event: MouseEvent, id: string) {
     if (event.button !== 1) return;
     event.preventDefault();
-    if (id === "map" || id === "schema") {
+    if (id === "map" || id === "schema" || id === "erd") {
       if (id === "map") mapTabOpen = false;
-      else schemaTabOpen = false;
+      else if (id === "schema") schemaTabOpen = false;
+      else erdTabOpen = false;
       if (view === id) view = "sql";
     } else void closeDocument(id).catch((error) => fail(error, "storage"));
   }
@@ -1912,10 +2058,7 @@
     };
   }
   function moveWindow(event: PointerEvent, target: keyof typeof floating) {
-    if (
-      (event.target as HTMLElement).closest("button") ||
-      readingLayout
-    )
+    if ((event.target as HTMLElement).closest("button") || readingLayout)
       return;
     const element = document.getElementById(floating[target].id);
     if (!element) return;
@@ -1927,11 +2070,7 @@
     const dx = event.clientX - rect.left,
       dy = event.clientY - rect.top;
     dragPointer(event, (next) => {
-      const at = clampWindow(
-        next.clientX - dx,
-        next.clientY - dy,
-        size,
-      );
+      const at = clampWindow(next.clientX - dx, next.clientY - dy, size);
       floating[target].set(at.x, at.y);
     });
   }
@@ -1943,8 +2082,7 @@
         180,
         Math.min(
           480,
-          width +
-            (next.clientX - start) * (side === "explorer" ? 1 : -1),
+          width + (next.clientX - start) * (side === "explorer" ? 1 : -1),
         ),
       );
       if (side === "explorer") explorerWidth = value;
@@ -2001,10 +2139,7 @@
       width = goalWidth,
       height = goalHeight;
     dragPointer(event, (next) => {
-      goalWidth = Math.max(
-        180,
-        Math.min(480, width + next.clientX - startX),
-      );
+      goalWidth = Math.max(180, Math.min(480, width + next.clientX - startX));
       goalHeight = Math.max(
         160,
         Math.min(1200, height + next.clientY - startY),
@@ -2057,10 +2192,7 @@
     const start = event.clientY,
       height = editorHeight;
     const move = (e: PointerEvent) => {
-      editorHeight = Math.max(
-        120,
-        Math.min(650, height + e.clientY - start),
-      );
+      editorHeight = Math.max(120, Math.min(650, height + e.clientY - start));
     };
     const up = () => {
       window.removeEventListener("pointermove", move);
@@ -2160,6 +2292,7 @@
             false,
             true,
           ),
+          contextAction("View Diagram", () => showDiagram(table.name)),
           contextAction("Copy Table Name", async () => {
             await navigator.clipboard.writeText(table.name);
             announce(`Copied table name: ${table.name}.`);
@@ -2259,6 +2392,7 @@
             busy || engineState === "loading",
           ),
           contextAction("View Schema", () => showSchema()),
+          contextAction("View Diagram", () => showDiagram()),
         ];
         break;
       case "database":
@@ -2284,7 +2418,7 @@
           contextAction(
             settings.judgeVisible ? "Hide Patchouli" : "Show Patchouli",
             async () => {
-              await command("Judge");
+              await command("Patchouli");
               if (settings.judgeVisible && settings.judgeDocked)
                 ideVisible = true;
             },
@@ -2302,24 +2436,24 @@
             settings.judgeDocked ? "Float Patchouli" : "Dock Patchouli",
             async () => {
               if (!settings.judgeDocked) ideVisible = true;
-              await command("Dock / Float Judge");
+              await command("Dock / Float Patchouli");
             },
             !storageReady,
             true,
           ),
           contextAction(
-            "Move Judge",
-            () => command("Move Judge"),
+            "Move Patchouli",
+            () => command("Move Patchouli"),
             !storageReady,
           ),
           contextAction(
-            "Reset Judge Position and Size",
-            () => command("Reset Judge Position and Size"),
+            "Reset Patchouli Position and Size",
+            () => command("Reset Patchouli Position and Size"),
             !storageReady,
           ),
           contextAction(
             "Show Diagnostics",
-            () => command("Judge Notes"),
+            () => command("Patchouli’s Notes"),
             !activeDoc,
             true,
           ),
@@ -2383,6 +2517,9 @@
             (!!activeDoc.lab && !evidenceCurrent)))
       );
     if (command === "Cancel") return !busy || engineState === "cancelling";
+    if (command === "Hint") return !storageReady || !challenge;
+    if (command === "Close All Documents")
+      return !storageReady || !openIds.length;
     if (
       [
         "Save",
@@ -2401,7 +2538,26 @@
     startMenu = false;
     explorerMenu = false;
     goalMenu = false;
+    // The completion popup belongs to the editor's caret. Any menu or toolbar
+    // verb moves attention elsewhere, so it must not stay on screen.
+    editor?.dismissCompletion();
     if (disabled(name)) return;
+    if (name.startsWith("doc:")) {
+      await activate(name.slice(4));
+      return;
+    }
+    if (name === "view:map") {
+      view = "map";
+      return;
+    }
+    if (name === "view:schema") {
+      showSchema();
+      return;
+    }
+    if (name === "view:erd") {
+      showDiagram();
+      return;
+    }
     try {
       switch (name) {
         case "New Query":
@@ -2433,7 +2589,7 @@
           await closeDocument();
           break;
         case "Close Window":
-        case "Close IDE":
+        case "Close Workbench":
           await closeWindow();
           break;
         case "Execute":
@@ -2475,7 +2631,7 @@
         case "Goal / Skill Details":
           showGoal = !showGoal;
           break;
-        case "Judge":
+        case "Patchouli":
           await toggleJudge();
           break;
         case "Reading Layout":
@@ -2511,7 +2667,7 @@
           view = "sql";
           outputTab = "Execution plan";
           break;
-        case "Judge Notes":
+        case "Patchouli’s Notes":
           view = "sql";
           ideVisible = true;
           outputTab = "Patchouli’s notes";
@@ -2536,9 +2692,16 @@
         case "Open Next Challenge":
           await openChallenge();
           break;
-        case "Leaderboard":
         case "Practice Records":
-          showModal("records", "Leaderboard — this device");
+          showModal("records", "Practice Records — this device");
+          break;
+        case "Hint":
+          if (completed || hints === 3)
+            showModal("hints", `${activeSummary?.displayNumber} — hints`);
+          else await revealHint();
+          break;
+        case "Close All Documents":
+          for (const id of [...openIds]) await closeDocument(id);
           break;
         case "Recycle Bin":
           showModal("bin", "Recycle Bin");
@@ -2558,7 +2721,7 @@
           ) {
             engine.cancel();
             await engine.resetSandbox();
-            if (domain === "sandbox") result = null;
+            clearSandboxRuns();
             await refreshSchema();
             announce(
               "Index lab session reset. Saved SQL and progress are unchanged.",
@@ -2576,26 +2739,26 @@
           showModal("storage", "Local Storage");
           break;
         }
-        case "Minimize IDE":
+        case "Minimize Workbench":
           ideVisible = false;
           await tick();
           document.getElementById("app-task")?.focus();
           break;
-        case "Maximize / Restore IDE":
+        case "Maximize / Restore Workbench":
           maximized = !maximized;
           break;
         case "Show Desktop":
           showDesktop();
           break;
-        case "Dock / Float Judge":
+        case "Dock / Float Patchouli":
           await dockJudge();
           break;
-        case "Reset Judge Position and Size":
+        case "Reset Patchouli Position and Size":
           judgeX = null;
           judgeY = null;
           judgeZoom = 1;
           break;
-        case "Move Judge":
+        case "Move Patchouli":
           settings.judgeDocked = false;
           settings.judgeVisible = true;
           await startMoving("judge");
@@ -2664,7 +2827,6 @@
             );
             break;
           }
-          if (name.startsWith("doc:")) await activate(name.slice(4));
       }
     } catch (e) {
       fail(e);
@@ -2807,6 +2969,37 @@
       movementKey(e);
       return;
     }
+    // Title mnemonics only: every menu title has a unique first letter, while
+    // item first letters collide (Save/Save As, Results/Reset Layout).
+    if (
+      e.altKey &&
+      !e.ctrlKey &&
+      !e.metaKey &&
+      !modal &&
+      ideVisible &&
+      (e.key.length === 1 || /^Key[A-Z]$/.test(e.code))
+    ) {
+      // Either source alone is insufficient: Option+F on macOS reports
+      // e.key "ƒ", while e.code names a QWERTY position that is not the
+      // labelled letter on AZERTY or Dvorak.
+      const target = Object.keys(menuItems).find(
+        (label) =>
+          label[0].toLowerCase() === e.key.toLowerCase() ||
+          "Key" + label[0].toUpperCase() === e.code,
+      );
+      if (target) {
+        e.preventDefault();
+        menu = menu === target ? "" : target;
+        focusedMenu = target;
+        if (menu)
+          void tick().then(() =>
+            document
+              .querySelector<HTMLElement>(".menu-popup button:not(:disabled)")
+              ?.focus(),
+          );
+        return;
+      }
+    }
     if (e.key === "Escape" && !modal) {
       menu = "";
       startMenu = false;
@@ -2834,7 +3027,7 @@
       document.querySelector(".ide")?.contains(document.activeElement)
     ) {
       e.preventDefault();
-      void command("Save");
+      void command(e.shiftKey ? "Save As" : "Save");
     }
   }
   function moveIde(event: PointerEvent) {
@@ -2989,7 +3182,7 @@
         onpointerdown={moveIde}
         ondblclick={(event) => {
           if (!(event.target as HTMLElement).closest("button"))
-            void command("Maximize / Restore IDE");
+            void command("Maximize / Restore Workbench");
         }}
       >
         <div class="window-title">
@@ -3001,19 +3194,20 @@
         </div>
         <div class="window-controls">
           <button
-            aria-label="Minimize IDE"
-            onclick={() => command("Minimize IDE")}>_</button
+            aria-label="Minimize Workbench"
+            onclick={() => command("Minimize Workbench")}>_</button
           ><button
-            aria-label="Maximize or restore IDE"
-            onclick={() => command("Maximize / Restore IDE")}
+            aria-label="Maximize or restore Workbench"
+            onclick={() => command("Maximize / Restore Workbench")}
             aria-pressed={maximized}
             ><span
               class="maximize-glyph"
               class:restore-glyph={maximized}
               aria-hidden="true"
             ></span></button
-          ><button aria-label="Close IDE" onclick={() => command("Close IDE")}
-            >×</button
+          ><button
+            aria-label="Close Workbench"
+            onclick={() => command("Close Workbench")}>×</button
           >
         </div>
       </header>
@@ -3028,7 +3222,8 @@
               onfocus={() => (focusedMenu = label)}
               class:menu-active={menu === label}
               onclick={() => (menu = menu === label ? "" : label)}
-              onkeydown={(e) => menuKey(e, label)}>{label}</button
+              onkeydown={(e) => menuKey(e, label)}
+              ><u>{label[0]}</u>{label.slice(1)}</button
             >{#if menu === label}<div
                 class="menu-popup"
                 style:left={menuPosition.left + "px"}
@@ -3038,38 +3233,40 @@
                 aria-label={label}
                 onkeydown={popupKey}
               >
-                {#each [...menuItems[label], ...(label === "Window" ? openIds.map((id) => "doc:" + id) : [])] as item}<button
-                    role={menuChecked(item) === undefined
-                      ? "menuitem"
-                      : "menuitemcheckbox"}
-                    aria-checked={menuChecked(item)}
-                    disabled={disabled(item)}
-                    onclick={() => command(item)}
-                    title={item === "Compare with Reference" &&
-                    !comparisonEligible
-                      ? "Submit a correct answer for the current SQL first."
-                      : shortcutHints[item]}
-                    >{item.startsWith("doc:")
-                      ? docs.find((d) => d.id === item.slice(4))?.name
-                      : item}{#if shortcutHints[item]}<span
-                        class="menu-shortcut"
-                        aria-hidden="true">{shortcutHints[item]}</span
-                      >{/if}{#if ["Judge", "Reading Layout", "Object Explorer", "Goal / Skill Details"].includes(item)}<span
+                {#each menuItems[label] as item}{#if item === "-"}<div
+                      class="menu-separator"
+                      role="separator"
+                    ></div>{:else}<button
+                      role={menuChecked(item) === undefined
+                        ? "menuitem"
+                        : "menuitemcheckbox"}
+                      aria-checked={menuChecked(item)}
+                      disabled={disabled(item)}
+                      onclick={() => command(item)}
+                      title={item === "Compare with Reference" &&
+                      !comparisonEligible
+                        ? "Submit a correct answer for the current SQL first."
+                        : shortcutHints[item]}
+                      >{menuLabel(item)}{#if shortcutHints[item]}<span
+                          class="menu-shortcut"
+                          aria-hidden="true">{shortcutHints[item]}</span
+                        >{/if}{#if menuChecked(item) !== undefined}<span
+                          class="menu-check"
+                          aria-hidden="true"
+                          >{menuChecked(item) ? "✓" : ""}</span
+                        >{/if}</button
+                    >{/if}{/each}{#if label === "Window" && windowEntries.length}
+                  <div class="menu-separator" role="separator"></div>
+                  {#each windowEntries as entry, index}<button
+                      role="menuitemradio"
+                      aria-checked={entry.active}
+                      onclick={() => command(entry.key)}
+                      >{#if index < 9}{index + 1}&nbsp;{/if}{entry.name}<span
                         class="menu-check"
-                        aria-hidden="true"
-                        >{(
-                          item === "Judge"
-                            ? settings.judgeVisible
-                            : item === "Reading Layout"
-                              ? settings.readingLayout
-                              : item === "Object Explorer"
-                                ? showExplorer
-                                : showGoal
-                        )
-                          ? "✓"
-                          : ""}</span
-                      >{/if}</button
-                  >{/each}
+                        aria-hidden="true">{entry.active ? "•" : ""}</span
+                      ></button
+                    >{/each}
+                {/if}
               </div>{/if}
           </div>{/each}
       </div>
@@ -3088,7 +3285,7 @@
           disabled={disabled("Execute")}
           onclick={() => command("Execute")}
           ><img src={icons.play} alt="" /><b>Execute</b
-          >{#if running && resultKind === "execute"}<span
+          >{#if running && runningKind === "execute"}<span
               class="spinner"
               aria-hidden="true"
             ></span>{:else}<span class="shortcut" aria-hidden="true">F5</span
@@ -3118,8 +3315,8 @@
         <button
           aria-pressed={settings.judgeVisible}
           class:pressed={settings.judgeVisible}
-          onclick={() => command("Judge")}
-          ><span class="judge-dot"></span>Judge</button
+          onclick={() => command("Patchouli")}
+          ><span class="judge-dot"></span>Patchouli</button
         >
         <span class="skill-tag"
           >{#if view === "map"}<b
@@ -3275,7 +3472,9 @@
                   placeholder="Filter tables…"
                   bind:value={objectFilter}
                 /><button onclick={() => (objectFilter = "")}>Clear</button
-                ><span>{formatCount(visibleTables.length, "match", "matches")}</span>
+                ><span
+                  >{formatCount(visibleTables.length, "match", "matches")}</span
+                >
               </div>{/if}
             <div
               class="tree inset"
@@ -3292,7 +3491,8 @@
                 aria-level="1"
                 aria-expanded={expanded.database}
                 onclick={() => (expanded.database = !expanded.database)}
-                ><span class="tree-toggle">{expanded.database ? "−" : "+"}</span
+                ><span class="tree-toggle" aria-hidden="true"
+                  >{expanded.database ? "−" : "+"}</span
                 ><img src={icons.database} alt="" /><b
                   >{activeDoc?.datasetId ?? "No dataset"}</b
                 ></button
@@ -3304,10 +3504,11 @@
                   aria-level="2"
                   aria-expanded={expanded.tables}
                   onclick={() => (expanded.tables = !expanded.tables)}
-                  ><span class="tree-toggle">{expanded.tables ? "−" : "+"}</span
+                  ><span class="tree-toggle" aria-hidden="true"
+                    >{expanded.tables ? "−" : "+"}</span
                   ><img src={icons.folder} alt="" />Tables</button
                 >
-                {#if expanded.tables}{#each visibleTables as table}<button
+                {#if expanded.tables}{#each visibleTables as table}{@const tableKey = `table:${table.name}`}<button
                       class:selected={selectedObject === table.name}
                       class="tree-row level3"
                       role="treeitem"
@@ -3315,7 +3516,11 @@
                       data-table={table.name}
                       aria-level="3"
                       aria-selected={selectedObject === table.name}
-                      onclick={() => (selectedObject = table.name)}
+                      aria-expanded={!!expanded[tableKey]}
+                      onclick={() => {
+                        selectedObject = table.name;
+                        expanded[tableKey] = !expanded[tableKey];
+                      }}
                       ondblclick={() => showSchema(table.name)}
                       onkeydown={(e) => {
                         if (e.key === "Enter") {
@@ -3323,10 +3528,38 @@
                           showSchema(table.name);
                         }
                       }}
+                      ><span class="tree-toggle" aria-hidden="true"
+                        >{expanded[tableKey] ? "−" : "+"}</span
                       ><img src={icons.table} alt="" />{table.name}<span
                         class="count">({table.count.toLocaleString()})</span
                       ></button
-                    >{/each}{#if schema.length === 0}<span class="tree-empty"
+                    >{#if expanded[tableKey]}{#each tableGroups(table) as group}<button
+                          class="tree-row level4"
+                          role="treeitem"
+                          aria-selected="false"
+                          aria-level="4"
+                          aria-expanded={!!expanded[group.key]}
+                          onclick={() =>
+                            (expanded[group.key] = !expanded[group.key])}
+                          ><span class="tree-toggle" aria-hidden="true"
+                            >{expanded[group.key] ? "−" : "+"}</span
+                          ><img src={icons.folder} alt="" />{group.name}</button
+                        >{#if expanded[group.key]}{#each group.items as item}<button
+                              class="tree-row level5"
+                              role="treeitem"
+                              aria-selected="false"
+                              aria-level="5"
+                              onclick={() => (selectedObject = table.name)}
+                              ondblclick={() => showSchema(table.name)}
+                              onkeydown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  showSchema(table.name);
+                                }
+                              }}>{item}</button
+                            >{:else}<span class="tree-empty">No objects</span
+                            >{/each}{/if}{/each}{/if}{/each}{#if schema.length === 0}<span
+                      class="tree-empty"
                       >{engineState === "error"
                         ? "Schema unavailable"
                         : "Loading schema…"}</span
@@ -3338,7 +3571,7 @@
                     aria-level="2"
                     aria-expanded={expanded[branch]}
                     onclick={() => (expanded[branch] = !expanded[branch])}
-                    ><span class="tree-toggle"
+                    ><span class="tree-toggle" aria-hidden="true"
                       >{expanded[branch] ? "−" : "+"}</span
                     ><img
                       src={icons[
@@ -3372,7 +3605,7 @@
                 aria-level="1"
                 aria-expanded={expanded.challenges}
                 onclick={() => (expanded.challenges = !expanded.challenges)}
-                ><span class="tree-toggle"
+                ><span class="tree-toggle" aria-hidden="true"
                   >{expanded.challenges ? "−" : "+"}</span
                 ><img src={icons.folder} alt="" /><b>Challenges</b></button
               >
@@ -3391,7 +3624,7 @@
                       view = "map";
                     }}
                   >
-                    <span class="tree-toggle"
+                    <span class="tree-toggle" aria-hidden="true"
                       >{expanded[mapSkill.id] ? "−" : "+"}</span
                     >
                     {mapSkill.label}
@@ -3425,8 +3658,7 @@
             </div>
             <div class="explorer-footer">
               Local data · {formatCount(schema.length, "table")}<br
-              />{activeDoc?.datasetId ??
-                "No dataset"} · immutable snapshots
+              />{activeDoc?.datasetId ?? "No dataset"} · immutable snapshots
             </div>
           </aside>
           <input
@@ -3463,11 +3695,9 @@
                     if (event.button === 1) event.preventDefault();
                   }}
                   onauxclick={(event) => closeTab(event, id)}
-                  ><img src={icons.document} alt="" />{doc.name}{!doc.saved
+                  ><img src={icons.document} alt="" />{doc.name}{isDirty(doc)
                     ? " *"
-                    : committedRevisions[doc.id] !== doc.revision
-                      ? " *"
-                      : ""}</button
+                    : ""}</button
                 >{/if}{/each}{#if mapTabOpen}<button
                 role="tab"
                 data-context="view-tab"
@@ -3491,7 +3721,20 @@
                   if (event.button === 1) event.preventDefault();
                 }}
                 onauxclick={(event) => closeTab(event, "schema")}
-                onclick={() => showSchema()}>schema_notes.txt</button
+                onclick={() => showSchema()}>schema.ref</button
+              >{/if}
+            {#if erdTabOpen}<button
+                role="tab"
+                data-context="view-tab"
+                data-view="erd"
+                aria-selected={view === "erd"}
+                tabindex={view === "erd" ? 0 : -1}
+                class:active={view === "erd"}
+                onmousedown={(event) => {
+                  if (event.button === 1) event.preventDefault();
+                }}
+                onauxclick={(event) => closeTab(event, "erd")}
+                onclick={() => showDiagram()}>schema.dgm</button
               >{/if}
           </div>
           {#if view === "sql"}
@@ -3567,7 +3810,9 @@
                       : ""}</button
                   >{/each}
               </div>
-              {#if result}<div class="run-identity">
+              {#if result && resultIsForActiveDocument}<div
+                  class="run-identity"
+                >
                   Revision {result.revision} · {result.id.slice(0, 8)} · {result.datasetId}
                   · {result.challenge?.challengeId ?? "scratch"}
                   {#if stale}<strong>STALE — SQL or document changed</strong
@@ -3728,6 +3973,12 @@
               {progression}
               {readingLayout}
               onselect={(id) => (selectedSkill = id)}
+            />
+          {:else if view === "erd"}<SchemaDiagram
+              {schema}
+              {readingLayout}
+              selected={selectedObject}
+              onselect={(table) => (selectedObject = table)}
             />
           {:else}<div class="schema-reference inset" data-region tabindex="-1">
               <h2>
@@ -3963,7 +4214,7 @@
       ? "auto"
       : undefined}
     style:--judge-zoom={docked ? undefined : effectiveJudgeZoom}
-    aria-label="Patchouli judge"
+    aria-label="Patchouli"
   >
     <div
       class="titlebar judge-title"
@@ -3973,10 +4224,10 @@
       <h2 id="judge-heading" tabindex="-1">Patchouli — {judgeState}</h2>
       <div class="window-controls">
         <button
-          aria-label={docked ? "Float judge" : "Dock judge"}
+          aria-label={docked ? "Float Patchouli" : "Dock Patchouli"}
           onclick={() => dockJudge()}>{docked ? "⇱" : "⇲"}</button
         ><button
-          aria-label="Hide judge"
+          aria-label="Hide Patchouli"
           onclick={async () => {
             settings.judgeVisible = false;
             await tick();
@@ -4017,12 +4268,13 @@
         ).length} WARN</b
       ><b class="style-count"
         >{currentDiagnostics.filter((d) => d.severity === "style").length} STYLE</b
-      ><button class="link" onclick={() => command("Judge Notes")}
+      ><button class="link" onclick={() => command("Patchouli’s Notes")}
         >Patchouli’s notes ›</button
       >
     </div>
     <div class="judge-actions">
-      <button onclick={() => command("Judge Notes")}>Show diagnostics</button
+      <button onclick={() => command("Patchouli’s Notes")}
+        >Show diagnostics</button
       ><button
         disabled={disabled("Compare with Reference")}
         title={!comparisonEligible
@@ -4039,7 +4291,7 @@
       >
       {#if !docked && !readingLayout}<button
           class="judge-resize"
-          aria-label="Resize judge"
+          aria-label="Resize Patchouli"
           title="Drag to resize · Arrow keys change size"
           onpointerdown={resizeJudge}
           onkeydown={resizeJudgeKey}
@@ -4215,8 +4467,8 @@
           </div>
           <p class="quiet">{challenge.starterExplanation}</p>
           <h3>
-            Scorecard · {result
-              ? resultKind === "submit"
+            Scorecard · {activeSlot
+              ? activeSlot.kind === "submit"
                 ? "last submission"
                 : "last run"
               : "no submission"}
@@ -4248,8 +4500,10 @@
                 ? result.fixtureResults.length
                 : (result?.result?.count.toLocaleString() ?? "No result")}
             </dd>
-            <dt>Diagnostics</dt>
-            <dd>{currentDiagnostics.length} current</dd>
+            <dt>Style and syntax notes</dt>
+            <dd>
+              {formatCount(currentDiagnostics.length, "note")} for this revision
+            </dd>
             <dt>Completion</dt>
             <dd>
               {completed
@@ -4259,7 +4513,9 @@
                   )}
             </dd>
           </dl>
-          {#if result?.fixtureResults}<ul class="fixture-results">
+          {#if result?.fixtureResults && resultBelongsHere}<ul
+              class="fixture-results"
+            >
               {#each result.fixtureResults as fixture}<li
                   class:correct={fixture.pass}
                 >
@@ -4343,12 +4599,17 @@
       {:else}
         <button
           disabled={!storageReady || !challenge}
-          onclick={() => revealHint()}
+          onclick={() =>
+            completed || hints === 3
+              ? showModal("hints", `${activeSummary?.displayNumber} — hints`)
+              : revealHint()}
         >
-          {hints === 3 ? "Review hints" : `Hint (${3 - hints} left)`}
+          {completed || hints === 3
+            ? "Review hints"
+            : `Hint (${3 - hints} left)`}
         </button>
         <button disabled={disabled("Submit")} onclick={() => command("Submit")}
-          >{#if running && resultKind === "submit"}<span
+          >{#if running && runningKind === "submit"}<span
               class="spinner"
               aria-hidden="true"
             ></span>Submitting…{:else}Submit{/if}</button
@@ -4473,7 +4734,7 @@
         {#each library as doc}<article>
             <h3>
               {doc.name}
-              <small>{doc.saved ? "Saved query" : "Recovered draft"}</small>
+              <small>{doc.saved ? "Saved query" : "Auto-saved draft"}</small>
             </h3>
             <p>
               Revision {doc.revision} · {new Date(
@@ -4633,9 +4894,12 @@
         >
           <h3>Hint {hint.level} · {hint.kind}</h3>
           <p>{hint.text}</p>
-        </section>{/each}{#if hints < 3}<button onclick={() => revealHint()}
+        </section>{/each}{#if hints < 3 && !completed}<button
+          onclick={() => revealHint()}
           >Reveal hint {hints + 1} ({3 - hints} left)</button
-        >{/if}
+        >{/if}{#if !hints}<p>
+          No hints were revealed for this challenge. Nothing here was withheld.
+        </p>{/if}
     {:else if modal === "records"}<p>
         These practice records belong to this browser. They are not verified
         public rankings.
@@ -4707,7 +4971,7 @@
                 ) {
                   await store.deleteAttempt(attempt.id);
                   attempts = attempts.filter((a) => a.id !== attempt.id);
-                  showModal("records", "Leaderboard — this device");
+                  showModal("records", "Practice Records — this device");
                 }
               }}>Delete attempt</button
             >
@@ -4720,6 +4984,8 @@
         <dd>Execute SQL while the editor has focus.</dd>
         <dt>Ctrl+S / Command+S</dt>
         <dd>Save the active query.</dd>
+        <dt>Ctrl+Shift+S / Command+Shift+S</dt>
+        <dd>Save the active query as a new copy.</dd>
         <dt>Escape, then Tab</dt>
         <dd>Leave the SQL editor without inserting indentation.</dd>
         <dt>F6 / Shift+F6</dt>
@@ -4793,8 +5059,7 @@
         {formatCount(skills.length, "skill")} · {formatCount(
           Object.keys(summaries).length,
           "complete exercise",
-        )}.
-        Correct current outcomes unlock later skills.
+        )}. Correct current outcomes unlock later skills.
       </p>
     {/if}
   </div>

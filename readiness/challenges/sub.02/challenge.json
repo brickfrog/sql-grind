@@ -32,6 +32,14 @@
       "text": "Customer 1 has many qualifying orders; customer 10002 has none."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (count(*) FILTER (WHERE customer_id = 1 AND status = 'paid'))::VARCHAR || '/' || (count(*) FILTER (WHERE customer_id = 10002 AND status = 'paid'))::VARCHAR FROM orders",
+      "equals": "10/0",
+      "claim": "hints[2]: customer 1 has many qualifying orders and customer 10002 has none"
+    }
+  ],
   "output": {
     "columns": [
       {

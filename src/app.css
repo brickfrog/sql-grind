@@ -329,6 +329,12 @@ small,
 .menu-popup button:focus .menu-shortcut {
   color: inherit;
 }
+.menu-separator {
+  height: 0;
+  margin: 3px 1px;
+  border-top: 1px solid #808080;
+  border-bottom: 1px solid #fff;
+}
 .comparison-progress {
   display: flex;
   align-items: center;
@@ -644,6 +650,12 @@ small,
 .tree-row.level3 {
   padding-left: 32px;
 }
+.tree-row.level4 {
+  padding-left: 49px;
+}
+.tree-row.level5 {
+  padding-left: 66px;
+}
 .tree-toggle {
   font: 10px/11px monospace;
   width: 11px;
@@ -922,6 +934,13 @@ small,
   background: #f4f2ee;
   border: 1px solid #c0bcb4;
   padding: 6px;
+  overflow-x: auto;
+}
+/* Column contracts are single lines: the block scrolls, the prose wraps. */
+.shape > div {
+  white-space: nowrap;
+}
+.shape > p {
   overflow-wrap: anywhere;
 }
 .scorecard {
@@ -1892,5 +1911,8 @@ small,
   .judge-dot,
   .status-message i {
     border: 2px solid CanvasText;
+  }
+  .menu-separator {
+    border-color: GrayText;
   }
 }

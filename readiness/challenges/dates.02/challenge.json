@@ -32,6 +32,14 @@
       "text": "The locally February timestamp on order 3 belongs to January in UTC."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT strftime(ordered_at AT TIME ZONE 'UTC', '%Y-%m') FROM orders WHERE order_id = 3",
+      "equals": "2024-01",
+      "claim": "hints[2]: the locally February timestamp on order 3 is January in UTC"
+    }
+  ],
   "output": {
     "columns": [
       {

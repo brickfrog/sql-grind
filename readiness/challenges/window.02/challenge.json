@@ -31,6 +31,14 @@
       "text": "Orders 10001 and 10002 tie in time. Do not filter to paid orders or UTC 2024."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM orders WHERE order_id IN (10001, 10002) AND ordered_at = TIMESTAMPTZ '2024-06-15 10:00:00+00'",
+      "equals": "2",
+      "claim": "hints[2]: orders 10001 and 10002 tie in time"
+    }
+  ],
   "output": {
     "columns": [
       {

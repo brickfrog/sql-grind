@@ -31,6 +31,14 @@
       "text": "The extra items sit on 9, 10, 99 and 100, which is where careless bands fail."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM order_items WHERE qty IN (9, 10, 99, 100)",
+      "equals": "4",
+      "claim": "hints[2]: extra items sit on quantities 9, 10, 99 and 100"
+    }
+  ],
   "output": {
     "columns": [
       {

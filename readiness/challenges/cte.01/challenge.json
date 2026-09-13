@@ -32,6 +32,14 @@
       "text": "Nine qualifying orders belong to only two customers in the boundary."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR || '/' || count(DISTINCT customer_id)::VARCHAR FROM orders WHERE status = 'paid' AND ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'",
+      "equals": "9/2",
+      "claim": "hints[2]: nine qualifying orders belong to two customers"
+    }
+  ],
   "output": {
     "columns": [
       {

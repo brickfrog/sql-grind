@@ -32,6 +32,14 @@
       "text": "Equal January totals share ranks 1 and 3, followed by rank 5."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "WITH monthly AS (SELECT date_trunc('month',o.ordered_at AT TIME ZONE 'UTC')::DATE AS mon,p.category_id,sum(i.qty::DECIMAL(18,0)*i.unit_price)::DECIMAL(38,2) AS revenue FROM orders o JOIN order_items i USING(order_id) JOIN products p USING(product_id) WHERE o.status = 'paid' AND o.ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND o.ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00' GROUP BY mon,p.category_id) SELECT string_agg(rnk::VARCHAR, ',' ORDER BY rnk, category_id) FROM (SELECT category_id, rank() OVER(ORDER BY revenue DESC) AS rnk FROM monthly WHERE mon = DATE '2024-01-01')",
+      "equals": "1,1,3,3,5",
+      "claim": "hints[2]: equal January totals share ranks 1 and 3, followed by rank 5"
+    }
+  ],
   "output": {
     "columns": [
       {

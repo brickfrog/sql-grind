@@ -30,7 +30,11 @@
     selectAll,
     undo,
   } from "@codemirror/commands";
-  import { autocompletion, completionKeymap } from "@codemirror/autocomplete";
+  import {
+    autocompletion,
+    closeCompletion,
+    completionKeymap,
+  } from "@codemirror/autocomplete";
   import { PostgreSQL, sql } from "@codemirror/lang-sql";
   import {
     bracketMatching,
@@ -227,6 +231,12 @@
         scroll: (_event, editor) => {
           notify(editor);
         },
+        // The popup is positioned against the editor, so it must not outlive
+        // the editor's focus: a toolbar click leaves it hanging otherwise.
+        blur: (_event, editor) => {
+          closeCompletion(editor);
+          return false;
+        },
       }),
       appearance.of(appearanceExtensions()),
     ];
@@ -354,6 +364,9 @@
   export function focus() {
     view?.focus();
   }
+  export function dismissCompletion() {
+    if (view) closeCompletion(view);
+  }
   export function getSelection() {
     const range = view?.state.selection.main;
     return { anchor: range?.anchor ?? 0, head: range?.head ?? 0 };
@@ -411,6 +424,7 @@
 
   export function command(name: string): void {
     if (!view) return;
+    closeCompletion(view);
     view.focus();
     switch (name) {
       case "undo":

@@ -28,7 +28,15 @@
     {
       "level": 3,
       "kind": "boundary",
-      "text": "Three customers are called Ari. All three must survive."
+      "text": "Grading includes a variant where three customers share the name Ari. All three must survive."
+    }
+  ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM customers WHERE customer_name = 'Ari'",
+      "equals": "3",
+      "claim": "hints[2]: three customers share the name Ari in the boundary variant"
     }
   ],
   "output": {

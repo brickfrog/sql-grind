@@ -32,6 +32,14 @@
       "text": "Customer 1 has multiple qualifying orders but appears only once."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM orders WHERE customer_id = 1 AND status = 'paid'",
+      "equals": "10",
+      "claim": "hints[2]: customer 1 has multiple qualifying orders"
+    }
+  ],
   "output": {
     "columns": [
       {

@@ -80,8 +80,12 @@ try {
   await ready();
   mark("fresh local startup without external origins");
   assert.match(await page.locator(".window-title").textContent(), /basics\.01/);
-  await page.getByRole("button", { name: "Dock judge", exact: true }).click();
-  await page.getByRole("button", { name: "Hide judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Dock Patchouli", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Hide Patchouli", exact: true })
+    .click();
   mark("starter execute", await run());
   assert.match(await page.locator(".scorecard").textContent(), /Not submitted/);
   const reference = await readFile(
@@ -116,20 +120,33 @@ try {
     .click();
   await celebration.waitFor({ state: "hidden" });
   mark("first-pass celebration offers one dismiss and one forward action");
-  await page
-    .getByRole("button", { name: "Hint (3 left)", exact: true })
-    .click();
+  // A completed challenge reviews its hints without consuming a level: the
+  // reveal action is withheld, so the remaining counter cannot walk backwards.
+  await page.getByRole("button", { name: "Review hints", exact: true }).click();
   await page.locator("dialog").waitFor({ state: "visible" });
-  await page
-    .getByRole("button", { name: "Reveal hint 2 (2 left)", exact: true })
-    .click();
-  await page
-    .getByRole("button", { name: "Reveal hint 3 (1 left)", exact: true })
-    .click();
+  assert.equal(
+    await page
+      .locator("dialog")
+      .getByRole("button", { name: /^Reveal hint/ })
+      .count(),
+    0,
+  );
+  // Withholding the reveal action must not leave an empty dialog behind.
+  assert.match(
+    await page.locator("dialog").textContent(),
+    /No hints were revealed for this challenge/,
+  );
   await page
     .locator("dialog")
     .getByRole("button", { name: "Close", exact: true })
     .click();
+  assert.equal(
+    await page
+      .getByRole("button", { name: "Review hints", exact: true })
+      .count(),
+    1,
+  );
+  mark("a completed challenge reviews hints without consuming a level");
   await page
     .locator(".toolbar")
     .getByRole("button", { name: "Save", exact: true })
@@ -180,6 +197,34 @@ try {
     fullPage: true,
   });
   mark("thirteen-node real skill map");
+  await page.getByRole("tab", { name: "my_solution.sql", exact: true }).click();
+  // Run evidence is keyed by document. A map round trip keeps this document's
+  // own scorecard, and a document without a run shows no foreign evidence.
+  const scorecard = () => page.locator(".scorecard").textContent();
+  assert.match(await scorecard(), /Not yet correct/);
+  assert.doesNotMatch(await scorecard(), /Not submitted|No result/);
+  await page.getByRole("menuitem", { name: "File", exact: true }).click();
+  await page.getByRole("menuitem", { name: "New Query", exact: true }).click();
+  await page.waitForFunction(
+    () => !document.querySelector(".toolbar .execute")?.disabled,
+    null,
+    { timeout: 45000 },
+  );
+  assert.equal(
+    await page.locator(".run-identity").count(),
+    0,
+    "a document without a run shows no other document's run identity",
+  );
+  await sql("SELECT 7::BIGINT AS scratch_only");
+  await run();
+  assert.match(await page.locator(".run-identity").textContent(), /scratch/);
+  await page.getByRole("tab", { name: "my_solution.sql", exact: true }).click();
+  assert.match(await scorecard(), /Not yet correct/);
+  assert.doesNotMatch(
+    await page.locator(".run-identity").textContent(),
+    /scratch/,
+  );
+  mark("run evidence stays keyed to its own document across tab switches");
   await page.getByRole("tab", { name: "my_solution.sql", exact: true }).click();
   await sql("SELECT sum(i*j) FROM range(1000000) a(i), range(1000000) b(j)");
   await page.locator(".toolbar .execute").click();

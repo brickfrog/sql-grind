@@ -68,7 +68,9 @@ try {
     judgeBeforeFocus,
   );
   evidence.checks.push("Keyboard focus does not reposition the floating judge");
-  await page.getByRole("button", { name: "Hide judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Hide Patchouli", exact: true })
+    .click();
   async function menu(group, name) {
     await page.getByRole("menuitem", { name: group, exact: true }).click();
     await page

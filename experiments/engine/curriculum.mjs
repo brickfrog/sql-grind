@@ -560,6 +560,13 @@ try {
     const referenceSql = await text(definition.reference);
     let starterRejected = false;
     const wrongRejected = new Set();
+    const claims = definition.dataClaims ?? [];
+    const claimsChecked = new Set();
+    for (const claim of claims)
+      assert(
+        dataset.gradingVariants.includes(claim.variant),
+        `${definition.challengeId}: data claim names unknown grading variant ${claim.variant}.`,
+      );
     if (definition.assessment.kind === "reconciliation") {
       assert(
         Array.isArray(checks.policies) && new Set(checks.policies).size >= 2,
@@ -622,6 +629,19 @@ try {
           );
           wrongRejected.add(index);
         }
+      // Authored prose that states a countable fact is checked against the
+      // graded data, so a claim cannot drift from the dataset it describes.
+      for (const claim of claims)
+        if (claim.variant === variantId) {
+          const answer = await query(claim.sql);
+          assert(
+            answer.rows.length === 1 &&
+              answer.fields.length === 1 &&
+              String(answer.rows[0][0]) === claim.equals,
+            `${definition.challengeId}: data claim failed (${claim.claim}): expected ${claim.equals}, got ${answer.rows.map((row) => row[0]).join(",") || "no rows"}`,
+          );
+          claimsChecked.add(claim);
+        }
       if (definition.assessment.secondaryReference) {
         const secondary = await query(
           await text(definition.assessment.secondaryReference),
@@ -677,6 +697,10 @@ try {
     assert(
       wrongRejected.size === checks.wrong.length,
       `${definition.challengeId}: not all negative checks ran.`,
+    );
+    assert(
+      claimsChecked.size === claims.length,
+      `${definition.challengeId}: not all data claims ran.`,
     );
   }
 } finally {

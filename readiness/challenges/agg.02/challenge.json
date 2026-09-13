@@ -31,6 +31,14 @@
       "text": "An empty email counts as populated here."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (count(*) FILTER (WHERE email IS NOT NULL))::VARCHAR || '/' || (count(*) FILTER (WHERE email = ''))::VARCHAR FROM customers",
+      "equals": "2/1",
+      "claim": "hints[2]: one empty email counts among the two populated emails"
+    }
+  ],
   "output": {
     "columns": [
       {

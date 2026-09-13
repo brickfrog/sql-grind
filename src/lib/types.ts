@@ -27,11 +27,17 @@ export interface ResultHandle {
   count: number;
   getRow(index: number): (string | null)[];
 }
+export interface SchemaReference {
+  column: string;
+  table: string;
+  toColumn: string;
+}
 export interface SchemaTable {
   name: string;
   count: number;
   columns: { name: string; type: string; nullable: boolean; key?: string }[];
   definition: string;
+  references: SchemaReference[];
 }
 export type EngineState =
   | "loading"

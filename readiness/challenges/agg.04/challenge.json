@@ -31,6 +31,14 @@
       "text": "Order 1 has three items and several processing snapshots; raw joins multiply money."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (SELECT count(*) FROM order_items WHERE order_id = 1)::VARCHAR || '/' || (SELECT count(*) FROM payments WHERE order_id = 1)::VARCHAR",
+      "equals": "3/4",
+      "claim": "hints[2]: order 1 has three items and several payment snapshots"
+    }
+  ],
   "output": {
     "columns": [
       {

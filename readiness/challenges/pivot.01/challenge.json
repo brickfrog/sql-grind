@@ -31,6 +31,14 @@
       "text": "The boundary has January damaged and unwanted refunds but no wrong_item refund."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT string_agg(DISTINCT reason, ',') FROM returns WHERE status = 'refunded' AND requested_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND requested_at < TIMESTAMPTZ '2024-02-01 00:00:00+00'",
+      "equals": "damaged,unwanted",
+      "claim": "hints[2]: January refunds cover damaged and unwanted but not wrong_item"
+    }
+  ],
   "output": {
     "columns": [
       {

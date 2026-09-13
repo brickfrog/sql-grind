@@ -32,6 +32,14 @@
       "text": "Paid order 12 has no items; catalog prices are not transaction prices."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM orders o WHERE o.order_id = 12 AND o.status = 'paid' AND NOT EXISTS (SELECT 1 FROM order_items i WHERE i.order_id = o.order_id)",
+      "equals": "1",
+      "claim": "hints[2]: paid order 12 has no items"
+    }
+  ],
   "output": {
     "columns": [
       {

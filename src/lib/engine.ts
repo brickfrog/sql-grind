@@ -6,6 +6,7 @@ import {
   type ParseResult,
   type RunRequest,
   type RunResult,
+  type SchemaReference,
   type SchemaTable,
 } from "./types";
 import {
@@ -54,6 +55,33 @@ const EXTENSIONS = ["icu", "json", "parquet"].map(
 );
 const quote = (value: string) => "'" + value.replaceAll("'", "''") + "'";
 const identifier = (value: string) => '"' + value.replaceAll('"', '""') + '"';
+// A DuckDB constraint row. Only the fields readSchema selects are described.
+type ConstraintRow = {
+  constraint_type?: unknown;
+  constraint_text?: unknown;
+  constraint_column_names?: unknown;
+  referenced_table?: unknown;
+  referenced_column_names?: unknown;
+};
+const nameList = (value: unknown) =>
+  Array.from((value ?? []) as Iterable<string>, String);
+// constraint_text is empty for a self-referencing foreign key, so the
+// structured columns supply the label DuckDB omits.
+function constraintLabel(constraint: ConstraintRow): string {
+  const text = String(constraint.constraint_text ?? "");
+  if (text) return text;
+  const locals = nameList(constraint.constraint_column_names);
+  const target = String(constraint.referenced_table ?? "");
+  const targets = nameList(constraint.referenced_column_names);
+  if (
+    constraint.constraint_type !== "FOREIGN KEY" ||
+    !target ||
+    !locals.length ||
+    !targets.length
+  )
+    return text;
+  return `FOREIGN KEY (${locals.join(", ")}) REFERENCES ${target}(${targets.join(", ")})`;
+}
 
 function errorMessage(error: unknown): string {
   const raw = error instanceof Error ? error.message : String(error);
@@ -1328,7 +1356,7 @@ export class EngineCoordinator {
     );
     const constraints = await work.wait(
       slot.conn!.query(
-        "SELECT table_name,constraint_type,constraint_column_names,constraint_text FROM duckdb_constraints() WHERE schema_name='main' AND constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')",
+        "SELECT table_name,constraint_type,constraint_column_names,constraint_text,referenced_table,referenced_column_names FROM duckdb_constraints() WHERE schema_name='main' AND constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')",
       ),
       slot,
     );
@@ -1351,7 +1379,9 @@ export class EngineCoordinator {
                 constraint.constraint_column_names as Iterable<string>,
               ).includes(String(column.column_name))
             )
-              keys.push(String(constraint.constraint_text));
+              // DuckDB reports a self-referencing foreign key with empty
+              // constraint_text, which would otherwise print as a blank key.
+              keys.push(constraintLabel(constraint));
           fields.push({
             name: String(column.column_name),
             type: String(column.data_type),
@@ -1359,11 +1389,41 @@ export class EngineCoordinator {
             ...(keys.length ? { key: keys.join("; ") } : {}),
           });
         }
+      // Typed edges for the relationship diagram. referenced_table is the only
+      // complete source: DuckDB leaves constraint_text empty for a
+      // self-referencing foreign key, so text parsing alone loses those edges.
+      // An edge that resolves from neither source is dropped — a missing edge
+      // is acceptable, a wrong one is not.
+      const references: SchemaReference[] = [];
+      for (const constraint of constraints)
+        if (
+          constraint.table_name === name &&
+          constraint.constraint_type === "FOREIGN KEY"
+        ) {
+          let locals = nameList(constraint.constraint_column_names);
+          let targets = nameList(constraint.referenced_column_names);
+          let table = String(constraint.referenced_table ?? "");
+          if (!table || !locals.length || !targets.length) {
+            const match =
+              /^FOREIGN KEY \(([^)]+)\) REFERENCES ([^(]+)\(([^)]+)\)$/.exec(
+                String(constraint.constraint_text ?? ""),
+              );
+            if (!match) continue;
+            locals = match[1].split(",").map((part) => part.trim());
+            table = match[2].trim();
+            targets = match[3].split(",").map((part) => part.trim());
+          }
+          locals.forEach((column, index) => {
+            const toColumn = targets[index];
+            if (toColumn) references.push({ column, table, toColumn });
+          });
+        }
       result.push({
         name,
         count,
         columns: fields,
         definition: String(row.sql),
+        references,
       });
     }
     if (

@@ -126,7 +126,9 @@ try {
   await page.goto(origin);
   await ready();
   await activeDocument(challengeName);
-  await page.getByRole("button", { name: "Hide judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Hide Patchouli", exact: true })
+    .click();
   await edit(reference);
   await page
     .getByRole("button", { name: "Hint (3 left)", exact: true })
@@ -428,7 +430,7 @@ try {
   );
   await page
     .locator(".toolbar")
-    .getByRole("button", { name: "Judge", exact: true })
+    .getByRole("button", { name: "Patchouli", exact: true })
     .click();
   assert.deepEqual(await page.locator(".diagnostic").allTextContents(), facts);
   await page
@@ -473,7 +475,9 @@ try {
     null,
     { timeout: 120000 },
   );
-  await page.getByRole("button", { name: "Hide judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Hide Patchouli", exact: true })
+    .click();
   mark(
     "Diagnostic facts survive hush and re-opening; Notes selects source; Hush does not disable parsing; real plan comparison requires consent",
   );

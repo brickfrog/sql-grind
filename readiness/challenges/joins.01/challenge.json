@@ -32,6 +32,14 @@
       "text": "Categories 2 and 3 both have the name Audio but are separate categories."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM categories WHERE c_name = 'Audio' AND category_id IN (2, 3)",
+      "equals": "2",
+      "claim": "hints[2]: categories 2 and 3 share the name Audio"
+    }
+  ],
   "output": {
     "columns": [
       {

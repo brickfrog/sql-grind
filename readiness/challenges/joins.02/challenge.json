@@ -31,6 +31,14 @@
       "text": "COUNT(*) would give the orderless customer 10001 a false count of one."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM customers c WHERE c.customer_id = 10001 AND NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id)",
+      "equals": "1",
+      "claim": "hints[2]: customer 10001 has no orders"
+    }
+  ],
   "output": {
     "columns": [
       {

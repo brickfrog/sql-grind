@@ -32,6 +32,14 @@
       "text": "Order 12 is empty; an inner join must not define the paid-order population."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM order_items WHERE order_id = 12",
+      "equals": "0",
+      "claim": "hints[2]: order 12 is empty"
+    }
+  ],
   "output": {
     "columns": [
       {

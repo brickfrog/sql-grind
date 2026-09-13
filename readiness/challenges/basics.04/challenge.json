@@ -31,6 +31,14 @@
       "text": "Products 3 and 10002 both cost 888.88, so the tie must resolve the same way twice."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM products WHERE unit_price = 888.88 AND product_id IN (3, 10002)",
+      "equals": "2",
+      "claim": "hints[2]: products 3 and 10002 both cost 888.88"
+    }
+  ],
   "output": {
     "columns": [
       {

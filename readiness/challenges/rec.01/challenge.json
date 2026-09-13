@@ -31,6 +31,14 @@
       "text": "Audio names repeat, but category identities 2 and 3 are separate descendants."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM categories WHERE parent_category_id = 1 AND c_name = 'Audio'",
+      "equals": "2",
+      "claim": "hints[2]: two separate descendants share the name Audio"
+    }
+  ],
   "output": {
     "columns": [
       {

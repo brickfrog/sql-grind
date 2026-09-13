@@ -31,6 +31,14 @@
       "text": "January wrong_item and February damaged are NULL, not zero and not absent rows."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (count(*) FILTER (WHERE mon = DATE '2024-01-01' AND wrong_item IS NULL))::VARCHAR || '/' || (count(*) FILTER (WHERE mon = DATE '2024-02-01' AND damaged IS NULL))::VARCHAR FROM monthly_matrix",
+      "equals": "1/1",
+      "claim": "hints[2]: January wrong_item and February damaged are NULL"
+    }
+  ],
   "output": {
     "columns": [
       {

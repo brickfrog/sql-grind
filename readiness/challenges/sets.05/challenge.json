@@ -31,6 +31,14 @@
       "text": "A has one extra 1; B has one extra NULL."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT ((SELECT count(*) FROM cohort_a WHERE customer_id = 1) - (SELECT count(*) FROM cohort_b WHERE customer_id = 1))::VARCHAR || '/' || ((SELECT count(*) FROM cohort_b WHERE customer_id IS NULL) - (SELECT count(*) FROM cohort_a WHERE customer_id IS NULL))::VARCHAR",
+      "equals": "1/1",
+      "claim": "hints[2]: A has one extra 1 and B has one extra NULL"
+    }
+  ],
   "output": {
     "columns": [
       {

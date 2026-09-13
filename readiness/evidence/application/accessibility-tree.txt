@@ -7,13 +7,13 @@
   - button "DuckDB Docs — opens in a new tab": DuckDB Docs
   - button "Schema Reference"
   - button "Skill Map"
-  - button "Leaderboard"
+  - button "Practice Records"
   - button "Recycle Bin"
 - main "SQL Grind workbench":
-  - text: SQL Grind - basics.01.sql * - commerce-practice (duckdb, in-browser)
-  - button "Minimize IDE": _
-  - button "Maximize or restore IDE"
-  - button "Close IDE": ×
+  - text: SQL Grind - basics.01.sql - commerce-practice (duckdb, in-browser)
+  - button "Minimize Workbench": _
+  - button "Maximize or restore Workbench"
+  - button "Close Workbench": ×
   - menubar "Application menus":
     - menuitem "File"
     - menuitem "Edit"
@@ -38,7 +38,7 @@
       - option "index-lab · immutable"
       - option "reconciliation · immutable"
     - button "Show Plan" [disabled]
-    - button "Judge"
+    - button "Patchouli"
     - text: SQL basics · 0/5 Completed
   - complementary "Object Explorer":
     - text: Object Explorer
@@ -49,8 +49,8 @@
     - button "Filter objects": ▽
     - text: seed-20240907
     - tree "Database objects":
-      - treeitem "− commerce-practice" [expanded] [level=1]
-      - treeitem "− Tables" [expanded] [level=2]
+      - treeitem "commerce-practice" [expanded] [level=1]
+      - treeitem "Tables" [expanded] [level=2]
       - treeitem "categories (48)" [level=3] [selected]
       - treeitem "customers (502)" [level=3]
       - treeitem "warehouses (14)" [level=3]
@@ -59,30 +59,30 @@
       - treeitem "order_items (8,505)" [level=3]
       - treeitem "payments (2,101)" [level=3]
       - treeitem "returns (126)" [level=3]
-      - treeitem "+ Views" [level=2]
-      - treeitem "+ Macros" [level=2]
-      - treeitem "+ Indexes / ART" [level=2]
-      - treeitem "− Challenges" [expanded] [level=1]
-      - treeitem "+ SQL basics In progress" [level=2]
-      - treeitem "+ Aggregation Locked" [level=2]
-      - treeitem "+ Joins Locked" [level=2]
-      - treeitem "+ Subqueries & EXISTS Locked" [level=2]
-      - treeitem "+ Set operations Locked" [level=2]
-      - treeitem "+ CTEs Locked" [level=2]
-      - treeitem "+ Window functions Locked" [level=2]
-      - treeitem "+ Date / time Locked" [level=2]
-      - treeitem "+ Recursive CTEs Locked" [level=2]
-      - treeitem "+ Pivot / unpivot Locked" [level=2]
-      - treeitem "+ Plans & indexing Locked" [level=2]
-      - treeitem "+ Cleaning & strings Locked" [level=2]
-      - treeitem "+ Reconciliation Locked" [level=2]
+      - treeitem "Views" [level=2]
+      - treeitem "Macros" [level=2]
+      - treeitem "Indexes / ART" [level=2]
+      - treeitem "Challenges" [expanded] [level=1]
+      - treeitem "SQL basics In progress" [level=2]
+      - treeitem "Aggregation Locked" [level=2]
+      - treeitem "Joins Locked" [level=2]
+      - treeitem "Subqueries & EXISTS Locked" [level=2]
+      - treeitem "Set operations Locked" [level=2]
+      - treeitem "CTEs Locked" [level=2]
+      - treeitem "Window functions Locked" [level=2]
+      - treeitem "Date / time Locked" [level=2]
+      - treeitem "Recursive CTEs Locked" [level=2]
+      - treeitem "Pivot / unpivot Locked" [level=2]
+      - treeitem "Plans & indexing Locked" [level=2]
+      - treeitem "Cleaning & strings Locked" [level=2]
+      - treeitem "Reconciliation Locked" [level=2]
     - text: Local data · 8 tables commerce-practice · immutable snapshots
   - slider "Object Explorer width": "220"
   - region "Documents":
     - tablist "Open documents":
-      - tab "basics.01.sql *" [selected]
+      - tab "basics.01.sql" [selected]
       - tab "Skill Map.dag"
-      - tab "schema_notes.txt"
+      - tab "schema.ref"
     - textbox "SQL editor — basics.01.sql · basics.01"
     - text: SQL, PostgreSQL-style highlighting for DuckDB. F5 or Control+Enter runs. Control+S saves. On macOS use Command. Tab leaves the editor; Escape then Tab also leaves it.
     - slider "Editor and results splitter": "290"
@@ -95,8 +95,9 @@
       - region "Query results":
         - text: No result
         - strong: Running…
-        - button "Accessible table (50 rows)"
+        - button "Accessible table (50 rows per page)"
         - button "Copy cell" [disabled]
+        - button "Export CSV" [disabled]
         - paragraph: Waiting for a complete result. Editing remains available.
         - text: "Arrows: move cell · Home/End: row edges · Page Up/Down: page · Ctrl+C / Command+C: exact cell value · Right-click / Shift+F10: copy menu. NULL ≠ empty string."
   - slider "Goal panel width": "280"
@@ -125,8 +126,8 @@
     - definition: Not measured
     - term: Rows returned
     - definition: No result
-    - term: Diagnostics
-    - definition: 0 current
+    - term: Style and syntax notes
+    - definition: 0 notes for this revision
     - term: Completion
     - definition: Available
     - heading "Compare with Reference" [level=3]
@@ -141,8 +142,8 @@
   - button "Start"
   - button "Show desktop"
   - button "DuckDB Docs — opens in a new tab"
-  - button "SQL Grind - basics.01.sql * · running"
+  - button "SQL Grind - basics.01.sql · running"
   - button "Patchouli — reading"
   - 'button "SQL engine: initializing"'
   - 'button "Patchouli: hidden"'
-  - time: 10:57 AM
+  - time: 01:03 PM

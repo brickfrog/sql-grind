@@ -31,6 +31,14 @@
       "text": "The requests include NULL and duplicate 1; the answer is 2,3,4."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT string_agg(c.customer_id::VARCHAR, ',' ORDER BY c.customer_id) FROM cohort_customers c WHERE NOT EXISTS (SELECT 1 FROM return_requests r WHERE r.customer_id = c.customer_id)",
+      "equals": "2,3,4",
+      "claim": "hints[2]: the answer is 2, 3 and 4"
+    }
+  ],
   "output": {
     "columns": [
       {

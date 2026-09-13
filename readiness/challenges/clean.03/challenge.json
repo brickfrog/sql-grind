@@ -31,6 +31,14 @@
       "text": "123456 is not a five-digit postal code; surrounding spaces are allowed only after trimming."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (count(*) FILTER (WHERE postal_text = '123456'))::VARCHAR || '/' || (count(*) FILTER (WHERE regexp_matches(trim(postal_text), '^[0-9]{5}$') AND postal_text <> trim(postal_text)))::VARCHAR FROM raw_contacts",
+      "equals": "1/1",
+      "claim": "hints[2]: 123456 is present and one padded code is valid only after trimming"
+    }
+  ],
   "output": {
     "columns": [
       {

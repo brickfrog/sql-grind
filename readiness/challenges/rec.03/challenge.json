@@ -31,6 +31,14 @@
       "text": "The edge 3 to 1 closes a cycle; keep the root row without traversing the cycle."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM category_edges WHERE parent_id = 3 AND child_id = 1",
+      "equals": "1",
+      "claim": "hints[2]: the edge 3 to 1 exists and closes a cycle"
+    }
+  ],
   "output": {
     "columns": [
       {

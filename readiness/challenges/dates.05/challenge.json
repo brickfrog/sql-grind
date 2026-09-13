@@ -31,6 +31,14 @@
       "text": "Two June orders share a day and count as one active day."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(DISTINCT (ordered_at AT TIME ZONE 'UTC')::DATE)::VARCHAR || '/' || count(*)::VARCHAR FROM orders WHERE status = 'paid' AND ordered_at >= TIMESTAMPTZ '2024-06-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2024-07-01 00:00:00+00'",
+      "equals": "1/2",
+      "claim": "hints[2]: two paid June orders share one active day"
+    }
+  ],
   "output": {
     "columns": [
       {

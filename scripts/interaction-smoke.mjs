@@ -130,7 +130,7 @@ try {
     // Judge docking and goal floating are independent: the docked judge rides
     // in the goal panel wherever it lives, and floating or docking one never
     // silently toggles the other.
-    await menu("Window", "Dock / Float Judge");
+    await menu("Window", "Dock / Float Patchouli");
     assert.equal(await page.locator("#judge-docked").count(), 1);
     const documentArea = await page.locator(".document-area").boundingBox();
     await menu("Window", "Dock / Float Goal");
@@ -150,7 +150,7 @@ try {
     // Float the judge back out: the goal must stay floating, so its header
     // button keeps offering Dock, not Pop out.
     await page
-      .getByRole("button", { name: "Float judge", exact: true })
+      .getByRole("button", { name: "Float Patchouli", exact: true })
       .click();
     assert.equal(await page.locator("#judge-window").count(), 1);
     assert.equal(
@@ -380,16 +380,22 @@ try {
   mark(
     "Editor focus leaves Patchouli stationary; her text paints above the IDE menus",
   );
-  await page.getByRole("button", { name: "Hide judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Hide Patchouli", exact: true })
+    .click();
   const originalIde = await page.locator(".ide").boundingBox();
   await drag(".ide-title", -40, 35);
   const movedIde = await page.locator(".ide").boundingBox();
   assert.equal(Math.round(movedIde.x), Math.round(originalIde.x - 40));
   assert.equal(Math.round(movedIde.y), Math.round(originalIde.y + 35));
   assert.equal(await page.evaluate(() => getSelection().toString()), "");
-  await page.getByRole("button", { name: "Maximize or restore IDE" }).click();
+  await page
+    .getByRole("button", { name: "Maximize or restore Workbench" })
+    .click();
   assert.equal((await page.locator(".ide").boundingBox()).x, 0);
-  await page.getByRole("button", { name: "Maximize or restore IDE" }).click();
+  await page
+    .getByRole("button", { name: "Maximize or restore Workbench" })
+    .click();
   assert.deepEqual(await page.locator(".ide").boundingBox(), movedIde);
   await page.mouse.move(0, 0);
   const chrome = await page
@@ -419,15 +425,21 @@ try {
   mark(
     "Main window drags and restores its position; controls match; selected explorer hover retains contrast",
   );
+  // Every enabled button looks clickable. A resize handle is the one honest
+  // exception: it names itself Resize and shows a resize cursor instead.
   const wrongCursors = await page
     .locator("button:enabled")
     .evaluateAll((elements) =>
       elements
-        .filter(
-          (e) =>
-            e.getBoundingClientRect().width &&
-            getComputedStyle(e).cursor !== "pointer",
-        )
+        .filter((e) => {
+          const cursor = getComputedStyle(e).cursor;
+          if (!e.getBoundingClientRect().width || cursor === "pointer")
+            return false;
+          return !(
+            /^Resize /.test(e.getAttribute("aria-label") ?? "") &&
+            /-resize$/.test(cursor)
+          );
+        })
         .map((e) => ({
           text: e.textContent,
           cursor: getComputedStyle(e).cursor,
@@ -516,7 +528,7 @@ try {
     0,
   );
   await page
-    .getByRole("tab", { name: "schema_notes.txt", exact: true })
+    .getByRole("tab", { name: "schema.ref", exact: true })
     .click({ button: "middle" });
   assert.equal(await page.locator('.document-tabs [role="tab"]').count(), 0);
   await page

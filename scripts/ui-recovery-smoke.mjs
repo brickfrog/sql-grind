@@ -84,7 +84,9 @@ try {
     .getByRole("button", { name: "Retry content", exact: true })
     .click();
   await ready(page);
-  await page.getByRole("button", { name: "Hide judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Hide Patchouli", exact: true })
+    .click();
   mark(
     "INJECTED corrupt asset is rejected; visible Retry content restores verified runtime",
   );

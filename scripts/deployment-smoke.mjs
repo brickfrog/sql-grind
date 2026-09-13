@@ -216,14 +216,18 @@ try {
   assert.ok(
     Number(await page.getByRole("grid").getAttribute("aria-rowcount")) > 1,
   );
-  await page.getByRole("button", { name: "Dock judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Dock Patchouli", exact: true })
+    .click();
   await page.locator("#judge-docked").waitFor();
   await shot("desktop-docked");
   await page.getByRole("tab", { name: "Skill Map.dag", exact: true }).click();
   await page.locator(".skill-node").first().waitFor();
   assert.equal(await page.locator(".skill-node").count(), 13);
   await shot("map-docked");
-  await page.getByRole("button", { name: "Float judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Float Patchouli", exact: true })
+    .click();
   await page.locator("#judge-window").waitFor();
   await shot("map-floating");
   evidence.icons = await page

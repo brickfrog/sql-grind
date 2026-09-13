@@ -34,8 +34,18 @@
   });
   const count = $derived(result?.count ?? 0);
   const columns = $derived(result?.columns ?? []);
+  // Per-column widths, seeded from the SQL type so timestamps are readable
+  // without a drag. A new result starts from the type-derived defaults.
+  let widths = $state<number[]>([]);
+  const defaultWidth = (type: string) =>
+    /TIMESTAMP/i.test(type) ? 220 : /DATE|TIME/i.test(type) ? 120 : 160;
+  const columnWidth = (index: number) =>
+    widths[index] ?? defaultWidth(columns[index]?.type ?? "");
   const template = $derived(
-    `48px ${columns.map(() => "minmax(160px, 1fr)").join(" ")}`,
+    `48px ${columns.map((_, index) => `${columnWidth(index)}px`).join(" ")}`,
+  );
+  const gridWidth = $derived(
+    48 + columns.reduce((total, _, index) => total + columnWidth(index), 0),
   );
   const visibleRows = $derived($virtualizer.getVirtualItems());
   const pageCount = $derived(Math.max(1, Math.ceil(count / pageSize)));
@@ -73,6 +83,7 @@
       copyStatus = "";
       cellMenu = null;
       if (nextResult && viewport) viewport.scrollTop = 0;
+      widths = [];
     });
   });
 
@@ -82,6 +93,66 @@
 
   function tsvField(value: string): string {
     return /[\t\r\n"]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value;
+  }
+  function csvField(value: string): string {
+    return /[",\r\n]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value;
+  }
+
+  function setWidth(index: number, value: number) {
+    const next = columns.map((_, i) => columnWidth(i));
+    next[index] = Math.max(60, Math.round(value));
+    widths = next;
+  }
+
+  function startResize(event: PointerEvent, index: number) {
+    const handle = event.currentTarget as HTMLElement;
+    const startX = event.clientX;
+    const start = columnWidth(index);
+    event.preventDefault();
+    event.stopPropagation();
+    handle.setPointerCapture(event.pointerId);
+    const move = (next: PointerEvent) =>
+      setWidth(index, start + next.clientX - startX);
+    const release = () => {
+      handle.releasePointerCapture(event.pointerId);
+      handle.removeEventListener("pointermove", move);
+      handle.removeEventListener("pointerup", release);
+      handle.removeEventListener("pointercancel", release);
+    };
+    handle.addEventListener("pointermove", move);
+    handle.addEventListener("pointerup", release);
+    handle.addEventListener("pointercancel", release);
+  }
+
+  function resizeKey(event: KeyboardEvent, index: number) {
+    const step =
+      event.key === "ArrowLeft" ? -16 : event.key === "ArrowRight" ? 16 : 0;
+    if (!step) return;
+    event.preventDefault();
+    event.stopPropagation();
+    setWidth(index, columnWidth(index) + step);
+  }
+
+  function exportCsv() {
+    if (!result || !count || !columns.length) return;
+    const lines = [columns.map((field) => csvField(field.name)).join(",")];
+    for (let index = 0; index < count; index++) {
+      const cells = result.getRow(index);
+      lines.push(
+        columns.map((_, field) => csvField(cellText(cells[field]))).join(","),
+      );
+    }
+    const url = URL.createObjectURL(
+      new Blob([lines.join("\r\n") + "\r\n"], {
+        type: "text/csv;charset=utf-8",
+      }),
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "result.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+    copyStatus = `Exported ${formatCount(count, "row")} to result.csv. NULL values export as the text NULL.`;
   }
 
   function openCellMenu(
@@ -122,6 +193,10 @@
         {
           label: "Copy Row with Headers",
           action: () => void copySelection("headers", index, col),
+        },
+        {
+          label: "Copy All with Headers",
+          action: () => void copySelection("all", index, col),
         },
       ],
     };
@@ -217,29 +292,37 @@
   }
 
   async function copySelection(
-    format: "cell" | "row" | "headers",
+    format: "cell" | "row" | "headers" | "all",
     index: number,
     col: number,
   ) {
     copyStatus = "";
     try {
-      let text: string;
-      if (format === "cell") {
-        text = cellText(result?.getRow(index)[col]);
-      } else {
-        const cells = result?.getRow(index);
-        const values = columns
+      const header = columns.map((field) => tsvField(field.name)).join("\t");
+      const rowText = (target: number) => {
+        const cells = result?.getRow(target);
+        return columns
           .map((_, field) => tsvField(cellText(cells?.[field])))
           .join("\t");
+      };
+      let text: string;
+      if (format === "cell") text = cellText(result?.getRow(index)[col]);
+      else if (format === "all")
+        text = [
+          header,
+          ...Array.from({ length: count }, (_, target) => rowText(target)),
+        ].join("\n");
+      else
         text =
           format === "headers"
-            ? `${columns.map((field) => tsvField(field.name)).join("\t")}\n${values}`
-            : values;
-      }
+            ? `${header}\n${rowText(index)}`
+            : rowText(index);
       const status =
         format === "cell"
           ? `Copied row ${index + 1}, ${columns[col].name}.`
-          : `Copied row ${index + 1}${format === "headers" ? " with headers" : ""}.`;
+          : format === "all"
+            ? `Copied ${formatCount(count, "row")} with headers. NULL values copy as the text NULL.`
+            : `Copied row ${index + 1}${format === "headers" ? " with headers" : ""}.`;
       await navigator.clipboard.writeText(text);
       copyStatus = status;
     } catch {
@@ -274,12 +357,19 @@
         page = Math.floor(row / pageSize);
       }}
       aria-pressed={paginated}
-      >{paginated ? "Virtual grid" : "Accessible table (50 rows)"}</button
+      >{paginated
+        ? "Virtual grid"
+        : `Accessible table (${pageSize} rows per page)`}</button
     >
     <button
       type="button"
       disabled={!count || !columns.length}
       onclick={copyCell}>Copy cell</button
+    >
+    <button
+      type="button"
+      disabled={!count || !columns.length}
+      onclick={exportCsv}>Export CSV</button
     >
   </div>
   {#if !result}
@@ -387,7 +477,7 @@
         aria-activedescendant={activeId}
         onkeydown={navigate}
         oncopy={copy}
-        style:min-width={`${48 + columns.length * 160}px`}
+        style:min-width={`${gridWidth}px`}
       >
         <div
           class="grid-header"
@@ -399,9 +489,18 @@
           {#each columns as col, colIndex}<div
               role="columnheader"
               aria-colindex={colIndex + 2}
+              class="resizable"
             >
               {col.name}<small title={`SQL type: ${col.type}`}>{col.type}</small
-              >
+              ><button
+                type="button"
+                class="column-grip"
+                aria-label={`Resize ${col.name}, ${columnWidth(colIndex)} pixels`}
+                title="Drag or use Left/Right arrows; double-click resets"
+                onpointerdown={(event) => startResize(event, colIndex)}
+                onkeydown={(event) => resizeKey(event, colIndex)}
+                ondblclick={() => setWidth(colIndex, defaultWidth(col.type))}
+              ></button>
             </div>{/each}
         </div>
         <div
@@ -558,6 +657,27 @@
     border: 1px solid;
     border-color: #fff #808080 #808080 #fff;
     overflow: hidden;
+  }
+  .grid-header > div.resizable {
+    position: relative;
+  }
+  .column-grip {
+    border: 0;
+    padding: 0;
+    border-radius: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    cursor: col-resize;
+    background: transparent;
+    touch-action: none;
+  }
+  .column-grip:hover,
+  .column-grip:focus-visible {
+    background: #0a246a;
+    outline: none;
   }
   small {
     display: block;

@@ -32,6 +32,14 @@
       "text": "March has no paid orders; COUNT(*) would turn its outer row into one."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM orders WHERE status = 'paid' AND ordered_at >= TIMESTAMPTZ '2024-03-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2024-04-01 00:00:00+00'",
+      "equals": "0",
+      "claim": "hints[2]: March has no paid orders"
+    }
+  ],
   "output": {
     "columns": [
       {

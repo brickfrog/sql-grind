@@ -31,6 +31,14 @@
       "text": "Order 1 has two returns for one item and several payment snapshots."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (SELECT count(*) FROM returns r JOIN order_items i USING(order_item_id) WHERE i.order_id = 1)::VARCHAR || '/' || (SELECT count(DISTINCT r.order_item_id) FROM returns r JOIN order_items i USING(order_item_id) WHERE i.order_id = 1)::VARCHAR || '/' || (SELECT count(*) FROM payments WHERE order_id = 1)::VARCHAR",
+      "equals": "2/1/4",
+      "claim": "hints[2]: order 1 has two returns on one item and several payment snapshots"
+    }
+  ],
   "output": {
     "columns": [
       {

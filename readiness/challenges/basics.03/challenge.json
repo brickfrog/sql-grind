@@ -31,6 +31,14 @@
       "text": "Customer 10001 holds empty text; customer 10002 holds nothing at all."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (count(*) FILTER (WHERE customer_id = 10001 AND email = ''))::VARCHAR || '/' || (count(*) FILTER (WHERE customer_id = 10002 AND email IS NULL))::VARCHAR FROM customers",
+      "equals": "1/1",
+      "claim": "brief and hints[2]: customer 10001 holds empty text and customer 10002 holds NULL"
+    }
+  ],
   "output": {
     "columns": [
       {

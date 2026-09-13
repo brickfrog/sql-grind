@@ -31,6 +31,14 @@
       "text": "January wrong_item is a genuine zero row; January unwanted is absent."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (count(*) FILTER (WHERE mon = DATE '2024-01-01' AND reason = 'wrong_item' AND qty = 0))::VARCHAR || '/' || (count(*) FILTER (WHERE mon = DATE '2024-01-01' AND reason = 'unwanted'))::VARCHAR FROM return_totals",
+      "equals": "1/0",
+      "claim": "hints[2]: January wrong_item is a zero row and January unwanted is absent"
+    }
+  ],
   "output": {
     "columns": [
       {

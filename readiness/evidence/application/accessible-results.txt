@@ -2,6 +2,7 @@
   - text: 1,000 rows · 3 columns
   - button "Virtual grid" [pressed]
   - button "Copy cell"
+  - button "Export CSV"
   - button "First" [disabled]
   - button "Previous" [disabled]
   - text: Page 1 of 20 · 1–50 of 1,000 rows

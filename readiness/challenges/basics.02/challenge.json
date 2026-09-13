@@ -32,6 +32,14 @@
       "text": "Order 1 sits on the included edge; order 10 sits on the excluded one."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (count(*) FILTER (WHERE order_id = 1 AND ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'))::VARCHAR || '/' || (count(*) FILTER (WHERE order_id = 10 AND ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'))::VARCHAR FROM orders",
+      "equals": "1/0",
+      "claim": "hints[2]: order 1 is inside UTC 2024 and order 10 is outside it"
+    }
+  ],
   "output": {
     "columns": [
       {

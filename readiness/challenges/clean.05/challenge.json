@@ -31,6 +31,14 @@
       "text": "02/03/2024 means February 3; 31/12/2024 and February 30 are invalid."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (SELECT date_text FROM raw_contacts WHERE contact_id = 2) || '|' || (SELECT date_text FROM raw_contacts WHERE contact_id = 6) || '|' || (SELECT date_text FROM raw_contacts WHERE contact_id = 4)",
+      "equals": "02/03/2024|31/12/2024|2024-02-30",
+      "claim": "hints[2]: the cited date literals are present in the boundary data"
+    }
+  ],
   "output": {
     "columns": [
       {

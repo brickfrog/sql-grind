@@ -31,6 +31,20 @@
       "text": "Ari identities remain separate; Zoë and Zoe must not merge."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(DISTINCT upper(trim(name_text)))::VARCHAR FROM raw_contacts WHERE upper(trim(name_text)) IN ('ARI', 'ZOË', 'ZOE')",
+      "equals": "3",
+      "claim": "hints[2]: Zoë and Zoe stay distinct even after case folding"
+    },
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR FROM raw_contacts WHERE upper(trim(name_text)) = 'ARI'",
+      "equals": "2",
+      "claim": "hints[2]: two separate identities are named Ari"
+    }
+  ],
   "output": {
     "columns": [
       {

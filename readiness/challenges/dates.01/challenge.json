@@ -31,6 +31,14 @@
       "text": "Order 9 has a 2025 local timestamp but is still in UTC 2024; order 10 is not."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (SELECT strftime(ordered_at AT TIME ZONE 'UTC', '%Y') FROM orders WHERE order_id = 9) || '/' || (SELECT strftime(ordered_at AT TIME ZONE 'UTC', '%Y') FROM orders WHERE order_id = 10)",
+      "equals": "2024/2025",
+      "claim": "hints[2]: order 9 is UTC 2024 while order 10 is not"
+    }
+  ],
   "output": {
     "columns": [
       {

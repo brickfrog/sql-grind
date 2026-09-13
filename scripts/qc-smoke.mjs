@@ -148,19 +148,21 @@ try {
   mark(
     "Escape closes hints and reset confirmation; focus returns to the persistent opener",
   );
-  await page.getByRole("button", { name: "Hide judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Hide Patchouli", exact: true })
+    .click();
   const title = page.locator(".ide-title .window-title");
   await title.dblclick();
   assert.equal(
     await page
-      .getByRole("button", { name: "Maximize or restore IDE" })
+      .getByRole("button", { name: "Maximize or restore Workbench" })
       .getAttribute("aria-pressed"),
     "true",
   );
   await title.dblclick();
   assert.equal(
     await page
-      .getByRole("button", { name: "Maximize or restore IDE" })
+      .getByRole("button", { name: "Maximize or restore Workbench" })
       .getAttribute("aria-pressed"),
     "false",
   );
@@ -251,14 +253,16 @@ try {
       .evaluate((element) => element.nextElementSibling.textContent.trim()),
     String(expected.length),
   );
-  await page.getByRole("button", { name: "Judge", exact: true }).click();
+  await page.getByRole("button", { name: "Patchouli", exact: true }).click();
   assert.equal(
     await page
       .getByRole("button", { name: "Compare with Reference", exact: true })
       .isDisabled(),
     true,
   );
-  await page.getByRole("button", { name: "Hide judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Hide Patchouli", exact: true })
+    .click();
   await edit(reference);
   await submit();
   assert.equal(
@@ -306,7 +310,7 @@ try {
     "Grading shows specific missing columns, per-dataset expected/actual counts, and familiar SQL types",
   );
   const attemptsBeforeComparison = await recordCount();
-  await page.getByRole("button", { name: "Judge", exact: true }).click();
+  await page.getByRole("button", { name: "Patchouli", exact: true }).click();
   await page
     .getByRole("button", { name: "Compare with Reference", exact: true })
     .click();

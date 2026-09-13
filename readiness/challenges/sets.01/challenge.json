@@ -31,6 +31,14 @@
       "text": "Repeated 1 and repeated NULL collapse to one row each."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (SELECT count(*) FROM (SELECT DISTINCT customer_id FROM cohort_a))::VARCHAR || '/' || (SELECT count(*) FROM cohort_a)::VARCHAR",
+      "equals": "4/6",
+      "claim": "hints[2]: repeated 1 and repeated NULL collapse to one row each"
+    }
+  ],
   "output": {
     "columns": [
       {

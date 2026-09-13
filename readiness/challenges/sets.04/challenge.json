@@ -31,6 +31,14 @@
       "text": "Both cohorts contain several NULL rows; exactly one NULL belongs in the result."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (SELECT count(*) FROM cohort_a WHERE customer_id IS NULL)::VARCHAR || '/' || (SELECT count(*) FROM cohort_b WHERE customer_id IS NULL)::VARCHAR",
+      "equals": "2/3",
+      "claim": "hints[2]: both cohorts contain several NULL rows"
+    }
+  ],
   "output": {
     "columns": [
       {

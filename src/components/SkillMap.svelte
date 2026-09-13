@@ -1,5 +1,5 @@
 <script module lang="ts">
-  let savedZoom = "100";
+  let savedZoom = "fit";
   let savedScroll = { left: 0, top: 0 };
 </script>
 

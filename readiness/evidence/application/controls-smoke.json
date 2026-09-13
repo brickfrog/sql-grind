@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-13T14:54:55.246Z",
+  "date": "2026-09-13T17:17:02.494Z",
   "browser": "153.0.8010.12",
   "checks": [
     "File New/Save/Save As preserve distinct documents",
@@ -17,6 +17,7 @@
     "Settings apply editor and judge preferences",
     "Storage, help, credits, external documentation link and local records",
     "IDE minimize/maximize/close, taskbar restoration, Show Desktop and Start",
+    "Menu separators, Alt mnemonics and the Window tab list",
     "Menu keyboard, F6 regions, 320px reading layout and dialog reflow"
   ],
   "errors": [],

@@ -32,6 +32,14 @@
       "text": "January category 2 reaches 100 through several smaller lines."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT sum(i.qty * i.unit_price)::VARCHAR || '/' || count(*)::VARCHAR FROM order_items i JOIN products p USING (product_id) JOIN orders o USING (order_id) WHERE p.category_id = 2 AND o.status = 'paid' AND o.ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND o.ordered_at < TIMESTAMPTZ '2024-02-01 00:00:00+00'",
+      "equals": "100.00/3",
+      "claim": "hints[2]: January category 2 reaches 100 across three lines"
+    }
+  ],
   "output": {
     "columns": [
       {

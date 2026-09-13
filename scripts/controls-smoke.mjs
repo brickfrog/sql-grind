@@ -80,7 +80,9 @@ try {
   );
   await page.goto(origin);
   await ready();
-  await page.getByRole("button", { name: "Hide judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Hide Patchouli", exact: true })
+    .click();
   await menu("File", "New Query");
   await page.waitForFunction(() =>
     document
@@ -334,6 +336,49 @@ try {
     true,
     "the last requested table stays selected",
   );
+  // A table node expands into the schema it already carries.
+  const customers = page.locator('[role="treeitem"][data-table="customers"]');
+  await customers.click();
+  assert.equal(await customers.getAttribute("aria-expanded"), "true");
+  const branch = (name) =>
+    page.locator('[role="treeitem"][aria-level="4"]', { hasText: name });
+  await branch("Columns").click();
+  assert.equal(
+    await page
+      .locator('[role="treeitem"][aria-level="5"]', {
+        hasText: "customer_id BIGINT NOT NULL",
+      })
+      .count(),
+    1,
+    "an expanded table lists its typed columns",
+  );
+  // Scoped: the top-level Views/Macros/Indexes branches print the same words,
+  // so the assertion must prove this table's own empty group rendered.
+  const indexes = branch("Indexes");
+  await indexes.click();
+  assert.equal(await indexes.getAttribute("aria-expanded"), "true");
+  const emptyGroup = await page.evaluate(() => {
+    const rows = Array.from(
+      document.querySelectorAll(
+        '.explorer [role="treeitem"], .explorer .tree-empty',
+      ),
+    );
+    const start = rows.findIndex(
+      (row) =>
+        row.getAttribute("aria-level") === "4" &&
+        row.textContent.includes("Indexes"),
+    );
+    return start >= 0 && rows[start + 1]?.className === "tree-empty"
+      ? rows[start + 1].textContent.trim()
+      : null;
+  });
+  assert.equal(
+    emptyGroup,
+    "No objects",
+    "an expanded table's empty Indexes group says No objects",
+  );
+  await customers.click();
+  assert.equal(await customers.getAttribute("aria-expanded"), "false");
   await page
     .getByRole("button", { name: "Object Explorer actions", exact: true })
     .click();
@@ -375,13 +420,13 @@ try {
   await menu("View", "Goal / Skill Details");
   await menu("View", "Reset Layout");
   mark("Pane visibility, collapse/expand, and layout reset");
-  await page.getByRole("tab", { name: "imported.sql *", exact: true }).click();
+  await page.getByRole("tab", { name: "imported.sql", exact: true }).click();
   await ready();
   for (const [command, label] of [
     ["Results", "Results"],
     ["Messages", "Messages"],
     ["Execution Plan", "Execution plan"],
-    ["Judge Notes", "Patchouli’s notes"],
+    ["Patchouli’s Notes", "Patchouli’s notes"],
   ]) {
     await menu("View", command);
     assert.equal(
@@ -450,7 +495,10 @@ try {
   await page.keyboard.press("ControlOrMeta+Home");
   await page.keyboard.press("PageDown");
   await page
-    .getByRole("button", { name: "Accessible table (50 rows)", exact: true })
+    .getByRole("button", {
+      name: "Accessible table (50 rows per page)",
+      exact: true,
+    })
     .click();
   assert.equal(await page.locator(".result-panel tbody tr").count(), 50);
   await page.getByRole("button", { name: "Last", exact: true }).click();
@@ -570,10 +618,12 @@ try {
   mark(
     "Thirteen-skill map, locked requirements, five selectable basics objectives, keyboard navigation, current skill, next challenge and independent drafts",
   );
-  await menu("View", "Judge");
+  await menu("View", "Patchouli");
   await visible("#judge-window");
   await page.getByRole("button", { name: "Hush", exact: true }).click();
-  await page.getByRole("button", { name: "Hide judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Hide Patchouli", exact: true })
+    .click();
   await page.locator(".judge-task").click();
   assert.equal(
     await page
@@ -592,7 +642,7 @@ try {
   await page.mouse.up();
   const moved = await page.locator("#judge-window").boundingBox();
   assert.ok(moved.x < box.x || moved.y < box.y);
-  await menu("Window", "Move Judge");
+  await menu("Window", "Move Patchouli");
   const startX = await page
     .locator("#judge-window")
     .evaluate((e) => e.getBoundingClientRect().x);
@@ -604,9 +654,13 @@ try {
       .evaluate((e) => e.getBoundingClientRect().x),
     startX + 10,
   );
-  await page.getByRole("button", { name: "Dock judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Dock Patchouli", exact: true })
+    .click();
   await visible("#judge-docked");
-  await page.getByRole("button", { name: "Float judge", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Float Patchouli", exact: true })
+    .click();
   await visible("#judge-window");
   await page
     .getByRole("button", { name: "Show diagnostics", exact: true })
@@ -617,8 +671,10 @@ try {
       .getAttribute("aria-selected"),
     "true",
   );
-  await menu("Window", "Reset Judge Position and Size");
-  await page.getByRole("button", { name: "Hide judge", exact: true }).click();
+  await menu("Window", "Reset Patchouli Position and Size");
+  await page
+    .getByRole("button", { name: "Hide Patchouli", exact: true })
+    .click();
   mark(
     "Judge drag, keyboard move, float/dock/hide, persistent hush and diagnostics",
   );
@@ -667,7 +723,7 @@ try {
   await popup.close();
   await page
     .locator(".desktop-icons")
-    .getByRole("button", { name: "Leaderboard", exact: true })
+    .getByRole("button", { name: "Practice Records", exact: true })
     .click();
   await visible("dialog");
   assert.equal(
@@ -677,22 +733,26 @@ try {
   );
   await close();
   mark("Storage, help, credits, external documentation link and local records");
-  await page.getByRole("button", { name: "Minimize IDE", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Minimize Workbench", exact: true })
+    .click();
   assert.equal(await page.locator(".ide").count(), 0);
   await page.locator("#app-task").click();
   await visible(".ide");
   await page
-    .getByRole("button", { name: "Maximize or restore IDE", exact: true })
+    .getByRole("button", { name: "Maximize or restore Workbench", exact: true })
     .click();
   assert.equal(await page.locator(".ide.maximized").count(), 1);
   await page
-    .getByRole("button", { name: "Maximize or restore IDE", exact: true })
+    .getByRole("button", { name: "Maximize or restore Workbench", exact: true })
     .click();
   await page.getByRole("button", { name: "Show desktop", exact: true }).click();
   assert.equal(await page.locator(".ide").count(), 0);
   await page.getByRole("button", { name: "Show desktop", exact: true }).click();
   await visible(".ide");
-  await page.getByRole("button", { name: "Close IDE", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Close Workbench", exact: true })
+    .click();
   await page.locator(".ide").waitFor({ state: "hidden" });
   await page.getByRole("button", { name: "Start", exact: true }).click();
   await page
@@ -703,7 +763,111 @@ try {
   mark(
     "IDE minimize/maximize/close, taskbar restoration, Show Desktop and Start",
   );
+  // Grouped menus, Alt mnemonics, and a Window menu that lists every open tab.
+  for (const group of [
+    "File",
+    "Edit",
+    "View",
+    "Query",
+    "Skills",
+    "Tools",
+    "Window",
+    "Help",
+  ]) {
+    await page.getByRole("menuitem", { name: group, exact: true }).click();
+    assert.ok(
+      (await page.locator('.menu-popup [role="separator"]').count()) > 0,
+      `${group} groups its items with separators`,
+    );
+    await page.keyboard.press("Escape");
+  }
+  assert.equal(
+    await page.locator(".menubar > div > button > u").count(),
+    8,
+    "every menu title exposes a mnemonic letter",
+  );
+  await page.keyboard.press("Alt+f");
+  await visible(".menu-popup");
+  assert.equal(
+    await page.evaluate(() =>
+      document.querySelector(".menu-popup")?.getAttribute("aria-label"),
+    ),
+    "File",
+  );
+  assert.equal(
+    await page.evaluate(() =>
+      document.querySelector(".menu-popup")?.contains(document.activeElement),
+    ),
+    true,
+    "Alt+F opens File and focuses its first enabled item",
+  );
+  await page.keyboard.press("Escape");
+  await page.getByRole("menuitem", { name: "Window", exact: true }).click();
+  const windowEntries = await page
+    .locator('.menu-popup [role="menuitemradio"]')
+    .allTextContents();
+  assert.ok(
+    windowEntries.some((entry) => entry.includes("Skill Map.dag")) &&
+      windowEntries.some((entry) => entry.includes("schema.ref")),
+    `Window lists the view tabs: ${windowEntries.join(" | ")}`,
+  );
+  assert.match(windowEntries[0], /^1/, "open tabs are numbered from one");
+  assert.equal(
+    await page
+      .locator('.menu-popup [role="menuitemradio"][aria-checked="true"]')
+      .count(),
+    1,
+    "exactly one Window entry is marked active",
+  );
+  assert.equal(
+    await page
+      .locator(".menu-popup")
+      .getByRole("menuitem", { name: "Maximize Workbench", exact: true })
+      .count(),
+    1,
+    "the maximize item names the action it performs",
+  );
+  // The command key is stable; only the label flips, so activating it must
+  // change the wording rather than leave both verbs on screen.
+  await page
+    .locator(".menu-popup")
+    .getByRole("menuitem", { name: "Maximize Workbench", exact: true })
+    .click();
+  await page.getByRole("menuitem", { name: "Window", exact: true }).click();
+  assert.equal(
+    await page
+      .locator(".menu-popup")
+      .getByRole("menuitem", { name: "Restore Workbench", exact: true })
+      .count(),
+    1,
+  );
+  await page
+    .locator(".menu-popup")
+    .getByRole("menuitem", { name: "Restore Workbench", exact: true })
+    .click();
+  // Close All Documents is scoped to SQL documents: the view tabs survive.
+  await page.getByRole("menuitem", { name: "Window", exact: true }).click();
+  await page
+    .locator(".menu-popup")
+    .getByRole("menuitem", { name: "Close All Documents", exact: true })
+    .click();
+  await page.waitForFunction(
+    () =>
+      !document.querySelector('.document-tabs [data-context="query-tab"]') &&
+      document.querySelector('.document-tabs [data-view="map"]'),
+  );
+  // Later checks assume an active document, so restore one immediately.
+  await menu("File", "New Query");
+  await page.waitForFunction(() =>
+    document.querySelector('.document-tabs [data-context="query-tab"]'),
+  );
+  mark("Menu separators, Alt mnemonics and the Window tab list");
   await page.getByRole("menuitem", { name: "File", exact: true }).focus();
+  assert.equal(
+    await page.evaluate(() => document.activeElement.id),
+    "menu-File",
+    "arrow navigation starts from the focused File title",
+  );
   await page.keyboard.press("ArrowRight");
   assert.equal(
     await page.evaluate(() => document.activeElement.id),

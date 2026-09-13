@@ -41,6 +41,14 @@ export interface ChallengeDefinition {
     kind: "concept" | "structure" | "boundary";
     text: string;
   }[];
+  // Optional machine-checked assertions about the graded data. The publisher
+  // runs each one so authored prose cannot drift from the dataset.
+  dataClaims?: {
+    variant: string;
+    sql: string;
+    equals: string;
+    claim: string;
+  }[];
   output: OutputContract;
   reference: string;
   expected: Record<string, string>;
@@ -286,6 +294,15 @@ export function validateChallenge(input: unknown): ChallengeDefinition {
     if (assessment.secondaryExpected !== undefined)
       assetMap(assessment.secondaryExpected, "Secondary expected assets");
   } else if (assessment.kind !== "exact") fail("Unknown assessment kind.");
+  if (value.dataClaims !== undefined) {
+    if (!Array.isArray(value.dataClaims) || !value.dataClaims.length)
+      fail("Data claims must be a non-empty array when present.");
+    for (const input of value.dataClaims) {
+      const claim = record(input, "Data claim");
+      for (const key of ["variant", "sql", "equals", "claim"])
+        text(claim[key], `Data claim ${key}`);
+    }
+  }
   return value as ChallengeDefinition;
 }
 export function validateDataset(input: unknown): DatasetDefinition {

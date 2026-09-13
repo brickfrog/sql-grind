@@ -31,6 +31,14 @@
       "text": "The boundary has eleven rows, including five NULL events."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR || '/' || (count(*) FILTER (WHERE customer_id IS NULL))::VARCHAR FROM (SELECT customer_id FROM cohort_a UNION ALL SELECT customer_id FROM cohort_b)",
+      "equals": "11/5",
+      "claim": "hints[2]: eleven cohort rows including five NULL events"
+    }
+  ],
   "output": {
     "columns": [
       {

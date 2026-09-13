@@ -31,6 +31,14 @@
       "text": "Repeated red collapses within a contact but remains for both contacts 1 and 5."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (count(*) FILTER (WHERE contact_id IN (1, 5) AND tags_text LIKE '%red%red%'))::VARCHAR FROM raw_contacts",
+      "equals": "2",
+      "claim": "hints[2]: contacts 1 and 5 both repeat red"
+    }
+  ],
   "output": {
     "columns": [
       {

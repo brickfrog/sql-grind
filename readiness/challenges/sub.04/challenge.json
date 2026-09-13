@@ -31,6 +31,14 @@
       "text": "Category 3 has two equal prices; category 2 has distinct prices."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT (SELECT count(DISTINCT unit_price) FROM products WHERE category_id = 3)::VARCHAR || '/' || (SELECT count(*) FROM products WHERE category_id = 3)::VARCHAR || '/' || (SELECT count(DISTINCT unit_price) FROM products WHERE category_id = 2)::VARCHAR || '/' || (SELECT count(*) FROM products WHERE category_id = 2)::VARCHAR",
+      "equals": "1/2/2/2",
+      "claim": "hints[2]: category 3 has two equal prices and category 2 has distinct prices"
+    }
+  ],
   "output": {
     "columns": [
       {

@@ -31,6 +31,14 @@
       "text": "The first two events share a date; their RANGE totals are both 30.00."
     }
   ],
+  "dataClaims": [
+    {
+      "variant": "boundary",
+      "sql": "SELECT count(*)::VARCHAR || '/' || sum(amount)::VARCHAR FROM daily_events WHERE event_date = DATE '2024-01-01'",
+      "equals": "2/30.00",
+      "claim": "hints[2]: the first two events share a date and total 30.00"
+    }
+  ],
   "output": {
     "columns": [
       {

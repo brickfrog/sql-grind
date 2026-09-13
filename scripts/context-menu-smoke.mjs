@@ -234,7 +234,10 @@ try {
     'id\ttext\tbig\tamount\tmissing\tempty\n2\t"line\n""two"""\t9007199254740995\t45.60\tNULL\t',
   );
   await page
-    .getByRole("button", { name: "Accessible table (50 rows)", exact: true })
+    .getByRole("button", {
+      name: "Accessible table (50 rows per page)",
+      exact: true,
+    })
     .click();
   await right(page.locator("#table-cell-0-1"));
   await choose("Copy Row");
