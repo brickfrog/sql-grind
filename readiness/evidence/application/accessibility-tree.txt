@@ -92,7 +92,6 @@
         - tab "Messages"
         - tab "Execution plan"
         - tab "Patchouli’s notes 0"
-        - tab "Assessment"
       - region "Query results":
         - text: No result
         - strong: Running…
@@ -146,4 +145,4 @@
   - button "Patchouli — reading"
   - 'button "SQL engine: initializing"'
   - 'button "Patchouli: hidden"'
-  - time: 08:45 AM
+  - time: 10:18 AM

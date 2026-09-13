@@ -1,6 +1,6 @@
 {
-  "date": "2026-09-13T01:23:10.283Z",
-  "origin": "http://127.0.0.1:4173",
+  "date": "2026-09-13T14:21:55.361Z",
+  "origin": "http://127.0.0.1:5176",
   "browser": "153.0.8010.12",
   "checks": [
     {
@@ -13,6 +13,9 @@
     {
       "name": "reference submission",
       "details": "Every complete grading variant passes exact types, values, NULLs, duplicates, and required ordering."
+    },
+    {
+      "name": "first-pass celebration offers one dismiss and one forward action"
     },
     {
       "name": "saved SQL, hints, completion and name restored after reload"
