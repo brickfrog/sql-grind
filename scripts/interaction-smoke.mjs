@@ -97,18 +97,12 @@ try {
   mark(
     "Judge grip resizes by pointer and keyboard; scaled drags clamp to the viewport edges",
   );
-  // View zoom: the desktop still fits the viewport, and drags under zoom land
-  // exactly where the pointer goes (positions are stored in pre-zoom pixels).
+  // Window drags land exactly where the pointer goes, and the desktop fits the
+  // viewport without scrollbars. The application has no zoom of its own; native
+  // browser zoom is covered by scripts/zoom-smoke.mjs.
   {
     // Park the judge in the corner so it does not cover the menu bar.
     await drag("#judge-window .judge-title", 3000, 3000);
-    await menu("View", "Zoom In");
-    await menu("View", "Zoom In");
-    assert.equal(
-      await page.evaluate(() => getComputedStyle(document.body).zoom),
-      "1.25",
-      "two zoom steps reach 125%",
-    );
     assert.equal(
       await page.evaluate(
         () =>
@@ -116,16 +110,15 @@ try {
           document.documentElement.scrollWidth <= window.innerWidth,
       ),
       true,
-      "zoomed desktop does not overflow the viewport",
+      "the desktop does not overflow the viewport",
     );
     const before = await page.locator("#judge-window").boundingBox();
     await drag("#judge-window .judge-title", -120, -80);
     const after = await page.locator("#judge-window").boundingBox();
-    assert.ok(Math.abs(after.x - (before.x - 120)) < 2, "zoomed drag x");
-    assert.ok(Math.abs(after.y - (before.y - 80)) < 2, "zoomed drag y");
+    assert.ok(Math.abs(after.x - (before.x - 120)) < 2, "drag x");
+    assert.ok(Math.abs(after.y - (before.y - 80)) < 2, "drag y");
     await drag("#judge-window .judge-title", 120, 80);
-    // Context menus are appended to the zoomed <body>; they must still open
-    // under the pointer.
+    // Context menus are appended to <body>; they must open under the pointer.
     const editorBox = await page.locator(".cm-content").boundingBox();
     await page.mouse.click(editorBox.x + 40, editorBox.y + 20, {
       button: "right",
@@ -210,15 +203,15 @@ try {
     await page
       .getByRole("slider", { name: "Goal panel width", exact: true })
       .fill("280");
-    await menu("View", "Actual Size");
     assert.equal(
       await page.evaluate(() => getComputedStyle(document.body).zoom),
       "1",
+      "the application never applies a zoom of its own",
     );
     moved = await page.locator("#judge-window").boundingBox();
   }
   mark(
-    "View zoom keeps the desktop in the viewport and pointer-accurate; the Goal panel pops out, moves, resizes, and docks",
+    "Window drags are pointer-accurate with no application zoom; the Goal panel pops out, moves, resizes, and docks",
   );
   await drag("#judge-window .judge-title", 4 - moved.x, 4 - moved.y);
   const parkedJudge = await page.locator("#judge-window").boundingBox();

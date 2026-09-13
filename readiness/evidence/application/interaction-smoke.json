@@ -1,9 +1,9 @@
 {
-  "date": "2026-09-13T05:32:26.440Z",
+  "date": "2026-09-13T12:46:10.052Z",
   "checks": [
     "Repeated judge drags preserve pointer offset without jumping or selecting text",
     "Judge grip resizes by pointer and keyboard; scaled drags clamp to the viewport edges",
-    "View zoom keeps the desktop in the viewport and pointer-accurate; the Goal panel pops out, moves, resizes, and docks",
+    "Window drags are pointer-accurate with no application zoom; the Goal panel pops out, moves, resizes, and docks",
     "Editor focus leaves Patchouli stationary; her text paints above the IDE menus",
     "Main window drags and restores its position; controls match; selected explorer hover retains contrast",
     "Enabled buttons use pointer cursors; editor uses dark text and a stronger monospace face",

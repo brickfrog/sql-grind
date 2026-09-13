@@ -946,8 +946,10 @@ function validateSettings(value: unknown): asserts value is Settings {
         number(value.layout[key], 0, 100000, false);
     if (value.layout.judgeZoom !== undefined)
       number(value.layout.judgeZoom, 0.75, 3, false);
-    if (value.layout.viewZoom !== undefined)
-      number(value.layout.viewZoom, 0.5, 2, false);
+    // layout.viewZoom is retired: the application no longer has its own zoom,
+    // because native browser zoom already scales the whole document. Stored
+    // rows may still carry any earlier value, so it is tolerated above without
+    // a range check and dropped by load().
     text(value.layout.selectedSkill);
   }
 }
@@ -1546,7 +1548,18 @@ export class PracticeStore {
         attempts: data.attempts.map(toAttempt),
         hints,
         settings: preferences
-          ? (({ judgeSize: _size, mood: _mood, ...rest }) => rest)(
+          ? (({ judgeSize: _size, mood: _mood, layout, ...rest }) => ({
+              ...rest,
+              ...(layout
+                ? {
+                    layout: (({ viewZoom: _zoom, ...keep }) => keep)(
+                      layout as NonNullable<Settings["layout"]> & {
+                        viewZoom?: unknown;
+                      },
+                    ),
+                  }
+                : {}),
+            }))(
               structuredClone(preferences.value) as Settings & {
                 judgeSize?: unknown;
                 mood?: unknown;

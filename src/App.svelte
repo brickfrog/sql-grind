@@ -120,9 +120,6 @@
     Paste: "Ctrl+V",
     "Select All": "Ctrl+A",
     Find: "Ctrl+F",
-    "Zoom In": "Ctrl+Alt+=",
-    "Zoom Out": "Ctrl+Alt+-",
-    "Actual Size": "Ctrl+Alt+0",
   };
   let running = $state(false);
   let storageReady = $state(false);
@@ -170,19 +167,11 @@
   const clampJudgeZoom = (value: number) =>
     Math.round(Math.max(JUDGE_ZOOM_MIN, Math.min(JUDGE_ZOOM_MAX, value)) * 20) /
     20;
-  // Whole-view zoom (View → Zoom In / Zoom Out / Actual Size). Applied as CSS
-  // `zoom` on <body>; pointer math converts viewport pixels through it.
-  const VIEW_ZOOM_STEPS = [0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2];
-  let viewZoom = $state(1);
-  // Unit convention: state (judgeX, goalWidth, ideX, …) is in app px, the
-  // pre-zoom CSS px the layout is written in. Pointer events and
-  // getBoundingClientRect() report viewport px; convert with toAppPx().
-  const toAppPx = (viewportPx: number) => viewportPx / viewZoom;
-  const viewWidth = () => toAppPx(window.innerWidth);
-  const viewHeight = () => toAppPx(window.innerHeight);
-  $effect(() => {
-    document.body.style.setProperty("--view-zoom", String(viewZoom));
-  });
+  // The application applies no zoom of its own: native browser zoom already
+  // scales the whole document, including pointer coordinates and viewport
+  // units, so layout state and pointer events share one coordinate space.
+  const viewWidth = () => window.innerWidth;
+  const viewHeight = () => window.innerHeight;
   // Floating goal window (View → Goal / Skill Details, Window → Dock / Float Goal).
   let goalFloating = $state(false);
   let goalHeight = $state(420);
@@ -422,9 +411,6 @@
       "Execution Plan",
       "Judge Notes",
       "Reading Layout",
-      "Zoom In",
-      "Zoom Out",
-      "Actual Size",
       "Reset Layout",
     ],
     Query: [
@@ -550,8 +536,8 @@
       if (!anchor || !popup) return;
       // The anchor rect is viewport px; menuPosition is consumed as pre-zoom
       // CSS px inside the zoomed body, so both bounds must be app px.
-      const anchorLeft = toAppPx(anchor.left);
-      const anchorBottom = toAppPx(anchor.bottom);
+      const anchorLeft = anchor.left;
+      const anchorBottom = anchor.bottom;
       // Height and scrolling come from .menu-popup's max-height rule, which is
       // already expressed in app px via --view-height.
       menuPosition = {
@@ -706,9 +692,6 @@
       goalHeight = settings.layout?.goalHeight ?? 420;
       goalFloating = settings.layout?.goalFloating ?? false;
       selectedSkill = settings.layout?.selectedSkill ?? "basics";
-      viewZoom = VIEW_ZOOM_STEPS.includes(settings.layout?.viewZoom ?? 1)
-        ? (settings.layout?.viewZoom ?? 1)
-        : 1;
       judgeZoom = clampJudgeZoom(settings.layout?.judgeZoom ?? 1);
       const restoredX = settings.layout?.judgeX ?? null;
       const restoredY = settings.layout?.judgeY ?? null;
@@ -1570,7 +1553,6 @@
       judgeX,
       judgeY,
       judgeZoom,
-      viewZoom,
       goalFloating,
       goalHeight,
       goalX,
@@ -1855,15 +1837,15 @@
     if (!element) return;
     const rect = element.getBoundingClientRect();
     const size = {
-      width: toAppPx(rect.width),
-      height: toAppPx(rect.height),
+      width: rect.width,
+      height: rect.height,
     };
-    const dx = toAppPx(event.clientX - rect.left),
-      dy = toAppPx(event.clientY - rect.top);
+    const dx = event.clientX - rect.left,
+      dy = event.clientY - rect.top;
     dragPointer(event, (next) => {
       const at = clampWindow(
-        toAppPx(next.clientX) - dx,
-        toAppPx(next.clientY) - dy,
+        next.clientX - dx,
+        next.clientY - dy,
         size,
       );
       floating[target].set(at.x, at.y);
@@ -1878,7 +1860,7 @@
         Math.min(
           480,
           width +
-            toAppPx(next.clientX - start) * (side === "explorer" ? 1 : -1),
+            (next.clientX - start) * (side === "explorer" ? 1 : -1),
         ),
       );
       if (side === "explorer") explorerWidth = value;
@@ -1917,8 +1899,8 @@
       .getElementById(floating[target].id)
       ?.getBoundingClientRect();
     if (!rect) return;
-    floating[target].set(toAppPx(rect.left), toAppPx(rect.top));
-    movementStart = { x: toAppPx(rect.left), y: toAppPx(rect.top) };
+    floating[target].set(rect.left, rect.top);
+    movementStart = { x: rect.left, y: rect.top };
     moving = target;
     document.getElementById(floating[target].heading)?.focus();
   }
@@ -1928,8 +1910,8 @@
     if (!element) return;
     const rect = element.getBoundingClientRect();
     // Anchor the top-left corner so the window grows toward the pointer.
-    goalX = toAppPx(rect.left);
-    goalY = toAppPx(rect.top);
+    goalX = rect.left;
+    goalY = rect.top;
     const startX = event.clientX,
       startY = event.clientY,
       width = goalWidth,
@@ -1937,11 +1919,11 @@
     dragPointer(event, (next) => {
       goalWidth = Math.max(
         180,
-        Math.min(480, width + toAppPx(next.clientX - startX)),
+        Math.min(480, width + next.clientX - startX),
       );
       goalHeight = Math.max(
         160,
-        Math.min(1200, height + toAppPx(next.clientY - startY)),
+        Math.min(1200, height + next.clientY - startY),
       );
     });
   }
@@ -1959,22 +1941,6 @@
         Math.min(1200, goalHeight + (event.key === "ArrowDown" ? 10 : -10)),
       );
   }
-  function setViewZoom(direction: -1 | 0 | 1) {
-    const index = VIEW_ZOOM_STEPS.indexOf(viewZoom);
-    viewZoom =
-      direction === 0
-        ? 1
-        : VIEW_ZOOM_STEPS[
-            Math.max(0, Math.min(VIEW_ZOOM_STEPS.length - 1, index + direction))
-          ];
-    // Zooming in shrinks the usable area; keep positioned windows reachable.
-    for (const target of Object.values(floating)) {
-      if (target.x === null || target.y === null) continue;
-      const at = clampWindow(target.x, target.y, target.size());
-      target.set(at.x, at.y);
-    }
-    announce(`View zoom ${Math.round(viewZoom * 100)}%`);
-  }
   function resizeJudge(event: PointerEvent) {
     const element = document.getElementById("judge-window");
     if (!element) return;
@@ -1983,8 +1949,8 @@
     const startZoom = judgeZoom;
     const startOffset = Math.max(1, event.clientX - rect.left);
     // Keep the top-left corner fixed while resizing from the bottom-right.
-    judgeX = toAppPx(rect.left);
-    judgeY = toAppPx(rect.top);
+    judgeX = rect.left;
+    judgeY = rect.top;
     dragPointer(event, (next) => {
       judgeZoom = clampJudgeZoom(
         (startZoom * (next.clientX - rect.left)) / startOffset,
@@ -2009,7 +1975,7 @@
     const move = (e: PointerEvent) => {
       editorHeight = Math.max(
         120,
-        Math.min(650, height + toAppPx(e.clientY - start)),
+        Math.min(650, height + e.clientY - start),
       );
     };
     const up = () => {
@@ -2555,15 +2521,6 @@
           goalFloating = true;
           await startMoving("goal");
           break;
-        case "Zoom In":
-          setViewZoom(1);
-          break;
-        case "Zoom Out":
-          setViewZoom(-1);
-          break;
-        case "Actual Size":
-          setViewZoom(0);
-          break;
         case "DuckDB Docs":
           window.open(
             "https://duckdb.org/docs/",
@@ -2763,17 +2720,6 @@
       movementKey(e);
       return;
     }
-    if (
-      (e.ctrlKey || e.metaKey) &&
-      e.altKey &&
-      !modal &&
-      ["=", "+", "-", "_", "0"].includes(e.key)
-    ) {
-      e.preventDefault();
-      setViewZoom(e.key === "0" ? 0 : e.key === "-" || e.key === "_" ? -1 : 1);
-      void updateSettings();
-      return;
-    }
     if (e.key === "Escape" && !modal) {
       menu = "";
       startMenu = false;
@@ -2814,21 +2760,21 @@
     const rect = (
       event.currentTarget as HTMLElement
     ).parentElement!.getBoundingClientRect();
-    const left = toAppPx(rect.left),
-      top = toAppPx(rect.top),
-      width = toAppPx(rect.width);
-    const startX = toAppPx(event.clientX),
-      startY = toAppPx(event.clientY);
+    const left = rect.left,
+      top = rect.top,
+      width = rect.width;
+    const startX = event.clientX,
+      startY = event.clientY;
     const offsetX = ideX,
       offsetY = ideY;
     dragPointer(event, (next) => {
       const x = Math.max(
         80 - width,
-        Math.min(viewWidth() - 80, left + toAppPx(next.clientX) - startX),
+        Math.min(viewWidth() - 80, left + next.clientX - startX),
       );
       const y = Math.max(
         0,
-        Math.min(viewHeight() - 58, top + toAppPx(next.clientY) - startY),
+        Math.min(viewHeight() - 58, top + next.clientY - startY),
       );
       ideX = offsetX + x - left;
       ideY = offsetY + y - top;
@@ -3745,9 +3691,7 @@
         ><span
           >DuckDB {activeDoc?.challenge?.engineVersion ?? "v1.5.4"} · 1 thread</span
         ><span>{result ? result.elapsedMs.toFixed(1) + " ms" : "Not run"}</span
-        >{#if viewZoom !== 1}<span title="View zoom (View → Actual Size resets)"
-            >Zoom {Math.round(viewZoom * 100)}%</span
-          >{/if}<span
+        ><span
           >{result?.fixtureResults
             ? `${result.fixtureResults.length} datasets`
             : `${result?.result?.count ?? 0} rows`}</span
@@ -4670,12 +4614,11 @@
         <dd>Navigate menus, tabs, tree, grid, and skill map.</dd>
         <dt>Editor/results splitter</dt>
         <dd>Up/Down resize 10 px; Shift changes 50 px. Home/End use limits.</dd>
-        <dt>Ctrl+Alt+= / Ctrl+Alt+- / Ctrl+Alt+0</dt>
-        <dd>Zoom the whole view in, out, or back to 100%.</dd>
       </dl>
       <p>
         Browser reload, close-tab, and zoom shortcuts remain browser actions
-        outside the editor.
+        outside the editor. Use the browser's own zoom to scale the whole
+        interface.
       </p>
     {:else if modal === "rules"}<h3>{challenge?.title ?? "Scratch query"}</h3>
       {#if challenge}

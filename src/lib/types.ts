@@ -150,7 +150,6 @@ export interface Settings {
     judgeZoom?: number;
     judgeX: number | null;
     judgeY: number | null;
-    viewZoom?: number;
     goalFloating?: boolean;
     goalHeight?: number;
     goalX?: number | null;

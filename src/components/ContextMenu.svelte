@@ -129,25 +129,20 @@
     // Escape ancestor stacking contexts and scrolling/overflow containers.
     document.body.appendChild(menu);
 
-    // The menu lives under <body>, which carries the app's view zoom
-    // (--view-zoom, applied as CSS zoom). Pointer and viewport values are
-    // viewport pixels; style lengths are app pixels.
-    const zoom =
-      parseFloat(
-        getComputedStyle(document.body).getPropertyValue("--view-zoom"),
-      ) || 1;
+    // Pointer and viewport values share one coordinate space: the application
+    // applies no zoom of its own, and native browser zoom scales both.
     const visualViewport = window.visualViewport;
-    const width = (visualViewport?.width ?? window.innerWidth) / zoom;
-    const height = (visualViewport?.height ?? window.innerHeight) / zoom;
-    const left = (visualViewport?.offsetLeft ?? 0) / zoom;
-    const top = (visualViewport?.offsetTop ?? 0) / zoom;
-    const px = x / zoom,
-      py = y / zoom;
+    const width = visualViewport?.width ?? window.innerWidth;
+    const height = visualViewport?.height ?? window.innerHeight;
+    const left = visualViewport?.offsetLeft ?? 0;
+    const top = visualViewport?.offsetTop ?? 0;
+    const px = x,
+      py = y;
     const inset = Math.min(4, width / 4, height / 4);
     menu.style.maxWidth = `${Math.max(0, width - inset * 2)}px`;
     menu.style.maxHeight = `${Math.max(0, height - inset * 2)}px`;
     const rect = menu.getBoundingClientRect();
-    const bounds = { width: rect.width / zoom, height: rect.height / zoom };
+    const bounds = { width: rect.width, height: rect.height };
     const preferredX =
       px + bounds.width > left + width - inset ? px - bounds.width : px;
     const preferredY =

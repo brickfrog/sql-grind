@@ -12,12 +12,10 @@ body,
 }
 body {
   background: #3a6ea5;
-  /* View zoom (View → Zoom In / Out). Viewport-unit lengths below divide by
-     it, because Chromium scales vh/vw inside a zoomed subtree. */
-  --view-zoom: 1;
-  --view-width: calc(100vw / var(--view-zoom));
-  --view-height: calc(100dvh / var(--view-zoom));
-  zoom: var(--view-zoom);
+  /* Viewport lengths. Native browser zoom scales these correctly on its own;
+     the application deliberately has no zoom of its own. */
+  --view-width: 100vw;
+  --view-height: 100dvh;
 }
 button,
 input,
