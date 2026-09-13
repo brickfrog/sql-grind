@@ -216,3 +216,25 @@ Safari, mobile browsers, minimum-device performance, and full screen-reader inte
 The supplied portrait is accepted for local use. Public redistribution rights remain deferred, without blocking local practice.
 The original design remains under `claude-design/design_handoff_sql_grind/`.
 The root package lock defines application dependencies. The engine lab has its own lock and serves publication tooling.
+
+## License
+
+The application source is under the GNU General Public License version 3
+([LICENSE](LICENSE)). The browser delivers the built JavaScript to every user, so
+a hosted copy distributes the work and must offer its source under the same
+terms.
+
+Bundled third-party assets keep their own terms and are not covered by that
+license:
+
+- Interface icons are the Fugue set by Yusuke Kamiyamane, under Creative Commons
+  Attribution 3.0. The application states this attribution in Help → Asset
+  Credits, and `public/icon-credits.txt` ships with the build.
+- The judge portrait is Touhou Project fan art from the community wiki. Touhou
+  Project is the work of Team Shanghai Alice. The portrait is neither original
+  to this project nor licensed under the GPL. Remove
+  `claude-design/design_handoff_sql_grind/assets/` and the portrait provisioning
+  in `scripts/setup.mjs` to build without it.
+
+DuckDB and DuckDB-Wasm are separate MIT-licensed projects. The build installs
+their pinned runtime; it does not modify them.
