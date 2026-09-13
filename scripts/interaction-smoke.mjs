@@ -213,6 +213,154 @@ try {
   mark(
     "Window drags are pointer-accurate with no application zoom; the Goal panel pops out, moves, resizes, and docks",
   );
+  // Below the 1100-pixel desktop minimum the IDE must reflow into Reading
+  // Layout rather than scroll the page sideways. Saved floating geometry and
+  // judge zoom stay on disk and return when the window widens again.
+  {
+    const desktop = page.viewportSize();
+    await page.locator("#judge-window .judge-resize").waitFor();
+    const grip = await page
+      .locator("#judge-window .judge-resize")
+      .boundingBox();
+    await page.mouse.move(grip.x + 7, grip.y + 7);
+    await page.mouse.down();
+    await page.mouse.move(grip.x + 500, grip.y + 300, { steps: 10 });
+    await page.mouse.up();
+    const zoomedJudge = await page.locator("#judge-window").boundingBox();
+    assert.ok(zoomedJudge.width > 400, "the judge is scaled above 1×");
+    await menu("Window", "Dock / Float Goal");
+    assert.equal(await page.locator("#goal-window").count(), 1);
+    const floatedGoal = await page.locator("#goal-window").boundingBox();
+    const fits = () =>
+      page.evaluate(
+        () => document.documentElement.scrollWidth - window.innerWidth,
+      );
+    for (const width of [1099, 720, 360]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.waitForFunction(
+        () => !!document.querySelector(".desktop.reading"),
+      );
+      assert.ok(
+        (await fits()) <= 1,
+        `no horizontal page overflow at ${width} pixels`,
+      );
+      assert.equal(
+        await page.locator("#goal-window").count(),
+        0,
+        `the floated goal rejoins document flow at ${width} pixels`,
+      );
+      assert.equal(
+        await page.locator("#goal-panel").count(),
+        1,
+        `the goal stays visible in flow at ${width} pixels`,
+      );
+      assert.equal(
+        await page.locator("#judge-window .judge-resize").count(),
+        0,
+        `the judge grip is withdrawn at ${width} pixels`,
+      );
+      assert.equal(
+        await page.evaluate(
+          () =>
+            getComputedStyle(
+              document.querySelector("#judge-window"),
+            ).getPropertyValue("--judge-zoom") || "1",
+        ),
+        "1",
+        `the judge renders at 1× in Reading Layout at ${width} pixels`,
+      );
+      assert.equal(
+        await page
+          .getByRole("menuitemcheckbox", {
+            name: "Reading Layout",
+            exact: true,
+          })
+          .count(),
+        0,
+        "the menu is closed between resizes",
+      );
+    }
+    // Narrow interaction: edit and execute SQL, open a dialog, read results.
+    await page.setViewportSize({ width: 720, height: 900 });
+    await page.locator(".cm-content").click();
+    await page.keyboard.press("ControlOrMeta+a");
+    await page.keyboard.type("SELECT 5::BIGINT AS narrow");
+    await page.getByRole("button", { name: "Execute", exact: true }).click();
+    await page.waitForFunction(
+      () => !document.querySelector(".toolbar .execute").disabled,
+      null,
+      { timeout: 60000 },
+    );
+    assert.match(
+      await page.locator(".result-tools span").first().textContent(),
+      /1 row · 1 column/,
+    );
+    await menu("Help", "Keyboard Shortcuts");
+    assert.ok(
+      (await fits()) <= 1,
+      "a dialog at 720 pixels adds no horizontal page overflow",
+    );
+    await page.keyboard.press("Escape");
+    await menu("Skills", "Skill Map");
+    await page
+      .getByRole("list", { name: "Skills in prerequisite order" })
+      .waitFor();
+    assert.ok(
+      (await fits()) <= 1,
+      "the linear skill list at 720 pixels adds no horizontal page overflow",
+    );
+    await page
+      .getByRole("tab", { name: /\.sql(?: \*)?$/ })
+      .first()
+      .click();
+    // Widening restores the desktop and the saved floating presentation.
+    await page.setViewportSize(desktop);
+    await page.waitForFunction(
+      () => !document.querySelector(".desktop.reading"),
+    );
+    const restoredGoal = await page.locator("#goal-window").boundingBox();
+    assert.ok(
+      Math.abs(restoredGoal.x - floatedGoal.x) < 2 &&
+        Math.abs(restoredGoal.y - floatedGoal.y) < 2 &&
+        Math.abs(restoredGoal.width - floatedGoal.width) < 2,
+      "the floated goal returns to its saved position and size",
+    );
+    const restoredJudge = await page.locator("#judge-window").boundingBox();
+    assert.ok(
+      Math.abs(restoredJudge.width - zoomedJudge.width) < 2,
+      "the judge returns to its saved zoom",
+    );
+    // The explicit preference is independent of the automatic reflow.
+    await menu("View", "Reading Layout");
+    assert.equal(await page.locator(".desktop.reading").count(), 1);
+    await page.setViewportSize({ width: 900, height: 900 });
+    await page.setViewportSize(desktop);
+    assert.equal(
+      await page.locator(".desktop.reading").count(),
+      1,
+      "resizing never clears the explicit Reading Layout preference",
+    );
+    await menu("View", "Reading Layout");
+    assert.equal(await page.locator(".desktop.reading").count(), 0);
+    await page
+      .getByRole("button", { name: "Dock Goal panel", exact: true })
+      .click();
+    await page
+      .getByRole("slider", { name: "Goal panel width", exact: true })
+      .fill("280");
+    await page.locator("#judge-window .judge-resize").waitFor();
+    const reset = await page
+      .locator("#judge-window .judge-resize")
+      .boundingBox();
+    await page.mouse.move(reset.x + 7, reset.y + 7);
+    await page.mouse.down();
+    await page.mouse.move(reset.x - 500, reset.y - 300, { steps: 10 });
+    await page.mouse.up();
+  }
+  mark(
+    "Narrow windows reflow into Reading Layout without horizontal page overflow, and widening restores saved floating geometry",
+  );
+  moved = await page.locator("#judge-window").boundingBox();
   await drag("#judge-window .judge-title", 4 - moved.x, 4 - moved.y);
   const parkedJudge = await page.locator("#judge-window").boundingBox();
   await page.locator(".cm-content").focus();

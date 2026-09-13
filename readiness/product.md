@@ -100,7 +100,7 @@ Repeated names invoke the corresponding inventory action.
 | M03 | View   | Object Explorer, Goal / Skill Details, Judge, Results, Messages, Execution Plan, Judge Notes, Reading Layout, Reset Layout. Visibility items expose checked state.              |
 | M04 | Query  | Execute, Parse, Cancel, Show Plan, Compare with Reference, Submit, Reset Challenge SQL. Reset restores authored starter SQL after explicit acceptance.                          |
 | M05 | Skills | Skill Map, Current Skill, Open Next Challenge, Practice Records. Current Skill selects the skill associated with the active challenge.                                          |
-| M06 | Tools  | Settings, Storage, Schema Reference, Refresh Schema, Reset Practice Sandbox. Sandbox reset never deletes saved queries or progress.                                             |
+| M06 | Tools  | Settings, Storage, Schema Reference, Refresh Schema, Reset Index Lab Session. The index lab reset never deletes saved queries or progress.                                      |
 | M07 | Window | Minimize IDE, Maximize / Restore IDE, Close IDE, Show Desktop, Dock / Float Judge, Move Judge, Reset Judge Position and Size, Dock / Float Goal, Move Goal, and open documents. |
 | M08 | Help   | Keyboard Shortcuts, Challenge Rules, DuckDB Docs, Asset Credits, About. About shows real application and engine versions.                                                       |
 
@@ -183,7 +183,7 @@ Evidence: specification lines 40–69. Prototype lines 73–165 and 176–244.
 | W23  | Requires links                                              | Select each prerequisite skill. The list identifies which requirements remain incomplete.                                                                                                                      |
 | W24  | Skill challenge rows                                        | Open any challenge in an accessible skill with its own current-version draft. Locked rows explain unmet prerequisites.                                                                                         |
 | W25  | Open next challenge                                         | Opens the first challenge without current completion, in authored order. Previously opened skills retain review access.                                                                                        |
-| W26  | Status bar cells                                            | Show real engine/version/thread state, elapsed interval, result count, and caret location. They are information, not inert buttons.                                                                            |
+| W26  | Status bar cells                                            | Show real engine/version/thread state, elapsed interval, result count, and caret location. They are information, not inert buttons. Its square reports the displayed message's outcome — neutral, working, success, or error — not merely engine readiness.       |
 
 The correctness area does not convert partial row matches into a percentage pass.
 Style and diagnostic counts remain separate from correctness.
@@ -275,11 +275,12 @@ Focus indicators remain distinct from selection, with at least 3:1 adjacent cont
 
 The default desktop retains the blue background, icon column, taskbar, three columns, square bevels, and specified palette roles.
 Its minimum desktop workspace remains 1100 by 640 CSS pixels.
-Below those dimensions, the desktop scrolls in both directions. No pane uses clipping to conceal controls or text.
+Below 1100 CSS pixels of viewport width, Reading Layout applies automatically instead of scrolling the desktop horizontally.
+Below 640 CSS pixels of height the desktop still scrolls vertically. No pane uses clipping to conceal controls or text.
 The default left and right panels remain 220 and 280 CSS pixels, subject to accessible hit-area adjustments.
 Each long tree, goal, notes list, editor, result grid, and map has an independent scroll region.
 
-Reading Layout supplies an additional single-column layout at all viewport sizes.
+Reading Layout supplies an additional single-column layout at all viewport sizes, and is the required layout below 1100 CSS pixels.
 It places navigation, active document, output, and goal/details in ordinary document flow.
 Prose and dialogs reflow at 320 CSS pixels without horizontal page scrolling.
 Only SQL, result tables, and the graph retain justified two-dimensional scroll regions.

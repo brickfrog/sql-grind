@@ -493,6 +493,170 @@ try {
       return value;
     },
   );
+  await check(
+    "temporal values keep their engine precision and per-row interval components",
+    async () => {
+      const value = await run(
+        `SELECT TIMESTAMP '2026-09-13 08:30:00' AS ts, TIMESTAMPTZ '2026-09-13 08:30:00+00' AS tstz, TIME '08:30:00' AS tm, DATE '2026-09-13' AS day, INTERVAL 3 DAY AS iv, INTERVAL '1 month 2 days 03:00:04.5' AS mixed, TIMESTAMP '2024-03-01 12:34:56.123456' AS micro FROM range(5)`,
+      );
+      complete(value);
+      assert.deepEqual(
+        value.result.columns.map((c) => c.type),
+        [
+          "TIMESTAMP",
+          "TIMESTAMP WITH TIME ZONE",
+          "TIME",
+          "DATE",
+          "INTERVAL",
+          "INTERVAL",
+          "TIMESTAMP",
+        ],
+      );
+      const expected = [
+        "2026-09-13 08:30:00",
+        "2026-09-13 08:30:00+00:00",
+        "08:30:00",
+        "2026-09-13",
+        "3 days",
+        "1 month 2 days 03:00:04.5",
+        "2024-03-01 12:34:56.123456",
+      ];
+      assert.equal(value.result.count, 5);
+      for (const row of value.result.rows) assert.deepEqual(row, expected);
+      assert.deepEqual(value.result.lastRow, expected);
+      return value;
+    },
+  );
+  await check(
+    "timestamp infinities and out-of-Date-range instants decode without raw integers",
+    async () => {
+      const value = await run(
+        "SELECT 'infinity'::TIMESTAMP AS hi, '-infinity'::TIMESTAMP AS lo, 'infinity'::DATE AS hiday, TIMESTAMP '9999-12-31 23:59:59.999999' AS far",
+      );
+      complete(value);
+      assert.deepEqual(value.result.rows, [
+        ["infinity", "-infinity", "infinity", "9999-12-31 23:59:59.999999"],
+      ]);
+      return value;
+    },
+  );
+  // A policy rejection must not hide a syntax error, and a parser that accepts
+  // a write statement must not grant it admission.
+  const admission = [
+    [
+      "a mistyped statement reports its parser error",
+      "SELCT * FRM customers WHERE;",
+      /syntax error/i,
+    ],
+    [
+      "a read query with an invalid trailing clause reports its parser error",
+      "SELECT customer_id FROM customers WHERE",
+      /syntax error/i,
+    ],
+    [
+      "DELETE retains the read-only rejection",
+      "DELETE FROM customers;",
+      /read-only.*index lab/is,
+    ],
+    [
+      "CREATE TABLE retains the read-only rejection",
+      "CREATE TABLE audit_probe(x INT);",
+      /read-only.*index lab/is,
+    ],
+    [
+      "two statements retain the distinct one-statement rejection",
+      "SELECT 1; SELECT 2;",
+      /one statement at a time/i,
+    ],
+    ["empty input remains distinct", "   \n  ", /Enter one SQL statement/i],
+    [
+      "an unfinished string reports a lexical error",
+      "SELECT 'unfinished",
+      /string|quote/i,
+    ],
+  ];
+  for (const [name, sql, pattern] of admission)
+    await check(`admission: ${name}`, async () => {
+      const value = await run(sql);
+      nonpass(value, "engine-error", `admission: ${name}`);
+      assert.match(value.message, pattern);
+      return value;
+    });
+  await check(
+    "rejected input leaves every learning table unchanged",
+    async () => {
+      const value = await run(
+        Object.keys(counts)
+          .map(
+            (name) =>
+              `SELECT '${name}' AS table_name, count(*)::BIGINT AS n FROM ${name}`,
+          )
+          .join(" UNION ALL ") + " ORDER BY table_name",
+      );
+      complete(value);
+      assert.deepEqual(
+        Object.fromEntries(
+          value.result.rows.map(([name, n]) => [name, Number(n)]),
+        ),
+        counts,
+      );
+      return value;
+    },
+  );
+  await check(
+    "cancelling rejected input returns cancellation, not completion",
+    async () => {
+      const outcome = await page.evaluate(async (req) => {
+        const pending = window.engineProof.engine.run(req);
+        window.engineProof.engine.cancel();
+        return window.engineProof.snapshot(await pending);
+      }, request("CREATE TABLE cancelled_probe(x INT)"));
+      assert.equal(outcome.outcome, "cancelled", outcome.message);
+      assert.equal(outcome.result, null);
+      expectedErrors.push({
+        name: "cancel during rejected-input parsing",
+        outcome: outcome.outcome,
+        message: outcome.message,
+      });
+      return { outcome, recovered: await recovery() };
+    },
+  );
+  await check(
+    "INJECTED parser unavailability retains the read-only rejection",
+    async () => {
+      // A policy rejection asks the parser whether the SQL is even valid. If
+      // that worker cannot start, the rejection must stand rather than being
+      // replaced by a worker error.
+      const outcome = await page.evaluate(async (req) => {
+        const RealWorker = window.Worker;
+        let broken = 1;
+        window.Worker = class extends RealWorker {
+          constructor(...args) {
+            if (broken-- > 0)
+              throw new Error("INJECTED parser worker spawn failure");
+            super(...args);
+          }
+        };
+        try {
+          return window.engineProof.snapshot(
+            await window.engineProof.engine.run(req),
+          );
+        } finally {
+          window.Worker = RealWorker;
+        }
+      }, request("DELETE FROM customers"));
+      assert.equal(outcome.outcome, "engine-error", outcome.message);
+      assert.match(outcome.message, /read-only.*index lab/is);
+      assert.doesNotMatch(outcome.message, /INJECTED/);
+      expectedErrors.push({
+        name: "INJECTED parser spawn failure during a policy rejection",
+        outcome: outcome.outcome,
+        message: outcome.message,
+      });
+      return { outcome, recovered: await recovery() };
+    },
+    true,
+  );
   await check("zero rows retain exact schema", async () => {
     const value = await run(
       "SELECT 42::BIGINT AS answer, NULL::DECIMAL(18,2) AS amount WHERE false",

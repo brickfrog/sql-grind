@@ -7,6 +7,7 @@
   import { onMount, tick } from "svelte";
   import { icons, type Skill } from "../lib/catalog";
   import type { Progression, ProgressState } from "../lib/progression";
+  import { formatCount } from "../lib/types";
 
   let {
     selected,
@@ -137,9 +138,9 @@
   <header class="map-toolbar">
     <strong>Skill Map.dag</strong>
     <span
-      >{skills.length} skills · {Object.values(progression.skills).filter(
-        (skill) => skill.completed,
-      ).length} completed</span
+      >{formatCount(skills.length, "skill")} · {Object.values(
+        progression.skills,
+      ).filter((skill) => skill.completed).length} completed</span
     >
     <label
       >Zoom
@@ -196,7 +197,10 @@
                   >{/each}{:else}None{/if}
             </p>
             <p>
-              {count(skill)} of {skill.objectives.length} objectives completed.
+              {count(skill)} of {formatCount(
+                skill.objectives.length,
+                "objective",
+              )} completed.
             </p>
           </li>
         {/each}
@@ -220,6 +224,33 @@
             aria-hidden="true"
             focusable="false"
           >
+            <defs>
+              <!-- refX places the tip at the line end, so arrows point into the dependent skill. -->
+              <marker
+                id="skill-edge-done"
+                viewBox="0 0 4 4"
+                refX="4"
+                refY="2"
+                markerWidth="4"
+                markerHeight="4"
+                markerUnits="strokeWidth"
+                orient="auto"
+              >
+                <path d="M0 0 L4 2 L0 4 z" fill="#286b28" />
+              </marker>
+              <marker
+                id="skill-edge-todo"
+                viewBox="0 0 4 4"
+                refX="4"
+                refY="2"
+                markerWidth="4"
+                markerHeight="4"
+                markerUnits="strokeWidth"
+                orient="auto"
+              >
+                <path d="M0 0 L4 2 L0 4 z" fill="#909090" />
+              </marker>
+            </defs>
             {#each edges as edge}
               <line
                 x1={edge.from.x + 150}
@@ -231,6 +262,9 @@
                   : "#909090"}
                 stroke-width="2"
                 stroke-dasharray="4 4"
+                marker-end={progression.skills[edge.from.id]?.completed
+                  ? "url(#skill-edge-done)"
+                  : "url(#skill-edge-todo)"}
               />
             {/each}
           </svg>

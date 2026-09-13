@@ -129,18 +129,29 @@ export function tokens(sql: string): Token[] {
   }
   return output;
 }
+// Admission rejections are classified so callers can tell an unparseable
+// statement from one the local read policy declines. A policy rejection is not
+// evidence that the SQL is syntactically valid.
+export class AdmissionFailure extends EngineFailure {
+  constructor(
+    readonly reason: "empty" | "multiple" | "policy",
+    message: string,
+  ) {
+    super("engine-error", message);
+  }
+}
 export function admit(sql: string, domain: "challenge" | "sandbox"): string {
   const parsed = tokens(sql);
   if (!parsed.length)
-    throw new EngineFailure("engine-error", "Enter one SQL statement.");
+    throw new AdmissionFailure("empty", "Enter one SQL statement.");
   const semicolon = parsed.findIndex(
     (token) => token.text === ";" && !token.quoted,
   );
   if (semicolon >= 0 && semicolon !== parsed.length - 1)
-    throw new EngineFailure("engine-error", "Run one statement at a time.");
+    throw new AdmissionFailure("multiple", "Run one statement at a time.");
   const end = semicolon >= 0 ? parsed.pop()!.from : sql.length;
   if (!parsed.length)
-    throw new EngineFailure("engine-error", "Enter one SQL statement.");
+    throw new AdmissionFailure("empty", "Enter one SQL statement.");
   const read = [
     "SELECT",
     "WITH",
@@ -156,8 +167,8 @@ export function admit(sql: string, domain: "challenge" | "sandbox"): string {
     if (parsed[start]?.text === "RECURSIVE") start++;
     const groupEnd = (opening: number): number => {
       if (parsed[opening]?.text !== "(" || parsed[opening].quoted)
-        throw new EngineFailure(
-          "engine-error",
+        throw new AdmissionFailure(
+          "policy",
           "Cannot extract this WITH statement under the local read policy.",
         );
       let depth = 1,
@@ -168,8 +179,8 @@ export function admit(sql: string, domain: "challenge" | "sandbox"): string {
         else if (parsed[cursor].text === ")") depth--;
       }
       if (depth)
-        throw new EngineFailure(
-          "engine-error",
+        throw new AdmissionFailure(
+          "policy",
           "Cannot extract an unfinished WITH statement.",
         );
       return cursor;
@@ -180,8 +191,8 @@ export function admit(sql: string, domain: "challenge" | "sandbox"): string {
       if (parsed[start]?.text === "USING" && parsed[start + 1]?.text === "KEY")
         start = groupEnd(start + 2);
       if (parsed[start]?.text !== "AS" || parsed[start].quoted)
-        throw new EngineFailure(
-          "engine-error",
+        throw new AdmissionFailure(
+          "policy",
           "Cannot extract this WITH statement under the local read policy.",
         );
       start++;
@@ -191,8 +202,8 @@ export function admit(sql: string, domain: "challenge" | "sandbox"): string {
       start = groupEnd(start);
       const cteStart = parsed[opening + 1];
       if (!cteStart || cteStart.quoted || !read.includes(cteStart.text))
-        throw new EngineFailure(
-          "engine-error",
+        throw new AdmissionFailure(
+          "policy",
           "CTEs must contain read queries in this application.",
         );
       if (parsed[start]?.text !== ",") break;
@@ -201,8 +212,8 @@ export function admit(sql: string, domain: "challenge" | "sandbox"): string {
   }
   const first = parsed[start];
   if (!first)
-    throw new EngineFailure(
-      "engine-error",
+    throw new AdmissionFailure(
+      "policy",
       "The WITH statement needs a final read query.",
     );
   const indexWrite =
@@ -214,11 +225,11 @@ export function admit(sql: string, domain: "challenge" | "sandbox"): string {
         (parsed[1]?.text === "UNIQUE" && parsed[2]?.text === "INDEX"))) ||
       (first.text === "DROP" && parsed[1]?.text === "INDEX"));
   if (first.quoted || (!read.includes(first.text) && !indexWrite))
-    throw new EngineFailure(
-      "engine-error",
+    throw new AdmissionFailure(
+      "policy",
       domain === "sandbox"
-        ? "The sandbox permits one read query or CREATE/DROP INDEX statement."
-        : "Challenges permit one read query. Use the separate sandbox for schema-changing SQL.",
+        ? "The index lab permits one read query or one CREATE/DROP INDEX statement."
+        : "This dataset is read-only. Run one read query. Index changes are available only in the index lab challenge.",
     );
   return sql.slice(0, end).trim();
 }
@@ -556,7 +567,9 @@ export function scanDiagnostics(
     const items = scans.get(scan.table) ?? [];
     items.push({
       path: scan.path,
-      ...(scan.projections !== undefined ? { projections: scan.projections } : {}),
+      ...(scan.projections !== undefined
+        ? { projections: scan.projections }
+        : {}),
       ...(scan.rowsScanned !== undefined ? { rows: scan.rowsScanned } : {}),
       ...(scan.filters !== undefined ? { filters: scan.filters } : {}),
     });

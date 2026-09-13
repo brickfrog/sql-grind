@@ -297,7 +297,7 @@ try {
   await edit(indexProbe);
   await run();
   assert.equal(await page.locator(".grid-row").count(), 0);
-  await menu("Tools", "Reset Practice Sandbox");
+  await menu("Tools", "Reset Index Lab Session");
   await page
     .locator("dialog")
     .getByRole("button", { name: "Cancel", exact: true })
@@ -305,12 +305,12 @@ try {
   assert.equal(await database.inputValue(), definition.datasetId);
   assert.equal(await exportSql(), indexProbe);
   assert.deepEqual(await tableCounts(), tablesBefore);
-  await menu("Tools", "Reset Practice Sandbox");
+  await menu("Tools", "Reset Index Lab Session");
   await confirm();
   await page.waitForFunction(() =>
     document
       .querySelector(".status-message")
-      ?.textContent?.startsWith("Schema refreshed"),
+      ?.textContent?.startsWith("Index lab session reset"),
   );
   assert.equal(await database.inputValue(), definition.datasetId);
   assert.equal(await exportSql(), indexProbe);

@@ -273,6 +273,67 @@ try {
     await page.locator("#schema-orders").textContent(),
     /ordered_at/,
   );
+  // The requested heading must reach the top of its own scroll viewport, not
+  // merely be somewhere inside it. End-of-content tables cannot scroll further,
+  // so accept the closest reachable position while the heading stays visible.
+  const placement = (table) =>
+    page.evaluate((name) => {
+      const section = document.getElementById(`schema-${name}`);
+      const view = document.querySelector(".schema-reference");
+      if (!section || !view) return null;
+      const offset =
+        section.getBoundingClientRect().top - view.getBoundingClientRect().top;
+      return {
+        offset,
+        atEnd: view.scrollTop >= view.scrollHeight - view.clientHeight - 1,
+        insideView: offset >= -1 && offset < view.clientHeight,
+      };
+    }, table);
+  // Navigation waits one tick plus one frame, so poll rather than sample once.
+  const anchored = async (table) => {
+    await page
+      .waitForFunction(
+        (name) => {
+          const section = document.getElementById(`schema-${name}`);
+          const view = document.querySelector(".schema-reference");
+          if (!section || !view) return false;
+          const offset =
+            section.getBoundingClientRect().top -
+            view.getBoundingClientRect().top;
+          const atEnd =
+            view.scrollTop >= view.scrollHeight - view.clientHeight - 1;
+          return (
+            offset >= -1 && offset < view.clientHeight && (offset < 4 || atEnd)
+          );
+        },
+        table,
+        { timeout: 5000 },
+      )
+      .catch(async () => {
+        assert.fail(
+          `${table} heading never reached the schema viewport start: ${JSON.stringify(await placement(table))}`,
+        );
+      });
+  };
+  await anchored("orders");
+  // Keyboard navigation uses the same path, and a later request wins.
+  await page.locator('[role="treeitem"][data-table="payments"]').focus();
+  await page.keyboard.press("Enter");
+  await visible("#schema-payments");
+  await anchored("payments");
+  await page.locator('[role="treeitem"][data-table="orders"]').dblclick();
+  await page.locator('[role="treeitem"][data-table="categories"]').dblclick();
+  await anchored("categories");
+  assert.equal(
+    await page.evaluate(
+      () =>
+        document
+          .querySelector('[role="treeitem"][data-table="categories"]')
+          ?.getAttribute("aria-selected") === "true",
+    ),
+    true,
+    "the last requested table stays selected",
+  );
   await page
     .getByRole("button", { name: "Object Explorer actions", exact: true })
     .click();

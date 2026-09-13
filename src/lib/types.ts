@@ -179,3 +179,12 @@ export const defaultSettings: Settings = {
   judgeVisible: true,
   judgeDocked: false,
 };
+
+// Count labels agree with their number: "1 row", "2 rows", "100,000 rows".
+export function formatCount(
+  count: number,
+  singular: string,
+  plural = `${singular}s`,
+): string {
+  return `${count.toLocaleString()} ${count === 1 ? singular : plural}`;
+}

@@ -1,13 +1,19 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
 import type { RecordBatch } from "apache-arrow";
-import type {
-  EngineState,
-  ParseResult,
-  RunRequest,
-  RunResult,
-  SchemaTable,
+import {
+  formatCount,
+  type EngineState,
+  type ParseResult,
+  type RunRequest,
+  type RunResult,
+  type SchemaTable,
 } from "./types";
-import { admit, analyze, scanDiagnostics } from "./engine-diagnostics";
+import {
+  admit,
+  AdmissionFailure,
+  analyze,
+  scanDiagnostics,
+} from "./engine-diagnostics";
 import {
   ArrowResult,
   batchBuffers,
@@ -497,19 +503,14 @@ export class EngineCoordinator {
         }
         const slot = this.parser;
         work.slots.add(slot);
-        const table = await work.deadline(
-          10_000,
-          "Parser deadline exceeded.",
-          () =>
-            work.wait(
-              slot.conn!.query(
-                `SELECT json_serialize_sql(${quote(sql)}) AS ast`,
-              ),
-              slot,
-            ),
+        return await this.analyzeSql(
+          work,
+          slot,
+          sql,
+          revision,
+          schema,
+          started,
         );
-        const ast = JSON.parse(String(table.getChildAt(0)!.get(0)));
-        return analyze(ast, sql, revision, performance.now() - started, schema);
       } catch (error) {
         for (const slot of work.slots) this.terminate(slot);
         return {
@@ -526,6 +527,31 @@ export class EngineCoordinator {
     });
     this.parserQueue = result.catch(() => {});
     return result;
+  }
+
+  // One parser round trip: serialize the statement, then classify the result.
+  // Callers own their parser slot; this never executes the statement itself.
+  private async analyzeSql(
+    work: Work,
+    slot: Slot,
+    sql: string,
+    revision: number,
+    schema: SchemaTable[],
+    startedAt: number,
+  ): Promise<ParseResult> {
+    const table = await work.deadline(10_000, "Parser deadline exceeded.", () =>
+      work.wait(
+        slot.conn!.query(`SELECT json_serialize_sql(${quote(sql)}) AS ast`),
+        slot,
+      ),
+    );
+    return analyze(
+      JSON.parse(String(table.getChildAt(0)!.get(0))),
+      sql,
+      revision,
+      performance.now() - startedAt,
+      schema,
+    );
   }
 
   private async query(
@@ -572,7 +598,7 @@ export class EngineCoordinator {
             if (visible)
               this.onState(
                 "transferring",
-                `Receiving result: ${rows.toLocaleString()} rows.`,
+                `Receiving result: ${formatCount(rows, "row")}.`,
               );
             // Yield between batches so Cancel can interrupt transfer, not only compute.
             const pause = Promise.withResolvers<void>();
@@ -659,7 +685,56 @@ export class EngineCoordinator {
           "Scratch documents can execute SQL but cannot receive challenge credit.",
         );
       // The only DDL route is the private, disposable index sequence below.
-      const sql = admit(request.sql, "challenge");
+      // Empty and multi-statement input is rejected outright. A policy
+      // rejection first asks the parser whether the statement is even valid,
+      // so a typo reports its own syntax error instead of read-only guidance.
+      let sql: string;
+      try {
+        sql = admit(request.sql, "challenge");
+      } catch (rejection) {
+        if (
+          !(rejection instanceof AdmissionFailure) ||
+          rejection.reason !== "policy"
+        )
+          throw rejection;
+        // Creating the parser is part of the guarded region: if the worker
+        // cannot start, the admission rejection stands rather than being
+        // replaced by a worker error.
+        let parsed: ParseResult | undefined;
+        let parser: Slot | undefined;
+        try {
+          parser = await this.create(work, context);
+          // Only syntax matters here, so the parser needs no schema.
+          parsed = await this.analyzeSql(
+            work,
+            parser,
+            request.sql,
+            request.revision,
+            [],
+            performance.now(),
+          );
+        } catch (parserError) {
+          if (work.reason) throw work.reason;
+          if (
+            parserError instanceof EngineFailure &&
+            (parserError.outcome === "cancelled" ||
+              parserError.outcome === "timeout")
+          )
+            throw parserError;
+        } finally {
+          if (parser) this.terminate(parser);
+        }
+        // Unsupported serialization reports valid: null, which is no evidence
+        // either way; the admission rejection stands.
+        if (parsed?.valid !== false) throw rejection;
+        return {
+          ...empty,
+          diagnostics: parsed.diagnostics,
+          message:
+            parsed.diagnostics.find((diagnostic) => diagnostic.ruleId === "SQL")
+              ?.message ?? "SQL syntax is invalid.",
+        };
+      }
       const preview = await this.create(
         work,
         context,
@@ -670,23 +745,13 @@ export class EngineCoordinator {
         const schema = await this.readSchema(work, preview, context.dataset);
         const parser = await this.create(work, context);
         try {
-          const ast = await work.deadline(
-            10_000,
-            "Parser deadline exceeded.",
-            () =>
-              work.wait(
-                parser.conn!.query(
-                  `SELECT json_serialize_sql(${quote(request.sql)}) AS ast`,
-                ),
-                parser,
-              ),
-          );
-          const parsed = analyze(
-            JSON.parse(String(ast.getChildAt(0)!.get(0))),
+          const parsed = await this.analyzeSql(
+            work,
+            parser,
             request.sql,
             request.revision,
-            0,
             schema,
+            performance.now(),
           );
           diagnostics = parsed.diagnostics;
           if (parsed.valid === false)

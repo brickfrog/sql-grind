@@ -15,6 +15,7 @@
   } from "./lib/storage";
   import {
     defaultSettings,
+    formatCount,
     type QueryDocument,
     type Settings,
     type RunResult,
@@ -42,6 +43,8 @@
     type SqlSlot,
   } from "./lib/engine-labs";
   import ReconciliationAssessment from "./components/ReconciliationAssessment.svelte";
+
+  type StatusTone = "neutral" | "working" | "success" | "error";
 
   let engine: EngineCoordinator;
   let store: PracticeStore;
@@ -87,6 +90,7 @@
   let attempts = $state<Attempt[]>([]);
   let engineState = $state<EngineState>("loading");
   let status = $state("Loading local practice data and DuckDB…");
+  let statusTone = $state<StatusTone>("working");
   let error = $state("");
   let errorSource = $state<"engine" | "storage" | "operation">("operation");
   let committedRevisions = $state<Record<string, number>>({});
@@ -178,6 +182,16 @@
   let goalX = $state<number | null>(null);
   let goalY = $state<number | null>(null);
   let moving = $state<"" | "judge" | "goal">("");
+  // Below the desktop's minimum width the three-column IDE cannot reflow, so
+  // Reading Layout becomes mandatory. This never writes the stored preference:
+  // widening restores whatever the learner actually chose.
+  const NARROW_QUERY = "(max-width: 1099px)";
+  let narrowViewport = $state(false);
+  const readingLayout = $derived(settings.readingLayout || narrowViewport);
+  // A floated Goal returns to document flow while narrow, with its saved
+  // coordinates, size, and visibility untouched.
+  const effectiveGoalFloating = $derived(goalFloating && !readingLayout);
+  const effectiveJudgeZoom = $derived(readingLayout ? 1 : judgeZoom);
   let movementStart = { x: 0, y: 0 };
   let menu = $state("");
   let menuPosition = $state({ left: 0, top: 0 });
@@ -303,6 +317,24 @@
             attempt.outcome === "complete",
         )),
   );
+  // Evidence about the draft on screen right now. `completed` records history
+  // and survives reloads and edits, so it can never stand in for this.
+  const solvedNow = $derived(
+    !!result &&
+      !stale &&
+      !!activeDoc &&
+      result.outcome === "complete" &&
+      result.correctness === "correct" &&
+      result.datasetId === activeDoc.datasetId &&
+      sameIdentity(result.challenge, activeDoc.challenge),
+  );
+  const currentFailure = $derived(
+    !!result &&
+      !stale &&
+      (result.outcome !== "complete" || result.correctness === "incorrect")
+      ? result.message
+      : "",
+  );
   const skill = $derived(
     skills.find((s) => s.id === selectedSkill) ?? skills[0],
   );
@@ -350,11 +382,14 @@
   const remark = $derived(
     settings.hush
       ? "Hushed. I keep reading — diagnostics and grading continue without me saying so."
-      : (currentDiagnostics[0]?.message ??
-          (running
-            ? "Running. I dislike waiting, so let us both be patient."
+      : running
+        ? "Running. I dislike waiting, so let us both be patient."
+        : (currentFailure ||
+          currentDiagnostics[0]?.message ||
+          (solvedNow
+            ? "Solved. The result agreed with the contract on every dataset; that is the only proof I accept."
             : completed
-              ? "Solved. The result agreed with the contract on every dataset; that is the only proof I accept."
+              ? "You completed this challenge before. Submit this draft to check it."
               : "I am reading your query. Correctness is what I check; style and speed are separate notes.")),
   );
   // Celebration for the first skill only, to see how it feels.
@@ -433,7 +468,7 @@
       "Storage",
       "Schema Reference",
       "Refresh Schema",
-      "Reset Practice Sandbox",
+      "Reset Index Lab Session",
     ],
     Window: [
       "Minimize IDE",
@@ -462,12 +497,11 @@
     { name: "Leaderboard", icon: "trophy" },
     { name: "Recycle Bin", icon: "bin" },
   ];
-  const outputTabs = [
+  const BASE_OUTPUT_TABS = [
     "Results",
     "Messages",
     "Execution plan",
     "Patchouli’s notes",
-    "Assessment",
   ];
 
   function stateLabel(state?: string) {
@@ -485,6 +519,7 @@
     const output = result?.result;
     if (
       !output ||
+      !resultBelongsHere ||
       result?.outcome !== "complete" ||
       !result.challenge ||
       summaries[result.challenge.challengeId]?.skillId !== "reconcile"
@@ -510,8 +545,39 @@
       committed: counts.high + counts.probable,
     };
   });
-  function announce(text: string) {
+  // A result only ever describes the document it ran for. Its revision may lag
+  // — the stale notice says so — but another document's evidence never shows.
+  const resultBelongsHere = $derived(
+    !!result &&
+      !!activeDoc &&
+      result.documentId === activeDoc.id &&
+      result.datasetId === activeDoc.datasetId &&
+      sameIdentity(result.challenge, activeDoc.challenge),
+  );
+  // The Assessment tab exists only where the authored challenge has an
+  // assessment panel. Empty panels are not created to justify a tab.
+  const assessmentAvailable = $derived(
+    !!challenge &&
+      (challenge.assessment.kind === "plan-lab" ||
+        challenge.assessment.kind === "reconciliation" ||
+        (activeSummary?.skillId === "reconcile" &&
+          challenge.output.columns.some(
+            (column) => column.name === "confidence",
+          ))),
+  );
+  const outputTabs = $derived(
+    assessmentAvailable
+      ? [...BASE_OUTPUT_TABS, "Assessment"]
+      : BASE_OUTPUT_TABS,
+  );
+  $effect(() => {
+    if (!outputTabs.includes(outputTab)) outputTab = "Results";
+  });
+  // The status square describes the displayed message's outcome, not merely
+  // engine readiness: a rejected query leaves the engine ready.
+  function announce(text: string, tone: StatusTone = "neutral") {
     status = text;
+    statusTone = tone;
     messages = [
       ...messages.slice(-99),
       `${new Date().toLocaleTimeString()}  ${text}`,
@@ -559,7 +625,7 @@
     const message = cause instanceof Error ? cause.message : String(cause);
     if (source !== "operation" || message !== error) errorSource = source;
     error = message;
-    announce(error);
+    announce(error, "error");
   }
   function isDirty(doc: QueryDocument) {
     return !doc.saved || committedRevisions[doc.id] !== doc.revision;
@@ -1285,6 +1351,7 @@
           : "Results";
     announce(
       `${kind === "submit" ? "Submitting" : kind === "plan" ? "Planning" : kind === "compare" ? "Comparing" : "Executing"} revision ${doc.revision}…`,
+      "working",
     );
     try {
       const run = await engine.run({
@@ -1320,9 +1387,14 @@
           ),
           ...run.diagnostics,
         ];
+      // This overrides the engine's own "ready" callback: the run outcome, not
+      // engine readiness, is what the displayed message reports.
       announce(
         run.message +
           (!current ? " Output is stale: the active document changed." : ""),
+        run.outcome !== "complete" || run.correctness === "incorrect"
+          ? "error"
+          : "success",
       );
       if (kind === "submit" && run.challenge) {
         const firstPass =
@@ -1414,14 +1486,26 @@
     await prepareDocument();
     announce(`Using immutable dataset ${datasetId}. SQL is unchanged.`);
   }
+  // Notes render after the view switches, so the heading only exists one tick
+  // plus one frame later. A stale callback must not scroll a newer request.
   function showSchema(name = "") {
     view = "schema";
     ideVisible = true;
-    if (name) selectedObject = name;
+    if (!name) return;
+    selectedObject = name;
+    const datasetId = activeDoc?.datasetId;
     void tick().then(() =>
-      document
-        .getElementById("schema-" + name)
-        ?.scrollIntoView({ block: "nearest" }),
+      requestAnimationFrame(() => {
+        if (
+          view !== "schema" ||
+          selectedObject !== name ||
+          activeDoc?.datasetId !== datasetId
+        )
+          return;
+        document
+          .getElementById("schema-" + name)
+          ?.scrollIntoView({ block: "start", behavior: "instant" });
+      }),
     );
   }
   async function revealHint() {
@@ -1830,7 +1914,7 @@
   function moveWindow(event: PointerEvent, target: keyof typeof floating) {
     if (
       (event.target as HTMLElement).closest("button") ||
-      settings.readingLayout
+      readingLayout
     )
       return;
     const element = document.getElementById(floating[target].id);
@@ -2465,17 +2549,20 @@
         case "Refresh Schema":
           await refreshSchema();
           break;
-        case "Reset Practice Sandbox":
+        case "Reset Index Lab Session":
           if (
             await confirmAction(
-              "Reset Practice Sandbox",
-              "Discard sandbox tables, variables, indexes, and pending results? Saved SQL and progress remain intact.",
+              "Reset Index Lab Session",
+              "End the disposable index lab session? Saved SQL and progress remain unchanged.",
             )
           ) {
             engine.cancel();
             await engine.resetSandbox();
             if (domain === "sandbox") result = null;
             await refreshSchema();
+            announce(
+              "Index lab session reset. Saved SQL and progress are unchanged.",
+            );
           }
           break;
         case "Settings":
@@ -2753,7 +2840,7 @@
   function moveIde(event: PointerEvent) {
     if (
       maximized ||
-      settings.readingLayout ||
+      readingLayout ||
       (event.target as HTMLElement).closest("button")
     )
       return;
@@ -2799,12 +2886,24 @@
       goalMenu = false;
     };
     window.addEventListener("sql-grind-context-menu-open", closeChromeMenus);
+    const narrow = window.matchMedia(NARROW_QUERY);
+    const narrowChanged = () => (narrowViewport = narrow.matches);
+    narrowChanged();
+    narrow.addEventListener("change", narrowChanged);
     let disposed = false;
     const timer = setInterval(() => (clock = new Date()), 1000);
     engine = new EngineCoordinator((state, message) => {
       if (!disposed) {
         engineState = state;
-        if (message) status = message;
+        if (message) {
+          status = message;
+          statusTone =
+            state === "error"
+              ? "error"
+              : state === "ready"
+                ? "neutral"
+                : "working";
+        }
       }
     });
     void (async () => {
@@ -2823,6 +2922,7 @@
         "sql-grind-context-menu-open",
         closeChromeMenus,
       );
+      narrow.removeEventListener("change", narrowChanged);
       clearTimeout(parseTimer);
       for (const timer of saveTimers.values()) clearTimeout(timer);
       engine.dispose();
@@ -2861,7 +2961,7 @@
   }}>Skip to SQL editor</a
 >
 <a class="skip-link" href="#output-region">Skip to output</a>
-<div class:reading={settings.readingLayout} class="desktop">
+<div class:reading={readingLayout} class="desktop">
   <nav class="desktop-icons" aria-label="Desktop shortcuts">
     {#each desktopIcons as item}<button
         class="desktop-icon"
@@ -2880,12 +2980,8 @@
       class:popup-open={!!menu || explorerMenu || goalMenu}
       class="ide window"
       aria-label="SQL Grind workbench"
-      style:left={!maximized && !settings.readingLayout
-        ? `${ideX}px`
-        : undefined}
-      style:top={!maximized && !settings.readingLayout
-        ? `${ideY}px`
-        : undefined}
+      style:left={!maximized && !readingLayout ? `${ideX}px` : undefined}
+      style:top={!maximized && !readingLayout ? `${ideY}px` : undefined}
     >
       <header
         class="titlebar ide-title"
@@ -3111,7 +3207,7 @@
           ? `${explorerWidth}px 7px `
           : "") +
           "minmax(340px, 1fr)" +
-          (showGoal && !goalFloating ? ` 7px ${goalWidth}px` : "")}
+          (showGoal && !effectiveGoalFloating ? ` 7px ${goalWidth}px` : "")}
       >
         {#if showExplorer}<aside
             class="explorer panel"
@@ -3179,7 +3275,7 @@
                   placeholder="Filter tables…"
                   bind:value={objectFilter}
                 /><button onclick={() => (objectFilter = "")}>Clear</button
-                ><span>{visibleTables.length} matches</span>
+                ><span>{formatCount(visibleTables.length, "match", "matches")}</span>
               </div>{/if}
             <div
               class="tree inset"
@@ -3328,7 +3424,8 @@
               {/if}
             </div>
             <div class="explorer-footer">
-              Local data · {schema.length} tables<br />{activeDoc?.datasetId ??
+              Local data · {formatCount(schema.length, "table")}<br
+              />{activeDoc?.datasetId ??
                 "No dataset"} · immutable snapshots
             </div>
           </aside>
@@ -3501,7 +3598,7 @@
                         : undefined}
                     />
                   {/if}
-                  {#if result?.assessment?.kind === "reconciliation"}
+                  {#if result?.assessment?.kind === "reconciliation" && resultBelongsHere}
                     {#if stale}<p>
                         This assessment belongs to the captured earlier SQL and
                         content, not the active revision.
@@ -3530,11 +3627,16 @@
                           {confidence}: {count}
                         </li>{/each}
                     </ul>
-                  {:else if !activeDoc?.lab}<p>
-                      Submit a reconciliation answer to inspect outcome metrics
-                      and evidence. Exact challenge outcomes appear in the
-                      scorecard.
-                    </p>{/if}
+                  {:else if !activeDoc?.lab}
+                    {#if challenge?.assessment.kind === "exact"}<p>
+                        Execute or submit your query to inspect confidence
+                        counts and coverage.
+                      </p>{:else}<p>
+                        Submit a reconciliation answer to inspect outcome
+                        metrics and evidence. Exact challenge outcomes appear in
+                        the scorecard.
+                      </p>{/if}
+                  {/if}
                 </div>
               {:else if outputTab === "Messages"}<div
                   class="message-list inset"
@@ -3624,7 +3726,7 @@
               selected={selectedSkill}
               {skills}
               {progression}
-              readingLayout={settings.readingLayout}
+              {readingLayout}
               onselect={(id) => (selectedSkill = id)}
             />
           {:else}<div class="schema-reference inset" data-region tabindex="-1">
@@ -3633,7 +3735,8 @@
                   .version ?? "scratch"}
               </h2>
               <p>
-                {schema.length} tables. Learning data is immutable. Times use UTC.
+                {formatCount(schema.length, "table")}. Learning data is
+                immutable. Times use UTC.
               </p>
               <p>
                 Challenge runs restore protected snapshots. The index sandbox is
@@ -3647,7 +3750,7 @@
               {#each schema as table}<section id={"schema-" + table.name}>
                   <h3>
                     {table.name}
-                    <small>{table.count.toLocaleString()} rows</small>
+                    <small>{formatCount(table.count, "row")}</small>
                   </h3>
                   <table>
                     <thead
@@ -3670,7 +3773,7 @@
                 </section>{/each}
             </div>{/if}
         </section>
-        {#if showGoal && !goalFloating}
+        {#if showGoal && !effectiveGoalFloating}
           <input
             class="sidebar-splitter"
             type="range"
@@ -3686,15 +3789,18 @@
       </div>
       <footer class="statusbar">
         <span class="status-message" role="status" aria-live="polite"
-          ><i class:ready={engineState === "ready"} class:working={busy}
+          ><i
+            class:ready={statusTone === "success"}
+            class:working={statusTone === "working"}
+            class:error={statusTone === "error"}
           ></i>{status}</span
         ><span
           >DuckDB {activeDoc?.challenge?.engineVersion ?? "v1.5.4"} · 1 thread</span
         ><span>{result ? result.elapsedMs.toFixed(1) + " ms" : "Not run"}</span
         ><span
           >{result?.fixtureResults
-            ? `${result.fixtureResults.length} datasets`
-            : `${result?.result?.count ?? 0} rows`}</span
+            ? formatCount(result.fixtureResults.length, "dataset")
+            : formatCount(result?.result?.count ?? 0, "row")}</span
         ><span
           >{activeDoc
             ? `Ln ${activeDoc.sql.slice(0, activeDoc.selection.head).split("\n").length} Col ${activeDoc.selection.head - (activeDoc.sql.lastIndexOf("\n", activeDoc.selection.head - 1) + 1) + 1} INS`
@@ -3705,7 +3811,9 @@
   {#if settings.judgeVisible && !settings.judgeDocked}{@render judge(
       false,
     )}{/if}
-  {#if ideVisible && showGoal && goalFloating}{@render goalPanel(true)}{/if}
+  {#if ideVisible && showGoal && effectiveGoalFloating}{@render goalPanel(
+      true,
+    )}{/if}
   {#key confettiRun}
     {#if confettiOn}
       <div class="confetti" aria-hidden="true">
@@ -3842,11 +3950,19 @@
     id={docked ? "judge-docked" : "judge-window"}
     class:docked
     class="judge window"
-    style:left={!docked && judgeX !== null ? judgeX + "px" : undefined}
-    style:top={!docked && judgeY !== null ? judgeY + "px" : undefined}
-    style:right={!docked && judgeX !== null ? "auto" : undefined}
-    style:bottom={!docked && judgeY !== null ? "auto" : undefined}
-    style:--judge-zoom={docked ? undefined : judgeZoom}
+    style:left={!docked && !readingLayout && judgeX !== null
+      ? judgeX + "px"
+      : undefined}
+    style:top={!docked && !readingLayout && judgeY !== null
+      ? judgeY + "px"
+      : undefined}
+    style:right={!docked && !readingLayout && judgeX !== null
+      ? "auto"
+      : undefined}
+    style:bottom={!docked && !readingLayout && judgeY !== null
+      ? "auto"
+      : undefined}
+    style:--judge-zoom={docked ? undefined : effectiveJudgeZoom}
     aria-label="Patchouli judge"
   >
     <div
@@ -3921,7 +4037,7 @@
           await updateSettings();
         }}>{settings.hush ? "Resume commentary" : "Hush"}</button
       >
-      {#if !docked}<button
+      {#if !docked && !readingLayout}<button
           class="judge-resize"
           aria-label="Resize judge"
           title="Drag to resize · Arrow keys change size"
@@ -4458,7 +4574,9 @@
             bind:checked={settings.readingLayout}
             onchange={updateSettings}
           />Single-column Reading Layout</label
-        ><label
+        >{#if narrowViewport}<small class="setting-note"
+            >Reading Layout is automatic below 1100 pixels.</small
+          >{/if}<label
           ><input
             type="checkbox"
             bind:checked={settings.announceDiagnostics}
@@ -4540,9 +4658,12 @@
         ><button onclick={() => exportBackup()}>Export records</button>
       </div>
       <p>
-        {Object.values(progression.challenges).filter(
-          (objective) => objective.completed,
-        ).length} current challenges completed.
+        {formatCount(
+          Object.values(progression.challenges).filter(
+            (objective) => objective.completed,
+          ).length,
+          "current challenge",
+        )} completed.
       </p>
       <div class="library-list">
         {#each filteredAttempts as attempt}<article>
@@ -4669,12 +4790,17 @@
         grading, or server-side submissions.
       </p>
       <p>
-        {skills.length} skills · {Object.keys(summaries).length} complete exercises.
+        {formatCount(skills.length, "skill")} · {formatCount(
+          Object.keys(summaries).length,
+          "complete exercise",
+        )}.
         Correct current outcomes unlock later skills.
       </p>
     {/if}
   </div>
-  {#if modal !== "prompt" && modal !== "confirm"}<footer class="dialog-actions">
+  {#if modal !== "prompt" && modal !== "confirm" && modal !== "celebrate"}<footer
+      class="dialog-actions"
+    >
       <button class="default-button" onclick={closeModal}>Close</button>
     </footer>{/if}
 </dialog>

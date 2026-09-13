@@ -93,6 +93,29 @@ try {
   assert.match(await page.locator(".fixture-results").textContent(), /PASS/);
   assert.equal(await page.locator(".fixture-results li").count(), 3);
   assert.match(await page.locator(".scorecard").textContent(), /Pass/);
+  // The first correct basics submission opens the modal celebration. It offers
+  // exactly one dismiss action and one forward action; a redundant footer Close
+  // would be a third way to say the same thing.
+  const celebration = page.locator("dialog");
+  await celebration.waitFor({ state: "visible" });
+  assert.equal(
+    await celebration
+      .getByRole("button", { name: "Close", exact: true })
+      .count(),
+    0,
+    "the celebration has no redundant footer Close",
+  );
+  assert.equal(
+    await celebration
+      .getByRole("button", { name: "Open next challenge", exact: true })
+      .count(),
+    1,
+  );
+  await celebration
+    .getByRole("button", { name: "Stay on this challenge", exact: true })
+    .click();
+  await celebration.waitFor({ state: "hidden" });
+  mark("first-pass celebration offers one dismiss and one forward action");
   await page
     .getByRole("button", { name: "Hint (3 left)", exact: true })
     .click();

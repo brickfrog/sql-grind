@@ -1,7 +1,7 @@
 <script lang="ts">
   import { tick, untrack } from "svelte";
   import { createVirtualizer } from "@tanstack/svelte-virtual";
-  import type { ResultHandle } from "../lib/types";
+  import { formatCount, type ResultHandle } from "../lib/types";
   import ContextMenu, { type ContextMenuItem } from "./ContextMenu.svelte";
 
   let {
@@ -262,7 +262,7 @@
   <div class="result-tools">
     <span
       >{result
-        ? `${count.toLocaleString()} rows · ${columns.length} columns`
+        ? `${formatCount(count, "row")} · ${formatCount(columns.length, "column")}`
         : "No result"}</span
     >
     {#if busy}<strong>Running…</strong>{/if}
@@ -301,7 +301,7 @@
       <span
         >Page {page + 1} of {pageCount} · {count
           ? `${page * pageSize + 1}–${Math.min(count, (page + 1) * pageSize)}`
-          : "0"} of {count.toLocaleString()} rows</span
+          : "0"} of {formatCount(count, "row")}</span
       >
       <button
         type="button"

@@ -1,4 +1,14 @@
-import { DataType, Table, type RecordBatch, type Schema } from "apache-arrow";
+import {
+  DataType,
+  DateUnit,
+  IntervalUnit,
+  Table,
+  TimeUnit,
+  type Data,
+  type RecordBatch,
+  type Schema,
+  type Vector,
+} from "apache-arrow";
 import {
   sameIdentity,
   validateIdentity,
@@ -132,9 +142,187 @@ export function cell(value: unknown, field: TypedField): string | null {
   if (value == null) return null;
   if (field.type.startsWith("Decimal"))
     return decimal(value as Uint32Array, field.scale ?? 0);
-  if (field.type === "Date32<DAY>" || field.type === "Date64<MILLISECOND>")
-    return new Date(value as number).toISOString().split("T")[0];
   return displayValue(value);
+}
+
+// DuckDB encodes timestamp infinities as the extreme int64 values and date
+// infinities as the extreme int32 values. Arrow's own getters convert raw
+// integers to Number milliseconds, which loses sub-millisecond digits and
+// throws on the sentinels, so every temporal column is decoded from its
+// original record-batch buffer instead.
+const TIMESTAMP_INFINITY = 9223372036854775807n;
+const TIMESTAMP_NEG_INFINITY = -9223372036854775807n;
+const DATE_INFINITY = 2147483647;
+const DATE_NEG_INFINITY = -2147483647;
+
+const SUBSECOND: Readonly<Record<TimeUnit, bigint>> = {
+  [TimeUnit.SECOND]: 1n,
+  [TimeUnit.MILLISECOND]: 1_000n,
+  [TimeUnit.MICROSECOND]: 1_000_000n,
+  [TimeUnit.NANOSECOND]: 1_000_000_000n,
+};
+const SUBSECOND_DIGITS: Readonly<Record<TimeUnit, number>> = {
+  [TimeUnit.SECOND]: 0,
+  [TimeUnit.MILLISECOND]: 3,
+  [TimeUnit.MICROSECOND]: 6,
+  [TimeUnit.NANOSECOND]: 9,
+};
+
+function floorDiv(value: bigint, divisor: bigint): bigint {
+  const quotient = value / divisor;
+  return value < 0n && quotient * divisor !== value ? quotient - 1n : quotient;
+}
+
+function pad(value: bigint | number, width: number): string {
+  return String(value).padStart(width, "0");
+}
+
+// Integer proleptic-Gregorian conversion over 400-year eras. JavaScript's Date
+// covers a narrower range than DuckDB's timestamps.
+function civilFromDays(days: number): { y: number; m: number; d: number } {
+  const shifted = days + 719_468;
+  const era = Math.floor(shifted / 146_097);
+  const dayOfEra = shifted - era * 146_097;
+  const yearOfEra = Math.floor(
+    (dayOfEra -
+      Math.floor(dayOfEra / 1460) +
+      Math.floor(dayOfEra / 36_524) -
+      Math.floor(dayOfEra / 146_096)) /
+      365,
+  );
+  const dayOfYear =
+    dayOfEra -
+    (365 * yearOfEra + Math.floor(yearOfEra / 4) - Math.floor(yearOfEra / 100));
+  const monthPosition = Math.floor((5 * dayOfYear + 2) / 153);
+  const d = dayOfYear - Math.floor((153 * monthPosition + 2) / 5) + 1;
+  const m = monthPosition + (monthPosition < 10 ? 3 : -9);
+  return { y: yearOfEra + era * 400 + (m <= 2 ? 1 : 0), m, d };
+}
+
+// ISO 8601 expanded years: four digits inside 0000-9999, otherwise a sign and
+// at least six digits. Nonpositive years use astronomical numbering.
+function isoYear(year: number): string {
+  if (year >= 0 && year <= 9999) return pad(year, 4);
+  const sign = year < 0 ? "-" : "+";
+  return sign + pad(Math.abs(year), 6);
+}
+
+function calendarDate(days: number): string {
+  const { y, m, d } = civilFromDays(days);
+  return `${isoYear(y)}-${pad(m, 2)}-${pad(d, 2)}`;
+}
+
+function fraction(value: bigint, digits: number): string {
+  if (!digits || value === 0n) return "";
+  const text = pad(value, digits).replace(/0+$/, "");
+  return text ? `.${text}` : "";
+}
+
+function clockTime(secondsOfDay: bigint, frac: bigint, digits: number): string {
+  const hours = secondsOfDay / 3600n;
+  const minutes = (secondsOfDay / 60n) % 60n;
+  const seconds = secondsOfDay % 60n;
+  return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}${fraction(frac, digits)}`;
+}
+
+type RawDecoder = (data: Data, index: number) => string;
+
+function timestampDecoder(unit: TimeUnit, zoned: boolean): RawDecoder {
+  const scale = SUBSECOND[unit];
+  const digits = SUBSECOND_DIGITS[unit];
+  // DuckDB normalizes zoned timestamps to UTC instants; display them as UTC.
+  const suffix = zoned ? "+00:00" : "";
+  return (data, index) => {
+    const raw = (data.values as BigInt64Array)[index];
+    if (raw === TIMESTAMP_INFINITY) return "infinity";
+    if (raw === TIMESTAMP_NEG_INFINITY) return "-infinity";
+    const seconds = floorDiv(raw, scale);
+    const frac = raw - seconds * scale;
+    const days = floorDiv(seconds, 86_400n);
+    const secondsOfDay = seconds - days * 86_400n;
+    return `${calendarDate(Number(days))} ${clockTime(secondsOfDay, frac, digits)}${suffix}`;
+  };
+}
+
+function timeDecoder(unit: TimeUnit, wide: boolean): RawDecoder {
+  const scale = SUBSECOND[unit];
+  const digits = SUBSECOND_DIGITS[unit];
+  return (data, index) => {
+    const raw = wide
+      ? (data.values as BigInt64Array)[index]
+      : BigInt((data.values as Int32Array)[index]);
+    const seconds = floorDiv(raw, scale);
+    const frac = raw - seconds * scale;
+    return clockTime(seconds, frac, digits);
+  };
+}
+
+function dateDecoder(unit: DateUnit): RawDecoder {
+  if (unit === DateUnit.DAY)
+    return (data, index) => {
+      const days = (data.values as Int32Array)[index];
+      if (days === DATE_INFINITY) return "infinity";
+      if (days === DATE_NEG_INFINITY) return "-infinity";
+      return calendarDate(days);
+    };
+  return (data, index) => {
+    const millis = (data.values as BigInt64Array)[index];
+    return calendarDate(Number(floorDiv(millis, 86_400_000n)));
+  };
+}
+
+function plural(count: bigint, noun: string): string {
+  return `${count} ${count === 1n || count === -1n ? noun : `${noun}s`}`;
+}
+
+// Months stay months and days stay days: a month is not a fixed number of days.
+// Each component keeps its own sign, exactly as the engine stored it.
+function intervalText(months: bigint, days: bigint, nanos: bigint): string {
+  const parts: string[] = [];
+  if (months) parts.push(plural(months, "month"));
+  if (days) parts.push(plural(days, "day"));
+  if (nanos) {
+    const magnitude = nanos < 0n ? -nanos : nanos;
+    const seconds = magnitude / 1_000_000_000n;
+    const frac = magnitude % 1_000_000_000n;
+    parts.push((nanos < 0n ? "-" : "") + clockTime(seconds, frac, 9));
+  }
+  return parts.length ? parts.join(" ") : "00:00:00";
+}
+
+// Arrow 17 computes an interval stride of 1 + unit, so its MONTH_DAY_NANO
+// getter reads three of the four words and drifts across rows. Decode the
+// physical words directly and never take an Arrow interval slice or view.
+function intervalDecoder(unit: IntervalUnit): RawDecoder {
+  if (unit === IntervalUnit.YEAR_MONTH)
+    return (data, index) =>
+      intervalText(BigInt((data.values as Int32Array)[index]), 0n, 0n);
+  if (unit === IntervalUnit.DAY_TIME)
+    return (data, index) => {
+      const words = data.values as Int32Array;
+      return intervalText(
+        0n,
+        BigInt(words[index * 2]),
+        BigInt(words[index * 2 + 1]) * 1_000_000n,
+      );
+    };
+  return (data, index) => {
+    const words = data.values as Int32Array;
+    const base = index * 4;
+    const nanos =
+      BigInt(words[base + 3]) * 4_294_967_296n + BigInt(words[base + 2] >>> 0);
+    return intervalText(BigInt(words[base]), BigInt(words[base + 1]), nanos);
+  };
+}
+
+function rawDecoder(type: DataType): RawDecoder | null {
+  if (DataType.isTimestamp(type))
+    return timestampDecoder(type.unit, Boolean(type.timezone));
+  if (DataType.isTime(type))
+    return timeDecoder(type.unit, type.bitWidth === 64);
+  if (DataType.isDate(type)) return dateDecoder(type.unit);
+  if (DataType.isInterval(type)) return intervalDecoder(type.unit);
+  return null;
 }
 
 export class ArrowResult implements ResultHandle {
@@ -142,6 +330,12 @@ export class ArrowResult implements ResultHandle {
   readonly fields: TypedField[];
   readonly count: number;
   private readonly table: Table;
+  private readonly batches: RecordBatch[];
+  // Cumulative first row index of each batch, plus the total row count.
+  private readonly starts: number[];
+  private readonly decoders: (RawDecoder | null)[];
+  private readonly vectors: (Vector | null)[];
+  private located = 0;
   constructor(schema: Schema, batches: RecordBatch[]) {
     this.table = new Table(schema, batches);
     this.fields = fieldsOf(schema);
@@ -150,12 +344,35 @@ export class ArrowResult implements ResultHandle {
       type: sqlType(schema.fields[i].type),
     }));
     this.count = this.table.numRows;
+    this.batches = this.table.batches;
+    this.starts = [0];
+    for (const batch of this.batches)
+      this.starts.push(this.starts[this.starts.length - 1] + batch.numRows);
+    this.decoders = schema.fields.map((field) => rawDecoder(field.type));
+    this.vectors = this.decoders.map((decoder, column) =>
+      decoder ? null : this.table.getChildAt(column),
+    );
+  }
+  // Rows arrive in both directions, so resume from the last located batch
+  // instead of rescanning or materializing a string table.
+  private locate(index: number): number {
+    let batch = this.located;
+    if (batch >= this.batches.length || index < this.starts[batch]) batch = 0;
+    while (this.starts[batch + 1] <= index) batch++;
+    this.located = batch;
+    return batch;
   }
   getRow(index: number): (string | null)[] {
     if (!Number.isInteger(index) || index < 0 || index >= this.count) return [];
-    return this.fields.map((field, column) =>
-      cell(this.table.getChildAt(column)!.get(index), field),
-    );
+    const batch = this.locate(index);
+    const local = index - this.starts[batch];
+    const children = this.batches[batch].data.children;
+    return this.fields.map((field, column) => {
+      const decoder = this.decoders[column];
+      if (!decoder) return cell(this.vectors[column]!.get(index), field);
+      const data = children[column];
+      return data.getValid(local) ? decoder(data, local) : null;
+    });
   }
 }
 

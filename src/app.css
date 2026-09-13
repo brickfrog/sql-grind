@@ -1100,6 +1100,11 @@ small,
 .status-message i.working {
   background: #ffd966;
 }
+/* Colour repeats the message's outcome; the message text and the live region
+   carry the same information without colour. */
+.status-message i.error {
+  background: #a33;
+}
 /* Busy indicator for Execute, Submit and Compare. The button text already
    says what is running, so reduced motion only drops the rotation. */
 .spinner {
@@ -1630,6 +1635,12 @@ small,
 .settings-grid label:has([type="checkbox"]) {
   flex-direction: row;
   align-items: center;
+}
+/* Spans the settings grid so the automatic-reflow note sits under its control
+   rather than stealing a neighbouring column. */
+.settings-grid .setting-note {
+  grid-column: 1 / -1;
+  margin-top: -10px;
 }
 .shortcuts dt {
   font-weight: bold;

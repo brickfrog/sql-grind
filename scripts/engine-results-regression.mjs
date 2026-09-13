@@ -4,9 +4,18 @@ import { createServer } from "vite";
 import {
   Bool,
   DateDay,
+  Field,
   Int64,
+  Interval,
+  IntervalUnit,
+  RecordBatch,
+  Schema,
   Table,
+  Time,
+  TimeUnit,
+  Timestamp,
   Utf8,
+  makeData,
   vectorFromArray,
 } from "apache-arrow";
 
@@ -410,8 +419,336 @@ try {
     }),
     "-1.23",
   );
+  // Temporal decoding. Arrow's own getters convert raw integers to Number
+  // milliseconds and compute an interval stride of 1 + unit, so these values
+  // are decoded from the original record-batch buffers instead.
+  function validityBitmap(valid) {
+    const bitmap = new Uint8Array((valid.length + 7) >> 3);
+    valid.forEach((ok, i) => {
+      if (ok) bitmap[i >> 3] |= 1 << i % 8;
+    });
+    return bitmap;
+  }
+  function nullProps(valid) {
+    if (!valid) return {};
+    return {
+      nullBitmap: validityBitmap(valid),
+      nullCount: valid.filter((ok) => !ok).length,
+    };
+  }
+  // Four Int32 words per row: months, days, low nanoseconds, high nanoseconds.
+  function intervalColumn(rows, valid) {
+    const words = new Int32Array(rows.length * 4);
+    rows.forEach(([months, days, nanos], index) => {
+      const base = index * 4;
+      const value = BigInt(nanos);
+      words[base] = months;
+      words[base + 1] = days;
+      words[base + 2] = Number(value & 0xffffffffn) | 0;
+      words[base + 3] = Number(value >> 32n);
+    });
+    return makeData({
+      type: new Interval(IntervalUnit.MONTH_DAY_NANO),
+      length: rows.length,
+      data: words,
+      ...nullProps(valid),
+    });
+  }
+  function bigColumn(type, values, valid) {
+    return makeData({
+      type,
+      length: values.length,
+      data: BigInt64Array.from(values.map(BigInt)),
+      ...nullProps(valid),
+    });
+  }
+  function decoded(children) {
+    const batches = children.map(
+      (columns) => new RecordBatch(Object.fromEntries(columns)),
+    );
+    const schema = new Schema(
+      children[0].map(([name, data]) =>
+        Field.new({ name, type: data.type, nullable: true }),
+      ),
+    );
+    const handle = new ArrowResult(schema, batches);
+    return {
+      handle,
+      rows: Array.from({ length: handle.count }, (_, i) => handle.getRow(i)),
+    };
+  }
+
+  const constant = decoded([
+    [["iv", intervalColumn(Array.from({ length: 5 }, () => [0, 3, 0n]))]],
+  ]);
+  assert.deepEqual(
+    constant.rows,
+    Array.from({ length: 5 }, () => ["3 days"]),
+    "constant interval decodes identically in every row",
+  );
+
+  const intervals = decoded([
+    [
+      [
+        "iv",
+        intervalColumn(
+          [
+            [1, 2, 10_800_000_000_000n],
+            [-5, 0, 0n],
+            [0, 0, 0n],
+            [-1, 2, -10_800_000_000_000n],
+            [13, 0, 4_500_000_000n],
+            [0, 0, 0n],
+            [0, 0, -1n],
+          ],
+          [true, true, true, true, true, false, true],
+        ),
+      ],
+    ],
+  ]);
+  assert.deepEqual(
+    intervals.rows,
+    [
+      ["1 month 2 days 03:00:00"],
+      ["-5 months"],
+      ["00:00:00"],
+      ["-1 month 2 days -03:00:00"],
+      ["13 months 00:00:04.5"],
+      [null],
+      ["-00:00:00.000000001"],
+    ],
+    "each interval row keeps its own months, days, and signed time",
+  );
+
+  const micro = new Timestamp(TimeUnit.MICROSECOND);
+  const stamps = decoded([
+    [
+      [
+        "ts",
+        bigColumn(micro, [
+          1_709_296_496_123_456n,
+          -1n,
+          0n,
+          9223372036854775807n,
+          -9223372036854775807n,
+          9_223_372_036_854_775_000n,
+        ]),
+      ],
+      [
+        "tstz",
+        bigColumn(new Timestamp(TimeUnit.MICROSECOND, "UTC"), [
+          1_709_296_496_123_456n,
+          -1n,
+          0n,
+          1n,
+          -62_135_596_800_000_000n,
+          253_402_300_799_999_999n,
+        ]),
+      ],
+      [
+        "nanos",
+        bigColumn(new Timestamp(TimeUnit.NANOSECOND), [
+          1_709_296_496_123_456_789n,
+          -1n,
+          0n,
+          1n,
+          -1_000_000_000n,
+          123_456_789n,
+        ]),
+      ],
+      [
+        "secs",
+        bigColumn(new Timestamp(TimeUnit.SECOND), [
+          1_709_296_496n,
+          -1n,
+          0n,
+          1n,
+          -62_135_596_800n,
+          253_402_300_799n,
+        ]),
+      ],
+      [
+        "millis",
+        bigColumn(new Timestamp(TimeUnit.MILLISECOND), [
+          1_709_296_496_123n,
+          -1n,
+          0n,
+          1n,
+          -1n,
+          -2n,
+        ]),
+      ],
+    ],
+  ]);
+  assert.deepEqual(
+    stamps.rows,
+    [
+      [
+        "2024-03-01 12:34:56.123456",
+        "2024-03-01 12:34:56.123456+00:00",
+        "2024-03-01 12:34:56.123456789",
+        "2024-03-01 12:34:56",
+        "2024-03-01 12:34:56.123",
+      ],
+      [
+        "1969-12-31 23:59:59.999999",
+        "1969-12-31 23:59:59.999999+00:00",
+        "1969-12-31 23:59:59.999999999",
+        "1969-12-31 23:59:59",
+        "1969-12-31 23:59:59.999",
+      ],
+      [
+        "1970-01-01 00:00:00",
+        "1970-01-01 00:00:00+00:00",
+        "1970-01-01 00:00:00",
+        "1970-01-01 00:00:00",
+        "1970-01-01 00:00:00",
+      ],
+      [
+        "infinity",
+        "1970-01-01 00:00:00.000001+00:00",
+        "1970-01-01 00:00:00.000000001",
+        "1970-01-01 00:00:01",
+        "1970-01-01 00:00:00.001",
+      ],
+      [
+        "-infinity",
+        "0001-01-01 00:00:00+00:00",
+        "1969-12-31 23:59:59",
+        "0001-01-01 00:00:00",
+        "1969-12-31 23:59:59.999",
+      ],
+      [
+        "+294247-01-10 04:00:54.775",
+        "9999-12-31 23:59:59.999999+00:00",
+        "1970-01-01 00:00:00.123456789",
+        "9999-12-31 23:59:59",
+        "1969-12-31 23:59:59.998",
+      ],
+    ],
+    "timestamps keep their declared unit, sentinels, and out-of-Date range",
+  );
+
+  const times = decoded([
+    [
+      [
+        "wide",
+        bigColumn(new Time(TimeUnit.MICROSECOND, 64), [
+          30_600_000_000n,
+          0n,
+          86_399_999_999n,
+        ]),
+      ],
+      [
+        "narrow",
+        makeData({
+          type: new Time(TimeUnit.SECOND, 32),
+          length: 3,
+          data: Int32Array.from([30_600, 0, 86_399]),
+        }),
+      ],
+    ],
+  ]);
+  assert.deepEqual(
+    times.rows,
+    [
+      ["08:30:00", "08:30:00"],
+      ["00:00:00", "00:00:00"],
+      ["23:59:59.999999", "23:59:59"],
+    ],
+    "time values carry no epoch date and keep declared precision",
+  );
+
+  // Two batches, nulls straddling both the batch and the null-bitmap byte
+  // boundary, read forward and then in reverse.
+  const spanning = decoded([
+    [
+      [
+        "iv",
+        intervalColumn(
+          [
+            [0, 1, 0n],
+            [0, 2, 0n],
+            [0, 3, 0n],
+            [0, 4, 0n],
+            [0, 5, 0n],
+          ],
+          [true, true, false, true, true],
+        ),
+      ],
+      [
+        "ts",
+        bigColumn(
+          micro,
+          [0n, 1_000_000n, 2_000_000n, 3_000_000n, 4_000_000n],
+          [true, false, true, true, true],
+        ),
+      ],
+    ],
+    [
+      [
+        "iv",
+        intervalColumn(
+          [
+            [0, 6, 0n],
+            [0, 7, 0n],
+            [0, 8, 0n],
+            [0, 9, 0n],
+            [0, 10, 0n],
+            [0, 11, 0n],
+            [0, 12, 0n],
+          ],
+          [true, true, true, false, true, true, true],
+        ),
+      ],
+      [
+        "ts",
+        bigColumn(
+          micro,
+          [
+            5_000_000n,
+            6_000_000n,
+            7_000_000n,
+            8_000_000n,
+            9_000_000n,
+            10_000_000n,
+            11_000_000n,
+          ],
+          [true, true, true, true, true, true, false],
+        ),
+      ],
+    ],
+  ]);
+  const spanningExpected = [
+    ["1 day", "1970-01-01 00:00:00"],
+    ["2 days", null],
+    [null, "1970-01-01 00:00:02"],
+    ["4 days", "1970-01-01 00:00:03"],
+    ["5 days", "1970-01-01 00:00:04"],
+    ["6 days", "1970-01-01 00:00:05"],
+    ["7 days", "1970-01-01 00:00:06"],
+    ["8 days", "1970-01-01 00:00:07"],
+    [null, "1970-01-01 00:00:08"],
+    ["10 days", "1970-01-01 00:00:09"],
+    ["11 days", "1970-01-01 00:00:10"],
+    ["12 days", null],
+  ];
+  assert.equal(spanning.handle.count, 12);
+  assert.deepEqual(
+    spanning.rows,
+    spanningExpected,
+    "record-batch and null-bitmap boundaries decode in forward order",
+  );
+  assert.deepEqual(
+    Array.from({ length: 12 }, (_, i) =>
+      spanning.handle.getRow(11 - i),
+    ).reverse(),
+    spanningExpected,
+    "the same rows decode in reverse access order",
+  );
+
   console.log(
-    "PASS exact comparator typed values, ordering, identity, malformed assets, and Arrow decoding",
+    "PASS exact comparator typed values, ordering, identity, malformed assets, Arrow decoding, and temporal decoding",
   );
 } finally {
   await server.close();
