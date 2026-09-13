@@ -20,7 +20,7 @@ Historical evidence under `evidence/` retains the scope of its recorded run.
 
 Sources:
 
-- [Design specification](../claude-design/design_handoff_sql_grind/README.md)
+- Design specification, in the original handoff bundle kept outside this repository.
 - [Product contract](product.md)
 - [DuckDB ranking functions](https://duckdb.org/docs/current/sql/functions/window_functions.html)
 - [DuckDB numeric types](https://duckdb.org/docs/current/sql/data_types/numeric.html)

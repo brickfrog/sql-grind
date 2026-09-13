@@ -7,7 +7,8 @@ Public hosting and portrait distribution checks do not block local implementatio
 
 ## Inputs
 
-- Visual authority: [design specification](../claude-design/design_handoff_sql_grind/README.md) and [prototype](../claude-design/design_handoff_sql_grind/SQL%20Grind.dc.html).
+- Visual authority: the design specification and prototype, in the original
+  handoff bundle kept outside this repository.
 - Product behavior: [product contract](product.md), including every control identifier and accessibility criterion.
 - Challenge text and types: [semantics](semantics.md) and [learning materials](challenge-07.json).
 - Data and engine identity: [manifest](manifest.json), schema, generator, boundary fixtures, and expected rows.

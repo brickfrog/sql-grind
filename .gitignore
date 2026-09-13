@@ -15,3 +15,4 @@ tmp/
 public/assets/
 *.zip
 dist-subpath/
+claude-design/

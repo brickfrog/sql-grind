@@ -20,10 +20,9 @@ A visual scaffold alone does not complete this goal.
 ## Starting points
 
 - [Original archive](Learn%20Analytics%20Platform%20Design.zip)
-- [Design specification](claude-design/design_handoff_sql_grind/README.md)
-- [Interactive prototype](claude-design/design_handoff_sql_grind/SQL%20Grind.dc.html)
-- [Supplied screenshots](claude-design/design_handoff_sql_grind/screenshots/)
-- [Portrait asset](claude-design/design_handoff_sql_grind/assets/patchouli.webp)
+- Design specification, interactive prototype, and supplied screenshots: the
+  original handoff bundle, kept outside this repository.
+- [Portrait asset](assets/portrait/patchouli.webp)
 
 The handoff directory is the primary reference. The archive also contains identical copies of the prototype, runtime, and portrait.
 The prototype is not production code. Its execution results, metrics, warnings, and challenge progress are hardcoded.
@@ -43,20 +42,20 @@ The supplied screenshots are cropped and mislabeled. Prefer the prototype and sp
 The application framework is decided. Other baseline choices remain recommendations from research, not requirements from the visual design.
 Record any replacement and its reason before implementation.
 
-| Area | Proposed choice | Reason or boundary |
-| --- | --- | --- |
-| Application | Svelte 5, TypeScript, Vite | Decided after comparison with React and Solid. Static client-side application without SvelteKit or server rendering. |
-| Appearance | Custom CSS tokens and semantic HTML | Exact Win2000 styling without global Win98 overrides. No 98.css dependency. |
-| Editor | CodeMirror 6 | Completion, keybindings, diagnostic ranges, and syntax highlighting. |
-| Execution | Pinned DuckDB-Wasm in a dedicated worker | Single-threaded baseline. Experimental threads require separate evidence. |
-| Results | Arrow batches and TanStack Virtual | Preserve exact values and bound rendered rows and retained memory. |
-| Data distribution | Versioned, deterministic Parquet assets | Measure download and execution costs before choosing default dataset size. |
-| Saved work | IndexedDB with a small wrapper | Keep queries and progress outside the disposable engine. Include export/import. |
-| Dataset cache | Decide after measurement | OPFS is a candidate, not a requirement implied by row counts. |
-| Skill map | SVG edges and HTML buttons | Twelve fixed nodes do not need a graph framework. |
-| Judge | Deterministic grading and authored dialogue | No LLM dependency for correctness, hints, or scores. |
-| Hosting | Local loopback static server with configurable headers | All runtime assets come from localhost. Public HTTPS hosting is optional publication work. |
-| Verification | Vitest and Playwright | Semantic grading boundaries and real browser workflows. |
+| Area              | Proposed choice                                        | Reason or boundary                                                                                                   |
+| ----------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| Application       | Svelte 5, TypeScript, Vite                             | Decided after comparison with React and Solid. Static client-side application without SvelteKit or server rendering. |
+| Appearance        | Custom CSS tokens and semantic HTML                    | Exact Win2000 styling without global Win98 overrides. No 98.css dependency.                                          |
+| Editor            | CodeMirror 6                                           | Completion, keybindings, diagnostic ranges, and syntax highlighting.                                                 |
+| Execution         | Pinned DuckDB-Wasm in a dedicated worker               | Single-threaded baseline. Experimental threads require separate evidence.                                            |
+| Results           | Arrow batches and TanStack Virtual                     | Preserve exact values and bound rendered rows and retained memory.                                                   |
+| Data distribution | Versioned, deterministic Parquet assets                | Measure download and execution costs before choosing default dataset size.                                           |
+| Saved work        | IndexedDB with a small wrapper                         | Keep queries and progress outside the disposable engine. Include export/import.                                      |
+| Dataset cache     | Decide after measurement                               | OPFS is a candidate, not a requirement implied by row counts.                                                        |
+| Skill map         | SVG edges and HTML buttons                             | Twelve fixed nodes do not need a graph framework.                                                                    |
+| Judge             | Deterministic grading and authored dialogue            | No LLM dependency for correctness, hints, or scores.                                                                 |
+| Hosting           | Local loopback static server with configurable headers | All runtime assets come from localhost. Public HTTPS hosting is optional publication work.                           |
+| Verification      | Vitest and Playwright                                  | Semantic grading boundaries and real browser workflows.                                                              |
 
 References: [Vite](https://vite.dev/guide/), [CodeMirror](https://codemirror.net/docs/guide/),
 [98.css scope](https://jdan.github.io/98.css/), [TanStack Virtual](https://tanstack.com/virtual/latest/docs/introduction).

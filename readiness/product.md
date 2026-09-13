@@ -10,8 +10,9 @@ The application baseline remains Svelte 5, TypeScript, and Vite.
 
 The primary design sources are:
 
-- [Design specification](../claude-design/design_handoff_sql_grind/README.md), lines 14–89 and 111–113.
-- [Prototype](../claude-design/design_handoff_sql_grind/SQL%20Grind.dc.html), lines 12–79, 103–175, 176–296, and 306–418.
+- Design specification, lines 14–89 and 111–113, in the original handoff bundle
+  kept outside this repository.
+- Prototype, lines 12–79, 103–175, 176–296, and 306–418, in the same bundle.
 - [Goal](../GOAL.md), outcomes 8–10 and the implementation sequence.
 - [Challenge semantics](semantics.md), which governs deterministic grading and the preserved Challenge 07 result.
 - [Authored curriculum](curriculum.json), which defines skills, prerequisites, required challenge order, and definition paths.
@@ -661,7 +662,7 @@ The handoff's phrase “Touhou fan-work license” is not a license grant for th
 
 ### Portrait
 
-The supplied file is `claude-design/design_handoff_sql_grind/assets/patchouli.webp`.
+The supplied file is `assets/portrait/patchouli.webp`.
 Its SHA-256 is `9ac49fbf2733234115889a954823bd24001cb562c87357ee8366c3e3b07c6ebf`.
 The upload filename is `patchouli_art-1789181910732-0cpn.webp`.
 The local handoff supplies no artist identity, original publication URL, license text, or permission correspondence.

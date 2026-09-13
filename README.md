@@ -214,7 +214,7 @@ Earlier files under `readiness/evidence/` retain their historical scope.
 
 Safari, mobile browsers, minimum-device performance, and full screen-reader interoperability remain unverified.
 The supplied portrait is accepted for local use. Public redistribution rights remain deferred, without blocking local practice.
-The original design remains under `claude-design/design_handoff_sql_grind/`.
+The original design handoff is kept outside this repository.
 The root package lock defines application dependencies. The engine lab has its own lock and serves publication tooling.
 
 ## License
@@ -233,7 +233,7 @@ license:
 - The judge portrait is Touhou Project fan art from the community wiki. Touhou
   Project is the work of Team Shanghai Alice. The portrait is neither original
   to this project nor licensed under the GPL. Remove
-  `claude-design/design_handoff_sql_grind/assets/` and the portrait provisioning
+  `assets/portrait/` and the portrait provisioning
   in `scripts/setup.mjs` to build without it.
 
 DuckDB and DuckDB-Wasm are separate MIT-licensed projects. The build installs
