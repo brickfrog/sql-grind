@@ -1,0 +1,13 @@
+{
+  "date": "2026-09-13T03:03:08.414Z",
+  "checks": [
+    "Assisted accepted attempt filters, export and immutable SQL reopening",
+    "Toolbar New/Open/Save/Parse, challenge filter, immutable dataset switching, DDL rejection and reset consent preserve SQL and progress",
+    "Thirteen authored skill details, prerequisite links, zoom, locked objectives, direct basics navigation, and confirmed starter reset",
+    "Diagnostic facts survive hush and re-opening; Notes selects source; Hush does not disable parsing; real plan comparison requires consent",
+    "Restore name collision requests a new name; permanent deletion and Empty Bin require consent",
+    "Deleting the only accepted attempt recomputes completion without fake mastery"
+  ],
+  "errors": [],
+  "pass": true
+}

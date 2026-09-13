@@ -1,0 +1,49 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "pivot.05",
+    "bundleVersion": "pivot.05-bundle-v1",
+    "challengeVersion": "pivot.05-v1",
+    "datasetVersion": "workshop-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "workshop",
+  "variantId": "variant",
+  "columns": [
+    {
+      "name": "mon",
+      "type": "DATE",
+      "nullable": false
+    },
+    {
+      "name": "reason",
+      "type": "VARCHAR",
+      "nullable": false
+    },
+    {
+      "name": "qty",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 3,
+  "rows": [
+    [
+      "2024-02-01",
+      "damaged",
+      "2"
+    ],
+    [
+      "2024-02-01",
+      "wrong_item",
+      "0"
+    ],
+    [
+      "2024-03-01",
+      "unwanted",
+      "3"
+    ]
+  ]
+}

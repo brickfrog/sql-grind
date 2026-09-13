@@ -1,0 +1,1 @@
+SELECT event_id,sum(amount) OVER(ORDER BY event_date,event_id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)::DECIMAL(38,2) AS rows_total,sum(amount) OVER(ORDER BY event_date RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)::DECIMAL(38,2) AS range_total FROM daily_events ORDER BY event_id;

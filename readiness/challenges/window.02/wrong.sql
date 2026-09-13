@@ -1,0 +1,1 @@
+WITH ranked AS (SELECT customer_id,order_id,row_number() OVER(PARTITION BY customer_id ORDER BY ordered_at DESC,order_id DESC) AS rn FROM orders WHERE ordered_at<TIMESTAMPTZ '2025-01-01 00:00:00+00') SELECT customer_id,order_id FROM ranked WHERE rn=1 ORDER BY customer_id;

@@ -1,0 +1,1579 @@
+{
+  "date": "2026-09-12T15:18:28.068Z",
+  "result": {
+    "environment": [
+      {
+        "name": "environment",
+        "value": {
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+          "hardwareConcurrency": 24,
+          "deviceMemory": 32,
+          "crossOriginIsolated": false,
+          "engine": {
+            "ms": 11.800000011920929,
+            "fields": [
+              {
+                "name": "version",
+                "type": "Utf8"
+              }
+            ],
+            "rows": [
+              {
+                "version": "v1.5.4"
+              }
+            ]
+          },
+          "startupMs": 1020.6999999880791,
+          "bundle": {
+            "mainModule": "/engine/duckdb-eh.wasm",
+            "mainWorker": "/engine/duckdb-browser-eh.worker.js",
+            "pthreadWorker": null
+          }
+        }
+      }
+    ],
+    "schema": {
+      "ms": 17.69999998807907,
+      "fields": [
+        {
+          "name": "Count",
+          "type": "Int64"
+        }
+      ],
+      "rows": []
+    },
+    "fixture": {
+      "ms": 35.10000002384186,
+      "fields": [
+        {
+          "name": "Count",
+          "type": "Int64"
+        }
+      ],
+      "rows": [
+        {
+          "Count": "3"
+        }
+      ]
+    },
+    "reference": {
+      "ms": 83.69999998807907,
+      "fields": [
+        {
+          "name": "mon",
+          "type": "Date32<DAY>"
+        },
+        {
+          "name": "category_id",
+          "type": "Int64"
+        },
+        {
+          "name": "c_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "revenue",
+          "type": "Decimal[38e+2]"
+        },
+        {
+          "name": "rnk",
+          "type": "Int64"
+        }
+      ],
+      "rows": [
+        {
+          "mon": 1704067200000,
+          "category_id": "2",
+          "c_name": "Audio",
+          "revenue": "\"10000\"",
+          "rnk": "1"
+        },
+        {
+          "mon": 1704067200000,
+          "category_id": "3",
+          "c_name": "Audio",
+          "revenue": "\"10000\"",
+          "rnk": "1"
+        },
+        {
+          "mon": 1704067200000,
+          "category_id": "4",
+          "c_name": "Kitchen",
+          "revenue": "\"9000\"",
+          "rnk": "3"
+        },
+        {
+          "mon": 1704067200000,
+          "category_id": "5",
+          "c_name": "Outdoor",
+          "revenue": "\"9000\"",
+          "rnk": "3"
+        },
+        {
+          "mon": 1706745600000,
+          "category_id": "2",
+          "c_name": "Audio",
+          "revenue": "\"5000\"",
+          "rnk": "1"
+        },
+        {
+          "mon": 1706745600000,
+          "category_id": "3",
+          "c_name": "Audio",
+          "revenue": "\"4000\"",
+          "rnk": "2"
+        },
+        {
+          "mon": 1706745600000,
+          "category_id": "4",
+          "c_name": "Kitchen",
+          "revenue": "\"4000\"",
+          "rnk": "2"
+        },
+        {
+          "mon": 1711929600000,
+          "category_id": "6",
+          "c_name": "Toys",
+          "revenue": "\"0\"",
+          "rnk": "1"
+        },
+        {
+          "mon": 1733011200000,
+          "category_id": "4",
+          "c_name": "Kitchen",
+          "revenue": "\"2468\"",
+          "rnk": "1"
+        }
+      ]
+    },
+    "exact": {
+      "ms": 1.800000011920929,
+      "fields": [
+        {
+          "name": "big",
+          "type": "Int64"
+        },
+        {
+          "name": "dec",
+          "type": "Decimal[38e+2]"
+        },
+        {
+          "name": "nil",
+          "type": "Int32"
+        },
+        {
+          "name": "day",
+          "type": "Date32<DAY>"
+        }
+      ],
+      "rows": [
+        {
+          "big": "9007199254740993",
+          "dec": "\"1234567890123456789012\"",
+          "nil": null,
+          "day": 1709164800000
+        }
+      ]
+    },
+    "parser": [
+      {
+        "name": "cte",
+        "sql": "WITH x AS (SELECT 1 AS n) SELECT * FROM x",
+        "times": [
+          2.600000023841858,
+          0.6000000238418579,
+          0.5999999642372131,
+          0.7000000476837158,
+          0.5999999642372131
+        ],
+        "ast": {
+          "error": false,
+          "statements": [
+            {
+              "node": {
+                "type": "SELECT_NODE",
+                "modifiers": [],
+                "cte_map": {
+                  "map": [
+                    {
+                      "key": "x",
+                      "value": {
+                        "aliases": [],
+                        "query": {
+                          "node": {
+                            "type": "SELECT_NODE",
+                            "modifiers": [],
+                            "cte_map": {
+                              "map": []
+                            },
+                            "select_list": [
+                              {
+                                "class": "CONSTANT",
+                                "type": "VALUE_CONSTANT",
+                                "alias": "n",
+                                "query_location": 18,
+                                "value": {
+                                  "type": {
+                                    "id": "INTEGER",
+                                    "type_info": null
+                                  },
+                                  "is_null": false,
+                                  "value": 1
+                                }
+                              }
+                            ],
+                            "from_table": {
+                              "type": "EMPTY",
+                              "alias": "",
+                              "sample": null,
+                              "query_location": 18446744073709552000
+                            },
+                            "where_clause": null,
+                            "group_expressions": [],
+                            "group_sets": [],
+                            "aggregate_handling": "STANDARD_HANDLING",
+                            "having": null,
+                            "sample": null,
+                            "qualify": null
+                          },
+                          "named_param_map": []
+                        },
+                        "materialized": "CTE_MATERIALIZE_DEFAULT",
+                        "key_targets": []
+                      }
+                    }
+                  ]
+                },
+                "select_list": [
+                  {
+                    "class": "STAR",
+                    "type": "STAR",
+                    "alias": "",
+                    "query_location": 33,
+                    "relation_name": "",
+                    "exclude_list": [],
+                    "replace_list": [],
+                    "columns": false,
+                    "expr": null,
+                    "qualified_exclude_list": [],
+                    "rename_list": []
+                  }
+                ],
+                "from_table": {
+                  "type": "BASE_TABLE",
+                  "alias": "",
+                  "sample": null,
+                  "query_location": 40,
+                  "schema_name": "",
+                  "table_name": "x",
+                  "column_name_alias": [],
+                  "catalog_name": "",
+                  "at_clause": null
+                },
+                "where_clause": null,
+                "group_expressions": [],
+                "group_sets": [],
+                "aggregate_handling": "STANDARD_HANDLING",
+                "having": null,
+                "sample": null,
+                "qualify": null
+              },
+              "named_param_map": []
+            }
+          ]
+        },
+        "lightweightMs": 4.400000035762787,
+        "utf16Length": 41,
+        "utf8Length": 41
+      },
+      {
+        "name": "recursive",
+        "sql": "WITH RECURSIVE x(n) AS (SELECT 1 UNION ALL SELECT n+1 FROM x WHERE n<3) SELECT * FROM x",
+        "times": [
+          1.5,
+          0.5,
+          0.8999999761581421,
+          0.6000000238418579,
+          0.5
+        ],
+        "ast": {
+          "error": false,
+          "statements": [
+            {
+              "node": {
+                "type": "SELECT_NODE",
+                "modifiers": [],
+                "cte_map": {
+                  "map": [
+                    {
+                      "key": "x",
+                      "value": {
+                        "aliases": [
+                          "n"
+                        ],
+                        "query": {
+                          "node": {
+                            "type": "RECURSIVE_CTE_NODE",
+                            "modifiers": [],
+                            "cte_map": {
+                              "map": []
+                            },
+                            "cte_name": "x",
+                            "union_all": true,
+                            "left": {
+                              "type": "SELECT_NODE",
+                              "modifiers": [],
+                              "cte_map": {
+                                "map": []
+                              },
+                              "select_list": [
+                                {
+                                  "class": "CONSTANT",
+                                  "type": "VALUE_CONSTANT",
+                                  "alias": "",
+                                  "query_location": 31,
+                                  "value": {
+                                    "type": {
+                                      "id": "INTEGER",
+                                      "type_info": null
+                                    },
+                                    "is_null": false,
+                                    "value": 1
+                                  }
+                                }
+                              ],
+                              "from_table": {
+                                "type": "EMPTY",
+                                "alias": "",
+                                "sample": null,
+                                "query_location": 18446744073709552000
+                              },
+                              "where_clause": null,
+                              "group_expressions": [],
+                              "group_sets": [],
+                              "aggregate_handling": "STANDARD_HANDLING",
+                              "having": null,
+                              "sample": null,
+                              "qualify": null
+                            },
+                            "right": {
+                              "type": "SELECT_NODE",
+                              "modifiers": [],
+                              "cte_map": {
+                                "map": []
+                              },
+                              "select_list": [
+                                {
+                                  "class": "FUNCTION",
+                                  "type": "FUNCTION",
+                                  "alias": "",
+                                  "query_location": 51,
+                                  "function_name": "+",
+                                  "schema": "",
+                                  "children": [
+                                    {
+                                      "class": "COLUMN_REF",
+                                      "type": "COLUMN_REF",
+                                      "alias": "",
+                                      "query_location": 50,
+                                      "column_names": [
+                                        "n"
+                                      ]
+                                    },
+                                    {
+                                      "class": "CONSTANT",
+                                      "type": "VALUE_CONSTANT",
+                                      "alias": "",
+                                      "query_location": 52,
+                                      "value": {
+                                        "type": {
+                                          "id": "INTEGER",
+                                          "type_info": null
+                                        },
+                                        "is_null": false,
+                                        "value": 1
+                                      }
+                                    }
+                                  ],
+                                  "filter": null,
+                                  "order_bys": {
+                                    "type": "ORDER_MODIFIER",
+                                    "orders": []
+                                  },
+                                  "distinct": false,
+                                  "is_operator": true,
+                                  "export_state": false,
+                                  "catalog": ""
+                                }
+                              ],
+                              "from_table": {
+                                "type": "BASE_TABLE",
+                                "alias": "",
+                                "sample": null,
+                                "query_location": 59,
+                                "schema_name": "",
+                                "table_name": "x",
+                                "column_name_alias": [],
+                                "catalog_name": "",
+                                "at_clause": null
+                              },
+                              "where_clause": {
+                                "class": "COMPARISON",
+                                "type": "COMPARE_LESSTHAN",
+                                "alias": "",
+                                "query_location": 68,
+                                "left": {
+                                  "class": "COLUMN_REF",
+                                  "type": "COLUMN_REF",
+                                  "alias": "",
+                                  "query_location": 67,
+                                  "column_names": [
+                                    "n"
+                                  ]
+                                },
+                                "right": {
+                                  "class": "CONSTANT",
+                                  "type": "VALUE_CONSTANT",
+                                  "alias": "",
+                                  "query_location": 69,
+                                  "value": {
+                                    "type": {
+                                      "id": "INTEGER",
+                                      "type_info": null
+                                    },
+                                    "is_null": false,
+                                    "value": 3
+                                  }
+                                }
+                              },
+                              "group_expressions": [],
+                              "group_sets": [],
+                              "aggregate_handling": "STANDARD_HANDLING",
+                              "having": null,
+                              "sample": null,
+                              "qualify": null
+                            },
+                            "aliases": [
+                              "n"
+                            ],
+                            "key_targets": []
+                          },
+                          "named_param_map": []
+                        },
+                        "materialized": "CTE_MATERIALIZE_DEFAULT",
+                        "key_targets": []
+                      }
+                    }
+                  ]
+                },
+                "select_list": [
+                  {
+                    "class": "STAR",
+                    "type": "STAR",
+                    "alias": "",
+                    "query_location": 79,
+                    "relation_name": "",
+                    "exclude_list": [],
+                    "replace_list": [],
+                    "columns": false,
+                    "expr": null,
+                    "qualified_exclude_list": [],
+                    "rename_list": []
+                  }
+                ],
+                "from_table": {
+                  "type": "BASE_TABLE",
+                  "alias": "",
+                  "sample": null,
+                  "query_location": 86,
+                  "schema_name": "",
+                  "table_name": "x",
+                  "column_name_alias": [],
+                  "catalog_name": "",
+                  "at_clause": null
+                },
+                "where_clause": null,
+                "group_expressions": [],
+                "group_sets": [],
+                "aggregate_handling": "STANDARD_HANDLING",
+                "having": null,
+                "sample": null,
+                "qualify": null
+              },
+              "named_param_map": []
+            }
+          ]
+        },
+        "lightweightMs": 0.8999999761581421,
+        "utf16Length": 87,
+        "utf8Length": 87
+      },
+      {
+        "name": "window",
+        "sql": "SELECT rank() OVER (ORDER BY i) FROM range(3) t(i)",
+        "times": [
+          0.699999988079071,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.5
+        ],
+        "ast": {
+          "error": false,
+          "statements": [
+            {
+              "node": {
+                "type": "SELECT_NODE",
+                "modifiers": [],
+                "cte_map": {
+                  "map": []
+                },
+                "select_list": [
+                  {
+                    "class": "WINDOW",
+                    "type": "WINDOW_RANK",
+                    "alias": "",
+                    "query_location": 7,
+                    "function_name": "rank",
+                    "schema": "",
+                    "catalog": "",
+                    "children": [],
+                    "partitions": [],
+                    "orders": [
+                      {
+                        "type": "ORDER_DEFAULT",
+                        "null_order": "ORDER_DEFAULT",
+                        "expression": {
+                          "class": "COLUMN_REF",
+                          "type": "COLUMN_REF",
+                          "alias": "",
+                          "query_location": 29,
+                          "column_names": [
+                            "i"
+                          ]
+                        }
+                      }
+                    ],
+                    "start": "UNBOUNDED_PRECEDING",
+                    "end": "CURRENT_ROW_RANGE",
+                    "start_expr": null,
+                    "end_expr": null,
+                    "offset_expr": null,
+                    "default_expr": null,
+                    "ignore_nulls": false,
+                    "filter_expr": null,
+                    "exclude_clause": "NO_OTHER",
+                    "distinct": false,
+                    "arg_orders": []
+                  }
+                ],
+                "from_table": {
+                  "type": "TABLE_FUNCTION",
+                  "alias": "t",
+                  "sample": null,
+                  "query_location": 37,
+                  "function": {
+                    "class": "FUNCTION",
+                    "type": "FUNCTION",
+                    "alias": "",
+                    "query_location": 37,
+                    "function_name": "range",
+                    "schema": "",
+                    "children": [
+                      {
+                        "class": "CONSTANT",
+                        "type": "VALUE_CONSTANT",
+                        "alias": "",
+                        "query_location": 43,
+                        "value": {
+                          "type": {
+                            "id": "INTEGER",
+                            "type_info": null
+                          },
+                          "is_null": false,
+                          "value": 3
+                        }
+                      }
+                    ],
+                    "filter": null,
+                    "order_bys": {
+                      "type": "ORDER_MODIFIER",
+                      "orders": []
+                    },
+                    "distinct": false,
+                    "is_operator": false,
+                    "export_state": false,
+                    "catalog": ""
+                  },
+                  "column_name_alias": [
+                    "i"
+                  ],
+                  "with_ordinality": "WITHOUT_ORDINALITY"
+                },
+                "where_clause": null,
+                "group_expressions": [],
+                "group_sets": [],
+                "aggregate_handling": "STANDARD_HANDLING",
+                "having": null,
+                "sample": null,
+                "qualify": null
+              },
+              "named_param_map": []
+            }
+          ]
+        },
+        "lightweightMs": 0.5,
+        "utf16Length": 50,
+        "utf8Length": 50
+      },
+      {
+        "name": "qualify",
+        "sql": "SELECT i, row_number() OVER () AS r FROM range(3) t(i) QUALIFY r=1",
+        "times": [
+          0.40000003576278687,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.5
+        ],
+        "ast": {
+          "error": false,
+          "statements": [
+            {
+              "node": {
+                "type": "SELECT_NODE",
+                "modifiers": [],
+                "cte_map": {
+                  "map": []
+                },
+                "select_list": [
+                  {
+                    "class": "COLUMN_REF",
+                    "type": "COLUMN_REF",
+                    "alias": "",
+                    "query_location": 7,
+                    "column_names": [
+                      "i"
+                    ]
+                  },
+                  {
+                    "class": "WINDOW",
+                    "type": "WINDOW_ROW_NUMBER",
+                    "alias": "r",
+                    "query_location": 10,
+                    "function_name": "row_number",
+                    "schema": "",
+                    "catalog": "",
+                    "children": [],
+                    "partitions": [],
+                    "orders": [],
+                    "start": "UNBOUNDED_PRECEDING",
+                    "end": "CURRENT_ROW_RANGE",
+                    "start_expr": null,
+                    "end_expr": null,
+                    "offset_expr": null,
+                    "default_expr": null,
+                    "ignore_nulls": false,
+                    "filter_expr": null,
+                    "exclude_clause": "NO_OTHER",
+                    "distinct": false,
+                    "arg_orders": []
+                  }
+                ],
+                "from_table": {
+                  "type": "TABLE_FUNCTION",
+                  "alias": "t",
+                  "sample": null,
+                  "query_location": 41,
+                  "function": {
+                    "class": "FUNCTION",
+                    "type": "FUNCTION",
+                    "alias": "",
+                    "query_location": 41,
+                    "function_name": "range",
+                    "schema": "",
+                    "children": [
+                      {
+                        "class": "CONSTANT",
+                        "type": "VALUE_CONSTANT",
+                        "alias": "",
+                        "query_location": 47,
+                        "value": {
+                          "type": {
+                            "id": "INTEGER",
+                            "type_info": null
+                          },
+                          "is_null": false,
+                          "value": 3
+                        }
+                      }
+                    ],
+                    "filter": null,
+                    "order_bys": {
+                      "type": "ORDER_MODIFIER",
+                      "orders": []
+                    },
+                    "distinct": false,
+                    "is_operator": false,
+                    "export_state": false,
+                    "catalog": ""
+                  },
+                  "column_name_alias": [
+                    "i"
+                  ],
+                  "with_ordinality": "WITHOUT_ORDINALITY"
+                },
+                "where_clause": null,
+                "group_expressions": [],
+                "group_sets": [],
+                "aggregate_handling": "STANDARD_HANDLING",
+                "having": null,
+                "sample": null,
+                "qualify": {
+                  "class": "COMPARISON",
+                  "type": "COMPARE_EQUAL",
+                  "alias": "",
+                  "query_location": 64,
+                  "left": {
+                    "class": "COLUMN_REF",
+                    "type": "COLUMN_REF",
+                    "alias": "",
+                    "query_location": 63,
+                    "column_names": [
+                      "r"
+                    ]
+                  },
+                  "right": {
+                    "class": "CONSTANT",
+                    "type": "VALUE_CONSTANT",
+                    "alias": "",
+                    "query_location": 65,
+                    "value": {
+                      "type": {
+                        "id": "INTEGER",
+                        "type_info": null
+                      },
+                      "is_null": false,
+                      "value": 1
+                    }
+                  }
+                }
+              },
+              "named_param_map": []
+            }
+          ]
+        },
+        "lightweightMs": 0.6000000238418579,
+        "utf16Length": 66,
+        "utf8Length": 66
+      },
+      {
+        "name": "pivot",
+        "sql": "PIVOT (SELECT 'a' AS k, 1 AS v) ON k USING sum(v)",
+        "times": [
+          5.199999988079071,
+          0.9000000357627869,
+          0.5999999642372131,
+          0.5,
+          1.0999999642372131
+        ],
+        "ast": {
+          "error": true,
+          "error_type": "not implemented",
+          "error_message": "Only SELECT statements can be serialized to json!"
+        },
+        "lightweightMs": 0.7000000476837158,
+        "utf16Length": 49,
+        "utf8Length": 49
+      },
+      {
+        "name": "aliases",
+        "sql": "SELECT t.i AS alias FROM range(3) AS t(i)",
+        "times": [
+          0.5999999642372131,
+          0.6000000238418579,
+          0.6000000238418579,
+          0.5,
+          0.5
+        ],
+        "ast": {
+          "error": false,
+          "statements": [
+            {
+              "node": {
+                "type": "SELECT_NODE",
+                "modifiers": [],
+                "cte_map": {
+                  "map": []
+                },
+                "select_list": [
+                  {
+                    "class": "COLUMN_REF",
+                    "type": "COLUMN_REF",
+                    "alias": "alias",
+                    "query_location": 7,
+                    "column_names": [
+                      "t",
+                      "i"
+                    ]
+                  }
+                ],
+                "from_table": {
+                  "type": "TABLE_FUNCTION",
+                  "alias": "t",
+                  "sample": null,
+                  "query_location": 25,
+                  "function": {
+                    "class": "FUNCTION",
+                    "type": "FUNCTION",
+                    "alias": "",
+                    "query_location": 25,
+                    "function_name": "range",
+                    "schema": "",
+                    "children": [
+                      {
+                        "class": "CONSTANT",
+                        "type": "VALUE_CONSTANT",
+                        "alias": "",
+                        "query_location": 31,
+                        "value": {
+                          "type": {
+                            "id": "INTEGER",
+                            "type_info": null
+                          },
+                          "is_null": false,
+                          "value": 3
+                        }
+                      }
+                    ],
+                    "filter": null,
+                    "order_bys": {
+                      "type": "ORDER_MODIFIER",
+                      "orders": []
+                    },
+                    "distinct": false,
+                    "is_operator": false,
+                    "export_state": false,
+                    "catalog": ""
+                  },
+                  "column_name_alias": [
+                    "i"
+                  ],
+                  "with_ordinality": "WITHOUT_ORDINALITY"
+                },
+                "where_clause": null,
+                "group_expressions": [],
+                "group_sets": [],
+                "aggregate_handling": "STANDARD_HANDLING",
+                "having": null,
+                "sample": null,
+                "qualify": null
+              },
+              "named_param_map": []
+            }
+          ]
+        },
+        "lightweightMs": 0.6000000238418579,
+        "utf16Length": 41,
+        "utf8Length": 41
+      },
+      {
+        "name": "comments",
+        "sql": "-- comment\nSELECT /* x */ 1",
+        "times": [
+          0.5999999642372131,
+          0.5,
+          0.3999999761581421,
+          0.5,
+          2.100000023841858
+        ],
+        "ast": {
+          "error": false,
+          "statements": [
+            {
+              "node": {
+                "type": "SELECT_NODE",
+                "modifiers": [],
+                "cte_map": {
+                  "map": []
+                },
+                "select_list": [
+                  {
+                    "class": "CONSTANT",
+                    "type": "VALUE_CONSTANT",
+                    "alias": "",
+                    "query_location": 26,
+                    "value": {
+                      "type": {
+                        "id": "INTEGER",
+                        "type_info": null
+                      },
+                      "is_null": false,
+                      "value": 1
+                    }
+                  }
+                ],
+                "from_table": {
+                  "type": "EMPTY",
+                  "alias": "",
+                  "sample": null,
+                  "query_location": 18446744073709552000
+                },
+                "where_clause": null,
+                "group_expressions": [],
+                "group_sets": [],
+                "aggregate_handling": "STANDARD_HANDLING",
+                "having": null,
+                "sample": null,
+                "qualify": null
+              },
+              "named_param_map": []
+            }
+          ]
+        },
+        "lightweightMs": 0.5,
+        "utf16Length": 27,
+        "utf8Length": 27
+      },
+      {
+        "name": "multiple",
+        "sql": "SELECT 1; SELECT 2",
+        "times": [
+          0.699999988079071,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.30000001192092896
+        ],
+        "ast": {
+          "error": false,
+          "statements": [
+            {
+              "node": {
+                "type": "SELECT_NODE",
+                "modifiers": [],
+                "cte_map": {
+                  "map": []
+                },
+                "select_list": [
+                  {
+                    "class": "CONSTANT",
+                    "type": "VALUE_CONSTANT",
+                    "alias": "",
+                    "query_location": 7,
+                    "value": {
+                      "type": {
+                        "id": "INTEGER",
+                        "type_info": null
+                      },
+                      "is_null": false,
+                      "value": 1
+                    }
+                  }
+                ],
+                "from_table": {
+                  "type": "EMPTY",
+                  "alias": "",
+                  "sample": null,
+                  "query_location": 18446744073709552000
+                },
+                "where_clause": null,
+                "group_expressions": [],
+                "group_sets": [],
+                "aggregate_handling": "STANDARD_HANDLING",
+                "having": null,
+                "sample": null,
+                "qualify": null
+              },
+              "named_param_map": []
+            },
+            {
+              "node": {
+                "type": "SELECT_NODE",
+                "modifiers": [],
+                "cte_map": {
+                  "map": []
+                },
+                "select_list": [
+                  {
+                    "class": "CONSTANT",
+                    "type": "VALUE_CONSTANT",
+                    "alias": "",
+                    "query_location": 17,
+                    "value": {
+                      "type": {
+                        "id": "INTEGER",
+                        "type_info": null
+                      },
+                      "is_null": false,
+                      "value": 2
+                    }
+                  }
+                ],
+                "from_table": {
+                  "type": "EMPTY",
+                  "alias": "",
+                  "sample": null,
+                  "query_location": 18446744073709552000
+                },
+                "where_clause": null,
+                "group_expressions": [],
+                "group_sets": [],
+                "aggregate_handling": "STANDARD_HANDLING",
+                "having": null,
+                "sample": null,
+                "qualify": null
+              },
+              "named_param_map": []
+            }
+          ]
+        },
+        "lightweightMs": 0.2999999523162842,
+        "utf16Length": 18,
+        "utf8Length": 18
+      },
+      {
+        "name": "incomplete",
+        "sql": "SELECT * FROM",
+        "times": [
+          1.300000011920929,
+          0.699999988079071,
+          0.6000000238418579,
+          0.6000000238418579,
+          1
+        ],
+        "ast": {
+          "error": true,
+          "error_type": "parser",
+          "error_message": "syntax error at end of input",
+          "error_subtype": "SYNTAX_ERROR",
+          "position": "13"
+        },
+        "lightweightMs": 0.3999999761581421,
+        "utf16Length": 13,
+        "utf8Length": 13
+      },
+      {
+        "name": "unicode",
+        "sql": "SELECT '😀é' AS s, missing FROM range(1)",
+        "times": [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5999999642372131
+        ],
+        "ast": {
+          "error": false,
+          "statements": [
+            {
+              "node": {
+                "type": "SELECT_NODE",
+                "modifiers": [],
+                "cte_map": {
+                  "map": []
+                },
+                "select_list": [
+                  {
+                    "class": "CONSTANT",
+                    "type": "VALUE_CONSTANT",
+                    "alias": "s",
+                    "query_location": 7,
+                    "value": {
+                      "type": {
+                        "id": "VARCHAR",
+                        "type_info": null
+                      },
+                      "is_null": false,
+                      "value": "😀é"
+                    }
+                  },
+                  {
+                    "class": "COLUMN_REF",
+                    "type": "COLUMN_REF",
+                    "alias": "",
+                    "query_location": 22,
+                    "column_names": [
+                      "missing"
+                    ]
+                  }
+                ],
+                "from_table": {
+                  "type": "TABLE_FUNCTION",
+                  "alias": "",
+                  "sample": null,
+                  "query_location": 35,
+                  "function": {
+                    "class": "FUNCTION",
+                    "type": "FUNCTION",
+                    "alias": "",
+                    "query_location": 35,
+                    "function_name": "range",
+                    "schema": "",
+                    "children": [
+                      {
+                        "class": "CONSTANT",
+                        "type": "VALUE_CONSTANT",
+                        "alias": "",
+                        "query_location": 41,
+                        "value": {
+                          "type": {
+                            "id": "INTEGER",
+                            "type_info": null
+                          },
+                          "is_null": false,
+                          "value": 1
+                        }
+                      }
+                    ],
+                    "filter": null,
+                    "order_bys": {
+                      "type": "ORDER_MODIFIER",
+                      "orders": []
+                    },
+                    "distinct": false,
+                    "is_operator": false,
+                    "export_state": false,
+                    "catalog": ""
+                  },
+                  "column_name_alias": [],
+                  "with_ordinality": "WITHOUT_ORDINALITY"
+                },
+                "where_clause": null,
+                "group_expressions": [],
+                "group_sets": [],
+                "aggregate_handling": "STANDARD_HANDLING",
+                "having": null,
+                "sample": null,
+                "qualify": null
+              },
+              "named_param_map": []
+            }
+          ]
+        },
+        "lightweightMs": 0.40000003576278687,
+        "utf16Length": 40,
+        "utf8Length": 43
+      },
+      {
+        "name": "unicodeError",
+        "sql": "SELECT '😀é', FROM",
+        "times": [
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.40000003576278687
+        ],
+        "ast": {
+          "error": true,
+          "error_type": "parser",
+          "error_message": "syntax error at end of input",
+          "error_subtype": "SYNTAX_ERROR",
+          "position": "17"
+        },
+        "lightweightMs": 0.2999999523162842,
+        "utf16Length": 18,
+        "utf8Length": 21
+      }
+    ],
+    "tokens": {
+      "offsets": [
+        0,
+        7,
+        16,
+        19,
+        20,
+        22,
+        30,
+        35,
+        40,
+        41,
+        42
+      ],
+      "types": [
+        4,
+        2,
+        4,
+        0,
+        3,
+        0,
+        4,
+        4,
+        3,
+        1,
+        3
+      ]
+    },
+    "profiles": {
+      "range": {
+        "ms": 8.400000035762787,
+        "fields": [
+          {
+            "name": "explain_key",
+            "type": "Utf8"
+          },
+          {
+            "name": "explain_value",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "explain_key": "analyzed_plan",
+            "explain_value": "{\n    \"total_memory_allocated\": 0,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 15294464,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.0067,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) SELECT sum(i) FROM range(10000) t(i)\",\n    \"cpu_time\": 0.0001,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 20001,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 10000,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 10000,\n            \"cpu_time\": 0.0001,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 20001,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 20001,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 10000,\n                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                    \"cpu_time\": 0.0001,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Aggregates\": \"sum(#0)\"\n                    },\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 16,\n                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 80000,\n                            \"operator_type\": \"PROJECTION\",\n                            \"operator_timing\": 0.0,\n                            \"operator_rows_scanned\": 0,\n                            \"extra_info\": {\n                                \"Projections\": \"i\",\n                                \"Estimated Cardinality\": \"10000\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 10000,\n                            \"cpu_time\": 0.0001,\n                            \"operator_name\": \"PROJECTION\",\n                            \"cumulative_cardinality\": 20000,\n                            \"operator_cardinality\": 10000,\n                            \"children\": [\n                                {\n                                    \"cumulative_cardinality\": 10000,\n                                    \"operator_cardinality\": 10000,\n                                    \"cumulative_rows_scanned\": 10000,\n                                    \"operator_name\": \"RANGE\",\n                                    \"cpu_time\": 0.0001,\n                                    \"operator_rows_scanned\": 10000,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Function\": \"RANGE\",\n                                        \"Estimated Cardinality\": \"10000\"\n                                    },\n                                    \"operator_timing\": 0.0001,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 80000,\n                                    \"operator_type\": \"TABLE_SCAN\",\n                                    \"children\": []\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+          }
+        ]
+      },
+      "filtered": {
+        "ms": 2.899999976158142,
+        "fields": [
+          {
+            "name": "explain_key",
+            "type": "Utf8"
+          },
+          {
+            "name": "explain_value",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "explain_key": "analyzed_plan",
+            "explain_value": "{\n    \"total_memory_allocated\": 0,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 15368192,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.0022,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) SELECT * FROM order_items WHERE qty=3\",\n    \"cpu_time\": 0.0001,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 2,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 19,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 19,\n            \"cpu_time\": 0.0001,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 2,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 2,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 19,\n                    \"operator_name\": \"PROJECTION\",\n                    \"cpu_time\": 0.0001,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Projections\": [\n                            \"order_item_id\",\n                            \"order_id\",\n                            \"product_id\",\n                            \"qty\",\n                            \"unit_price\"\n                        ],\n                        \"Estimated Cardinality\": \"7\"\n                    },\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 36,\n                    \"operator_type\": \"PROJECTION\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 36,\n                            \"operator_type\": \"TABLE_SCAN\",\n                            \"operator_timing\": 0.0001,\n                            \"operator_rows_scanned\": 19,\n                            \"extra_info\": {\n                                \"Table\": \"memory.main.order_items\",\n                                \"Type\": \"Sequential Scan\",\n                                \"Projections\": [\n                                    \"qty\",\n                                    \"order_item_id\",\n                                    \"order_id\",\n                                    \"product_id\",\n                                    \"unit_price\"\n                                ],\n                                \"Filters\": \"qty=3\",\n                                \"Estimated Cardinality\": \"7\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 19,\n                            \"cpu_time\": 0.0001,\n                            \"operator_name\": \"SEQ_SCAN\",\n                            \"cumulative_cardinality\": 1,\n                            \"operator_cardinality\": 1,\n                            \"children\": []\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+          }
+        ]
+      },
+      "repeated": {
+        "ms": 2.400000035762787,
+        "fields": [
+          {
+            "name": "explain_key",
+            "type": "Utf8"
+          },
+          {
+            "name": "explain_value",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "explain_key": "analyzed_plan",
+            "explain_value": "{\n    \"total_memory_allocated\": 0,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 15368192,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.001700001,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) SELECT sum(qty), sum(qty) FROM order_items\",\n    \"cpu_time\": 0.000100001,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 40,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 19,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 19,\n            \"cpu_time\": 0.000100001,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 40,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 40,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 19,\n                    \"operator_name\": \"PROJECTION\",\n                    \"cpu_time\": 0.000100001,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Projections\": [\n                            \"sum(qty)\",\n                            \"sum(qty)\"\n                        ],\n                        \"Estimated Cardinality\": \"1\"\n                    },\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 32,\n                    \"operator_type\": \"PROJECTION\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 16,\n                            \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                            \"operator_timing\": 0.000100001,\n                            \"operator_rows_scanned\": 0,\n                            \"extra_info\": {\n                                \"Aggregates\": \"sum_no_overflow(#0)\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 19,\n                            \"cpu_time\": 0.000100001,\n                            \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                            \"cumulative_cardinality\": 39,\n                            \"operator_cardinality\": 1,\n                            \"children\": [\n                                {\n                                    \"cumulative_cardinality\": 38,\n                                    \"operator_cardinality\": 19,\n                                    \"cumulative_rows_scanned\": 19,\n                                    \"operator_name\": \"PROJECTION\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 0,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Projections\": \"qty\",\n                                        \"Estimated Cardinality\": \"19\"\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 76,\n                                    \"operator_type\": \"PROJECTION\",\n                                    \"children\": [\n                                        {\n                                            \"system_peak_temp_dir_size\": 0,\n                                            \"result_set_size\": 76,\n                                            \"operator_type\": \"TABLE_SCAN\",\n                                            \"operator_timing\": 0.0,\n                                            \"operator_rows_scanned\": 19,\n                                            \"extra_info\": {\n                                                \"Table\": \"memory.main.order_items\",\n                                                \"Type\": \"Sequential Scan\",\n                                                \"Projections\": \"qty\",\n                                                \"Estimated Cardinality\": \"19\"\n                                            },\n                                            \"system_peak_buffer_memory\": 0,\n                                            \"cumulative_rows_scanned\": 19,\n                                            \"cpu_time\": 0.0,\n                                            \"operator_name\": \"SEQ_SCAN\",\n                                            \"cumulative_cardinality\": 19,\n                                            \"operator_cardinality\": 19,\n                                            \"children\": []\n                                        }\n                                    ]\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+          }
+        ]
+      },
+      "pruned": {
+        "ms": 2.299999952316284,
+        "fields": [
+          {
+            "name": "explain_key",
+            "type": "Utf8"
+          },
+          {
+            "name": "explain_value",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "explain_key": "analyzed_plan",
+            "explain_value": "{\n    \"total_memory_allocated\": 0,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 15368192,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.0017,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) WITH x AS (SELECT * FROM order_items) SELECT sum(qty) FROM x\",\n    \"cpu_time\": 0.0,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 39,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 19,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 19,\n            \"cpu_time\": 0.0,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 39,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 39,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 19,\n                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                    \"cpu_time\": 0.0,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Aggregates\": \"sum_no_overflow(#0)\"\n                    },\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 16,\n                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 76,\n                            \"operator_type\": \"PROJECTION\",\n                            \"operator_timing\": 0.0,\n                            \"operator_rows_scanned\": 0,\n                            \"extra_info\": {\n                                \"Projections\": \"qty\",\n                                \"Estimated Cardinality\": \"19\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 19,\n                            \"cpu_time\": 0.0,\n                            \"operator_name\": \"PROJECTION\",\n                            \"cumulative_cardinality\": 38,\n                            \"operator_cardinality\": 19,\n                            \"children\": [\n                                {\n                                    \"cumulative_cardinality\": 19,\n                                    \"operator_cardinality\": 19,\n                                    \"cumulative_rows_scanned\": 19,\n                                    \"operator_name\": \"SEQ_SCAN\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 19,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Table\": \"memory.main.order_items\",\n                                        \"Type\": \"Sequential Scan\",\n                                        \"Projections\": \"qty\",\n                                        \"Estimated Cardinality\": \"19\"\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 76,\n                                    \"operator_type\": \"TABLE_SCAN\",\n                                    \"children\": []\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+          }
+        ]
+      }
+    },
+    "profileFile": {
+      "ms": 4.399999976158142,
+      "fields": [
+        {
+          "name": "sum(qty)",
+          "type": "Decimal[38e0]"
+        }
+      ],
+      "rows": [
+        {
+          "sum(qty)": "\"22\""
+        }
+      ]
+    },
+    "profileFileBytes": "{\n    \"total_memory_allocated\": 0,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 15368192,\n    \"rows_returned\": 1,\n    \"result_set_size\": 16,\n    \"latency\": 0.001100001,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \" SELECT sum(qty) FROM order_items\",\n    \"cpu_time\": 0.0,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 39,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 19,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 16,\n            \"operator_type\": \"UNGROUPED_AGGREGATE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {\n                \"Aggregates\": \"sum_no_overflow(#0)\"\n            },\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 19,\n            \"cpu_time\": 0.0,\n            \"operator_name\": \"UNGROUPED_AGGREGATE\",\n            \"cumulative_cardinality\": 39,\n            \"operator_cardinality\": 1,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 38,\n                    \"operator_cardinality\": 19,\n                    \"cumulative_rows_scanned\": 19,\n                    \"operator_name\": \"PROJECTION\",\n                    \"cpu_time\": 0.0,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Projections\": \"qty\",\n                        \"Estimated Cardinality\": \"19\"\n                    },\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 76,\n                    \"operator_type\": \"PROJECTION\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 76,\n                            \"operator_type\": \"TABLE_SCAN\",\n                            \"operator_timing\": 0.0,\n                            \"operator_rows_scanned\": 19,\n                            \"extra_info\": {\n                                \"Table\": \"memory.main.order_items\",\n                                \"Type\": \"Sequential Scan\",\n                                \"Projections\": \"qty\",\n                                \"Estimated Cardinality\": \"19\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 19,\n                            \"cpu_time\": 0.0,\n                            \"operator_name\": \"SEQ_SCAN\",\n                            \"cumulative_cardinality\": 19,\n                            \"operator_cardinality\": 19,\n                            \"children\": []\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}",
+    "restrictions": {
+      "before": {
+        "ms": 16.80000001192093,
+        "fields": [
+          {
+            "name": "n",
+            "type": "Int64"
+          }
+        ],
+        "rows": [
+          {
+            "n": "1"
+          }
+        ]
+      },
+      "configure": {
+        "ms": 1,
+        "fields": [
+          {
+            "name": "Success",
+            "type": "Bool"
+          }
+        ],
+        "rows": []
+      },
+      "registered": {
+        "error": "Error: Permission Error: Cannot access file \"registered.csv\" - file system operations are disabled by configuration\n\nLINE 1: SELECT * FROM read_csv('registered.csv')\n                      ^"
+      },
+      "remote": {
+        "error": "Error: Permission Error: Cannot access file \"https://example.com/secret.csv\" - file system operations are disabled by configuration\n\nLINE 1: SELECT * FROM read_csv('https://example.com/secret.csv')\n                      ^"
+      },
+      "install": {
+        "ms": 0.5999999642372131,
+        "fields": [
+          {
+            "name": "Success",
+            "type": "Bool"
+          }
+        ],
+        "rows": []
+      },
+      "attach": {
+        "error": "Error: Permission Error: Cannot access file \"other.db\" - file system operations are disabled by configuration"
+      },
+      "copy": {
+        "error": "Error: Permission Error: Cannot access file \"leak.csv\" - file system operations are disabled by configuration"
+      },
+      "unlock": {
+        "error": "Error: Invalid Input Error: Cannot change configuration option \"enable_external_access\" - the configuration has been locked"
+      },
+      "protected": {
+        "ms": 1.9000000357627869,
+        "fields": [
+          {
+            "name": "Count",
+            "type": "Int64"
+          }
+        ],
+        "rows": [
+          {
+            "Count": "0"
+          }
+        ]
+      },
+      "profile": {
+        "ms": 1.699999988079071,
+        "fields": [
+          {
+            "name": "explain_key",
+            "type": "Utf8"
+          },
+          {
+            "name": "explain_value",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "explain_key": "analyzed_plan",
+            "explain_value": "{\n    \"total_memory_allocated\": 0,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 15368192,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.0011,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) SELECT count(*) FROM orders\",\n    \"cpu_time\": 0.000099999,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 13,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 12,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 12,\n            \"cpu_time\": 0.000099999,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 13,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 13,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 12,\n                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                    \"cpu_time\": 0.000099999,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Aggregates\": \"count_star()\"\n                    },\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 8,\n                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 96,\n                            \"operator_type\": \"TABLE_SCAN\",\n                            \"operator_timing\": 0.000099999,\n                            \"operator_rows_scanned\": 12,\n                            \"extra_info\": {\n                                \"Table\": \"memory.main.orders\",\n                                \"Type\": \"Sequential Scan\",\n                                \"Projections\": \"\",\n                                \"Estimated Cardinality\": \"12\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 12,\n                            \"cpu_time\": 0.000099999,\n                            \"operator_name\": \"SEQ_SCAN\",\n                            \"cumulative_cardinality\": 12,\n                            \"operator_cardinality\": 12,\n                            \"children\": []\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+          }
+        ]
+      }
+    },
+    "parserWorker": {
+      "startupMs": 803.8999999761581,
+      "concurrent": {
+        "ms": 0.8999999761581421,
+        "fields": [
+          {
+            "name": "ast",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "ast": "{\"error\":false,\"statements\":[{\"node\":{\"type\":\"SELECT_NODE\",\"modifiers\":[],\"cte_map\":{\"map\":[]},\"select_list\":[{\"class\":\"CONSTANT\",\"type\":\"VALUE_CONSTANT\",\"alias\":\"\",\"query_location\":7,\"value\":{\"type\":{\"id\":\"INTEGER\",\"type_info\":null},\"is_null\":false,\"value\":42}}],\"from_table\":{\"type\":\"EMPTY\",\"alias\":\"\",\"sample\":null,\"query_location\":18446744073709551615},\"where_clause\":null,\"group_expressions\":[],\"group_sets\":[],\"aggregate_handling\":\"STANDARD_HANDLING\",\"having\":null,\"sample\":null,\"qualify\":null},\"named_param_map\":[]}]}"
+          }
+        ]
+      }
+    },
+    "cancel": {
+      "value": true,
+      "ms": 1.699999988079071
+    },
+    "cancelResult": "Error: query was canceled",
+    "recovery": {
+      "ms": 1.800000011920929,
+      "fields": [
+        {
+          "name": "recovered",
+          "type": "Int32"
+        }
+      ],
+      "rows": [
+        {
+          "recovered": 42
+        }
+      ]
+    },
+    "transferCancel": false,
+    "transfer": {
+      "rows": 100352,
+      "batches": 49,
+      "ms": 9.399999976158142,
+      "retainedRows": 0
+    },
+    "transferRecovery": {
+      "ms": 1.600000023841858,
+      "fields": [
+        {
+          "name": "recovered",
+          "type": "Int32"
+        }
+      ],
+      "rows": [
+        {
+          "recovered": 43
+        }
+      ]
+    },
+    "memoryFailure": {
+      "error": "Error: Out of Memory Error: failed to allocate data of size 8.0 MiB (10.2 MiB/15.2 MiB used)\nDatabase is launched in in-memory mode and no temporary directory is specified.\nUnused blocks cannot be offloaded to disk.\n\nLaunch the database with a persistent storage back-end\nOr set SET temp_directory='/path/to/tmp.tmp'\n\nPossible solutions:\n* Reducing the number of threads (SET threads=X)\n* Disabling insertion-order preservation (SET preserve_insertion_order=false)\n* Increasing the memory limit (SET memory_limit='...GB')\n\nSee also https://duckdb.org/docs/stable/guides/performance/how_to_tune_workloads"
+    },
+    "memoryRecovery": {
+      "ms": 1.9000000357627869,
+      "fields": [
+        {
+          "name": "recovered",
+          "type": "Int32"
+        }
+      ],
+      "rows": [
+        {
+          "recovered": 44
+        }
+      ]
+    }
+  },
+  "network": [
+    {
+      "url": "http://127.0.0.1:5173/",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/main.js?t=1789226291348",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/@vite/client",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_state.js?v=9c337f02",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/node_modules/vite/dist/client/env.mjs",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-PZ5AY32C.js?v=520162ae",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-GQIWTLA3.js?v=520162ae",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@duckdb_duckdb-wasm.js?v=59081d46",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_lang-sql.js?v=0c08e767",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/engine/duckdb-browser-eh.worker.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/engine/duckdb-eh.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/engine/duckdb-browser-eh.worker.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/engine/duckdb-eh.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/engine/duckdb-browser-eh.worker.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/engine/duckdb-eh.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/engine/duckdb-browser-eh.worker.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/engine/duckdb-eh.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/engine/duckdb-browser-eh.worker.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/engine/duckdb-eh.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
+      "status": 200
+    }
+  ],
+  "errors": []
+}

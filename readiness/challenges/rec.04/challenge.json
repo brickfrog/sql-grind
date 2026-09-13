@@ -1,0 +1,78 @@
+{
+  "challengeId": "rec.04",
+  "skillId": "rec",
+  "displayNumber": "rec.04",
+  "version": "rec.04-v1",
+  "bundleVersion": "rec.04-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Bounded directed routes",
+  "brief": "Enumerate bounded directed routes.",
+  "instructions": [
+    "From warehouse 1 enumerate routes of one through three directed edges without revisiting a node. Return destination, numeric-ID path, hop count, and sum of minutes.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "graphs",
+  "starterSql": "SELECT from_id,to_id,minutes FROM route_edges LIMIT 10;",
+  "starterExplanation": "This starter exposes from_id,to_id,minutes from route_edges without solving bounded directed routes.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Bound recursion by both hop count and visited identities."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Carry destination, path, hops, and accumulated cost; exclude the zero-hop anchor from output."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "The edge 4 to 2 must not revisit 2 on path 1>2>4, but is valid after 1>3>4."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "destination_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "path",
+        "type": "VARCHAR",
+        "nullable": false
+      },
+      {
+        "name": "hops",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "total_minutes",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "destination_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "path",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/rec.04/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/rec.04/expected-boundary.json",
+    "weighted": "/bundle/challenges/rec.04/expected-weighted.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

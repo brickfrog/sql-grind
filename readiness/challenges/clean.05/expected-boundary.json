@@ -1,0 +1,75 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "clean.05",
+    "bundleVersion": "clean.05-bundle-v1",
+    "challengeVersion": "clean.05-v1",
+    "datasetVersion": "workshop-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "workshop",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "contact_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "parsed_date",
+      "type": "DATE",
+      "nullable": true
+    },
+    {
+      "name": "parse_state",
+      "type": "VARCHAR",
+      "nullable": false
+    },
+    {
+      "name": "rejected_value",
+      "type": "VARCHAR",
+      "nullable": true
+    }
+  ],
+  "complete": true,
+  "rowCount": 6,
+  "rows": [
+    [
+      "1",
+      "2024-02-29",
+      "valid",
+      null
+    ],
+    [
+      "2",
+      "2024-02-03",
+      "valid",
+      null
+    ],
+    [
+      "3",
+      "2024-02-29",
+      "valid",
+      null
+    ],
+    [
+      "4",
+      null,
+      "invalid",
+      "2024-02-30"
+    ],
+    [
+      "5",
+      null,
+      "missing",
+      null
+    ],
+    [
+      "6",
+      null,
+      "invalid",
+      "31/12/2024"
+    ]
+  ]
+}

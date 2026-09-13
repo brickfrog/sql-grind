@@ -1,0 +1,82 @@
+{
+  "challengeId": "cte.03",
+  "skillId": "cte",
+  "displayNumber": "cte.03",
+  "version": "cte.03-v1",
+  "bundleVersion": "cte.03-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Rank completed groups",
+  "brief": "Rank grouped results instead of individual detail rows.",
+  "instructions": [
+    "Return all paid UTC 2024 monthly category transaction totals and competition rank within each month. Do not apply a rank cutoff. Sort month then rank; peer order is free.",
+    "For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_id,ordered_at,status FROM orders LIMIT 10;",
+  "starterExplanation": "This starter exposes order_id,ordered_at,status from orders without solving rank completed groups.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Aggregate to monthly category grain before applying a window rank."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Put totals in a named relation; rank revenue descending within month in the outer query."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Equal January totals share ranks 1 and 3, followed by rank 5."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "mon",
+        "type": "DATE",
+        "nullable": false
+      },
+      {
+        "name": "category_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "revenue",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      },
+      {
+        "name": "rnk",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "mon",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "rnk",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/cte.03/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/cte.03/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/cte.03/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/cte.03/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

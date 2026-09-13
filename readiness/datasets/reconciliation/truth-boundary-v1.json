@@ -1,0 +1,668 @@
+{
+  "formatVersion": "reconciliation-truth-v1",
+  "references": [
+    {
+      "refId": "9007199254741108",
+      "businessUnit": "Central",
+      "category": "hardware",
+      "status": "determinate",
+      "groupKey": "r:9007199254741108|p:9007199254741019",
+      "family": 1,
+      "source": {
+        "accountKey": "acct-69761810650804004",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "1049",
+      "businessUnit": "Central",
+      "category": "hardware",
+      "status": "determinate",
+      "groupKey": "r:1049|p:1249",
+      "family": 2,
+      "source": {
+        "accountKey": "acct-35839248345526358",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "9007199254741076",
+      "businessUnit": "North",
+      "category": "hardware",
+      "status": "determinate",
+      "groupKey": "r:9007199254741076|p:9007199254741314",
+      "family": 3,
+      "source": {
+        "accountKey": "acct-19480427466200003",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "1102",
+      "businessUnit": "North",
+      "category": "hardware",
+      "status": "determinate",
+      "groupKey": "r:1102|p:1493",
+      "family": 3,
+      "source": {
+        "accountKey": "acct-42445741012494816",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "9007199254741157",
+      "businessUnit": "Central",
+      "category": "hardware",
+      "status": "determinate",
+      "groupKey": "r:9007199254741157|p:9007199254741268",
+      "family": 4,
+      "source": {
+        "accountKey": "acct-10180881577130411",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "1171",
+      "businessUnit": "Central",
+      "category": "hardware",
+      "status": "determinate",
+      "groupKey": "r:1171|p:1382",
+      "family": 5,
+      "source": {
+        "accountKey": "acct-5473565944211705",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "9007199254741128",
+      "businessUnit": "South",
+      "category": "hardware",
+      "status": "determinate",
+      "groupKey": "r:9007199254741128|p:1152",
+      "family": 6,
+      "source": {
+        "accountKey": "acct-35917556866575481",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "9007199254741207",
+      "businessUnit": "North",
+      "category": "hardware",
+      "status": "determinate",
+      "groupKey": "r:9007199254741207|p:1464,9007199254741185",
+      "family": 7,
+      "source": {
+        "accountKey": "acct-67205154290594403",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "9007199254741182",
+      "businessUnit": "North",
+      "category": "hardware",
+      "status": "determinate",
+      "groupKey": "r:9007199254741182,9007199254741290|p:1003",
+      "family": 8,
+      "source": {
+        "accountKey": "acct-26926870891733899",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "4"
+      }
+    },
+    {
+      "refId": "9007199254741290",
+      "businessUnit": "North",
+      "category": "hardware",
+      "status": "determinate",
+      "groupKey": "r:9007199254741182,9007199254741290|p:1003",
+      "family": 8,
+      "source": {
+        "accountKey": "acct-26926870891733899",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "6"
+      }
+    },
+    {
+      "refId": "9007199254741446",
+      "businessUnit": "South",
+      "category": "hardware",
+      "status": "ambiguous",
+      "groupKey": null,
+      "family": 9,
+      "source": {
+        "accountKey": "acct-51156855118455547",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "9007199254741262",
+      "businessUnit": "North",
+      "category": "hardware",
+      "status": "ambiguous",
+      "groupKey": null,
+      "family": 10,
+      "source": {
+        "accountKey": "acct-8059914383481215",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "9007199254741059",
+      "businessUnit": "North",
+      "category": "hardware",
+      "status": "ambiguous",
+      "groupKey": null,
+      "family": 10,
+      "source": {
+        "accountKey": "acct-8059914383481215",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "9007199254741127",
+      "businessUnit": "North",
+      "category": "hardware",
+      "status": "missing",
+      "groupKey": null,
+      "family": 11,
+      "source": {
+        "accountKey": "acct-67461007918823599",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "9007199254741487",
+      "businessUnit": "North",
+      "category": "hardware",
+      "status": "missing",
+      "groupKey": null,
+      "family": 12,
+      "source": {
+        "accountKey": "acct-43093957845870913",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "refId": "1219",
+      "businessUnit": "South",
+      "category": "hardware",
+      "status": "determinate",
+      "groupKey": "r:1219|p:1481",
+      "family": 13,
+      "source": {
+        "accountKey": "acct-34387439263250088",
+        "eventDate": "2024-02-01",
+        "description": "steel blue bolt",
+        "quantity": "10"
+      }
+    }
+  ],
+  "partners": [
+    {
+      "partnerId": "9007199254741019",
+      "source": {
+        "accountKey": "acct-69761810650804004",
+        "sourceEventKey": "event-184761847369616550",
+        "categoryText": "hardware",
+        "dateText": "2024-02-01",
+        "descriptionText": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1193",
+      "source": {
+        "accountKey": "acct-69761810650804004",
+        "sourceEventKey": "event-34223439930313820",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "100"
+      }
+    },
+    {
+      "partnerId": "1249",
+      "source": {
+        "accountKey": "  ACCT-35839248345526358  ",
+        "sourceEventKey": "event-215278835084794527",
+        "categoryText": " Hard--Ware ",
+        "dateText": "02/01/2024",
+        "descriptionText": "  STEEL ,  BLUE ,  BOLT! ",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1324",
+      "source": {
+        "accountKey": "acct-35839248345526358",
+        "sourceEventKey": "event-34384892900394648",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "100"
+      }
+    },
+    {
+      "partnerId": "9007199254741314",
+      "source": {
+        "accountKey": "acct-19480427466200003",
+        "sourceEventKey": "event-67740067004502671",
+        "categoryText": "hardware",
+        "dateText": "2024-02-02",
+        "descriptionText": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1080",
+      "source": {
+        "accountKey": "acct-19480427466200003",
+        "sourceEventKey": "event-207834549212645448",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "100"
+      }
+    },
+    {
+      "partnerId": "1493",
+      "source": {
+        "accountKey": "acct-42445741012494816",
+        "sourceEventKey": "event-19151079773402594",
+        "categoryText": "hardware",
+        "dateText": "2024-02-04",
+        "descriptionText": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1026",
+      "source": {
+        "accountKey": "acct-42445741012494816",
+        "sourceEventKey": "event-38641715644582085",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "100"
+      }
+    },
+    {
+      "partnerId": "9007199254741268",
+      "source": {
+        "accountKey": "acct-10180881577130411",
+        "sourceEventKey": "event-286890173451806831",
+        "categoryText": "hardware",
+        "dateText": "01 Feb 2024",
+        "descriptionText": "steel blue bol",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1275",
+      "source": {
+        "accountKey": "acct-10180881577130411",
+        "sourceEventKey": "event-129927091137501075",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "100"
+      }
+    },
+    {
+      "partnerId": "1382",
+      "source": {
+        "accountKey": "acct-5473565944211705",
+        "sourceEventKey": "event-108501621594411263",
+        "categoryText": "hardware",
+        "dateText": "2024-02-30",
+        "descriptionText": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1394",
+      "source": {
+        "accountKey": "acct-5473565944211705",
+        "sourceEventKey": "event-144657564587049665",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "100"
+      }
+    },
+    {
+      "partnerId": "9007199254741148",
+      "source": {
+        "accountKey": "acct-35917556866575481",
+        "sourceEventKey": "event-161473581591138940",
+        "categoryText": "hardware",
+        "dateText": "2024-02-01",
+        "descriptionText": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1152",
+      "source": {
+        "accountKey": "acct-35917556866575481",
+        "sourceEventKey": "event-161473581591138940",
+        "categoryText": "hardware",
+        "dateText": "2024-02-01",
+        "descriptionText": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1224",
+      "source": {
+        "accountKey": "acct-35917556866575481",
+        "sourceEventKey": "event-262493613396667208",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "100"
+      }
+    },
+    {
+      "partnerId": "9007199254741185",
+      "source": {
+        "accountKey": "acct-67205154290594403",
+        "sourceEventKey": "event-48755728667746018",
+        "categoryText": "hardware",
+        "dateText": "2024-02-01",
+        "descriptionText": "steel blue bolt",
+        "quantity": "4"
+      }
+    },
+    {
+      "partnerId": "1464",
+      "source": {
+        "accountKey": "acct-67205154290594403",
+        "sourceEventKey": "event-22188781101831461",
+        "categoryText": "hardware",
+        "dateText": "2024-02-01",
+        "descriptionText": "steel blue bolt",
+        "quantity": "6"
+      }
+    },
+    {
+      "partnerId": "1166",
+      "source": {
+        "accountKey": "acct-67205154290594403",
+        "sourceEventKey": "event-224087299169834775",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "100"
+      }
+    },
+    {
+      "partnerId": "1003",
+      "source": {
+        "accountKey": "acct-26926870891733899",
+        "sourceEventKey": "event-30674477147536333",
+        "categoryText": "hardware",
+        "dateText": "2024-02-01",
+        "descriptionText": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1146",
+      "source": {
+        "accountKey": "acct-26926870891733899",
+        "sourceEventKey": "event-5403241349368491",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "100"
+      }
+    },
+    {
+      "partnerId": "9007199254741234",
+      "source": {
+        "accountKey": "acct-51156855118455547",
+        "sourceEventKey": "event-196667337396072167",
+        "categoryText": "hardware",
+        "dateText": "2024-02-01",
+        "descriptionText": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1230",
+      "source": {
+        "accountKey": "acct-51156855118455547",
+        "sourceEventKey": "event-58467750098249585",
+        "categoryText": "hardware",
+        "dateText": "2024-02-01",
+        "descriptionText": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1476",
+      "source": {
+        "accountKey": "acct-51156855118455547",
+        "sourceEventKey": "event-113182990885254657",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "100"
+      }
+    },
+    {
+      "partnerId": "1203",
+      "source": {
+        "accountKey": "acct-8059914383481215",
+        "sourceEventKey": "event-11498823715475220",
+        "categoryText": "hardware",
+        "dateText": "2024-02-01",
+        "descriptionText": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1084",
+      "source": {
+        "accountKey": "acct-8059914383481215",
+        "sourceEventKey": "event-69457773779036261",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "100"
+      }
+    },
+    {
+      "partnerId": "1374",
+      "source": {
+        "accountKey": null,
+        "sourceEventKey": "event-152192423894857486",
+        "categoryText": "hardware",
+        "dateText": "2024-02-01",
+        "descriptionText": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1481",
+      "source": {
+        "accountKey": "acct-34387439263250088",
+        "sourceEventKey": "event-265104183727486826",
+        "categoryText": "hardware",
+        "dateText": "2024-02-01",
+        "descriptionText": "steel blue bolt",
+        "quantity": "10"
+      }
+    },
+    {
+      "partnerId": "1216",
+      "source": {
+        "accountKey": "acct-34387439263250088",
+        "sourceEventKey": "event-250853566744645660",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "4"
+      }
+    },
+    {
+      "partnerId": "1496",
+      "source": {
+        "accountKey": "acct-34387439263250088",
+        "sourceEventKey": "event-243776641480985668",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "6"
+      }
+    },
+    {
+      "partnerId": "1158",
+      "source": {
+        "accountKey": "acct-34387439263250088",
+        "sourceEventKey": "event-47840228325427509",
+        "categoryText": "supplies",
+        "dateText": "2023-01-01",
+        "descriptionText": "unrelated distant service",
+        "quantity": "100"
+      }
+    }
+  ],
+  "groups": [
+    {
+      "key": "r:9007199254741108|p:9007199254741019",
+      "refIds": [
+        "9007199254741108"
+      ],
+      "partnerIds": [
+        "9007199254741019"
+      ],
+      "family": "singleton"
+    },
+    {
+      "key": "r:1049|p:1249",
+      "refIds": [
+        "1049"
+      ],
+      "partnerIds": [
+        "1249"
+      ],
+      "family": "singleton"
+    },
+    {
+      "key": "r:9007199254741076|p:9007199254741314",
+      "refIds": [
+        "9007199254741076"
+      ],
+      "partnerIds": [
+        "9007199254741314"
+      ],
+      "family": "singleton"
+    },
+    {
+      "key": "r:1102|p:1493",
+      "refIds": [
+        "1102"
+      ],
+      "partnerIds": [
+        "1493"
+      ],
+      "family": "singleton"
+    },
+    {
+      "key": "r:9007199254741157|p:9007199254741268",
+      "refIds": [
+        "9007199254741157"
+      ],
+      "partnerIds": [
+        "9007199254741268"
+      ],
+      "family": "singleton"
+    },
+    {
+      "key": "r:1171|p:1382",
+      "refIds": [
+        "1171"
+      ],
+      "partnerIds": [
+        "1382"
+      ],
+      "family": "singleton"
+    },
+    {
+      "key": "r:9007199254741128|p:1152",
+      "refIds": [
+        "9007199254741128"
+      ],
+      "partnerIds": [
+        "1152"
+      ],
+      "family": "singleton"
+    },
+    {
+      "key": "r:9007199254741207|p:1464,9007199254741185",
+      "refIds": [
+        "9007199254741207"
+      ],
+      "partnerIds": [
+        "1464",
+        "9007199254741185"
+      ],
+      "family": "split"
+    },
+    {
+      "key": "r:9007199254741182,9007199254741290|p:1003",
+      "refIds": [
+        "9007199254741182",
+        "9007199254741290"
+      ],
+      "partnerIds": [
+        "1003"
+      ],
+      "family": "rollup"
+    },
+    {
+      "key": "r:1219|p:1481",
+      "refIds": [
+        "1219"
+      ],
+      "partnerIds": [
+        "1481"
+      ],
+      "family": "singleton"
+    }
+  ],
+  "replayAliases": {
+    "9007199254741148": "1152"
+  }
+}

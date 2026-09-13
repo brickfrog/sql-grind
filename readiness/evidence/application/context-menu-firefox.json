@@ -1,0 +1,17 @@
+{
+  "pass": true,
+  "browser": "155.0",
+  "checks": [
+    "Table menu creates and runs 1000-row query",
+    "Keyboard editor menu executes query",
+    "Result clipboard round-trip preserves exact BIGINT",
+    "640x180 forced-color menu stays in viewport and scrolls keyboard selection",
+    "Escape restores tray focus"
+  ],
+  "tinyContextBounds": {
+    "x": 343,
+    "y": 4,
+    "width": 230,
+    "height": 172
+  }
+}

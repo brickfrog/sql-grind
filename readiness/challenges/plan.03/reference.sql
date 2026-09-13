@@ -1,0 +1,11 @@
+WITH item_totals AS (
+  SELECT order_id, sum(qty * unit_price)::DECIMAL(38,2) AS gross_revenue
+  FROM order_items GROUP BY order_id
+), payment_totals AS (
+  SELECT order_id, sum(amount)::DECIMAL(38,2) AS paid_amount
+  FROM payments WHERE status = 'succeeded' GROUP BY order_id
+)
+SELECT o.order_id, coalesce(i.gross_revenue, 0)::DECIMAL(38,2) AS gross_revenue,
+  coalesce(p.paid_amount, 0)::DECIMAL(38,2) AS paid_amount
+FROM orders o LEFT JOIN item_totals i USING (order_id)
+LEFT JOIN payment_totals p USING (order_id) ORDER BY o.order_id;

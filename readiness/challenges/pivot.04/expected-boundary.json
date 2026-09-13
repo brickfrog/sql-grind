@@ -1,0 +1,79 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "pivot.04",
+    "bundleVersion": "pivot.04-bundle-v1",
+    "challengeVersion": "pivot.04-v1",
+    "datasetVersion": "workshop-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "workshop",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "mon",
+      "type": "DATE",
+      "nullable": false
+    },
+    {
+      "name": "reason",
+      "type": "VARCHAR",
+      "nullable": false
+    },
+    {
+      "name": "qty",
+      "type": "BIGINT",
+      "nullable": true
+    }
+  ],
+  "complete": true,
+  "rowCount": 9,
+  "rows": [
+    [
+      "2024-01-01",
+      "damaged",
+      "2"
+    ],
+    [
+      "2024-01-01",
+      "unwanted",
+      "0"
+    ],
+    [
+      "2024-01-01",
+      "wrong_item",
+      null
+    ],
+    [
+      "2024-02-01",
+      "damaged",
+      null
+    ],
+    [
+      "2024-02-01",
+      "unwanted",
+      "1"
+    ],
+    [
+      "2024-02-01",
+      "wrong_item",
+      "3"
+    ],
+    [
+      "2024-03-01",
+      "damaged",
+      "0"
+    ],
+    [
+      "2024-03-01",
+      "unwanted",
+      "0"
+    ],
+    [
+      "2024-03-01",
+      "wrong_item",
+      "0"
+    ]
+  ]
+}

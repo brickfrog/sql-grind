@@ -1,0 +1,117 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "window.04",
+    "bundleVersion": "window.04-bundle-v1",
+    "challengeVersion": "window.04-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "mon",
+      "type": "DATE",
+      "nullable": false
+    },
+    {
+      "name": "revenue",
+      "type": "DECIMAL",
+      "nullable": false,
+      "precision": 38,
+      "scale": 2
+    },
+    {
+      "name": "previous_revenue",
+      "type": "DECIMAL",
+      "nullable": true,
+      "precision": 38,
+      "scale": 2
+    },
+    {
+      "name": "change",
+      "type": "DECIMAL",
+      "nullable": true,
+      "precision": 38,
+      "scale": 2
+    }
+  ],
+  "complete": true,
+  "rowCount": 12,
+  "rows": [
+    [
+      "2024-01-01",
+      "460.00",
+      null,
+      null
+    ],
+    [
+      "2024-02-01",
+      "160.00",
+      "460.00",
+      "-300.00"
+    ],
+    [
+      "2024-03-01",
+      "0.00",
+      "160.00",
+      "-160.00"
+    ],
+    [
+      "2024-04-01",
+      "0.00",
+      "0.00",
+      "0.00"
+    ],
+    [
+      "2024-05-01",
+      "0.00",
+      "0.00",
+      "0.00"
+    ],
+    [
+      "2024-06-01",
+      "20.17",
+      "0.00",
+      "20.17"
+    ],
+    [
+      "2024-07-01",
+      "0.00",
+      "20.17",
+      "-20.17"
+    ],
+    [
+      "2024-08-01",
+      "0.00",
+      "0.00",
+      "0.00"
+    ],
+    [
+      "2024-09-01",
+      "0.00",
+      "0.00",
+      "0.00"
+    ],
+    [
+      "2024-10-01",
+      "0.00",
+      "0.00",
+      "0.00"
+    ],
+    [
+      "2024-11-01",
+      "0.00",
+      "0.00",
+      "0.00"
+    ],
+    [
+      "2024-12-01",
+      "24.68",
+      "0.00",
+      "24.68"
+    ]
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "invariants": {
+    "ms": 185.0999999642372,
+    "fields": [
+      {
+        "name": "invariant",
+        "type": "Utf8"
+      },
+      {
+        "name": "violations",
+        "type": "Int64"
+      }
+    ],
+    "rows": [
+      {
+        "invariant": "product_nonleaf",
+        "violations": "0"
+      },
+      {
+        "invariant": "customer_after_order",
+        "violations": "0"
+      },
+      {
+        "invariant": "return_before_order",
+        "violations": "0"
+      },
+      {
+        "invariant": "return_quantity",
+        "violations": "0"
+      },
+      {
+        "invariant": "refund_amount",
+        "violations": "0"
+      },
+      {
+        "invariant": "payment_before_order",
+        "violations": "0"
+      }
+    ]
+  },
+  "counts": {
+    "categories": "48",
+    "customers": "120000",
+    "warehouses": "14",
+    "products": "12000",
+    "orders": "1400000",
+    "order_items": "5900000",
+    "payments": "1500000",
+    "returns": "88000"
+  },
+  "starter": {
+    "ms": 1805.300000011921,
+    "fields": [
+      {
+        "name": "mon",
+        "type": "Date32<DAY>"
+      },
+      {
+        "name": "category_id",
+        "type": "Int64"
+      },
+      {
+        "name": "c_name",
+        "type": "Utf8"
+      },
+      {
+        "name": "revenue",
+        "type": "Decimal[38e+2]"
+      }
+    ],
+    "rowCount": 468
+  },
+  "pass": true
+}

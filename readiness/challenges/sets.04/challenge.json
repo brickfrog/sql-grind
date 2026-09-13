@@ -1,0 +1,58 @@
+{
+  "challengeId": "sets.04",
+  "skillId": "sets",
+  "displayNumber": "sets.04",
+  "version": "sets.04-v1",
+  "bundleVersion": "sets.04-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Shared membership",
+  "brief": "Find membership shared by independent cohorts.",
+  "instructions": [
+    "Return distinct membership shared by both cohorts, including a shared NULL.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "workshop",
+  "starterSql": "SELECT customer_id FROM cohort_a LIMIT 10;",
+  "starterExplanation": "This starter exposes customer_id from cohort_a without solving shared membership.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "INTERSECT returns distinct shared membership."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Intersect the two identity projections before sorting."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Both cohorts contain several NULL rows; exactly one NULL belongs in the result."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "customer_id",
+        "type": "BIGINT",
+        "nullable": true
+      }
+    ],
+    "ordering": [
+      {
+        "column": "customer_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/sets.04/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/sets.04/expected-boundary.json",
+    "variant": "/bundle/challenges/sets.04/expected-variant.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

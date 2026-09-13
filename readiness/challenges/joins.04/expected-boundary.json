@@ -1,0 +1,45 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "joins.04",
+    "bundleVersion": "joins.04-bundle-v1",
+    "challengeVersion": "joins.04-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "customer_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "cohort",
+      "type": "VARCHAR",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 4,
+  "rows": [
+    [
+      "1",
+      "paid"
+    ],
+    [
+      "10001",
+      "no_paid"
+    ],
+    [
+      "10002",
+      "no_paid"
+    ],
+    [
+      "9007199254740993",
+      "paid"
+    ]
+  ]
+}

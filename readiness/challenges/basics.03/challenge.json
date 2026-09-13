@@ -1,0 +1,64 @@
+{
+  "challengeId": "basics.03",
+  "skillId": "basics",
+  "displayNumber": "basics.03",
+  "version": "basics.03-v1",
+  "bundleVersion": "basics.03-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Literal email states",
+  "brief": "Absent, blank and present are three different states. A record lies once you flatten them into two.",
+  "instructions": [
+    "Report literal NULL as missing, a literal empty string as empty, and every other input as value. Do not trim anything.",
+    "Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT customer_id,email FROM customers LIMIT 10;",
+  "starterExplanation": "The starter reads customer_id and email out of customers. It runs. It does not answer the question.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "CASE, with an explicit test for absence: NULL is equal to nothing, not even itself."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Ask whether the value is missing before you ask whether it is empty."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Customer 10001 holds empty text; customer 10002 holds nothing at all."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "customer_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "email_state",
+        "type": "VARCHAR",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "customer_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/basics.03/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/basics.03/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/basics.03/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/basics.03/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "agg.02",
+    "bundleVersion": "agg.02-bundle-v1",
+    "challengeVersion": "agg.02-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "seed-20240907",
+  "columns": [
+    {
+      "name": "customer_count",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "populated_email_count",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 1,
+  "rows": [
+    [
+      "502",
+      "456"
+    ]
+  ]
+}

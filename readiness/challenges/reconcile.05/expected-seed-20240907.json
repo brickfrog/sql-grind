@@ -1,0 +1,2286 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "reconcile.05",
+    "bundleVersion": "reconcile.05-bundle-v1",
+    "challengeVersion": "reconcile.05-v1",
+    "datasetVersion": "reconciliation-data-v1",
+    "assessmentVersion": "reconciliation-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "reconciliation",
+  "variantId": "seed-20240907",
+  "columns": [
+    {
+      "name": "ref_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "partner_ids",
+      "type": "VARCHAR",
+      "nullable": false
+    },
+    {
+      "name": "confidence",
+      "type": "VARCHAR",
+      "nullable": false
+    },
+    {
+      "name": "score",
+      "type": "DECIMAL",
+      "nullable": false,
+      "precision": 5,
+      "scale": 4
+    },
+    {
+      "name": "explanation",
+      "type": "VARCHAR",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 320,
+  "rows": [
+    [
+      "1075",
+      "[\"6297\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "1374",
+      "[\"2653\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "1626",
+      "[\"5418\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "1723",
+      "[\"2335\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "1806",
+      "[\"6906\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "1846",
+      "[\"7390\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "2439",
+      "[\"10603\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "2757",
+      "[\"6641\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "2954",
+      "[\"9706\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "2960",
+      "[\"7081\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "2994",
+      "[\"4750\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "3036",
+      "[\"5438\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "3093",
+      "[\"9379\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "3097",
+      "[\"10587\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "3129",
+      "[\"7408\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "3351",
+      "[\"5569\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "3469",
+      "[\"5219\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "3552",
+      "[\"10646\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "3712",
+      "[\"4744\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "3810",
+      "[\"2397\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "4066",
+      "[\"5709\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "4133",
+      "[\"6459\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "4146",
+      "[\"4714\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "4360",
+      "[\"2684\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "4386",
+      "[\"5113\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "4541",
+      "[\"7599\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "4916",
+      "[\"2173\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "5079",
+      "[\"8582\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "5085",
+      "[\"2965\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "5459",
+      "[\"4032\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "5701",
+      "[\"5247\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "6018",
+      "[\"5981\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "6045",
+      "[\"5528\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "6062",
+      "[\"5255\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "6118",
+      "[\"4567\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "6177",
+      "[\"3679\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "6195",
+      "[\"6506\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "6252",
+      "[\"10048\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "6253",
+      "[\"4044\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "6317",
+      "[\"7723\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "6322",
+      "[\"7728\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "6354",
+      "[\"5109\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "6527",
+      "[\"10605\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "7189",
+      "[\"7147\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "7294",
+      "[\"7315\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "7449",
+      "[\"6112\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "7492",
+      "[\"1594\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "7551",
+      "[\"9477\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "7572",
+      "[\"8166\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "7925",
+      "[\"8377\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "8011",
+      "[\"3142\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "8164",
+      "[\"6662\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "8188",
+      "[\"5990\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "8276",
+      "[\"10876\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "8476",
+      "[\"2853\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "8735",
+      "[\"1556\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "8770",
+      "[\"9282\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "8864",
+      "[\"6385\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "8874",
+      "[\"6896\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "8931",
+      "[\"6995\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9029",
+      "[\"9626\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9076",
+      "[\"7268\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9280",
+      "[\"6719\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9321",
+      "[\"10918\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "9370",
+      "[\"4507\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9665",
+      "[\"2268\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9699",
+      "[\"8535\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9766",
+      "[\"9566\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9894",
+      "[\"7178\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9936",
+      "[\"4048\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "9992",
+      "[\"2989\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "10080",
+      "[\"4078\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "10081",
+      "[\"5065\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "10176",
+      "[\"3663\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "10260",
+      "[\"4986\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "10268",
+      "[\"2587\"]",
+      "high",
+      "0.9000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "10325",
+      "[\"10555\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "10635",
+      "[\"8563\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "10873",
+      "[\"9324\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "10904",
+      "[\"4358\"]",
+      "probable",
+      "0.8000",
+      "A unique supported group has incomplete evidence; inspect its source facts."
+    ],
+    [
+      "9007199254741033",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254741131",
+      "[\"9007199254746456\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254741132",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254741250",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254741258",
+      "[\"9007199254748636\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254741277",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254741296",
+      "[\"9007199254743775\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254741344",
+      "[\"9007199254747111\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254741376",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254741403",
+      "[\"9007199254742630\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254741409",
+      "[\"7775\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254741589",
+      "[\"10277\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254741691",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254741729",
+      "[\"3504\",\"9007199254741171\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254741797",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254741864",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254741875",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254741918",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254741984",
+      "[\"9007199254750859\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254741987",
+      "[\"9007199254747443\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742043",
+      "[\"4300\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742084",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254742233",
+      "[\"10562\",\"9007199254744944\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742264",
+      "[\"8956\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742265",
+      "[\"10034\",\"9007199254749626\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742272",
+      "[\"9007199254742080\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742283",
+      "[\"9007199254746266\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742319",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254742363",
+      "[\"9007199254744728\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742371",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254742388",
+      "[\"9007199254745020\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742493",
+      "[\"6218\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742523",
+      "[\"2112\",\"9007199254742120\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742537",
+      "[\"8956\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742579",
+      "[\"9007199254741101\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742635",
+      "[\"9007199254746910\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742639",
+      "[\"1129\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742667",
+      "[\"9682\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742672",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254742863",
+      "[\"9007199254745703\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742873",
+      "[\"9007199254747944\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254742902",
+      "[\"4108\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743012",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254743021",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254743069",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254743142",
+      "[\"6935\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743187",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254743257",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254743441",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254743445",
+      "[\"2811\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743511",
+      "[\"9007199254745876\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743585",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254743618",
+      "[\"9007199254750107\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743625",
+      "[\"9007199254742791\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743652",
+      "[\"4919\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743653",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254743672",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254743756",
+      "[\"1088\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743778",
+      "[\"9138\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743806",
+      "[\"7524\",\"9007199254743503\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743837",
+      "[\"9007199254744419\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743858",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254743879",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254743927",
+      "[\"9007199254742196\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743935",
+      "[\"9007199254747540\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743943",
+      "[\"9007199254749894\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743951",
+      "[\"1088\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254743967",
+      "[\"9007199254743072\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254744063",
+      "[\"5207\",\"9007199254749179\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254744110",
+      "[\"5201\",\"9007199254741397\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254744254",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254744276",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254744300",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254744366",
+      "[\"9007199254741140\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254744397",
+      "[\"10771\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254744398",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254744416",
+      "[\"1642\",\"9007199254750135\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254744443",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254744530",
+      "[\"4957\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254744619",
+      "[\"9007199254743648\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254744709",
+      "[\"9138\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254744741",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254744797",
+      "[\"9007199254747568\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254744920",
+      "[\"10967\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254744949",
+      "[\"9007199254744274\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745072",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254745158",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254745167",
+      "[\"10142\",\"9007199254750907\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745223",
+      "[\"1390\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745346",
+      "[\"9007199254750702\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745427",
+      "[\"9007199254749205\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745450",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254745490",
+      "[\"4825\",\"9007199254741298\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745491",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254745539",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254745553",
+      "[\"1608\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745640",
+      "[\"1966\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745648",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254745783",
+      "[\"9007199254744784\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745791",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254745840",
+      "[\"8520\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745865",
+      "[\"9007199254749791\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745874",
+      "[\"3155\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745889",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254745902",
+      "[\"3768\",\"9007199254745836\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745940",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254745980",
+      "[\"9007199254743793\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254745981",
+      "[\"8520\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746019",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746050",
+      "[\"9671\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746068",
+      "[\"9007199254746905\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746078",
+      "[\"6073\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746085",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746122",
+      "[\"9007199254742970\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746151",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746206",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254746256",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746275",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254746289",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746291",
+      "[\"2256\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746351",
+      "[\"6218\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746356",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746360",
+      "[\"9007199254743359\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746517",
+      "[\"1966\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746560",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746578",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746613",
+      "[\"1390\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746632",
+      "[\"1523\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746657",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746672",
+      "[\"9007199254745936\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746675",
+      "[\"3155\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746743",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746769",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746771",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746777",
+      "[\"9007199254749818\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746812",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746814",
+      "[\"9682\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746840",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254746853",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254746929",
+      "[\"7775\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254746941",
+      "[\"2281\",\"9007199254749912\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747001",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254747035",
+      "[\"4300\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747223",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254747240",
+      "[\"1116\",\"9007199254744980\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747319",
+      "[\"9007199254748482\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747575",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254747577",
+      "[\"7695\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747589",
+      "[\"9007199254747026\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747619",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254747714",
+      "[\"7695\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747730",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254747769",
+      "[\"9007199254742750\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747821",
+      "[\"9007199254741257\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747845",
+      "[\"9571\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747869",
+      "[\"10625\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747871",
+      "[\"9007199254742619\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747938",
+      "[\"2929\",\"9007199254742919\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747976",
+      "[\"9007199254742857\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254747997",
+      "[\"8730\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748022",
+      "[\"9007199254741567\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748063",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254748071",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254748088",
+      "[\"10771\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748145",
+      "[\"9007199254747461\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748195",
+      "[\"9007199254749307\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748228",
+      "[\"9007199254742242\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748252",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254748289",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254748380",
+      "[\"10245\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748386",
+      "[\"10967\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748435",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254748497",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254748507",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254748509",
+      "[\"9007199254743437\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748530",
+      "[\"9893\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748555",
+      "[\"10796\",\"9007199254746332\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748623",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254748630",
+      "[\"4677\",\"9007199254750582\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748641",
+      "[\"9007199254742965\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748706",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254748765",
+      "[\"7553\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748781",
+      "[\"6639\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748848",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254748899",
+      "[\"1129\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748942",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254748949",
+      "[\"7499\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748976",
+      "[\"9007199254745194\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748978",
+      "[\"3689\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254748994",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254749000",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254749045",
+      "[\"4069\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749052",
+      "[\"9007199254747177\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749062",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254749063",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254749075",
+      "[\"6935\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749097",
+      "[\"9007199254741390\",\"9747\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749140",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254749190",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254749316",
+      "[\"1216\",\"9007199254750959\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749317",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254749357",
+      "[\"2270\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749367",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254749412",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254749417",
+      "[\"9007199254741728\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749427",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254749440",
+      "[\"9007199254746406\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749445",
+      "[\"9007199254742869\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749454",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254749478",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254749545",
+      "[\"7423\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749560",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254749611",
+      "[\"2811\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749612",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254749673",
+      "[\"1608\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749695",
+      "[\"6453\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749798",
+      "[\"6579\",\"9007199254742104\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749811",
+      "[\"9007199254749893\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749821",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254749840",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254749885",
+      "[\"9007199254744241\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749892",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254749906",
+      "[\"9007199254747822\"]",
+      "high",
+      "0.9500",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254749974",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254750002",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254750133",
+      "[\"9065\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254750165",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254750176",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254750378",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254750441",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254750469",
+      "[\"9007199254748082\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254750494",
+      "[\"1523\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254750537",
+      "[]",
+      "missing",
+      "0.0000",
+      "No candidate group supplies sufficient evidence."
+    ],
+    [
+      "9007199254750543",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254750567",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254750775",
+      "[\"9007199254743059\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254750790",
+      "[]",
+      "ambiguous",
+      "1.0000",
+      "Competing groups have equal or insufficiently separated evidence, or reuse a member."
+    ],
+    [
+      "9007199254750854",
+      "[\"7423\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254750909",
+      "[\"9007199254748739\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ],
+    [
+      "9007199254750980",
+      "[\"7670\",\"9007199254748643\"]",
+      "high",
+      "1.0000",
+      "A unique strong group survives simultaneous member-conflict review."
+    ]
+  ]
+}

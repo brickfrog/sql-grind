@@ -1,0 +1,58 @@
+{
+  "challengeId": "sets.01",
+  "skillId": "sets",
+  "displayNumber": "sets.01",
+  "version": "sets.01-v1",
+  "bundleVersion": "sets.01-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Distinct cohort union",
+  "brief": "Combine overlapping cohorts while removing duplicate membership.",
+  "instructions": [
+    "Return the distinct union of both cohorts, including one NULL.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "workshop",
+  "starterSql": "SELECT customer_id FROM cohort_a LIMIT 10;",
+  "starterExplanation": "This starter exposes customer_id from cohort_a without solving distinct cohort union.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "UNION removes duplicate membership, including duplicate NULL values."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Combine both projections with the distinct set operation."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Repeated 1 and repeated NULL collapse to one row each."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "customer_id",
+        "type": "BIGINT",
+        "nullable": true
+      }
+    ],
+    "ordering": [
+      {
+        "column": "customer_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/sets.01/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/sets.01/expected-boundary.json",
+    "variant": "/bundle/challenges/sets.01/expected-variant.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "challengeId": "clean.03",
+  "skillId": "clean",
+  "displayNumber": "clean.03",
+  "version": "clean.03-v1",
+  "bundleVersion": "clean.03-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Postal validation with originals",
+  "brief": "Extract valid postal values while retaining rejected originals.",
+  "instructions": [
+    "Accept only trimmed US five digits or five-plus-four digits with one hyphen. Return accepted trimmed input as postal_code. Retain invalid non-NULL input unchanged as rejected_value; missing input gives two NULLs.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "workshop",
+  "starterSql": "SELECT contact_id,postal_text FROM raw_contacts LIMIT 10;",
+  "starterExplanation": "This starter exposes contact_id,postal_text from raw_contacts without solving postal validation with originals.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Use full-string matching rather than substring extraction."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Evaluate a validity flag on trimmed text, then independently select accepted and rejected outputs."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "123456 is not a five-digit postal code; surrounding spaces are allowed only after trimming."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "contact_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "postal_code",
+        "type": "VARCHAR",
+        "nullable": true
+      },
+      {
+        "name": "rejected_value",
+        "type": "VARCHAR",
+        "nullable": true
+      }
+    ],
+    "ordering": [
+      {
+        "column": "contact_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/clean.03/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/clean.03/expected-boundary.json",
+    "variant": "/bundle/challenges/clean.03/expected-variant.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

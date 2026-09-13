@@ -1,0 +1,4524 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "reconcile.01",
+    "bundleVersion": "reconcile.01-bundle-v1",
+    "challengeVersion": "reconcile.01-v1",
+    "datasetVersion": "reconciliation-data-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "reconciliation",
+  "variantId": "seed-20240907",
+  "columns": [
+    {
+      "name": "ref_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "partner_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "normalized_category",
+      "type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "name": "parsed_date",
+      "type": "DATE",
+      "nullable": true
+    },
+    {
+      "name": "normalized_description",
+      "type": "VARCHAR",
+      "nullable": true
+    }
+  ],
+  "complete": true,
+  "rowCount": 640,
+  "rows": [
+    [
+      "1075",
+      "2445",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "1075",
+      "6297",
+      "hardware",
+      "2024-04-25",
+      "silver black screw"
+    ],
+    [
+      "1374",
+      "2653",
+      "hardware",
+      "2024-03-11",
+      "copper green plate"
+    ],
+    [
+      "1374",
+      "3392",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "1626",
+      "2867",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "1626",
+      "5418",
+      "hardware",
+      null,
+      "silver black screw"
+    ],
+    [
+      "1723",
+      "1918",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "1723",
+      "2335",
+      "hardware",
+      "2024-03-12",
+      "copper green plate"
+    ],
+    [
+      "1806",
+      "6906",
+      "hardware",
+      "2024-05-04",
+      "copper green plate"
+    ],
+    [
+      "1806",
+      "9039",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "1846",
+      "1763",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "1846",
+      "7390",
+      "hardware",
+      null,
+      "brass white clamp"
+    ],
+    [
+      "2439",
+      "3318",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "2439",
+      "10603",
+      "hardware",
+      "2024-03-20",
+      "brass white clamp"
+    ],
+    [
+      "2757",
+      "4562",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "2757",
+      "6641",
+      "hardware",
+      "2024-06-14",
+      "silver black screw"
+    ],
+    [
+      "2954",
+      "7767",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "2954",
+      "9706",
+      "hardware",
+      "2024-03-01",
+      "silver black screw"
+    ],
+    [
+      "2960",
+      "7081",
+      "hardware",
+      "2024-06-17",
+      "copper green plate"
+    ],
+    [
+      "2960",
+      "8830",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "2994",
+      "4667",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "2994",
+      "4750",
+      "hardware",
+      null,
+      "brass white clamp"
+    ],
+    [
+      "3036",
+      "5438",
+      "hardware",
+      "2024-06-02",
+      "silver black screw"
+    ],
+    [
+      "3036",
+      "8490",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3093",
+      "9379",
+      "hardware",
+      "2024-06-25",
+      "silver black screw"
+    ],
+    [
+      "3093",
+      "10701",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3097",
+      "6556",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3097",
+      "10587",
+      "hardware",
+      null,
+      "copper green plate"
+    ],
+    [
+      "3129",
+      "6861",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3129",
+      "7408",
+      "hardware",
+      "2024-06-20",
+      "copper green plate"
+    ],
+    [
+      "3351",
+      "5569",
+      "hardware",
+      "2024-03-01",
+      "copper green plate"
+    ],
+    [
+      "3351",
+      "7151",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3469",
+      "5219",
+      "hardware",
+      "2024-06-22",
+      "copper green plate"
+    ],
+    [
+      "3469",
+      "5557",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3469",
+      "7439",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3469",
+      "8287",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3552",
+      "4617",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3552",
+      "7792",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3552",
+      "8375",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3552",
+      "10646",
+      "hardware",
+      "2024-06-17",
+      "copper green plate"
+    ],
+    [
+      "3712",
+      "4744",
+      "hardware",
+      "2024-03-14",
+      "silver black screw"
+    ],
+    [
+      "3712",
+      "8211",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3810",
+      "2397",
+      "hardware",
+      "2024-02-01",
+      "copper green plate"
+    ],
+    [
+      "3810",
+      "3240",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3810",
+      "9485",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "3810",
+      "10942",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "4066",
+      "3780",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "4066",
+      "5709",
+      "hardware",
+      "2024-03-04",
+      "copper green plate"
+    ],
+    [
+      "4133",
+      "6459",
+      "hardware",
+      "2024-02-01",
+      "copper green plate"
+    ],
+    [
+      "4133",
+      "7205",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "4146",
+      "3885",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "4146",
+      "4714",
+      "hardware",
+      null,
+      "copper green plate"
+    ],
+    [
+      "4360",
+      "2684",
+      "hardware",
+      "2024-03-08",
+      "copper green plate"
+    ],
+    [
+      "4360",
+      "5280",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "4386",
+      "4869",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "4386",
+      "5113",
+      "hardware",
+      null,
+      "silver black screw"
+    ],
+    [
+      "4541",
+      "7599",
+      "hardware",
+      "2024-03-15",
+      "copper green plate"
+    ],
+    [
+      "4541",
+      "7617",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "4916",
+      "1483",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "4916",
+      "2173",
+      "hardware",
+      "2024-03-04",
+      "silver black screw"
+    ],
+    [
+      "5079",
+      "6831",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "5079",
+      "8513",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "5079",
+      "8582",
+      "hardware",
+      "2024-06-22",
+      "silver black screw"
+    ],
+    [
+      "5079",
+      "9784",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "5085",
+      "2965",
+      "hardware",
+      "2024-03-11",
+      "silver black screw"
+    ],
+    [
+      "5085",
+      "4026",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "5459",
+      "4032",
+      "hardware",
+      "2024-05-01",
+      "copper green plate"
+    ],
+    [
+      "5459",
+      "5532",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "5459",
+      "6384",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "5459",
+      "9558",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "5701",
+      "2879",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "5701",
+      "5247",
+      "hardware",
+      null,
+      "silver black screw"
+    ],
+    [
+      "6018",
+      "5981",
+      "hardware",
+      null,
+      "silver black screw"
+    ],
+    [
+      "6018",
+      "9407",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6045",
+      "5528",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "6045",
+      "9083",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6062",
+      "2060",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6062",
+      "5255",
+      "hardware",
+      null,
+      "copper green plate"
+    ],
+    [
+      "6118",
+      "4567",
+      "hardware",
+      "2024-06-14",
+      "silver black screw"
+    ],
+    [
+      "6118",
+      "8856",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6118",
+      "10408",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6118",
+      "10983",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6177",
+      "3401",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6177",
+      "3679",
+      "hardware",
+      null,
+      "silver black screw"
+    ],
+    [
+      "6195",
+      "6506",
+      "hardware",
+      "2024-03-11",
+      "silver black screw"
+    ],
+    [
+      "6195",
+      "7368",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6195",
+      "7478",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6195",
+      "9734",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6252",
+      "4820",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6252",
+      "9991",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6252",
+      "10048",
+      "hardware",
+      "2024-04-25",
+      "silver black screw"
+    ],
+    [
+      "6252",
+      "10439",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6253",
+      "2513",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6253",
+      "2991",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6253",
+      "4044",
+      "hardware",
+      "2024-03-17",
+      "brass white clamp"
+    ],
+    [
+      "6253",
+      "6409",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6317",
+      "6487",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6317",
+      "7723",
+      "hardware",
+      null,
+      "silver black screw"
+    ],
+    [
+      "6322",
+      "1431",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6322",
+      "7728",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ],
+    [
+      "6354",
+      "2218",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6354",
+      "5083",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6354",
+      "5109",
+      "hardware",
+      "2024-03-01",
+      "silver black screw"
+    ],
+    [
+      "6354",
+      "6529",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6527",
+      "2330",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6527",
+      "3145",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6527",
+      "6516",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "6527",
+      "10605",
+      "hardware",
+      "2024-05-13",
+      "brass white clamp"
+    ],
+    [
+      "7189",
+      "1258",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "7189",
+      "7147",
+      "hardware",
+      "2024-03-01",
+      "copper green plate"
+    ],
+    [
+      "7189",
+      "7516",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "7189",
+      "8321",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "7294",
+      "7315",
+      "hardware",
+      "2024-06-22",
+      "copper green plate"
+    ],
+    [
+      "7294",
+      "10727",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "7449",
+      "6112",
+      "hardware",
+      "2024-05-11",
+      "copper green plate"
+    ],
+    [
+      "7449",
+      "6215",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "7492",
+      "1594",
+      "hardware",
+      "2024-05-13",
+      "brass white clamp"
+    ],
+    [
+      "7492",
+      "9610",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "7551",
+      "5038",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "7551",
+      "9477",
+      "hardware",
+      "2024-04-24",
+      "silver black screw"
+    ],
+    [
+      "7572",
+      "6612",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "7572",
+      "8166",
+      "hardware",
+      "2024-05-01",
+      "copper green plate"
+    ],
+    [
+      "7925",
+      "1268",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "7925",
+      "4478",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "7925",
+      "7335",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "7925",
+      "8377",
+      "hardware",
+      "2024-03-28",
+      "copper green plate"
+    ],
+    [
+      "8011",
+      "3142",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ],
+    [
+      "8011",
+      "8519",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8164",
+      "3487",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8164",
+      "4459",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8164",
+      "5374",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8164",
+      "6662",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ],
+    [
+      "8188",
+      "1709",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8188",
+      "5990",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "8276",
+      "10366",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8276",
+      "10876",
+      "hardware",
+      "2024-06-25",
+      "copper green plate"
+    ],
+    [
+      "8476",
+      "2853",
+      "hardware",
+      "2024-05-01",
+      "silver black screw"
+    ],
+    [
+      "8476",
+      "10611",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8735",
+      "1556",
+      "hardware",
+      "2024-04-21",
+      "silver black screw"
+    ],
+    [
+      "8735",
+      "6033",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8770",
+      "3114",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8770",
+      "9282",
+      "hardware",
+      null,
+      "copper green plate"
+    ],
+    [
+      "8864",
+      "2551",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8864",
+      "6385",
+      "hardware",
+      null,
+      "copper green plate"
+    ],
+    [
+      "8874",
+      "3372",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8874",
+      "6244",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8874",
+      "6896",
+      "hardware",
+      "2024-03-08",
+      "copper green plate"
+    ],
+    [
+      "8874",
+      "8632",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8931",
+      "5485",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "8931",
+      "6995",
+      "hardware",
+      "2024-03-17",
+      "brass white clamp"
+    ],
+    [
+      "9029",
+      "4473",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9029",
+      "5080",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9029",
+      "7509",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9029",
+      "9626",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "9076",
+      "5192",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9076",
+      "7157",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9076",
+      "7268",
+      "hardware",
+      "2024-04-21",
+      "silver black screw"
+    ],
+    [
+      "9076",
+      "7952",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9280",
+      "6719",
+      "hardware",
+      "2024-02-04",
+      "copper green plate"
+    ],
+    [
+      "9280",
+      "10328",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9321",
+      "7815",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9321",
+      "10918",
+      "hardware",
+      null,
+      "copper green plate"
+    ],
+    [
+      "9370",
+      "4507",
+      "hardware",
+      "2024-03-28",
+      "copper green plate"
+    ],
+    [
+      "9370",
+      "7958",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9665",
+      "2268",
+      "hardware",
+      "2024-05-16",
+      "brass white clamp"
+    ],
+    [
+      "9665",
+      "5273",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9699",
+      "4043",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9699",
+      "8535",
+      "hardware",
+      "2024-06-05",
+      "silver black screw"
+    ],
+    [
+      "9766",
+      "1935",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9766",
+      "8214",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9766",
+      "9566",
+      "hardware",
+      "2024-05-11",
+      "copper green plate"
+    ],
+    [
+      "9766",
+      "10349",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9894",
+      "2744",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9894",
+      "3840",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9894",
+      "7178",
+      "hardware",
+      "2024-03-12",
+      "copper green plate"
+    ],
+    [
+      "9894",
+      "8976",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9936",
+      "4048",
+      "hardware",
+      null,
+      "silver black screw"
+    ],
+    [
+      "9936",
+      "10591",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9992",
+      "2989",
+      "hardware",
+      "2024-06-17",
+      "silver black screw"
+    ],
+    [
+      "9992",
+      "7537",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "10080",
+      "3651",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "10080",
+      "4078",
+      "hardware",
+      null,
+      "copper green plate"
+    ],
+    [
+      "10081",
+      "2521",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "10081",
+      "5065",
+      "hardware",
+      "2024-04-03",
+      "copper green plate"
+    ],
+    [
+      "10176",
+      "3663",
+      "hardware",
+      null,
+      "copper green plate"
+    ],
+    [
+      "10176",
+      "7314",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "10260",
+      "4986",
+      "hardware",
+      "2024-06-22",
+      "silver black screw"
+    ],
+    [
+      "10260",
+      "7240",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "10268",
+      "2587",
+      "hardware",
+      "2024-05-14",
+      "copper green plate"
+    ],
+    [
+      "10268",
+      "9633",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "10325",
+      "5671",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "10325",
+      "10555",
+      "hardware",
+      null,
+      "copper green plate"
+    ],
+    [
+      "10635",
+      "3314",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "10635",
+      "8075",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "10635",
+      "8389",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "10635",
+      "8563",
+      "hardware",
+      "2024-06-02",
+      "silver black screw"
+    ],
+    [
+      "10873",
+      "9324",
+      "hardware",
+      null,
+      "silver black screw"
+    ],
+    [
+      "10873",
+      "10686",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "10904",
+      "4358",
+      "hardware",
+      null,
+      "copper green plate"
+    ],
+    [
+      "10904",
+      "9899",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741033",
+      "1004",
+      "hardware",
+      "2024-04-25",
+      "silver black screw"
+    ],
+    [
+      "9007199254741033",
+      "6615",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741131",
+      "9255",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741131",
+      "9007199254746456",
+      "hardware",
+      "2024-03-11",
+      "silver black scre"
+    ],
+    [
+      "9007199254741250",
+      "6985",
+      "hardware",
+      "2024-06-02",
+      "silver black screw"
+    ],
+    [
+      "9007199254741250",
+      "10399",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741258",
+      "3946",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741258",
+      "9007199254748636",
+      "hardware",
+      "2024-03-12",
+      "silver black screw"
+    ],
+    [
+      "9007199254741277",
+      "5371",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741277",
+      "5601",
+      "hardware",
+      "2024-05-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254741296",
+      "10783",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741296",
+      "9007199254743775",
+      "hardware",
+      "2024-06-22",
+      "copper green plate"
+    ],
+    [
+      "9007199254741344",
+      "9176",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741344",
+      "9007199254747111",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ],
+    [
+      "9007199254741403",
+      "7480",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741403",
+      "9007199254742630",
+      "hardware",
+      "2024-05-13",
+      "brass white clam"
+    ],
+    [
+      "9007199254741409",
+      "1271",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741409",
+      "7775",
+      "hardware",
+      "2024-06-22",
+      "copper green plate"
+    ],
+    [
+      "9007199254741589",
+      "8445",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741589",
+      "10277",
+      "hardware",
+      "2024-03-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254741729",
+      "3504",
+      "hardware",
+      "2024-05-11",
+      "copper green plate"
+    ],
+    [
+      "9007199254741729",
+      "4162",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741729",
+      "9007199254741171",
+      "hardware",
+      "2024-05-11",
+      "copper green plate"
+    ],
+    [
+      "9007199254741797",
+      "7890",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741797",
+      "9193",
+      "hardware",
+      "2024-04-25",
+      "silver black screw"
+    ],
+    [
+      "9007199254741797",
+      "9007199254744731",
+      "hardware",
+      "2024-04-25",
+      "silver black screw"
+    ],
+    [
+      "9007199254741864",
+      "6985",
+      "hardware",
+      "2024-06-02",
+      "silver black screw"
+    ],
+    [
+      "9007199254741864",
+      "10399",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741875",
+      "7362",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741875",
+      "9842",
+      "hardware",
+      "2024-03-01",
+      "silver black screw"
+    ],
+    [
+      "9007199254741875",
+      "9007199254746404",
+      "hardware",
+      "2024-03-01",
+      "silver black screw"
+    ],
+    [
+      "9007199254741918",
+      "4790",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "9007199254741918",
+      "8298",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741984",
+      "8021",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741984",
+      "9007199254750859",
+      "hardware",
+      "2024-03-18",
+      "brass white clamp"
+    ],
+    [
+      "9007199254741987",
+      "9144",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254741987",
+      "9007199254747443",
+      "hardware",
+      "2024-03-29",
+      "copper green plate"
+    ],
+    [
+      "9007199254742043",
+      "4300",
+      "hardware",
+      "2024-03-17",
+      "brass white clamp"
+    ],
+    [
+      "9007199254742043",
+      "6320",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742233",
+      "3438",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742233",
+      "10562",
+      "hardware",
+      "2024-03-08",
+      "copper green plate"
+    ],
+    [
+      "9007199254742233",
+      "9007199254744944",
+      "hardware",
+      "2024-03-08",
+      "copper green plate"
+    ],
+    [
+      "9007199254742264",
+      "8009",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742264",
+      "8956",
+      "hardware",
+      "2024-05-11",
+      "copper green plate"
+    ],
+    [
+      "9007199254742265",
+      "7360",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742265",
+      "10034",
+      "hardware",
+      "2024-05-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254742265",
+      "9007199254749626",
+      "hardware",
+      "2024-05-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254742272",
+      "10412",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742272",
+      "9007199254742080",
+      "hardware",
+      "2024-05-11",
+      "copper green plat"
+    ],
+    [
+      "9007199254742283",
+      "5739",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742283",
+      "9007199254746266",
+      "hardware",
+      "2024-03-12",
+      "copper green plat"
+    ],
+    [
+      "9007199254742363",
+      "9402",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742363",
+      "9007199254744728",
+      "hardware",
+      "2024-03-13",
+      "copper green plate"
+    ],
+    [
+      "9007199254742388",
+      "1436",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742388",
+      "9007199254745020",
+      "hardware",
+      "2024-03-08",
+      "copper green plate"
+    ],
+    [
+      "9007199254742493",
+      "6218",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ],
+    [
+      "9007199254742493",
+      "9011",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742523",
+      "2112",
+      "hardware",
+      "2024-03-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254742523",
+      "6733",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742523",
+      "9007199254742120",
+      "hardware",
+      "2024-03-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254742537",
+      "8009",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742537",
+      "8956",
+      "hardware",
+      "2024-05-11",
+      "copper green plate"
+    ],
+    [
+      "9007199254742579",
+      "5168",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742579",
+      "9007199254741101",
+      "hardware",
+      "2024-06-17",
+      "copper green plat"
+    ],
+    [
+      "9007199254742635",
+      "5497",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742635",
+      "9007199254746910",
+      "hardware",
+      "2024-06-18",
+      "copper green plate"
+    ],
+    [
+      "9007199254742639",
+      "1129",
+      "hardware",
+      "2024-06-22",
+      "silver black screw"
+    ],
+    [
+      "9007199254742639",
+      "3190",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742667",
+      "7015",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742667",
+      "9682",
+      "hardware",
+      "2024-03-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254742863",
+      "2861",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742863",
+      "9007199254745703",
+      "hardware",
+      "2024-06-23",
+      "silver black screw"
+    ],
+    [
+      "9007199254742873",
+      "9484",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254742873",
+      "9007199254747944",
+      "hardware",
+      "2024-03-01",
+      "silver black scre"
+    ],
+    [
+      "9007199254742902",
+      "4108",
+      "hardware",
+      "2024-03-08",
+      "copper green plate"
+    ],
+    [
+      "9007199254742902",
+      "8746",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743021",
+      "2456",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743021",
+      "3315",
+      "hardware",
+      "2024-03-12",
+      "copper green plate"
+    ],
+    [
+      "9007199254743021",
+      "9007199254749200",
+      "hardware",
+      "2024-03-12",
+      "copper green plate"
+    ],
+    [
+      "9007199254743142",
+      "1428",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743142",
+      "6935",
+      "hardware",
+      "2024-04-25",
+      "silver black screw"
+    ],
+    [
+      "9007199254743257",
+      "1876",
+      "hardware",
+      "2024-03-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254743257",
+      "5797",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743441",
+      "2072",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743441",
+      "7566",
+      "hardware",
+      "2024-05-11",
+      "copper green plate"
+    ],
+    [
+      "9007199254743445",
+      "1743",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743445",
+      "2811",
+      "hardware",
+      "2024-06-14",
+      "silver black screw"
+    ],
+    [
+      "9007199254743511",
+      "2004",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743511",
+      "9007199254745876",
+      "hardware",
+      "2024-03-31",
+      "copper green plat"
+    ],
+    [
+      "9007199254743618",
+      "4361",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743618",
+      "9007199254750107",
+      "hardware",
+      "2024-04-25",
+      "silver black screw"
+    ],
+    [
+      "9007199254743625",
+      "6679",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743625",
+      "9007199254742791",
+      "hardware",
+      "2024-05-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254743652",
+      "1852",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743652",
+      "4919",
+      "hardware",
+      "2024-03-01",
+      "silver black screw"
+    ],
+    [
+      "9007199254743672",
+      "2087",
+      "hardware",
+      "2024-06-02",
+      "silver black screw"
+    ],
+    [
+      "9007199254743672",
+      "6301",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743672",
+      "9007199254742413",
+      "hardware",
+      "2024-06-02",
+      "silver black screw"
+    ],
+    [
+      "9007199254743756",
+      "1088",
+      "hardware",
+      "2024-06-02",
+      "silver black screw"
+    ],
+    [
+      "9007199254743756",
+      "5444",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743778",
+      "1280",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743778",
+      "9138",
+      "hardware",
+      "2024-06-17",
+      "copper green plate"
+    ],
+    [
+      "9007199254743806",
+      "7524",
+      "hardware",
+      "2024-04-25",
+      "silver black screw"
+    ],
+    [
+      "9007199254743806",
+      "10458",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743806",
+      "9007199254743503",
+      "hardware",
+      "2024-04-25",
+      "silver black screw"
+    ],
+    [
+      "9007199254743837",
+      "1360",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743837",
+      "9007199254744419",
+      "hardware",
+      "2024-06-15",
+      "silver black screw"
+    ],
+    [
+      "9007199254743858",
+      "1290",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743858",
+      "8606",
+      "hardware",
+      "2024-05-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254743858",
+      "9007199254744816",
+      "hardware",
+      "2024-05-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254743927",
+      "2069",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743927",
+      "9007199254742196",
+      "hardware",
+      "2024-03-02",
+      "silver black screw"
+    ],
+    [
+      "9007199254743935",
+      "2287",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743935",
+      "9007199254747540",
+      "hardware",
+      "2024-03-12",
+      "copper green plate"
+    ],
+    [
+      "9007199254743943",
+      "7620",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743943",
+      "9007199254749894",
+      "hardware",
+      "2024-06-22",
+      "silver black scre"
+    ],
+    [
+      "9007199254743951",
+      "1088",
+      "hardware",
+      "2024-06-02",
+      "silver black screw"
+    ],
+    [
+      "9007199254743951",
+      "5444",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743967",
+      "6361",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254743967",
+      "9007199254743072",
+      "hardware",
+      "2024-04-26",
+      "silver black screw"
+    ],
+    [
+      "9007199254744063",
+      "5207",
+      "hardware",
+      "2024-03-17",
+      "brass white clamp"
+    ],
+    [
+      "9007199254744063",
+      "9026",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744063",
+      "9007199254749179",
+      "hardware",
+      "2024-03-17",
+      "brass white clamp"
+    ],
+    [
+      "9007199254744110",
+      "5201",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "9007199254744110",
+      "7174",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744110",
+      "9007199254741397",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "9007199254744276",
+      "3604",
+      "hardware",
+      "2024-03-08",
+      "copper green plate"
+    ],
+    [
+      "9007199254744276",
+      "10696",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744276",
+      "9007199254749069",
+      "hardware",
+      "2024-03-08",
+      "copper green plate"
+    ],
+    [
+      "9007199254744300",
+      "7032",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744300",
+      "9293",
+      "hardware",
+      "2024-06-17",
+      "copper green plate"
+    ],
+    [
+      "9007199254744300",
+      "9007199254747243",
+      "hardware",
+      "2024-06-17",
+      "copper green plate"
+    ],
+    [
+      "9007199254744366",
+      "7133",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744366",
+      "9007199254741140",
+      "hardware",
+      "2024-06-17",
+      "copper green plate"
+    ],
+    [
+      "9007199254744397",
+      "8196",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744397",
+      "10771",
+      "hardware",
+      "2024-03-11",
+      "silver black screw"
+    ],
+    [
+      "9007199254744398",
+      "2072",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744398",
+      "7566",
+      "hardware",
+      "2024-05-11",
+      "copper green plate"
+    ],
+    [
+      "9007199254744416",
+      "1642",
+      "hardware",
+      "2024-06-17",
+      "copper green plate"
+    ],
+    [
+      "9007199254744416",
+      "5213",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744416",
+      "9007199254750135",
+      "hardware",
+      "2024-06-17",
+      "copper green plate"
+    ],
+    [
+      "9007199254744530",
+      "2902",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744530",
+      "4957",
+      "hardware",
+      "2024-06-14",
+      "silver black screw"
+    ],
+    [
+      "9007199254744619",
+      "1528",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744619",
+      "9007199254743648",
+      "hardware",
+      "2024-05-01",
+      "copper green plat"
+    ],
+    [
+      "9007199254744709",
+      "1280",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744709",
+      "9138",
+      "hardware",
+      "2024-06-17",
+      "copper green plate"
+    ],
+    [
+      "9007199254744741",
+      "8033",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744741",
+      "10926",
+      "hardware",
+      "2024-03-01",
+      "silver black screw"
+    ],
+    [
+      "9007199254744797",
+      "2443",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744797",
+      "9007199254747568",
+      "hardware",
+      "2024-03-28",
+      "copper green plat"
+    ],
+    [
+      "9007199254744920",
+      "4716",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744920",
+      "10967",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "9007199254744949",
+      "1050",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254744949",
+      "9007199254744274",
+      "hardware",
+      "2024-02-02",
+      "copper green plate"
+    ],
+    [
+      "9007199254745072",
+      "6158",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745072",
+      "7176",
+      "hardware",
+      "2024-03-12",
+      "copper green plate"
+    ],
+    [
+      "9007199254745158",
+      "2321",
+      "hardware",
+      "2024-06-22",
+      "copper green plate"
+    ],
+    [
+      "9007199254745158",
+      "4629",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745158",
+      "9007199254741424",
+      "hardware",
+      "2024-06-22",
+      "copper green plate"
+    ],
+    [
+      "9007199254745167",
+      "10142",
+      "hardware",
+      "2024-06-22",
+      "copper green plate"
+    ],
+    [
+      "9007199254745167",
+      "10912",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745167",
+      "9007199254750907",
+      "hardware",
+      "2024-06-22",
+      "copper green plate"
+    ],
+    [
+      "9007199254745223",
+      "1390",
+      "hardware",
+      "2024-03-08",
+      "copper green plate"
+    ],
+    [
+      "9007199254745223",
+      "9974",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745346",
+      "5428",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745346",
+      "9007199254750702",
+      "hardware",
+      "2024-05-02",
+      "copper green plate"
+    ],
+    [
+      "9007199254745427",
+      "7501",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745427",
+      "9007199254749205",
+      "hardware",
+      "2024-05-13",
+      "brass white clamp"
+    ],
+    [
+      "9007199254745490",
+      "4825",
+      "hardware",
+      "2024-02-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254745490",
+      "7915",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745490",
+      "9007199254741298",
+      "hardware",
+      "2024-02-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254745491",
+      "4993",
+      "hardware",
+      "2024-06-14",
+      "silver black screw"
+    ],
+    [
+      "9007199254745491",
+      "10820",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745539",
+      "2350",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "9007199254745539",
+      "3714",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745539",
+      "9007199254750301",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "9007199254745553",
+      "1608",
+      "hardware",
+      "2024-03-12",
+      "copper green plate"
+    ],
+    [
+      "9007199254745553",
+      "10963",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745640",
+      "1966",
+      "hardware",
+      "2024-05-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254745640",
+      "4128",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745648",
+      "6689",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745648",
+      "8463",
+      "hardware",
+      "2024-06-17",
+      "copper green plate"
+    ],
+    [
+      "9007199254745783",
+      "3846",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745783",
+      "9007199254744784",
+      "hardware",
+      "2024-05-12",
+      "copper green plate"
+    ],
+    [
+      "9007199254745840",
+      "1123",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745840",
+      "8520",
+      "hardware",
+      "2024-04-21",
+      "silver black screw"
+    ],
+    [
+      "9007199254745865",
+      "6489",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745865",
+      "9007199254749791",
+      "hardware",
+      "2024-02-01",
+      "copper green plat"
+    ],
+    [
+      "9007199254745874",
+      "3155",
+      "hardware",
+      "2024-05-13",
+      "brass white clamp"
+    ],
+    [
+      "9007199254745874",
+      "4163",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745889",
+      "4670",
+      "hardware",
+      "2024-02-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254745889",
+      "9876",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745889",
+      "9007199254746804",
+      "hardware",
+      "2024-02-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254745902",
+      "1033",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745902",
+      "3768",
+      "hardware",
+      "2024-06-22",
+      "silver black screw"
+    ],
+    [
+      "9007199254745902",
+      "9007199254745836",
+      "hardware",
+      "2024-06-22",
+      "silver black screw"
+    ],
+    [
+      "9007199254745980",
+      "4396",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745980",
+      "9007199254743793",
+      "hardware",
+      "2024-03-28",
+      "copper green plate"
+    ],
+    [
+      "9007199254745981",
+      "1123",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254745981",
+      "8520",
+      "hardware",
+      "2024-04-21",
+      "silver black screw"
+    ],
+    [
+      "9007199254746019",
+      "1932",
+      "hardware",
+      "2024-03-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254746019",
+      "9731",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746019",
+      "9007199254741268",
+      "hardware",
+      "2024-03-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254746050",
+      "8346",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746050",
+      "9671",
+      "hardware",
+      "2024-05-13",
+      "brass white clamp"
+    ],
+    [
+      "9007199254746068",
+      "6537",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746068",
+      "9007199254746905",
+      "hardware",
+      "2024-03-11",
+      "silver black screw"
+    ],
+    [
+      "9007199254746078",
+      "6073",
+      "hardware",
+      "2024-06-22",
+      "copper green plate"
+    ],
+    [
+      "9007199254746078",
+      "9052",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746085",
+      "8934",
+      "hardware",
+      "2024-03-17",
+      "brass white clamp"
+    ],
+    [
+      "9007199254746085",
+      "9244",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746122",
+      "7062",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746122",
+      "9007199254742970",
+      "hardware",
+      "2024-03-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254746151",
+      "4398",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ],
+    [
+      "9007199254746151",
+      "5837",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746256",
+      "2556",
+      "hardware",
+      "2024-06-22",
+      "copper green plate"
+    ],
+    [
+      "9007199254746256",
+      "3296",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746289",
+      "8683",
+      "hardware",
+      "2024-03-11",
+      "silver black screw"
+    ],
+    [
+      "9007199254746289",
+      "8988",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746289",
+      "9007199254741494",
+      "hardware",
+      "2024-03-11",
+      "silver black screw"
+    ],
+    [
+      "9007199254746291",
+      "2256",
+      "hardware",
+      "2024-02-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254746291",
+      "2324",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746351",
+      "6218",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ],
+    [
+      "9007199254746351",
+      "9011",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746356",
+      "1876",
+      "hardware",
+      "2024-03-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254746356",
+      "5797",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746360",
+      "2741",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746360",
+      "9007199254743359",
+      "hardware",
+      "2024-05-11",
+      "copper green plate"
+    ],
+    [
+      "9007199254746517",
+      "1966",
+      "hardware",
+      "2024-05-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254746517",
+      "4128",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746560",
+      "1162",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746560",
+      "5478",
+      "hardware",
+      "2024-03-28",
+      "copper green plate"
+    ],
+    [
+      "9007199254746578",
+      "8033",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746578",
+      "10926",
+      "hardware",
+      "2024-03-01",
+      "silver black screw"
+    ],
+    [
+      "9007199254746613",
+      "1390",
+      "hardware",
+      "2024-03-08",
+      "copper green plate"
+    ],
+    [
+      "9007199254746613",
+      "9974",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746632",
+      "1523",
+      "hardware",
+      "2024-03-28",
+      "copper green plate"
+    ],
+    [
+      "9007199254746632",
+      "9813",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746657",
+      "6158",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746657",
+      "7176",
+      "hardware",
+      "2024-03-12",
+      "copper green plate"
+    ],
+    [
+      "9007199254746672",
+      "1657",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746672",
+      "9007199254745936",
+      "hardware",
+      "2024-06-22",
+      "silver black screw"
+    ],
+    [
+      "9007199254746675",
+      "3155",
+      "hardware",
+      "2024-05-13",
+      "brass white clamp"
+    ],
+    [
+      "9007199254746675",
+      "4163",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746743",
+      "9333",
+      "hardware",
+      "2024-02-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254746743",
+      "9969",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746769",
+      "1162",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746769",
+      "5478",
+      "hardware",
+      "2024-03-28",
+      "copper green plate"
+    ],
+    [
+      "9007199254746771",
+      "7052",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746771",
+      "9042",
+      "hardware",
+      "2024-05-13",
+      "brass white clamp"
+    ],
+    [
+      "9007199254746777",
+      "6525",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746777",
+      "9007199254749818",
+      "hardware",
+      "2024-04-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254746812",
+      "7603",
+      "hardware",
+      "2024-06-22",
+      "silver black screw"
+    ],
+    [
+      "9007199254746812",
+      "10374",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746812",
+      "9007199254741275",
+      "hardware",
+      "2024-06-22",
+      "silver black screw"
+    ],
+    [
+      "9007199254746814",
+      "7015",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746814",
+      "9682",
+      "hardware",
+      "2024-03-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254746840",
+      "1128",
+      "hardware",
+      "2024-05-11",
+      "copper green plate"
+    ],
+    [
+      "9007199254746840",
+      "4076",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746840",
+      "9007199254743218",
+      "hardware",
+      "2024-05-11",
+      "copper green plate"
+    ],
+    [
+      "9007199254746929",
+      "1271",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746929",
+      "7775",
+      "hardware",
+      "2024-06-22",
+      "copper green plate"
+    ],
+    [
+      "9007199254746941",
+      "2281",
+      "hardware",
+      "2024-03-12",
+      "copper green plate"
+    ],
+    [
+      "9007199254746941",
+      "7676",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254746941",
+      "9007199254749912",
+      "hardware",
+      "2024-03-12",
+      "copper green plate"
+    ],
+    [
+      "9007199254747001",
+      "9141",
+      "hardware",
+      "2024-03-17",
+      "brass white clamp"
+    ],
+    [
+      "9007199254747001",
+      "9669",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747001",
+      "9007199254742570",
+      "hardware",
+      "2024-03-17",
+      "brass white clamp"
+    ],
+    [
+      "9007199254747035",
+      "4300",
+      "hardware",
+      "2024-03-17",
+      "brass white clamp"
+    ],
+    [
+      "9007199254747035",
+      "6320",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747223",
+      "7052",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747223",
+      "9042",
+      "hardware",
+      "2024-05-13",
+      "brass white clamp"
+    ],
+    [
+      "9007199254747240",
+      "1116",
+      "hardware",
+      "2024-04-21",
+      "silver black screw"
+    ],
+    [
+      "9007199254747240",
+      "9262",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747240",
+      "9007199254744980",
+      "hardware",
+      "2024-04-21",
+      "silver black screw"
+    ],
+    [
+      "9007199254747319",
+      "5017",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747319",
+      "9007199254748482",
+      "hardware",
+      "2024-04-21",
+      "silver black screw"
+    ],
+    [
+      "9007199254747577",
+      "7695",
+      "hardware",
+      "2024-03-01",
+      "silver black screw"
+    ],
+    [
+      "9007199254747577",
+      "8462",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747589",
+      "8843",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747589",
+      "9007199254747026",
+      "hardware",
+      "2024-06-14",
+      "silver black screw"
+    ],
+    [
+      "9007199254747619",
+      "9333",
+      "hardware",
+      "2024-02-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254747619",
+      "9969",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747714",
+      "7695",
+      "hardware",
+      "2024-03-01",
+      "silver black screw"
+    ],
+    [
+      "9007199254747714",
+      "8462",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747769",
+      "2586",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747769",
+      "9007199254742750",
+      "hardware",
+      "2024-06-02",
+      "silver black screw"
+    ],
+    [
+      "9007199254747821",
+      "3567",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747821",
+      "9007199254741257",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "9007199254747845",
+      "1292",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747845",
+      "9571",
+      "hardware",
+      "2024-04-21",
+      "silver black screw"
+    ],
+    [
+      "9007199254747869",
+      "6432",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747869",
+      "10625",
+      "hardware",
+      "2024-03-12",
+      "copper green plate"
+    ],
+    [
+      "9007199254747871",
+      "4429",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747871",
+      "9007199254742619",
+      "hardware",
+      "2024-03-09",
+      "copper green plate"
+    ],
+    [
+      "9007199254747938",
+      "1359",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747938",
+      "2929",
+      "hardware",
+      "2024-06-14",
+      "silver black screw"
+    ],
+    [
+      "9007199254747938",
+      "9007199254742919",
+      "hardware",
+      "2024-06-14",
+      "silver black screw"
+    ],
+    [
+      "9007199254747976",
+      "3927",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747976",
+      "9007199254742857",
+      "hardware",
+      "2024-05-14",
+      "brass white clamp"
+    ],
+    [
+      "9007199254747997",
+      "6057",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254747997",
+      "8730",
+      "hardware",
+      "2024-06-17",
+      "copper green plate"
+    ],
+    [
+      "9007199254748022",
+      "10720",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748022",
+      "9007199254741567",
+      "hardware",
+      "2024-06-14",
+      "silver black scre"
+    ],
+    [
+      "9007199254748071",
+      "2263",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748071",
+      "8752",
+      "hardware",
+      "2024-03-11",
+      "silver black screw"
+    ],
+    [
+      "9007199254748088",
+      "8196",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748088",
+      "10771",
+      "hardware",
+      "2024-03-11",
+      "silver black screw"
+    ],
+    [
+      "9007199254748145",
+      "6026",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748145",
+      "9007199254747461",
+      "hardware",
+      "2024-04-22",
+      "silver black screw"
+    ],
+    [
+      "9007199254748195",
+      "10520",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748195",
+      "9007199254749307",
+      "hardware",
+      "2024-04-28",
+      "silver black scre"
+    ],
+    [
+      "9007199254748228",
+      "6528",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748228",
+      "9007199254742242",
+      "hardware",
+      "2024-03-01",
+      "silver black screw"
+    ],
+    [
+      "9007199254748289",
+      "5371",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748289",
+      "5601",
+      "hardware",
+      "2024-05-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254748380",
+      "4391",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748380",
+      "10245",
+      "hardware",
+      "2024-05-11",
+      "copper green plate"
+    ],
+    [
+      "9007199254748386",
+      "4716",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748386",
+      "10967",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "9007199254748497",
+      "5600",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ],
+    [
+      "9007199254748497",
+      "10785",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748497",
+      "9007199254749302",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ],
+    [
+      "9007199254748509",
+      "1559",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748509",
+      "9007199254743437",
+      "hardware",
+      "2024-03-02",
+      "copper green plate"
+    ],
+    [
+      "9007199254748530",
+      "8862",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748530",
+      "9893",
+      "hardware",
+      "2024-06-02",
+      "silver black screw"
+    ],
+    [
+      "9007199254748555",
+      "6798",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748555",
+      "10796",
+      "hardware",
+      "2024-05-13",
+      "brass white clamp"
+    ],
+    [
+      "9007199254748555",
+      "9007199254746332",
+      "hardware",
+      "2024-05-13",
+      "brass white clamp"
+    ],
+    [
+      "9007199254748630",
+      "1824",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748630",
+      "4677",
+      "hardware",
+      "2024-03-28",
+      "copper green plate"
+    ],
+    [
+      "9007199254748630",
+      "9007199254750582",
+      "hardware",
+      "2024-03-28",
+      "copper green plate"
+    ],
+    [
+      "9007199254748641",
+      "7845",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748641",
+      "9007199254742965",
+      "hardware",
+      "2024-06-02",
+      "silver black scre"
+    ],
+    [
+      "9007199254748706",
+      "1267",
+      "hardware",
+      "2024-06-14",
+      "silver black screw"
+    ],
+    [
+      "9007199254748706",
+      "10497",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748706",
+      "9007199254748546",
+      "hardware",
+      "2024-06-14",
+      "silver black screw"
+    ],
+    [
+      "9007199254748765",
+      "3144",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748765",
+      "7553",
+      "hardware",
+      "2024-06-22",
+      "silver black screw"
+    ],
+    [
+      "9007199254748781",
+      "6639",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "9007199254748781",
+      "8571",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748848",
+      "4887",
+      "hardware",
+      "2024-03-28",
+      "copper green plate"
+    ],
+    [
+      "9007199254748848",
+      "10843",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748848",
+      "9007199254743202",
+      "hardware",
+      "2024-03-28",
+      "copper green plate"
+    ],
+    [
+      "9007199254748899",
+      "1129",
+      "hardware",
+      "2024-06-22",
+      "silver black screw"
+    ],
+    [
+      "9007199254748899",
+      "3190",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748942",
+      "7820",
+      "hardware",
+      "2024-04-21",
+      "silver black screw"
+    ],
+    [
+      "9007199254748942",
+      "9393",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748949",
+      "7499",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ],
+    [
+      "9007199254748949",
+      "9500",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748976",
+      "5202",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254748976",
+      "9007199254745194",
+      "hardware",
+      "2024-03-17",
+      "brass white clamp"
+    ],
+    [
+      "9007199254748978",
+      "3689",
+      "hardware",
+      "2024-03-17",
+      "brass white clamp"
+    ],
+    [
+      "9007199254748978",
+      "8437",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749000",
+      "1071",
+      "hardware",
+      "2024-06-22",
+      "silver black screw"
+    ],
+    [
+      "9007199254749000",
+      "8401",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749045",
+      "4069",
+      "hardware",
+      "2024-03-11",
+      "silver black screw"
+    ],
+    [
+      "9007199254749045",
+      "7199",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749052",
+      "10966",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749052",
+      "9007199254747177",
+      "hardware",
+      "2024-06-03",
+      "silver black screw"
+    ],
+    [
+      "9007199254749075",
+      "1428",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749075",
+      "6935",
+      "hardware",
+      "2024-04-25",
+      "silver black screw"
+    ],
+    [
+      "9007199254749097",
+      "3229",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749097",
+      "9747",
+      "hardware",
+      "2024-03-01",
+      "silver black screw"
+    ],
+    [
+      "9007199254749097",
+      "9007199254741390",
+      "hardware",
+      "2024-03-01",
+      "silver black screw"
+    ],
+    [
+      "9007199254749140",
+      "8934",
+      "hardware",
+      "2024-03-17",
+      "brass white clamp"
+    ],
+    [
+      "9007199254749140",
+      "9244",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749316",
+      "1216",
+      "hardware",
+      "2024-06-02",
+      "silver black screw"
+    ],
+    [
+      "9007199254749316",
+      "10000",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749316",
+      "9007199254750959",
+      "hardware",
+      "2024-06-02",
+      "silver black screw"
+    ],
+    [
+      "9007199254749317",
+      "6689",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749317",
+      "8463",
+      "hardware",
+      "2024-06-17",
+      "copper green plate"
+    ],
+    [
+      "9007199254749357",
+      "2270",
+      "hardware",
+      "2024-04-25",
+      "silver black screw"
+    ],
+    [
+      "9007199254749357",
+      "5744",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749367",
+      "1706",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749367",
+      "10852",
+      "hardware",
+      "2024-05-13",
+      "brass white clamp"
+    ],
+    [
+      "9007199254749367",
+      "9007199254750164",
+      "hardware",
+      "2024-05-13",
+      "brass white clamp"
+    ],
+    [
+      "9007199254749417",
+      "5697",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749417",
+      "9007199254741728",
+      "hardware",
+      "2024-06-23",
+      "copper green plate"
+    ],
+    [
+      "9007199254749427",
+      "4134",
+      "hardware",
+      "2024-04-21",
+      "silver black screw"
+    ],
+    [
+      "9007199254749427",
+      "8895",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749427",
+      "9007199254749905",
+      "hardware",
+      "2024-04-21",
+      "silver black screw"
+    ],
+    [
+      "9007199254749440",
+      "2725",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749440",
+      "9007199254746406",
+      "hardware",
+      "2024-04-21",
+      "silver black scre"
+    ],
+    [
+      "9007199254749445",
+      "9453",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749445",
+      "9007199254742869",
+      "hardware",
+      "2024-06-22",
+      "copper green plat"
+    ],
+    [
+      "9007199254749478",
+      "4993",
+      "hardware",
+      "2024-06-14",
+      "silver black screw"
+    ],
+    [
+      "9007199254749478",
+      "10820",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749545",
+      "7423",
+      "hardware",
+      "2024-02-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254749545",
+      "10557",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749560",
+      "4183",
+      "hardware",
+      "2024-03-08",
+      "copper green plate"
+    ],
+    [
+      "9007199254749560",
+      "5475",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749611",
+      "1743",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749611",
+      "2811",
+      "hardware",
+      "2024-06-14",
+      "silver black screw"
+    ],
+    [
+      "9007199254749612",
+      "2263",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749612",
+      "8752",
+      "hardware",
+      "2024-03-11",
+      "silver black screw"
+    ],
+    [
+      "9007199254749673",
+      "1608",
+      "hardware",
+      "2024-03-12",
+      "copper green plate"
+    ],
+    [
+      "9007199254749673",
+      "10963",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749695",
+      "6453",
+      "hardware",
+      "2024-03-28",
+      "copper green plate"
+    ],
+    [
+      "9007199254749695",
+      "10962",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749798",
+      "1915",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749798",
+      "6579",
+      "hardware",
+      "2024-03-11",
+      "silver black screw"
+    ],
+    [
+      "9007199254749798",
+      "9007199254742104",
+      "hardware",
+      "2024-03-11",
+      "silver black screw"
+    ],
+    [
+      "9007199254749811",
+      "7677",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749811",
+      "9007199254749893",
+      "hardware",
+      "2024-03-01",
+      "copper green plat"
+    ],
+    [
+      "9007199254749840",
+      "4398",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ],
+    [
+      "9007199254749840",
+      "5837",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749885",
+      "6343",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749885",
+      "9007199254744241",
+      "hardware",
+      "2024-03-08",
+      "copper green plat"
+    ],
+    [
+      "9007199254749906",
+      "7895",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254749906",
+      "9007199254747822",
+      "hardware",
+      "2024-04-29",
+      "silver black screw"
+    ],
+    [
+      "9007199254749974",
+      "1071",
+      "hardware",
+      "2024-06-22",
+      "silver black screw"
+    ],
+    [
+      "9007199254749974",
+      "8401",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750133",
+      "3607",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750133",
+      "9065",
+      "hardware",
+      "2024-05-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254750176",
+      "4183",
+      "hardware",
+      "2024-03-08",
+      "copper green plate"
+    ],
+    [
+      "9007199254750176",
+      "5475",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750378",
+      "2556",
+      "hardware",
+      "2024-06-22",
+      "copper green plate"
+    ],
+    [
+      "9007199254750378",
+      "3296",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750469",
+      "4226",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750469",
+      "9007199254748082",
+      "hardware",
+      "2024-03-17",
+      "brass white clam"
+    ],
+    [
+      "9007199254750494",
+      "1523",
+      "hardware",
+      "2024-03-28",
+      "copper green plate"
+    ],
+    [
+      "9007199254750494",
+      "9813",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750543",
+      "4790",
+      "hardware",
+      "2024-04-28",
+      "silver black screw"
+    ],
+    [
+      "9007199254750543",
+      "8298",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750567",
+      "1004",
+      "hardware",
+      "2024-04-25",
+      "silver black screw"
+    ],
+    [
+      "9007199254750567",
+      "6615",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750775",
+      "3648",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750775",
+      "9007199254743059",
+      "hardware",
+      "2024-02-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254750790",
+      "7820",
+      "hardware",
+      "2024-04-21",
+      "silver black screw"
+    ],
+    [
+      "9007199254750790",
+      "9393",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750854",
+      "7423",
+      "hardware",
+      "2024-02-01",
+      "copper green plate"
+    ],
+    [
+      "9007199254750854",
+      "10557",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750909",
+      "10663",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750909",
+      "9007199254748739",
+      "hardware",
+      "2024-04-25",
+      "silver black scre"
+    ],
+    [
+      "9007199254750980",
+      "5308",
+      "supplies",
+      "2023-01-01",
+      "unrelated distant service"
+    ],
+    [
+      "9007199254750980",
+      "7670",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ],
+    [
+      "9007199254750980",
+      "9007199254748643",
+      "hardware",
+      "2024-03-31",
+      "copper green plate"
+    ]
+  ]
+}

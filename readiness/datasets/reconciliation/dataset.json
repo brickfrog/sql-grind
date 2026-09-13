@@ -1,0 +1,33 @@
+{
+  "id": "reconciliation",
+  "version": "reconciliation-data-v1",
+  "tables": [
+    "reference_events",
+    "partner_events",
+    "category_aliases"
+  ],
+  "schema": "/bundle/datasets/reconciliation/schema.sql",
+  "previewVariant": "boundary-v1",
+  "gradingVariants": [
+    "boundary-v1",
+    "seed-20240907",
+    "seed-20240908"
+  ],
+  "variants": {
+    "boundary-v1": {
+      "bootstrap": [
+        "/bundle/datasets/reconciliation/boundary-v1.sql"
+      ]
+    },
+    "seed-20240907": {
+      "bootstrap": [
+        "/bundle/datasets/reconciliation/seed-20240907.sql"
+      ]
+    },
+    "seed-20240908": {
+      "bootstrap": [
+        "/bundle/datasets/reconciliation/seed-20240908.sql"
+      ]
+    }
+  }
+}

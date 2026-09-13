@@ -1,0 +1,77 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "dates.02",
+    "bundleVersion": "dates.02-bundle-v1",
+    "challengeVersion": "dates.02-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "seed-20240908",
+  "columns": [
+    {
+      "name": "mon",
+      "type": "DATE",
+      "nullable": false
+    },
+    {
+      "name": "paid_order_count",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 12,
+  "rows": [
+    [
+      "2024-01-01",
+      "106"
+    ],
+    [
+      "2024-02-01",
+      "98"
+    ],
+    [
+      "2024-03-01",
+      "112"
+    ],
+    [
+      "2024-04-01",
+      "92"
+    ],
+    [
+      "2024-05-01",
+      "81"
+    ],
+    [
+      "2024-06-01",
+      "77"
+    ],
+    [
+      "2024-07-01",
+      "88"
+    ],
+    [
+      "2024-08-01",
+      "112"
+    ],
+    [
+      "2024-09-01",
+      "104"
+    ],
+    [
+      "2024-10-01",
+      "107"
+    ],
+    [
+      "2024-11-01",
+      "101"
+    ],
+    [
+      "2024-12-01",
+      "108"
+    ]
+  ]
+}

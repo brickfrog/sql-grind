@@ -1,0 +1,1 @@
+SELECT o.order_id,(SELECT p.status FROM payments p WHERE p.order_id=o.order_id ORDER BY p.paid_at DESC NULLS FIRST,p.payment_id DESC LIMIT 1) AS latest_payment_status FROM orders o ORDER BY o.order_id;

@@ -1,0 +1,125 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "basics.05",
+    "bundleVersion": "basics.05-bundle-v1",
+    "challengeVersion": "basics.05-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "order_item_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "quantity_band",
+      "type": "VARCHAR",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 24,
+  "rows": [
+    [
+      "1",
+      "small"
+    ],
+    [
+      "2",
+      "small"
+    ],
+    [
+      "3",
+      "small"
+    ],
+    [
+      "4",
+      "small"
+    ],
+    [
+      "5",
+      "small"
+    ],
+    [
+      "6",
+      "small"
+    ],
+    [
+      "7",
+      "small"
+    ],
+    [
+      "8",
+      "small"
+    ],
+    [
+      "9",
+      "small"
+    ],
+    [
+      "10",
+      "small"
+    ],
+    [
+      "11",
+      "small"
+    ],
+    [
+      "12",
+      "small"
+    ],
+    [
+      "13",
+      "small"
+    ],
+    [
+      "14",
+      "small"
+    ],
+    [
+      "15",
+      "small"
+    ],
+    [
+      "16",
+      "small"
+    ],
+    [
+      "17",
+      "small"
+    ],
+    [
+      "18",
+      "small"
+    ],
+    [
+      "19",
+      "small"
+    ],
+    [
+      "10001",
+      "small"
+    ],
+    [
+      "10002",
+      "medium"
+    ],
+    [
+      "10003",
+      "medium"
+    ],
+    [
+      "10004",
+      "large"
+    ],
+    [
+      "10005",
+      "small"
+    ]
+  ]
+}

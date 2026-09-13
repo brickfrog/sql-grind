@@ -1,0 +1,1 @@
+SELECT order_id FROM orders WHERE status = 'paid' AND ordered_at BETWEEN TIMESTAMPTZ '2024-01-01 00:00:00+00' AND TIMESTAMPTZ '2025-01-01 00:00:00+00' ORDER BY order_id;

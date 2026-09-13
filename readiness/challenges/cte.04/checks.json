@@ -1,0 +1,8 @@
+{
+  "wrong": [
+    {
+      "sql": "/bundle/challenges/cte.04/wrong.sql",
+      "variant": "boundary"
+    }
+  ]
+}

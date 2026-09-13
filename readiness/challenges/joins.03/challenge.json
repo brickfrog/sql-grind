@@ -1,0 +1,65 @@
+{
+  "challengeId": "joins.03",
+  "skillId": "joins",
+  "displayNumber": "joins.03",
+  "version": "joins.03-v1",
+  "bundleVersion": "joins.03-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Optional paid activity",
+  "brief": "Filter optional activity without removing the parent.",
+  "instructions": [
+    "Return every customer with the number of paid orders in UTC 2024. Keep customers without any qualifying order as zero.",
+    "For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT customer_id,customer_name FROM customers LIMIT 10;",
+  "starterExplanation": "This starter exposes customer_id,customer_name from customers without solving optional paid activity.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Filter the optional relation without filtering away preserved parents."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Put the qualifying-order predicate in the left join condition or a prefiltered relation."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Customer 10002 has an order but only a pending order."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "customer_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "paid_order_count",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "customer_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/joins.03/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/joins.03/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/joins.03/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/joins.03/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

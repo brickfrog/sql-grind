@@ -1,0 +1,11 @@
+{
+  "date": "2026-09-13T03:06:06.233Z",
+  "checks": [
+    "INJECTED corrupt asset is rejected; visible Retry content restores verified runtime",
+    "INJECTED quota failure exposes dirty state and SQL export; Retry save commits exact SQL across reload",
+    "Real two-tab conflict survives Refresh library; recovery includes subsequent edits and preserves winner across reload",
+    "Close flushes panel layout, selected skill and preferences; reload restores committed state"
+  ],
+  "errors": [],
+  "pass": true
+}

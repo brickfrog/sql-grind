@@ -1,0 +1,74 @@
+{
+  "challengeId": "pivot.02",
+  "skillId": "pivot",
+  "displayNumber": "pivot.02",
+  "version": "pivot.02-v1",
+  "bundleVersion": "pivot.02-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Conditional return matrix",
+  "brief": "Produce the same matrix through conditional aggregation.",
+  "instructions": [
+    "Return the same observed UTC 2024 refund-month quantity matrix as the pivot report. Sum refunded quantities by reason, filling absent reasons with zero. Equivalent PIVOT results also qualify.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT return_id,reason,qty,refunded_at,status FROM returns LIMIT 10;",
+  "starterExplanation": "This starter exposes return_id,reason,qty,refunded_at,status from returns without solving conditional return matrix.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Conditional aggregates form fixed columns without changing the grouping grain."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Group refund events by typed UTC month and sum each reason through CASE."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Count quantities rather than return rows, and exclude rejected returns."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "mon",
+        "type": "DATE",
+        "nullable": false
+      },
+      {
+        "name": "damaged",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "wrong_item",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "unwanted",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "mon",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/pivot.02/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/pivot.02/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/pivot.02/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/pivot.02/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

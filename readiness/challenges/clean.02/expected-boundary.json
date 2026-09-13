@@ -1,0 +1,64 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "clean.02",
+    "bundleVersion": "clean.02-bundle-v1",
+    "challengeVersion": "clean.02-v1",
+    "datasetVersion": "workshop-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "workshop",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "contact_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "email_state",
+      "type": "VARCHAR",
+      "nullable": false
+    },
+    {
+      "name": "email_value",
+      "type": "VARCHAR",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 6,
+  "rows": [
+    [
+      "1",
+      "missing",
+      "[unavailable]"
+    ],
+    [
+      "2",
+      "blank",
+      "[unavailable]"
+    ],
+    [
+      "3",
+      "value",
+      "person@example.invalid"
+    ],
+    [
+      "4",
+      "blank",
+      "[unavailable]"
+    ],
+    [
+      "5",
+      "value",
+      "UPPER@example.invalid"
+    ],
+    [
+      "6",
+      "value",
+      "x@example.invalid"
+    ]
+  ]
+}

@@ -1,0 +1,1 @@
+WITH reporting_orders AS (SELECT order_id FROM orders WHERE status = 'paid' AND ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00') SELECT order_id FROM reporting_orders ORDER BY order_id;

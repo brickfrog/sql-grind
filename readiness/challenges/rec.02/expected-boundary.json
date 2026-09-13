@@ -1,0 +1,53 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "rec.02",
+    "bundleVersion": "rec.02-bundle-v1",
+    "challengeVersion": "rec.02-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "leaf_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "path",
+      "type": "VARCHAR",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 6,
+  "rows": [
+    [
+      "2",
+      "2>1"
+    ],
+    [
+      "3",
+      "3>1"
+    ],
+    [
+      "4",
+      "4>1"
+    ],
+    [
+      "5",
+      "5>1"
+    ],
+    [
+      "6",
+      "6>1"
+    ],
+    [
+      "7",
+      "7>1"
+    ]
+  ]
+}

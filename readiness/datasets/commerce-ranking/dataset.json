@@ -1,0 +1,64 @@
+{
+  "id": "commerce-ranking",
+  "version": "small-v1",
+  "tables": [
+    "categories",
+    "customers",
+    "warehouses",
+    "products",
+    "orders",
+    "order_items",
+    "payments",
+    "returns"
+  ],
+  "schema": "/bundle/schema.sql",
+  "previewVariant": "small-v1",
+  "gradingVariants": [
+    "boundary-v1",
+    "small-v1"
+  ],
+  "variants": {
+    "boundary-v1": {
+      "bootstrap": [
+        "/bundle/fixtures.sql"
+      ]
+    },
+    "small-v1": {
+      "bootstrap": [],
+      "parquet": [
+        {
+          "table": "categories",
+          "asset": "/bundle/data/small-v1/categories.parquet"
+        },
+        {
+          "table": "customers",
+          "asset": "/bundle/data/small-v1/customers.parquet"
+        },
+        {
+          "table": "warehouses",
+          "asset": "/bundle/data/small-v1/warehouses.parquet"
+        },
+        {
+          "table": "products",
+          "asset": "/bundle/data/small-v1/products.parquet"
+        },
+        {
+          "table": "orders",
+          "asset": "/bundle/data/small-v1/orders.parquet"
+        },
+        {
+          "table": "order_items",
+          "asset": "/bundle/data/small-v1/order_items.parquet"
+        },
+        {
+          "table": "payments",
+          "asset": "/bundle/data/small-v1/payments.parquet"
+        },
+        {
+          "table": "returns",
+          "asset": "/bundle/data/small-v1/returns.parquet"
+        }
+      ]
+    }
+  }
+}

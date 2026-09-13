@@ -1,0 +1,13 @@
+{
+  "pass": true,
+  "origin": "http://127.0.0.1:4173",
+  "definitions": [
+    "basics.01",
+    "basics.05"
+  ],
+  "datasets": [
+    "commerce-practice"
+  ],
+  "blocked": [],
+  "errors": []
+}

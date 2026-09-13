@@ -1,0 +1,53 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "window.05",
+    "bundleVersion": "window.05-bundle-v1",
+    "challengeVersion": "window.05-v1",
+    "datasetVersion": "workshop-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "workshop",
+  "variantId": "variant",
+  "columns": [
+    {
+      "name": "event_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "rows_total",
+      "type": "DECIMAL",
+      "nullable": false,
+      "precision": 38,
+      "scale": 2
+    },
+    {
+      "name": "range_total",
+      "type": "DECIMAL",
+      "nullable": false,
+      "precision": 38,
+      "scale": 2
+    }
+  ],
+  "complete": true,
+  "rowCount": 3,
+  "rows": [
+    [
+      "101",
+      "10.00",
+      "30.00"
+    ],
+    [
+      "102",
+      "30.00",
+      "30.00"
+    ],
+    [
+      "103",
+      "35.00",
+      "35.00"
+    ]
+  ]
+}

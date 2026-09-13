@@ -1,0 +1,1260 @@
+{
+  "version": "curriculum-v1",
+  "skills": [
+    {
+      "id": "basics",
+      "label": "SQL basics",
+      "brief": "Projection, filtering, NULL values, deterministic ordering, and CASE boundaries.",
+      "requires": [],
+      "x": 30,
+      "y": 250,
+      "requiredChallengeIds": [
+        "basics.01",
+        "basics.02",
+        "basics.03",
+        "basics.04",
+        "basics.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "basics.01",
+          "path": "/bundle/challenges/basics.01/challenge.json",
+          "title": "Customer identities",
+          "brief": "Customers are told apart by identity, not by name. Two readers called Ari are still two readers.",
+          "displayNumber": "basics.01",
+          "identity": {
+            "challengeId": "basics.01",
+            "bundleVersion": "basics.01-bundle-v1",
+            "challengeVersion": "basics.01-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "basics.02",
+          "path": "/bundle/challenges/basics.02/challenge.json",
+          "title": "Paid reporting year",
+          "brief": "Paid work inside one reporting year, with the year's edges defined exactly rather than approximately.",
+          "displayNumber": "basics.02",
+          "identity": {
+            "challengeId": "basics.02",
+            "bundleVersion": "basics.02-bundle-v1",
+            "challengeVersion": "basics.02-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "basics.03",
+          "path": "/bundle/challenges/basics.03/challenge.json",
+          "title": "Literal email states",
+          "brief": "Absent, blank and present are three different states. A record lies once you flatten them into two.",
+          "displayNumber": "basics.03",
+          "identity": {
+            "challengeId": "basics.03",
+            "bundleVersion": "basics.03-bundle-v1",
+            "challengeVersion": "basics.03-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "basics.04",
+          "path": "/bundle/challenges/basics.04/challenge.json",
+          "title": "Repeatable top five",
+          "brief": "A shortlist that names the same five rows every time you ask for it, ties included.",
+          "displayNumber": "basics.04",
+          "identity": {
+            "challengeId": "basics.04",
+            "bundleVersion": "basics.04-bundle-v1",
+            "challengeVersion": "basics.04-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "basics.05",
+          "path": "/bundle/challenges/basics.05/challenge.json",
+          "title": "Quantity boundaries",
+          "brief": "Bands that cover every quantity once: no gaps to fall through, no overlaps to argue about.",
+          "displayNumber": "basics.05",
+          "identity": {
+            "challengeId": "basics.05",
+            "bundleVersion": "basics.05-bundle-v1",
+            "challengeVersion": "basics.05-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "agg",
+      "label": "Aggregation",
+      "brief": "Exact grouped totals, HAVING, grouping sets, and avoiding fan-out.",
+      "requires": [
+        "basics"
+      ],
+      "x": 200,
+      "y": 130,
+      "requiredChallengeIds": [
+        "agg.01",
+        "agg.02",
+        "agg.03",
+        "agg.04",
+        "agg.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "agg.01",
+          "path": "/bundle/challenges/agg.01/challenge.json",
+          "title": "Order revenue",
+          "brief": "Calculate exact transaction revenue at the order grain.",
+          "displayNumber": "agg.01",
+          "identity": {
+            "challengeId": "agg.01",
+            "bundleVersion": "agg.01-bundle-v1",
+            "challengeVersion": "agg.01-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "agg.02",
+          "path": "/bundle/challenges/agg.02/challenge.json",
+          "title": "Rows and populated attributes",
+          "brief": "Count records separately from populated attributes.",
+          "displayNumber": "agg.02",
+          "identity": {
+            "challengeId": "agg.02",
+            "bundleVersion": "agg.02-bundle-v1",
+            "challengeVersion": "agg.02-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "agg.03",
+          "path": "/bundle/challenges/agg.03/challenge.json",
+          "title": "Qualifying monthly groups",
+          "brief": "Filter completed groups rather than individual transactions.",
+          "displayNumber": "agg.03",
+          "identity": {
+            "challengeId": "agg.03",
+            "bundleVersion": "agg.03-bundle-v1",
+            "challengeVersion": "agg.03-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "agg.04",
+          "path": "/bundle/challenges/agg.04/challenge.json",
+          "title": "Independent detail totals",
+          "brief": "Combine independent detail totals without multiplying money.",
+          "displayNumber": "agg.04",
+          "identity": {
+            "challengeId": "agg.04",
+            "bundleVersion": "agg.04-bundle-v1",
+            "challengeVersion": "agg.04-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "agg.05",
+          "path": "/bundle/challenges/agg.05/challenge.json",
+          "title": "Data NULL and subtotal",
+          "brief": "Distinguish an actual missing group from a subtotal.",
+          "displayNumber": "agg.05",
+          "identity": {
+            "challengeId": "agg.05",
+            "bundleVersion": "agg.05-bundle-v1",
+            "challengeVersion": "agg.05-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "joins",
+      "label": "Joins",
+      "brief": "Key relationships, outer joins, semi/anti joins, and reconciliation at the correct grain.",
+      "requires": [
+        "basics"
+      ],
+      "x": 200,
+      "y": 250,
+      "requiredChallengeIds": [
+        "joins.01",
+        "joins.02",
+        "joins.03",
+        "joins.04",
+        "joins.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "joins.01",
+          "path": "/bundle/challenges/joins.01/challenge.json",
+          "title": "Transaction relationship chain",
+          "brief": "Traverse the full transaction relationship chain.",
+          "displayNumber": "joins.01",
+          "identity": {
+            "challengeId": "joins.01",
+            "bundleVersion": "joins.01-bundle-v1",
+            "challengeVersion": "joins.01-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "joins.02",
+          "path": "/bundle/challenges/joins.02/challenge.json",
+          "title": "Customers without activity",
+          "brief": "Keep customers who have no activity.",
+          "displayNumber": "joins.02",
+          "identity": {
+            "challengeId": "joins.02",
+            "bundleVersion": "joins.02-bundle-v1",
+            "challengeVersion": "joins.02-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "joins.03",
+          "path": "/bundle/challenges/joins.03/challenge.json",
+          "title": "Optional paid activity",
+          "brief": "Filter optional activity without removing the parent.",
+          "displayNumber": "joins.03",
+          "identity": {
+            "challengeId": "joins.03",
+            "bundleVersion": "joins.03-bundle-v1",
+            "challengeVersion": "joins.03-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "joins.04",
+          "path": "/bundle/challenges/joins.04/challenge.json",
+          "title": "Customer activity cohorts",
+          "brief": "Separate customers with qualifying activity from those without it.",
+          "displayNumber": "joins.04",
+          "identity": {
+            "challengeId": "joins.04",
+            "bundleVersion": "joins.04-bundle-v1",
+            "challengeVersion": "joins.04-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "joins.05",
+          "path": "/bundle/challenges/joins.05/challenge.json",
+          "title": "Quantities and processing totals",
+          "brief": "Reconcile quantities and processing totals at their actual grains.",
+          "displayNumber": "joins.05",
+          "identity": {
+            "challengeId": "joins.05",
+            "bundleVersion": "joins.05-bundle-v1",
+            "challengeVersion": "joins.05-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sub",
+      "label": "Subqueries & EXISTS",
+      "brief": "Scalar and correlated subqueries, EXISTS, and explicit unique-result rules.",
+      "requires": [
+        "basics"
+      ],
+      "x": 200,
+      "y": 370,
+      "requiredChallengeIds": [
+        "sub.01",
+        "sub.02",
+        "sub.03",
+        "sub.04",
+        "sub.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "sub.01",
+          "path": "/bundle/challenges/sub.01/challenge.json",
+          "title": "Above the catalog average",
+          "brief": "Find prices above the overall average without changing the comparison grain.",
+          "displayNumber": "sub.01",
+          "identity": {
+            "challengeId": "sub.01",
+            "bundleVersion": "sub.01-bundle-v1",
+            "challengeVersion": "sub.01-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "sub.02",
+          "path": "/bundle/challenges/sub.02/challenge.json",
+          "title": "Qualifying customer existence",
+          "brief": "Find customers with qualifying activity without duplicate output.",
+          "displayNumber": "sub.02",
+          "identity": {
+            "challengeId": "sub.02",
+            "bundleVersion": "sub.02-bundle-v1",
+            "challengeVersion": "sub.02-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "sub.03",
+          "path": "/bundle/challenges/sub.03/challenge.json",
+          "title": "Nullable exclusion",
+          "brief": "Exclude customers safely when a lookup contains missing references.",
+          "displayNumber": "sub.03",
+          "identity": {
+            "challengeId": "sub.03",
+            "bundleVersion": "sub.03-bundle-v1",
+            "challengeVersion": "sub.03-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "sub.04",
+          "path": "/bundle/challenges/sub.04/challenge.json",
+          "title": "Above peer-group average",
+          "brief": "Compare each product against its own peer group.",
+          "displayNumber": "sub.04",
+          "identity": {
+            "challengeId": "sub.04",
+            "bundleVersion": "sub.04-bundle-v1",
+            "challengeVersion": "sub.04-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "sub.05",
+          "path": "/bundle/challenges/sub.05/challenge.json",
+          "title": "Declared scalar winner",
+          "brief": "Resolve multiple possible scalar answers with a declared winner rule.",
+          "displayNumber": "sub.05",
+          "identity": {
+            "challengeId": "sub.05",
+            "bundleVersion": "sub.05-bundle-v1",
+            "challengeVersion": "sub.05-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sets",
+      "label": "Set operations",
+      "brief": "UNION, INTERSECT, EXCEPT, and duplicate-preserving ALL operations.",
+      "requires": [
+        "agg"
+      ],
+      "x": 370,
+      "y": 70,
+      "requiredChallengeIds": [
+        "sets.01",
+        "sets.02",
+        "sets.03",
+        "sets.04",
+        "sets.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "sets.01",
+          "path": "/bundle/challenges/sets.01/challenge.json",
+          "title": "Distinct cohort union",
+          "brief": "Combine overlapping cohorts while removing duplicate membership.",
+          "displayNumber": "sets.01",
+          "identity": {
+            "challengeId": "sets.01",
+            "bundleVersion": "sets.01-bundle-v1",
+            "challengeVersion": "sets.01-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "sets.02",
+          "path": "/bundle/challenges/sets.02/challenge.json",
+          "title": "Duplicate-preserving union",
+          "brief": "Combine event streams without losing repeated events.",
+          "displayNumber": "sets.02",
+          "identity": {
+            "challengeId": "sets.02",
+            "bundleVersion": "sets.02-bundle-v1",
+            "challengeVersion": "sets.02-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "sets.03",
+          "path": "/bundle/challenges/sets.03/challenge.json",
+          "title": "Distinct cohort difference",
+          "brief": "Find cohort differences with explicit missing-value semantics.",
+          "displayNumber": "sets.03",
+          "identity": {
+            "challengeId": "sets.03",
+            "bundleVersion": "sets.03-bundle-v1",
+            "challengeVersion": "sets.03-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "sets.04",
+          "path": "/bundle/challenges/sets.04/challenge.json",
+          "title": "Shared membership",
+          "brief": "Find membership shared by independent cohorts.",
+          "displayNumber": "sets.04",
+          "identity": {
+            "challengeId": "sets.04",
+            "bundleVersion": "sets.04-bundle-v1",
+            "challengeVersion": "sets.04-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "sets.05",
+          "path": "/bundle/challenges/sets.05/challenge.json",
+          "title": "Multiplicity in both directions",
+          "brief": "Reconcile multiplicity differences in both directions.",
+          "displayNumber": "sets.05",
+          "identity": {
+            "challengeId": "sets.05",
+            "bundleVersion": "sets.05-bundle-v1",
+            "challengeVersion": "sets.05-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cte",
+      "label": "CTEs",
+      "brief": "Named relations, explicit grains, chaining, and materialization.",
+      "requires": [
+        "agg",
+        "joins",
+        "sub"
+      ],
+      "x": 370,
+      "y": 190,
+      "requiredChallengeIds": [
+        "cte.01",
+        "cte.02",
+        "cte.03",
+        "cte.04",
+        "cte.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "cte.01",
+          "path": "/bundle/challenges/cte.01/challenge.json",
+          "title": "One filtered population",
+          "brief": "Reuse one filtered population for consistent summaries.",
+          "displayNumber": "cte.01",
+          "identity": {
+            "challengeId": "cte.01",
+            "bundleVersion": "cte.01-bundle-v1",
+            "challengeVersion": "cte.01-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "cte.02",
+          "path": "/bundle/challenges/cte.02/challenge.json",
+          "title": "Named summary grains",
+          "brief": "Build summaries through explicitly named grains.",
+          "displayNumber": "cte.02",
+          "identity": {
+            "challengeId": "cte.02",
+            "bundleVersion": "cte.02-bundle-v1",
+            "challengeVersion": "cte.02-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "cte.03",
+          "path": "/bundle/challenges/cte.03/challenge.json",
+          "title": "Rank completed groups",
+          "brief": "Rank grouped results instead of individual detail rows.",
+          "displayNumber": "cte.03",
+          "identity": {
+            "challengeId": "cte.03",
+            "bundleVersion": "cte.03-bundle-v1",
+            "challengeVersion": "cte.03-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "cte.04",
+          "path": "/bundle/challenges/cte.04/challenge.json",
+          "title": "Organization and optimization",
+          "brief": "Separate query organization from assumptions about optimization.",
+          "displayNumber": "cte.04",
+          "identity": {
+            "challengeId": "cte.04",
+            "bundleVersion": "cte.04-bundle-v1",
+            "challengeVersion": "cte.04-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "cte.05",
+          "path": "/bundle/challenges/cte.05/challenge.json",
+          "title": "Independent customer report",
+          "brief": "Assemble independent customer summaries into an explainable report.",
+          "displayNumber": "cte.05",
+          "identity": {
+            "challengeId": "cte.05",
+            "bundleVersion": "cte.05-bundle-v1",
+            "challengeVersion": "cte.05-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "window",
+      "label": "Window functions",
+      "brief": "Ranking, deterministic peers, calendar comparisons, and window frames.",
+      "requires": [
+        "agg",
+        "joins"
+      ],
+      "x": 370,
+      "y": 310,
+      "requiredChallengeIds": [
+        "window.01",
+        "window.02",
+        "window.03",
+        "window.04",
+        "window.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "window.01",
+          "path": "/bundle/challenges/window.01/challenge.json",
+          "title": "Competition and dense ranks",
+          "brief": "Explain how tied values affect competition and dense ranking.",
+          "displayNumber": "window.01",
+          "identity": {
+            "challengeId": "window.01",
+            "bundleVersion": "window.01-bundle-v1",
+            "challengeVersion": "window.01-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "window.02",
+          "path": "/bundle/challenges/window.02/challenge.json",
+          "title": "Deterministic latest order",
+          "brief": "Select a latest event deterministically.",
+          "displayNumber": "window.02",
+          "identity": {
+            "challengeId": "window.02",
+            "bundleVersion": "window.02-bundle-v1",
+            "challengeVersion": "window.02-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "window.03",
+          "path": "/bundle/challenge-07.json",
+          "title": "Top categories by monthly paid gross revenue",
+          "brief": "Rank monthly category revenue while preserving qualifying ties.",
+          "displayNumber": "07",
+          "identity": {
+            "challengeId": "window.03",
+            "bundleVersion": "window.03-bundle-v2",
+            "challengeVersion": "challenge-07-v1",
+            "datasetVersion": "small-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "window.04",
+          "path": "/bundle/challenges/window.04/challenge.json",
+          "title": "Adjacent calendar periods",
+          "brief": "Compare adjacent calendar periods rather than adjacent observed periods.",
+          "displayNumber": "window.04",
+          "identity": {
+            "challengeId": "window.04",
+            "bundleVersion": "window.04-bundle-v1",
+            "challengeVersion": "window.04-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "window.05",
+          "path": "/bundle/challenges/window.05/challenge.json",
+          "title": "Rows and peer frames",
+          "brief": "Distinguish physical-row frames from equal-date peer frames.",
+          "displayNumber": "window.05",
+          "identity": {
+            "challengeId": "window.05",
+            "bundleVersion": "window.05-bundle-v1",
+            "challengeVersion": "window.05-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dates",
+      "label": "Date / time",
+      "brief": "UTC boundaries, calendar months, fiscal years, and activity gaps.",
+      "requires": [
+        "joins"
+      ],
+      "x": 370,
+      "y": 430,
+      "requiredChallengeIds": [
+        "dates.01",
+        "dates.02",
+        "dates.03",
+        "dates.04",
+        "dates.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "dates.01",
+          "path": "/bundle/challenges/dates.01/challenge.json",
+          "title": "UTC reporting boundaries",
+          "brief": "Classify events against UTC reporting boundaries.",
+          "displayNumber": "dates.01",
+          "identity": {
+            "challengeId": "dates.01",
+            "bundleVersion": "dates.01-bundle-v1",
+            "challengeVersion": "dates.01-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "dates.02",
+          "path": "/bundle/challenges/dates.02/challenge.json",
+          "title": "Typed calendar groups",
+          "brief": "Group timestamps into typed calendar periods.",
+          "displayNumber": "dates.02",
+          "identity": {
+            "challengeId": "dates.02",
+            "bundleVersion": "dates.02-bundle-v1",
+            "challengeVersion": "dates.02-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "dates.03",
+          "path": "/bundle/challenges/dates.03/challenge.json",
+          "title": "Explicit empty periods",
+          "brief": "Report empty periods explicitly.",
+          "displayNumber": "dates.03",
+          "identity": {
+            "challengeId": "dates.03",
+            "bundleVersion": "dates.03-bundle-v1",
+            "challengeVersion": "dates.03-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "dates.04",
+          "path": "/bundle/challenges/dates.04/challenge.json",
+          "title": "July-start fiscal years",
+          "brief": "Assign reporting years that start midway through a calendar year.",
+          "displayNumber": "dates.04",
+          "identity": {
+            "challengeId": "dates.04",
+            "bundleVersion": "dates.04-bundle-v1",
+            "challengeVersion": "dates.04-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "dates.05",
+          "path": "/bundle/challenges/dates.05/challenge.json",
+          "title": "Activity islands",
+          "brief": "Find activity islands using a declared maximum gap.",
+          "displayNumber": "dates.05",
+          "identity": {
+            "challengeId": "dates.05",
+            "bundleVersion": "dates.05-bundle-v1",
+            "challengeVersion": "dates.05-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "rec",
+      "label": "Recursive CTEs",
+      "brief": "Category trees, visited paths, bounded routes, and equal-cost ties.",
+      "requires": [
+        "cte"
+      ],
+      "x": 540,
+      "y": 130,
+      "requiredChallengeIds": [
+        "rec.01",
+        "rec.02",
+        "rec.03",
+        "rec.04",
+        "rec.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "rec.01",
+          "path": "/bundle/challenges/rec.01/challenge.json",
+          "title": "Root identity and depth",
+          "brief": "Enumerate a hierarchy with root identity and depth.",
+          "displayNumber": "08",
+          "identity": {
+            "challengeId": "rec.01",
+            "bundleVersion": "rec.01-bundle-v1",
+            "challengeVersion": "rec.01-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "rec.02",
+          "path": "/bundle/challenges/rec.02/challenge.json",
+          "title": "Leaf-to-root paths",
+          "brief": "Trace each leaf back to its root.",
+          "displayNumber": "rec.02",
+          "identity": {
+            "challengeId": "rec.02",
+            "bundleVersion": "rec.02-bundle-v1",
+            "challengeVersion": "rec.02-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "rec.03",
+          "path": "/bundle/challenges/rec.03/challenge.json",
+          "title": "Simple paths through a cycle",
+          "brief": "Traverse a cyclic relationship without revisiting a node.",
+          "displayNumber": "rec.03",
+          "identity": {
+            "challengeId": "rec.03",
+            "bundleVersion": "rec.03-bundle-v1",
+            "challengeVersion": "rec.03-v1",
+            "datasetVersion": "graphs-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "rec.04",
+          "path": "/bundle/challenges/rec.04/challenge.json",
+          "title": "Bounded directed routes",
+          "brief": "Enumerate bounded directed routes.",
+          "displayNumber": "rec.04",
+          "identity": {
+            "challengeId": "rec.04",
+            "bundleVersion": "rec.04-bundle-v1",
+            "challengeVersion": "rec.04-v1",
+            "datasetVersion": "graphs-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "rec.05",
+          "path": "/bundle/challenges/rec.05/challenge.json",
+          "title": "All cheapest routes",
+          "brief": "Find cheapest routes without discarding equal-cost alternatives.",
+          "displayNumber": "rec.05",
+          "identity": {
+            "challengeId": "rec.05",
+            "bundleVersion": "rec.05-bundle-v1",
+            "challengeVersion": "rec.05-v1",
+            "datasetVersion": "graphs-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pivot",
+      "label": "Pivot / unpivot",
+      "brief": "Fixed pivot matrices, conditional aggregation, unpivot, and round trips.",
+      "requires": [
+        "cte",
+        "window"
+      ],
+      "x": 540,
+      "y": 250,
+      "requiredChallengeIds": [
+        "pivot.01",
+        "pivot.02",
+        "pivot.03",
+        "pivot.04",
+        "pivot.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "pivot.01",
+          "path": "/bundle/challenges/pivot.01/challenge.json",
+          "title": "Fixed monthly return matrix",
+          "brief": "Turn categorized events into a fixed monthly report.",
+          "displayNumber": "09",
+          "identity": {
+            "challengeId": "pivot.01",
+            "bundleVersion": "pivot.01-bundle-v1",
+            "challengeVersion": "pivot.01-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "pivot.02",
+          "path": "/bundle/challenges/pivot.02/challenge.json",
+          "title": "Conditional return matrix",
+          "brief": "Produce the same matrix through conditional aggregation.",
+          "displayNumber": "pivot.02",
+          "identity": {
+            "challengeId": "pivot.02",
+            "bundleVersion": "pivot.02-bundle-v1",
+            "challengeVersion": "pivot.02-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "pivot.03",
+          "path": "/bundle/challenges/pivot.03/challenge.json",
+          "title": "Complete return calendar",
+          "brief": "Preserve empty periods as well as absent categories.",
+          "displayNumber": "pivot.03",
+          "identity": {
+            "challengeId": "pivot.03",
+            "bundleVersion": "pivot.03-bundle-v1",
+            "challengeVersion": "pivot.03-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "pivot.04",
+          "path": "/bundle/challenges/pivot.04/challenge.json",
+          "title": "Missing cells survive unpivot",
+          "brief": "Expand a matrix without silently dropping missing cells.",
+          "displayNumber": "pivot.04",
+          "identity": {
+            "challengeId": "pivot.04",
+            "bundleVersion": "pivot.04-bundle-v1",
+            "challengeVersion": "pivot.04-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "pivot.05",
+          "path": "/bundle/challenges/pivot.05/challenge.json",
+          "title": "Grain-preserving reshape",
+          "brief": "Preserve a declared grain through a reshape round trip.",
+          "displayNumber": "pivot.05",
+          "identity": {
+            "challengeId": "pivot.05",
+            "bundleVersion": "pivot.05-bundle-v1",
+            "challengeVersion": "pivot.05-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "label": "Plans & indexing",
+      "brief": "Supported plan evidence, ART indexes in a sandbox, and paired measurements.",
+      "requires": [
+        "window",
+        "joins"
+      ],
+      "x": 540,
+      "y": 370,
+      "requiredChallengeIds": [
+        "plan.01",
+        "plan.02",
+        "plan.03",
+        "plan.04",
+        "plan.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "plan.01",
+          "path": "/bundle/challenges/plan.01/challenge.json",
+          "title": "Count output and scanned rows",
+          "brief": "Distinguish output cardinality from scanned work.",
+          "displayNumber": "plan.01",
+          "identity": {
+            "challengeId": "plan.01",
+            "bundleVersion": "plan.01-bundle-v1",
+            "challengeVersion": "plan.01-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "plan-lab-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "plan.02",
+          "path": "/bundle/challenges/plan.02/challenge.json",
+          "title": "Observe filter pushdown",
+          "brief": "Check whether a filter reaches a scan instead of assuming it does.",
+          "displayNumber": "plan.02",
+          "identity": {
+            "challengeId": "plan.02",
+            "bundleVersion": "plan.02-bundle-v1",
+            "challengeVersion": "plan.02-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "plan-lab-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "plan.03",
+          "path": "/bundle/challenges/plan.03/challenge.json",
+          "title": "Compare aggregation strategies",
+          "brief": "Compare equivalent aggregation strategies at the same grain.",
+          "displayNumber": "plan.03",
+          "identity": {
+            "challengeId": "plan.03",
+            "bundleVersion": "plan.03-bundle-v1",
+            "challengeVersion": "plan.03-v1",
+            "datasetVersion": "commerce-practice-v1",
+            "assessmentVersion": "plan-lab-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "plan.04",
+          "path": "/bundle/challenges/plan.04/challenge.json",
+          "title": "Measure a disposable index",
+          "brief": "Create an index, observe the access path, then remove the index.",
+          "displayNumber": "plan.04",
+          "identity": {
+            "challengeId": "plan.04",
+            "bundleVersion": "plan.04-bundle-v1",
+            "challengeVersion": "plan.04-v1",
+            "datasetVersion": "index-lab-v1",
+            "assessmentVersion": "plan-lab-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "plan.05",
+          "path": "/bundle/challenges/plan.05/challenge.json",
+          "title": "Measure selection breadth",
+          "brief": "Compare selective and broad work without treating one timing as truth.",
+          "displayNumber": "plan.05",
+          "identity": {
+            "challengeId": "plan.05",
+            "bundleVersion": "plan.05-bundle-v1",
+            "challengeVersion": "plan.05-v1",
+            "datasetVersion": "index-lab-v1",
+            "assessmentVersion": "plan-lab-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "clean",
+      "label": "Cleaning & strings",
+      "brief": "Whitespace, missing values, extraction, splitting, and explicit date formats.",
+      "requires": [
+        "dates",
+        "sub"
+      ],
+      "x": 540,
+      "y": 430,
+      "requiredChallengeIds": [
+        "clean.01",
+        "clean.02",
+        "clean.03",
+        "clean.04",
+        "clean.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "clean.01",
+          "path": "/bundle/challenges/clean.01/challenge.json",
+          "title": "Presentation without identity loss",
+          "brief": "Normalize presentation without merging identities.",
+          "displayNumber": "clean.01",
+          "identity": {
+            "challengeId": "clean.01",
+            "bundleVersion": "clean.01-bundle-v1",
+            "challengeVersion": "clean.01-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "clean.02",
+          "path": "/bundle/challenges/clean.02/challenge.json",
+          "title": "Blank and missing contact input",
+          "brief": "Separate blank input from missing input before display fallback.",
+          "displayNumber": "clean.02",
+          "identity": {
+            "challengeId": "clean.02",
+            "bundleVersion": "clean.02-bundle-v1",
+            "challengeVersion": "clean.02-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "clean.03",
+          "path": "/bundle/challenges/clean.03/challenge.json",
+          "title": "Postal validation with originals",
+          "brief": "Extract valid postal values while retaining rejected originals.",
+          "displayNumber": "clean.03",
+          "identity": {
+            "challengeId": "clean.03",
+            "bundleVersion": "clean.03-bundle-v1",
+            "challengeVersion": "clean.03-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "clean.04",
+          "path": "/bundle/challenges/clean.04/challenge.json",
+          "title": "Normalized one-to-many tags",
+          "brief": "Expand multivalue text into a clean one-to-many relation.",
+          "displayNumber": "clean.04",
+          "identity": {
+            "challengeId": "clean.04",
+            "bundleVersion": "clean.04-bundle-v1",
+            "challengeVersion": "clean.04-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "clean.05",
+          "path": "/bundle/challenges/clean.05/challenge.json",
+          "title": "Declared mixed date formats",
+          "brief": "Parse declared date formats and expose rejected input.",
+          "displayNumber": "clean.05",
+          "identity": {
+            "challengeId": "clean.05",
+            "bundleVersion": "clean.05-bundle-v1",
+            "challengeVersion": "clean.05-v1",
+            "datasetVersion": "workshop-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "reconcile",
+      "label": "Reconciliation",
+      "brief": "Reconcile imperfect records across two sources. Preserve the reference data, normalize known inconsistencies, and find plausible matches from partial evidence. Resolve duplicates and aggregation differences, distinguish confident matches from ambiguous cases, and report coverage with evidence for each decision.",
+      "requires": [
+        "cte",
+        "window",
+        "sets",
+        "clean"
+      ],
+      "x": 740,
+      "y": 310,
+      "requiredChallengeIds": [
+        "reconcile.01",
+        "reconcile.02",
+        "reconcile.03",
+        "reconcile.04",
+        "reconcile.05"
+      ],
+      "definitions": [
+        {
+          "challengeId": "reconcile.01",
+          "path": "/bundle/challenges/reconcile.01/challenge.json",
+          "title": "Normalize and block candidates",
+          "brief": "Normalize known inconsistencies and expose plausible candidates without altering the reference.",
+          "displayNumber": "reconcile.01",
+          "identity": {
+            "challengeId": "reconcile.01",
+            "bundleVersion": "reconcile.01-bundle-v1",
+            "challengeVersion": "reconcile.01-v1",
+            "datasetVersion": "reconciliation-data-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "reconcile.02",
+          "path": "/bundle/challenges/reconcile.02/challenge.json",
+          "title": "Score and rank pair evidence",
+          "brief": "Combine weak evidence and rank candidates without hiding ties.",
+          "displayNumber": "reconcile.02",
+          "identity": {
+            "challengeId": "reconcile.02",
+            "bundleVersion": "reconcile.02-bundle-v1",
+            "challengeVersion": "reconcile.02-v1",
+            "datasetVersion": "reconciliation-data-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "reconcile.03",
+          "path": "/bundle/challenges/reconcile.03/challenge.json",
+          "title": "Reconcile split and rollup groups",
+          "brief": "Reconcile split and aggregated records at compatible grains.",
+          "displayNumber": "reconcile.03",
+          "identity": {
+            "challengeId": "reconcile.03",
+            "bundleVersion": "reconcile.03-bundle-v1",
+            "challengeVersion": "reconcile.03-v1",
+            "datasetVersion": "reconciliation-data-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "reconcile.04",
+          "path": "/bundle/challenges/reconcile.04/challenge.json",
+          "title": "Resolve confidence and coverage",
+          "brief": "Separate confident decisions, ambiguity, and missing evidence before reporting coverage.",
+          "displayNumber": "reconcile.04",
+          "identity": {
+            "challengeId": "reconcile.04",
+            "bundleVersion": "reconcile.04-bundle-v1",
+            "challengeVersion": "reconcile.04-v1",
+            "datasetVersion": "reconciliation-data-v1",
+            "assessmentVersion": "exact-v1",
+            "engineVersion": "v1.5.4"
+          }
+        },
+        {
+          "challengeId": "reconcile.05",
+          "path": "/bundle/challenges/reconcile.05/challenge.json",
+          "title": "Design a reconciliation policy",
+          "brief": "Design a defensible reconciliation policy and inspect its failures.",
+          "displayNumber": "reconcile.05",
+          "identity": {
+            "challengeId": "reconcile.05",
+            "bundleVersion": "reconcile.05-bundle-v1",
+            "challengeVersion": "reconcile.05-v1",
+            "datasetVersion": "reconciliation-data-v1",
+            "assessmentVersion": "reconciliation-v1",
+            "engineVersion": "v1.5.4"
+          }
+        }
+      ]
+    }
+  ],
+  "datasets": [
+    {
+      "id": "commerce-ranking",
+      "path": "/bundle/datasets/commerce-ranking/dataset.json"
+    },
+    {
+      "id": "commerce-practice",
+      "path": "/bundle/datasets/commerce-practice/dataset.json"
+    },
+    {
+      "id": "workshop",
+      "path": "/bundle/datasets/workshop/dataset.json"
+    },
+    {
+      "id": "graphs",
+      "path": "/bundle/datasets/graphs/dataset.json"
+    },
+    {
+      "id": "index-lab",
+      "path": "/bundle/datasets/index-lab/dataset.json"
+    },
+    {
+      "id": "reconciliation",
+      "path": "/bundle/datasets/reconciliation/dataset.json"
+    }
+  ]
+}

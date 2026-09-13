@@ -1,0 +1,52 @@
+{
+  "id": "commerce-practice",
+  "version": "commerce-practice-v1",
+  "tables": [
+    "categories",
+    "customers",
+    "warehouses",
+    "products",
+    "orders",
+    "order_items",
+    "payments",
+    "returns"
+  ],
+  "schema": "/bundle/schema.sql",
+  "previewVariant": "seed-20240907",
+  "gradingVariants": [
+    "boundary",
+    "seed-20240907",
+    "seed-20240908"
+  ],
+  "variants": {
+    "boundary": {
+      "bootstrap": [
+        "/bundle/fixtures.sql",
+        "/bundle/datasets/commerce-practice/supplements.sql",
+        "/bundle/invariants.sql"
+      ]
+    },
+    "seed-20240907": {
+      "bootstrap": [
+        "/bundle/datasets/commerce-practice/config-20240907.sql",
+        "/bundle/generator.sql",
+        "/bundle/datasets/commerce-practice/prepare-seeded.sql",
+        "/bundle/schema.sql",
+        "/bundle/datasets/commerce-practice/restore-seeded.sql",
+        "/bundle/datasets/commerce-practice/supplements.sql",
+        "/bundle/invariants.sql"
+      ]
+    },
+    "seed-20240908": {
+      "bootstrap": [
+        "/bundle/datasets/commerce-practice/config-20240908.sql",
+        "/bundle/generator.sql",
+        "/bundle/datasets/commerce-practice/prepare-seeded.sql",
+        "/bundle/schema.sql",
+        "/bundle/datasets/commerce-practice/restore-seeded.sql",
+        "/bundle/datasets/commerce-practice/supplements.sql",
+        "/bundle/invariants.sql"
+      ]
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "rec.05",
+    "bundleVersion": "rec.05-bundle-v1",
+    "challengeVersion": "rec.05-v1",
+    "datasetVersion": "graphs-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "graphs",
+  "variantId": "weighted",
+  "columns": [
+    {
+      "name": "path",
+      "type": "VARCHAR",
+      "nullable": false
+    },
+    {
+      "name": "total_minutes",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 1,
+  "rows": [
+    [
+      "1>2>4>5",
+      "25"
+    ]
+  ]
+}

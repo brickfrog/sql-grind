@@ -1,0 +1,8 @@
+{
+  "wrong": [
+    {
+      "sql": "/bundle/challenges/reconcile.04/wrong.sql",
+      "variant": "boundary-v1"
+    }
+  ]
+}

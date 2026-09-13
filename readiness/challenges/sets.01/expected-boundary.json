@@ -1,0 +1,39 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "sets.01",
+    "bundleVersion": "sets.01-bundle-v1",
+    "challengeVersion": "sets.01-v1",
+    "datasetVersion": "workshop-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "workshop",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "customer_id",
+      "type": "BIGINT",
+      "nullable": true
+    }
+  ],
+  "complete": true,
+  "rowCount": 5,
+  "rows": [
+    [
+      "1"
+    ],
+    [
+      "2"
+    ],
+    [
+      "3"
+    ],
+    [
+      "4"
+    ],
+    [
+      null
+    ]
+  ]
+}

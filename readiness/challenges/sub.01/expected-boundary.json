@@ -1,0 +1,47 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "sub.01",
+    "bundleVersion": "sub.01-bundle-v1",
+    "challengeVersion": "sub.01-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "product_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "unit_price",
+      "type": "DECIMAL",
+      "nullable": false,
+      "precision": 38,
+      "scale": 2
+    }
+  ],
+  "complete": true,
+  "rowCount": 4,
+  "rows": [
+    [
+      "2",
+      "777.77"
+    ],
+    [
+      "3",
+      "888.88"
+    ],
+    [
+      "4",
+      "999.99"
+    ],
+    [
+      "10002",
+      "888.88"
+    ]
+  ]
+}

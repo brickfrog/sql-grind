@@ -1,0 +1,68 @@
+{
+  "challengeId": "rec.03",
+  "skillId": "rec",
+  "displayNumber": "rec.03",
+  "version": "rec.03-v1",
+  "bundleVersion": "rec.03-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Simple paths through a cycle",
+  "brief": "Traverse a cyclic relationship without revisiting a node.",
+  "instructions": [
+    "Start at node 1. Emit every simple directed category path, including the zero-hop root. A node can occur through multiple paths but never twice within one path.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "graphs",
+  "starterSql": "SELECT parent_id,child_id FROM category_edges LIMIT 10;",
+  "starterExplanation": "This starter exposes parent_id,child_id from category_edges without solving simple paths through a cycle.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Carry a path-local visited set in the recursive relation."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Append a child only when its identity is absent from that path."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "The edge 3 to 1 closes a cycle; keep the root row without traversing the cycle."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "node_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "path",
+        "type": "VARCHAR",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "node_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "path",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/rec.03/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/rec.03/expected-boundary.json",
+    "weighted": "/bundle/challenges/rec.03/expected-weighted.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

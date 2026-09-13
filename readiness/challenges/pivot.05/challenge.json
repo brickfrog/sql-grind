@@ -1,0 +1,73 @@
+{
+  "challengeId": "pivot.05",
+  "skillId": "pivot",
+  "displayNumber": "pivot.05",
+  "version": "pivot.05-v1",
+  "bundleVersion": "pivot.05-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Grain-preserving reshape",
+  "brief": "Preserve a declared grain through a reshape round trip.",
+  "instructions": [
+    "Pivot return_totals by reason and unpivot back to month, reason, and quantity. Preserve actual zero rows and absent combinations; do not create zero rows for absent combinations.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "workshop",
+  "starterSql": "SELECT mon,reason FROM return_totals LIMIT 10;",
+  "starterExplanation": "This starter shows the source grain but omits quantities. The completed result must preserve genuine zeros and exclude absent combinations.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "A round trip preserves the unique input grain only when absence remains distinguishable from zero."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Keep NULL for absent pivot combinations; default unpivot then omits only those absent cells."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "January wrong_item is a genuine zero row; January unwanted is absent."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "mon",
+        "type": "DATE",
+        "nullable": false
+      },
+      {
+        "name": "reason",
+        "type": "VARCHAR",
+        "nullable": false
+      },
+      {
+        "name": "qty",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "mon",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "reason",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/pivot.05/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/pivot.05/expected-boundary.json",
+    "variant": "/bundle/challenges/pivot.05/expected-variant.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

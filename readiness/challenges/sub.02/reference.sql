@@ -1,0 +1,1 @@
+SELECT c.customer_id FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id=c.customer_id AND o.status = 'paid' AND o.ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND o.ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00') ORDER BY c.customer_id;

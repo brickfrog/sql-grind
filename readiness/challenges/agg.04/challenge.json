@@ -1,0 +1,73 @@
+{
+  "challengeId": "agg.04",
+  "skillId": "agg",
+  "displayNumber": "agg.04",
+  "version": "agg.04-v1",
+  "bundleVersion": "agg.04-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Independent detail totals",
+  "brief": "Combine independent detail totals without multiplying money.",
+  "instructions": [
+    "Return all orders in every status and year. Aggregate transaction revenue and succeeded payment amounts independently. Fill absent sums with zero.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_id,customer_id,status FROM orders LIMIT 10;",
+  "starterExplanation": "This starter exposes order_id,customer_id,status from orders without solving independent detail totals.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Pre-aggregate independent one-to-many relationships."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Build item and succeeded-payment totals per order before joining."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Order 1 has three items and several processing snapshots; raw joins multiply money."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "order_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "gross_revenue",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      },
+      {
+        "name": "paid_amount",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      }
+    ],
+    "ordering": [
+      {
+        "column": "order_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/agg.04/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/agg.04/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/agg.04/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/agg.04/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

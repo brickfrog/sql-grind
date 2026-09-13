@@ -1,0 +1,71 @@
+{
+  "challengeId": "plan.04",
+  "skillId": "plan",
+  "displayNumber": "plan.04",
+  "version": "plan.04-v1",
+  "bundleVersion": "plan.04-bundle-v1",
+  "assessmentVersion": "plan-lab-v1",
+  "title": "Measure a disposable index",
+  "brief": "Create an index, observe the access path, then remove the index.",
+  "instructions": [
+    "Create one non-unique index on lookup_orders(customer_id) in the disposable sandbox.",
+    "Use the main query to return order_id and amount for customer_id = 42.",
+    "Sort by order_id.",
+    "Report index, sequential, or not-reported from the measured scan profile.",
+    "Drop the same index after the probe.",
+    "The catalog must contain the requested index after CREATE and no index after DROP.",
+    "The complete probe result must agree before CREATE, after CREATE, and after DROP.",
+    "An index scan is not required for completion."
+  ],
+  "datasetId": "index-lab",
+  "starterSql": "SELECT order_id, customer_id, amount FROM lookup_orders LIMIT 10;\n",
+  "starterExplanation": "The starter shows lookup rows without the requested filter. The CREATE and DROP fields share this disposable session, not the learning database.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "An index is a separate database object, not a change to source rows."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Create an index on the customer lookup key, run the exact probe, then drop that index."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "A small lookup can still use a sequential scan. Completion requires the measured access report and an empty final index catalog."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "order_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "amount",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      }
+    ],
+    "ordering": [
+      {
+        "column": "order_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/plan.04/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/plan.04/expected-boundary.json"
+  },
+  "assessment": {
+    "kind": "plan-lab",
+    "lab": "index"
+  }
+}

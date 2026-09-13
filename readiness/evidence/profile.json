@@ -1,0 +1,442 @@
+{
+  "cases": {
+    "comma": {
+      "result": {
+        "ms": 25.399999976158142,
+        "fields": [
+          {
+            "name": "n",
+            "type": "Int64"
+          }
+        ],
+        "rows": [
+          {
+            "n": "19"
+          }
+        ]
+      },
+      "plan": {
+        "ms": 17.19999998807907,
+        "fields": [
+          {
+            "name": "explain_key",
+            "type": "Utf8"
+          },
+          {
+            "name": "explain_value",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "explain_key": "analyzed_plan",
+            "explain_value": "{\n    \"total_memory_allocated\": 2359296,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 32931840,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.0064,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) SELECT count(*) AS n FROM orders o, order_items i WHERE o.order_id=i.order_id\",\n    \"cpu_time\": 0.0,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 50,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 30,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 30,\n            \"cpu_time\": 0.0,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 50,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 50,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 30,\n                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                    \"cpu_time\": 0.0,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Aggregates\": \"count_star()\"\n                    },\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 8,\n                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 304,\n                            \"operator_type\": \"HASH_JOIN\",\n                            \"operator_timing\": 0.0,\n                            \"operator_rows_scanned\": 0,\n                            \"extra_info\": {\n                                \"Join Type\": \"INNER\",\n                                \"Conditions\": \"order_id = order_id\",\n                                \"Estimated Cardinality\": \"19\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 30,\n                            \"cpu_time\": 0.0,\n                            \"operator_name\": \"HASH_JOIN\",\n                            \"cumulative_cardinality\": 49,\n                            \"operator_cardinality\": 19,\n                            \"children\": [\n                                {\n                                    \"cumulative_cardinality\": 19,\n                                    \"operator_cardinality\": 19,\n                                    \"cumulative_rows_scanned\": 19,\n                                    \"operator_name\": \"SEQ_SCAN\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 19,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Table\": \"memory.main.order_items\",\n                                        \"Type\": \"Sequential Scan\",\n                                        \"Projections\": \"order_id\",\n                                        \"Estimated Cardinality\": \"19\",\n                                        \"Dynamic Filters\": \"optional: order_id>=1 AND optional: order_id<=11\"\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 152,\n                                    \"operator_type\": \"TABLE_SCAN\",\n                                    \"children\": []\n                                },\n                                {\n                                    \"cumulative_cardinality\": 11,\n                                    \"operator_cardinality\": 11,\n                                    \"cumulative_rows_scanned\": 11,\n                                    \"operator_name\": \"SEQ_SCAN\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 11,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Table\": \"memory.main.orders\",\n                                        \"Type\": \"Index Scan\",\n                                        \"Projections\": \"order_id\",\n                                        \"Filters\": \"order_id<=11\",\n                                        \"Estimated Cardinality\": \"12\"\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 88,\n                                    \"operator_type\": \"TABLE_SCAN\",\n                                    \"children\": []\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+          }
+        ]
+      }
+    },
+    "explicit": {
+      "result": {
+        "ms": 2.099999964237213,
+        "fields": [
+          {
+            "name": "n",
+            "type": "Int64"
+          }
+        ],
+        "rows": [
+          {
+            "n": "19"
+          }
+        ]
+      },
+      "plan": {
+        "ms": 2.300000011920929,
+        "fields": [
+          {
+            "name": "explain_key",
+            "type": "Utf8"
+          },
+          {
+            "name": "explain_value",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "explain_key": "analyzed_plan",
+            "explain_value": "{\n    \"total_memory_allocated\": 2359296,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 32931840,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.0014,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) SELECT count(*) AS n FROM orders o JOIN order_items i ON o.order_id=i.order_id\",\n    \"cpu_time\": 0.0001,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 50,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 30,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 30,\n            \"cpu_time\": 0.0001,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 50,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 50,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 30,\n                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                    \"cpu_time\": 0.0001,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Aggregates\": \"count_star()\"\n                    },\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 8,\n                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 304,\n                            \"operator_type\": \"HASH_JOIN\",\n                            \"operator_timing\": 0.0001,\n                            \"operator_rows_scanned\": 0,\n                            \"extra_info\": {\n                                \"Join Type\": \"INNER\",\n                                \"Conditions\": \"order_id = order_id\",\n                                \"Estimated Cardinality\": \"19\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 30,\n                            \"cpu_time\": 0.0001,\n                            \"operator_name\": \"HASH_JOIN\",\n                            \"cumulative_cardinality\": 49,\n                            \"operator_cardinality\": 19,\n                            \"children\": [\n                                {\n                                    \"cumulative_cardinality\": 19,\n                                    \"operator_cardinality\": 19,\n                                    \"cumulative_rows_scanned\": 19,\n                                    \"operator_name\": \"SEQ_SCAN\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 19,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Table\": \"memory.main.order_items\",\n                                        \"Type\": \"Sequential Scan\",\n                                        \"Projections\": \"order_id\",\n                                        \"Estimated Cardinality\": \"19\",\n                                        \"Dynamic Filters\": \"optional: order_id>=1 AND optional: order_id<=11\"\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 152,\n                                    \"operator_type\": \"TABLE_SCAN\",\n                                    \"children\": []\n                                },\n                                {\n                                    \"cumulative_cardinality\": 11,\n                                    \"operator_cardinality\": 11,\n                                    \"cumulative_rows_scanned\": 11,\n                                    \"operator_name\": \"SEQ_SCAN\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 11,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Table\": \"memory.main.orders\",\n                                        \"Type\": \"Index Scan\",\n                                        \"Projections\": \"order_id\",\n                                        \"Filters\": \"order_id<=11\",\n                                        \"Estimated Cardinality\": \"12\"\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 88,\n                                    \"operator_type\": \"TABLE_SCAN\",\n                                    \"children\": []\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+          }
+        ]
+      }
+    },
+    "disconnected": {
+      "result": {
+        "ms": 1.7000000476837158,
+        "fields": [
+          {
+            "name": "n",
+            "type": "Int64"
+          }
+        ],
+        "rows": [
+          {
+            "n": "228"
+          }
+        ]
+      },
+      "plan": {
+        "ms": 1.699999988079071,
+        "fields": [
+          {
+            "name": "explain_key",
+            "type": "Utf8"
+          },
+          {
+            "name": "explain_value",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "explain_key": "analyzed_plan",
+            "explain_value": "{\n    \"total_memory_allocated\": 262144,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 32931840,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.001,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) SELECT count(*) AS n FROM orders o, order_items i\",\n    \"cpu_time\": 0.0,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 260,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 31,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 31,\n            \"cpu_time\": 0.0,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 260,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 260,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 31,\n                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                    \"cpu_time\": 0.0,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Aggregates\": \"count_star()\"\n                    },\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 8,\n                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 3648,\n                            \"operator_type\": \"CROSS_PRODUCT\",\n                            \"operator_timing\": 0.0,\n                            \"operator_rows_scanned\": 0,\n                            \"extra_info\": {},\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 31,\n                            \"cpu_time\": 0.0,\n                            \"operator_name\": \"CROSS_PRODUCT\",\n                            \"cumulative_cardinality\": 259,\n                            \"operator_cardinality\": 228,\n                            \"children\": [\n                                {\n                                    \"cumulative_cardinality\": 19,\n                                    \"operator_cardinality\": 19,\n                                    \"cumulative_rows_scanned\": 19,\n                                    \"operator_name\": \"SEQ_SCAN\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 19,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Table\": \"memory.main.order_items\",\n                                        \"Type\": \"Sequential Scan\",\n                                        \"Projections\": \"\",\n                                        \"Estimated Cardinality\": \"19\"\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 152,\n                                    \"operator_type\": \"TABLE_SCAN\",\n                                    \"children\": []\n                                },\n                                {\n                                    \"cumulative_cardinality\": 12,\n                                    \"operator_cardinality\": 12,\n                                    \"cumulative_rows_scanned\": 12,\n                                    \"operator_name\": \"SEQ_SCAN\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 12,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Table\": \"memory.main.orders\",\n                                        \"Type\": \"Sequential Scan\",\n                                        \"Projections\": \"\",\n                                        \"Estimated Cardinality\": \"12\"\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 96,\n                                    \"operator_type\": \"TABLE_SCAN\",\n                                    \"children\": []\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+          }
+        ]
+      }
+    },
+    "intentional": {
+      "result": {
+        "ms": 2.300000011920929,
+        "fields": [
+          {
+            "name": "n",
+            "type": "Int64"
+          }
+        ],
+        "rows": [
+          {
+            "n": "6"
+          }
+        ]
+      },
+      "plan": {
+        "ms": 1.800000011920929,
+        "fields": [
+          {
+            "name": "explain_key",
+            "type": "Utf8"
+          },
+          {
+            "name": "explain_value",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "explain_key": "analyzed_plan",
+            "explain_value": "{\n    \"total_memory_allocated\": 262144,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 32931840,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.001,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) SELECT count(*) AS n FROM range(2) a CROSS JOIN range(3) b\",\n    \"cpu_time\": 0.000100001,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 12,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 5,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 5,\n            \"cpu_time\": 0.000100001,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 12,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 12,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 5,\n                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                    \"cpu_time\": 0.000100001,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Aggregates\": \"count_star()\"\n                    },\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 8,\n                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 96,\n                            \"operator_type\": \"CROSS_PRODUCT\",\n                            \"operator_timing\": 0.0,\n                            \"operator_rows_scanned\": 0,\n                            \"extra_info\": {},\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 5,\n                            \"cpu_time\": 0.000100001,\n                            \"operator_name\": \"CROSS_PRODUCT\",\n                            \"cumulative_cardinality\": 11,\n                            \"operator_cardinality\": 6,\n                            \"children\": [\n                                {\n                                    \"cumulative_cardinality\": 3,\n                                    \"operator_cardinality\": 3,\n                                    \"cumulative_rows_scanned\": 3,\n                                    \"operator_name\": \"RANGE\",\n                                    \"cpu_time\": 0.000100001,\n                                    \"operator_rows_scanned\": 3,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Function\": \"RANGE\",\n                                        \"Estimated Cardinality\": \"3\"\n                                    },\n                                    \"operator_timing\": 0.000100001,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 24,\n                                    \"operator_type\": \"TABLE_SCAN\",\n                                    \"children\": []\n                                },\n                                {\n                                    \"cumulative_cardinality\": 2,\n                                    \"operator_cardinality\": 2,\n                                    \"cumulative_rows_scanned\": 2,\n                                    \"operator_name\": \"RANGE\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 2,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Function\": \"RANGE\",\n                                        \"Estimated Cardinality\": \"2\"\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 16,\n                                    \"operator_type\": \"TABLE_SCAN\",\n                                    \"children\": []\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+          }
+        ]
+      }
+    },
+    "repeated": {
+      "result": {
+        "ms": 2.299999952316284,
+        "fields": [
+          {
+            "name": "a",
+            "type": "Decimal[38e0]"
+          },
+          {
+            "name": "b",
+            "type": "Decimal[38e0]"
+          }
+        ],
+        "rows": [
+          {
+            "a": "\"22\"",
+            "b": "\"22\""
+          }
+        ]
+      },
+      "plan": {
+        "ms": 1.5999999642372131,
+        "fields": [
+          {
+            "name": "explain_key",
+            "type": "Utf8"
+          },
+          {
+            "name": "explain_value",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "explain_key": "analyzed_plan",
+            "explain_value": "{\n    \"total_memory_allocated\": 0,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 32931840,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.001,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) SELECT sum(qty) AS a, sum(qty) AS b FROM order_items\",\n    \"cpu_time\": 0.0,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 40,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 19,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 19,\n            \"cpu_time\": 0.0,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 40,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 40,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 19,\n                    \"operator_name\": \"PROJECTION\",\n                    \"cpu_time\": 0.0,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Projections\": [\n                            \"a\",\n                            \"b\"\n                        ],\n                        \"Estimated Cardinality\": \"1\"\n                    },\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 32,\n                    \"operator_type\": \"PROJECTION\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 16,\n                            \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                            \"operator_timing\": 0.0,\n                            \"operator_rows_scanned\": 0,\n                            \"extra_info\": {\n                                \"Aggregates\": \"sum_no_overflow(#0)\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 19,\n                            \"cpu_time\": 0.0,\n                            \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                            \"cumulative_cardinality\": 39,\n                            \"operator_cardinality\": 1,\n                            \"children\": [\n                                {\n                                    \"cumulative_cardinality\": 38,\n                                    \"operator_cardinality\": 19,\n                                    \"cumulative_rows_scanned\": 19,\n                                    \"operator_name\": \"PROJECTION\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 0,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Projections\": \"qty\",\n                                        \"Estimated Cardinality\": \"19\"\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 76,\n                                    \"operator_type\": \"PROJECTION\",\n                                    \"children\": [\n                                        {\n                                            \"system_peak_temp_dir_size\": 0,\n                                            \"result_set_size\": 76,\n                                            \"operator_type\": \"TABLE_SCAN\",\n                                            \"operator_timing\": 0.0,\n                                            \"operator_rows_scanned\": 19,\n                                            \"extra_info\": {\n                                                \"Table\": \"memory.main.order_items\",\n                                                \"Type\": \"Sequential Scan\",\n                                                \"Projections\": \"qty\",\n                                                \"Estimated Cardinality\": \"19\"\n                                            },\n                                            \"system_peak_buffer_memory\": 0,\n                                            \"cumulative_rows_scanned\": 19,\n                                            \"cpu_time\": 0.0,\n                                            \"operator_name\": \"SEQ_SCAN\",\n                                            \"cumulative_cardinality\": 19,\n                                            \"operator_cardinality\": 19,\n                                            \"children\": []\n                                        }\n                                    ]\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+          }
+        ]
+      }
+    },
+    "pruned": {
+      "result": {
+        "ms": 4.300000011920929,
+        "fields": [
+          {
+            "name": "sum(qty)",
+            "type": "Decimal[38e0]"
+          }
+        ],
+        "rows": [
+          {
+            "sum(qty)": "\"22\""
+          }
+        ]
+      },
+      "plan": {
+        "ms": 2.5,
+        "fields": [
+          {
+            "name": "explain_key",
+            "type": "Utf8"
+          },
+          {
+            "name": "explain_value",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "explain_key": "analyzed_plan",
+            "explain_value": "{\n    \"total_memory_allocated\": 0,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 32931840,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.0015,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) WITH x AS (SELECT * FROM order_items) SELECT sum(qty) FROM x\",\n    \"cpu_time\": 0.0,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 39,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 19,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 19,\n            \"cpu_time\": 0.0,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 39,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 39,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 19,\n                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                    \"cpu_time\": 0.0,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Aggregates\": \"sum_no_overflow(#0)\"\n                    },\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 16,\n                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 76,\n                            \"operator_type\": \"PROJECTION\",\n                            \"operator_timing\": 0.0,\n                            \"operator_rows_scanned\": 0,\n                            \"extra_info\": {\n                                \"Projections\": \"qty\",\n                                \"Estimated Cardinality\": \"19\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 19,\n                            \"cpu_time\": 0.0,\n                            \"operator_name\": \"PROJECTION\",\n                            \"cumulative_cardinality\": 38,\n                            \"operator_cardinality\": 19,\n                            \"children\": [\n                                {\n                                    \"cumulative_cardinality\": 19,\n                                    \"operator_cardinality\": 19,\n                                    \"cumulative_rows_scanned\": 19,\n                                    \"operator_name\": \"SEQ_SCAN\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 19,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Table\": \"memory.main.order_items\",\n                                        \"Type\": \"Sequential Scan\",\n                                        \"Projections\": \"qty\",\n                                        \"Estimated Cardinality\": \"19\"\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 76,\n                                    \"operator_type\": \"TABLE_SCAN\",\n                                    \"children\": []\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+          }
+        ]
+      }
+    },
+    "repeatedScans": {
+      "result": {
+        "ms": 10.599999964237213,
+        "fields": [
+          {
+            "name": "a",
+            "type": "Decimal[38e0]"
+          },
+          {
+            "name": "b",
+            "type": "Decimal[38e0]"
+          }
+        ],
+        "rows": [
+          {
+            "a": "\"5\"",
+            "b": "\"17\""
+          }
+        ]
+      },
+      "plan": {
+        "ms": 4.600000023841858,
+        "fields": [
+          {
+            "name": "explain_key",
+            "type": "Utf8"
+          },
+          {
+            "name": "explain_value",
+            "type": "Utf8"
+          }
+        ],
+        "rows": [
+          {
+            "explain_key": "analyzed_plan",
+            "explain_value": "{\n    \"total_memory_allocated\": 262144,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 32931840,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.0037,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) SELECT (SELECT sum(qty) FROM order_items WHERE qty>1) AS a, (SELECT sum(qty) FROM order_items WHERE qty=1) AS b\",\n    \"cpu_time\": 0.0001,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 47,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 38,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 38,\n            \"cpu_time\": 0.0001,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 47,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 47,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 38,\n                    \"operator_name\": \"CROSS_PRODUCT\",\n                    \"cpu_time\": 0.0001,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {},\n                    \"operator_timing\": 0.0,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 32,\n                    \"operator_type\": \"CROSS_PRODUCT\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 16,\n                            \"operator_type\": \"PROJECTION\",\n                            \"operator_timing\": 0.0,\n                            \"operator_rows_scanned\": 0,\n                            \"extra_info\": {\n                                \"Projections\": [\n                                    \"CASE  WHEN ((#1 > 1)) THEN (\\\"error\\\"('More than one row returned by a subquery used as an expression - scalar subqueries can only return a single row.\",\n                                    \"Use \\\"SET scalar_subquery_error_on_multiple_rows=false\\\" to revert to previous behavior of returning a random row.')) ELSE #0 END\"\n                                ],\n                                \"Estimated Cardinality\": \"1\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 19,\n                            \"cpu_time\": 0.0,\n                            \"operator_name\": \"PROJECTION\",\n                            \"cumulative_cardinality\": 8,\n                            \"operator_cardinality\": 1,\n                            \"children\": [\n                                {\n                                    \"cumulative_cardinality\": 7,\n                                    \"operator_cardinality\": 1,\n                                    \"cumulative_rows_scanned\": 19,\n                                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 0,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Aggregates\": [\n                                            \"\\\"first\\\"(#0)\",\n                                            \"count_star()\"\n                                        ]\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 24,\n                                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                                    \"children\": [\n                                        {\n                                            \"system_peak_temp_dir_size\": 0,\n                                            \"result_set_size\": 16,\n                                            \"operator_type\": \"PROJECTION\",\n                                            \"operator_timing\": 0.0,\n                                            \"operator_rows_scanned\": 0,\n                                            \"extra_info\": {\n                                                \"Projections\": \"#0\",\n                                                \"Estimated Cardinality\": \"1\"\n                                            },\n                                            \"system_peak_buffer_memory\": 0,\n                                            \"cumulative_rows_scanned\": 19,\n                                            \"cpu_time\": 0.0,\n                                            \"operator_name\": \"PROJECTION\",\n                                            \"cumulative_cardinality\": 6,\n                                            \"operator_cardinality\": 1,\n                                            \"children\": [\n                                                {\n                                                    \"cumulative_cardinality\": 5,\n                                                    \"operator_cardinality\": 1,\n                                                    \"cumulative_rows_scanned\": 19,\n                                                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                                                    \"cpu_time\": 0.0,\n                                                    \"operator_rows_scanned\": 0,\n                                                    \"system_peak_buffer_memory\": 0,\n                                                    \"extra_info\": {\n                                                        \"Aggregates\": \"sum_no_overflow(#0)\"\n                                                    },\n                                                    \"operator_timing\": 0.0,\n                                                    \"system_peak_temp_dir_size\": 0,\n                                                    \"result_set_size\": 16,\n                                                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                                                    \"children\": [\n                                                        {\n                                                            \"system_peak_temp_dir_size\": 0,\n                                                            \"result_set_size\": 8,\n                                                            \"operator_type\": \"PROJECTION\",\n                                                            \"operator_timing\": 0.0,\n                                                            \"operator_rows_scanned\": 0,\n                                                            \"extra_info\": {\n                                                                \"Projections\": \"qty\",\n                                                                \"Estimated Cardinality\": \"3\"\n                                                            },\n                                                            \"system_peak_buffer_memory\": 0,\n                                                            \"cumulative_rows_scanned\": 19,\n                                                            \"cpu_time\": 0.0,\n                                                            \"operator_name\": \"PROJECTION\",\n                                                            \"cumulative_cardinality\": 4,\n                                                            \"operator_cardinality\": 2,\n                                                            \"children\": [\n                                                                {\n                                                                    \"cumulative_cardinality\": 2,\n                                                                    \"operator_cardinality\": 2,\n                                                                    \"cumulative_rows_scanned\": 19,\n                                                                    \"operator_name\": \"SEQ_SCAN\",\n                                                                    \"cpu_time\": 0.0,\n                                                                    \"operator_rows_scanned\": 19,\n                                                                    \"system_peak_buffer_memory\": 0,\n                                                                    \"extra_info\": {\n                                                                        \"Table\": \"memory.main.order_items\",\n                                                                        \"Type\": \"Sequential Scan\",\n                                                                        \"Projections\": \"qty\",\n                                                                        \"Filters\": \"qty>1\",\n                                                                        \"Estimated Cardinality\": \"3\"\n                                                                    },\n                                                                    \"operator_timing\": 0.0,\n                                                                    \"system_peak_temp_dir_size\": 0,\n                                                                    \"result_set_size\": 8,\n                                                                    \"operator_type\": \"TABLE_SCAN\",\n                                                                    \"children\": []\n                                                                }\n                                                            ]\n                                                        }\n                                                    ]\n                                                }\n                                            ]\n                                        }\n                                    ]\n                                }\n                            ]\n                        },\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 16,\n                            \"operator_type\": \"PROJECTION\",\n                            \"operator_timing\": 0.0001,\n                            \"operator_rows_scanned\": 0,\n                            \"extra_info\": {\n                                \"Projections\": [\n                                    \"CASE  WHEN ((#1 > 1)) THEN (\\\"error\\\"('More than one row returned by a subquery used as an expression - scalar subqueries can only return a single row.\",\n                                    \"Use \\\"SET scalar_subquery_error_on_multiple_rows=false\\\" to revert to previous behavior of returning a random row.')) ELSE #0 END\"\n                                ],\n                                \"Estimated Cardinality\": \"1\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 19,\n                            \"cpu_time\": 0.0001,\n                            \"operator_name\": \"PROJECTION\",\n                            \"cumulative_cardinality\": 38,\n                            \"operator_cardinality\": 1,\n                            \"children\": [\n                                {\n                                    \"cumulative_cardinality\": 37,\n                                    \"operator_cardinality\": 1,\n                                    \"cumulative_rows_scanned\": 19,\n                                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                                    \"cpu_time\": 0.0,\n                                    \"operator_rows_scanned\": 0,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Aggregates\": [\n                                            \"\\\"first\\\"(#0)\",\n                                            \"count_star()\"\n                                        ]\n                                    },\n                                    \"operator_timing\": 0.0,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 24,\n                                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                                    \"children\": [\n                                        {\n                                            \"system_peak_temp_dir_size\": 0,\n                                            \"result_set_size\": 16,\n                                            \"operator_type\": \"PROJECTION\",\n                                            \"operator_timing\": 0.0,\n                                            \"operator_rows_scanned\": 0,\n                                            \"extra_info\": {\n                                                \"Projections\": \"#0\",\n                                                \"Estimated Cardinality\": \"1\"\n                                            },\n                                            \"system_peak_buffer_memory\": 0,\n                                            \"cumulative_rows_scanned\": 19,\n                                            \"cpu_time\": 0.0,\n                                            \"operator_name\": \"PROJECTION\",\n                                            \"cumulative_cardinality\": 36,\n                                            \"operator_cardinality\": 1,\n                                            \"children\": [\n                                                {\n                                                    \"cumulative_cardinality\": 35,\n                                                    \"operator_cardinality\": 1,\n                                                    \"cumulative_rows_scanned\": 19,\n                                                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                                                    \"cpu_time\": 0.0,\n                                                    \"operator_rows_scanned\": 0,\n                                                    \"system_peak_buffer_memory\": 0,\n                                                    \"extra_info\": {\n                                                        \"Aggregates\": \"sum_no_overflow(#0)\"\n                                                    },\n                                                    \"operator_timing\": 0.0,\n                                                    \"system_peak_temp_dir_size\": 0,\n                                                    \"result_set_size\": 16,\n                                                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                                                    \"children\": [\n                                                        {\n                                                            \"system_peak_temp_dir_size\": 0,\n                                                            \"result_set_size\": 68,\n                                                            \"operator_type\": \"PROJECTION\",\n                                                            \"operator_timing\": 0.0,\n                                                            \"operator_rows_scanned\": 0,\n                                                            \"extra_info\": {\n                                                                \"Projections\": \"qty\",\n                                                                \"Estimated Cardinality\": \"7\"\n                                                            },\n                                                            \"system_peak_buffer_memory\": 0,\n                                                            \"cumulative_rows_scanned\": 19,\n                                                            \"cpu_time\": 0.0,\n                                                            \"operator_name\": \"PROJECTION\",\n                                                            \"cumulative_cardinality\": 34,\n                                                            \"operator_cardinality\": 17,\n                                                            \"children\": [\n                                                                {\n                                                                    \"cumulative_cardinality\": 17,\n                                                                    \"operator_cardinality\": 17,\n                                                                    \"cumulative_rows_scanned\": 19,\n                                                                    \"operator_name\": \"SEQ_SCAN\",\n                                                                    \"cpu_time\": 0.0,\n                                                                    \"operator_rows_scanned\": 19,\n                                                                    \"system_peak_buffer_memory\": 0,\n                                                                    \"extra_info\": {\n                                                                        \"Table\": \"memory.main.order_items\",\n                                                                        \"Type\": \"Sequential Scan\",\n                                                                        \"Projections\": \"qty\",\n                                                                        \"Filters\": \"qty=1\",\n                                                                        \"Estimated Cardinality\": \"7\"\n                                                                    },\n                                                                    \"operator_timing\": 0.0,\n                                                                    \"system_peak_temp_dir_size\": 0,\n                                                                    \"result_set_size\": 68,\n                                                                    \"operator_type\": \"TABLE_SCAN\",\n                                                                    \"children\": []\n                                                                }\n                                                            ]\n                                                        }\n                                                    ]\n                                                }\n                                            ]\n                                        }\n                                    ]\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+          }
+        ]
+      }
+    }
+  },
+  "pairs": [
+    {
+      "referenceMs": 5,
+      "candidateMs": 5.100000023841858,
+      "ratio": 1.0200000047683715,
+      "first": "reference"
+    },
+    {
+      "referenceMs": 5.300000011920929,
+      "candidateMs": 4.5,
+      "ratio": 0.8490566018638598,
+      "first": "candidate"
+    },
+    {
+      "referenceMs": 5.399999976158142,
+      "candidateMs": 6.200000047683716,
+      "ratio": 1.1481481620477225,
+      "first": "reference"
+    },
+    {
+      "referenceMs": 6.199999988079071,
+      "candidateMs": 5.599999964237213,
+      "ratio": 0.9032258024200812,
+      "first": "candidate"
+    },
+    {
+      "referenceMs": 5.5,
+      "candidateMs": 4.800000011920929,
+      "ratio": 0.8727272748947144,
+      "first": "reference"
+    },
+    {
+      "referenceMs": 5.100000023841858,
+      "candidateMs": 4.400000035762787,
+      "ratio": 0.8627451010183022,
+      "first": "candidate"
+    },
+    {
+      "referenceMs": 5.900000035762787,
+      "candidateMs": 5.199999988079071,
+      "ratio": 0.8813559248405639,
+      "first": "reference"
+    },
+    {
+      "referenceMs": 4.5,
+      "candidateMs": 5.399999976158142,
+      "ratio": 1.1999999947018094,
+      "first": "candidate"
+    },
+    {
+      "referenceMs": 4.399999976158142,
+      "candidateMs": 4.399999976158142,
+      "ratio": 1,
+      "first": "reference"
+    }
+  ],
+  "stale": {
+    "captured": 1,
+    "current": 2,
+    "discard": true,
+    "document": "SELECT 2"
+  },
+  "debounceToDiagnosticMs": 401.19999998807907,
+  "engineMemory": {
+    "ms": 0.800000011920929,
+    "fields": [
+      {
+        "name": "tag",
+        "type": "Utf8"
+      },
+      {
+        "name": "memory_usage_bytes",
+        "type": "Int64"
+      },
+      {
+        "name": "temporary_storage_bytes",
+        "type": "Int64"
+      }
+    ],
+    "rows": [
+      {
+        "tag": "BASE_TABLE",
+        "memory_usage_bytes": "524288",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "HASH_TABLE",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "PARQUET_READER",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "CSV_READER",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "ORDER_BY",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "ART_INDEX",
+        "memory_usage_bytes": "13893632",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "COLUMN_DATA",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "METADATA",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "OVERFLOW_STRINGS",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "IN_MEMORY_TABLE",
+        "memory_usage_bytes": "827392",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "ALLOCATOR",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "EXTENSION",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "TRANSACTION",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "EXTERNAL_FILE_CACHE",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "WINDOW",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      },
+      {
+        "tag": "OBJECT_CACHE",
+        "memory_usage_bytes": "0",
+        "temporary_storage_bytes": "0"
+      }
+    ]
+  },
+  "processMemory": {
+    "samples": [
+      {
+        "stage": "browser",
+        "rssKiB": 330824
+      },
+      {
+        "stage": "oneEngine",
+        "rssKiB": 629188
+      },
+      {
+        "stage": "twoEngines",
+        "rssKiB": 779028
+      },
+      {
+        "stage": "fixturesAndProfiles",
+        "rssKiB": 782240
+      }
+    ],
+    "scope": "Sum of VmRSS for Chromium CDP-reported processes. Includes browser, renderer and GPU. Shared pages can be counted twice. Point samples, not peak."
+  }
+}

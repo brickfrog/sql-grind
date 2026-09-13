@@ -1,0 +1,86 @@
+{
+  "challengeId": "plan.03",
+  "skillId": "plan",
+  "displayNumber": "plan.03",
+  "version": "plan.03-v1",
+  "bundleVersion": "plan.03-bundle-v1",
+  "assessmentVersion": "plan-lab-v1",
+  "title": "Compare aggregation strategies",
+  "brief": "Compare equivalent aggregation strategies at the same grain.",
+  "instructions": [
+    "Return every order with independent item revenue and succeeded payment totals.",
+    "Calculate revenue from transaction quantity times transaction price.",
+    "Use zero for missing totals and preserve all statuses and years.",
+    "Sort by order_id.",
+    "Compare your primary query against the supplied correlated-subquery baseline.",
+    "Report the lower measured median, or equal.",
+    "Report whether the median difference exceeds the sum of both MADs.",
+    "No speed threshold determines completion."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_id, customer_id, status FROM orders LIMIT 10;\n",
+  "starterExplanation": "The starter shows the order grain. The supplied baseline uses independent correlated aggregates. An alternative can preaggregate each detail relation.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Aggregate independent detail relations before combining their totals."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Make one item total and one succeeded-payment total for each order, then preserve every order."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Several items and payments on one order multiply totals in a direct detail join. The two strategies need not differ in speed."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "order_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "gross_revenue",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      },
+      {
+        "name": "paid_amount",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      }
+    ],
+    "ordering": [
+      {
+        "column": "order_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/plan.03/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/plan.03/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/plan.03/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/plan.03/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "plan-lab",
+    "lab": "preaggregation",
+    "secondaryReference": "/bundle/challenges/plan.03/secondary-reference.sql",
+    "secondaryExpected": {
+      "boundary": "/bundle/challenges/plan.03/secondary-expected-boundary.json",
+      "seed-20240907": "/bundle/challenges/plan.03/secondary-expected-seed-20240907.json",
+      "seed-20240908": "/bundle/challenges/plan.03/secondary-expected-seed-20240908.json"
+    }
+  }
+}

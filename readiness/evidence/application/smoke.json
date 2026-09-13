@@ -1,0 +1,34 @@
+{
+  "date": "2026-09-13T01:23:10.283Z",
+  "origin": "http://127.0.0.1:4173",
+  "browser": "153.0.8010.12",
+  "checks": [
+    {
+      "name": "fresh local startup without external origins"
+    },
+    {
+      "name": "starter execute",
+      "details": "Execution complete. Correctness was not evaluated; Submit checks every grading variant."
+    },
+    {
+      "name": "reference submission",
+      "details": "Every complete grading variant passes exact types, values, NULLs, duplicates, and required ordering."
+    },
+    {
+      "name": "saved SQL, hints, completion and name restored after reload"
+    },
+    {
+      "name": "missing-customer rejection",
+      "details": "The complete answer differs from the challenge contract. See each variant; no partial output can pass."
+    },
+    {
+      "name": "thirteen-node real skill map"
+    },
+    {
+      "name": "execution recovered after cancellation",
+      "details": "Execution complete. Correctness was not evaluated; Submit checks every grading variant."
+    }
+  ],
+  "errors": [],
+  "pass": true
+}

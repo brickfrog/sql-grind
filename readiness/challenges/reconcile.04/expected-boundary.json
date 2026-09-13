@@ -1,0 +1,156 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "reconcile.04",
+    "bundleVersion": "reconcile.04-bundle-v1",
+    "challengeVersion": "reconcile.04-v1",
+    "datasetVersion": "reconciliation-data-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "reconciliation",
+  "variantId": "boundary-v1",
+  "columns": [
+    {
+      "name": "ref_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "group_key",
+      "type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "name": "confidence",
+      "type": "VARCHAR",
+      "nullable": false
+    },
+    {
+      "name": "score",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "margin",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 16,
+  "rows": [
+    [
+      "1049",
+      "r:1049|p:1249",
+      "high",
+      "100",
+      "100"
+    ],
+    [
+      "1102",
+      "r:1102|p:1493",
+      "high",
+      "90",
+      "90"
+    ],
+    [
+      "1171",
+      "r:1171|p:1382",
+      "probable",
+      "80",
+      "80"
+    ],
+    [
+      "1219",
+      "r:1219|p:1481",
+      "high",
+      "100",
+      "70"
+    ],
+    [
+      "9007199254741059",
+      null,
+      "ambiguous",
+      "100",
+      "100"
+    ],
+    [
+      "9007199254741076",
+      "r:9007199254741076|p:9007199254741314",
+      "high",
+      "95",
+      "95"
+    ],
+    [
+      "9007199254741108",
+      "r:9007199254741108|p:9007199254741019",
+      "high",
+      "100",
+      "100"
+    ],
+    [
+      "9007199254741127",
+      null,
+      "missing",
+      "0",
+      "0"
+    ],
+    [
+      "9007199254741128",
+      "r:9007199254741128|p:1152",
+      "high",
+      "100",
+      "100"
+    ],
+    [
+      "9007199254741157",
+      "r:9007199254741157|p:9007199254741268",
+      "high",
+      "100",
+      "100"
+    ],
+    [
+      "9007199254741182",
+      "r:9007199254741182,9007199254741290|p:1003",
+      "high",
+      "100",
+      "30"
+    ],
+    [
+      "9007199254741207",
+      "r:9007199254741207|p:1464,9007199254741185",
+      "high",
+      "100",
+      "30"
+    ],
+    [
+      "9007199254741262",
+      null,
+      "ambiguous",
+      "100",
+      "100"
+    ],
+    [
+      "9007199254741290",
+      "r:9007199254741182,9007199254741290|p:1003",
+      "high",
+      "100",
+      "30"
+    ],
+    [
+      "9007199254741446",
+      null,
+      "ambiguous",
+      "100",
+      "0"
+    ],
+    [
+      "9007199254741487",
+      null,
+      "missing",
+      "0",
+      "0"
+    ]
+  ]
+}

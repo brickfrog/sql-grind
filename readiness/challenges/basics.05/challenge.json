@@ -1,0 +1,64 @@
+{
+  "challengeId": "basics.05",
+  "skillId": "basics",
+  "displayNumber": "basics.05",
+  "version": "basics.05-v1",
+  "bundleVersion": "basics.05-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Quantity boundaries",
+  "brief": "Bands that cover every quantity once: no gaps to fall through, no overlaps to argue about.",
+  "instructions": [
+    "Classify 1 to 9 as small, 10 to 99 as medium, and 100 to 1000 as large. Return every item.",
+    "Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_item_id,qty FROM order_items LIMIT 10;",
+  "starterExplanation": "The starter reads order_item_id and qty out of order_items. It runs. It does not answer the question.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Every permitted quantity must match exactly one branch of the CASE."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Either write closed intervals, or let increasing upper bounds do the work."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "The extra items sit on 9, 10, 99 and 100, which is where careless bands fail."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "order_item_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "quantity_band",
+        "type": "VARCHAR",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "order_item_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/basics.05/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/basics.05/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/basics.05/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/basics.05/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

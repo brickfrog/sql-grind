@@ -1,0 +1,13 @@
+{
+  "pass": true,
+  "browser": "153.0.8010.12",
+  "checks": [
+    "Tray menu clamps to the viewport, skips disabled commands, restores keyboard focus, and closes/reopens without losing SQL",
+    "Database tree context opens schema details without exposing tray window commands",
+    "Patchouli tray actions honor visibility, hush and explicit docking, including reopening a hidden docked workbench",
+    "Table selection runs a bounded quoted query in a new tab; context tab actions target the clicked document and preserve drafts",
+    "Editor execution and both result menus work; row copies preserve escaped TSV, exact integers/decimals, NULL and empty strings",
+    "Only one context menu remains open; Tab, outside clicks and resize dismiss it"
+  ],
+  "errors": []
+}

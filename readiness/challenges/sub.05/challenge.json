@@ -1,0 +1,64 @@
+{
+  "challengeId": "sub.05",
+  "skillId": "sub",
+  "displayNumber": "sub.05",
+  "version": "sub.05-v1",
+  "bundleVersion": "sub.05-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Declared scalar winner",
+  "brief": "Resolve multiple possible scalar answers with a declared winner rule.",
+  "instructions": [
+    "For every order select payment status by paid_at descending NULLS LAST, then payment_id descending. Return NULL when no payment exists. Do not select the lexicographically greatest status.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_id,customer_id FROM orders LIMIT 10;",
+  "starterExplanation": "This starter exposes order_id,customer_id from orders without solving declared scalar winner.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "An ordered scalar subquery resolves multiple possible answers."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Correlate payments to one order and limit after the full declared ordering."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Order 1 has a NULL timestamp and a tied latest timestamp. Non-NULL time wins first, larger identity breaks its tie."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "order_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "latest_payment_status",
+        "type": "VARCHAR",
+        "nullable": true
+      }
+    ],
+    "ordering": [
+      {
+        "column": "order_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/sub.05/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/sub.05/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/sub.05/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/sub.05/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

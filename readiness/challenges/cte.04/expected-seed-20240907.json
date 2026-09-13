@@ -1,0 +1,79 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "cte.04",
+    "bundleVersion": "cte.04-bundle-v1",
+    "challengeVersion": "cte.04-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "seed-20240907",
+  "columns": [
+    {
+      "name": "mon",
+      "type": "DATE",
+      "nullable": false
+    },
+    {
+      "name": "revenue",
+      "type": "DECIMAL",
+      "nullable": false,
+      "precision": 38,
+      "scale": 2
+    }
+  ],
+  "complete": true,
+  "rowCount": 12,
+  "rows": [
+    [
+      "2024-01-01",
+      "629794.82"
+    ],
+    [
+      "2024-02-01",
+      "593792.19"
+    ],
+    [
+      "2024-03-01",
+      "679690.93"
+    ],
+    [
+      "2024-04-01",
+      "560927.62"
+    ],
+    [
+      "2024-05-01",
+      "502742.43"
+    ],
+    [
+      "2024-06-01",
+      "469108.13"
+    ],
+    [
+      "2024-07-01",
+      "506238.28"
+    ],
+    [
+      "2024-08-01",
+      "683683.93"
+    ],
+    [
+      "2024-09-01",
+      "637528.86"
+    ],
+    [
+      "2024-10-01",
+      "642776.77"
+    ],
+    [
+      "2024-11-01",
+      "610368.69"
+    ],
+    [
+      "2024-12-01",
+      "647991.23"
+    ]
+  ]
+}

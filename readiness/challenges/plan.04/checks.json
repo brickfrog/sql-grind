@@ -1,0 +1,13 @@
+{
+  "wrong": [
+    {
+      "sql": "/bundle/challenges/plan.04/wrong.sql",
+      "variant": "boundary"
+    }
+  ],
+  "indexSequence": {
+    "create": "/bundle/challenges/plan.04/create.sql",
+    "probe": "/bundle/challenges/plan.04/reference.sql",
+    "drop": "/bundle/challenges/plan.04/drop.sql"
+  }
+}

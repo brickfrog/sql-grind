@@ -1,0 +1,68 @@
+{
+  "challengeId": "clean.04",
+  "skillId": "clean",
+  "displayNumber": "clean.04",
+  "version": "clean.04-v1",
+  "bundleVersion": "clean.04-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Normalized one-to-many tags",
+  "brief": "Expand multivalue text into a clean one-to-many relation.",
+  "instructions": [
+    "Split comma-separated tags, trim and lowercase tokens, discard empty tokens, and deduplicate within each contact only. Missing or empty lists contribute no rows.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "workshop",
+  "starterSql": "SELECT contact_id,tags_text FROM raw_contacts LIMIT 10;",
+  "starterExplanation": "This starter exposes contact_id,tags_text from raw_contacts without solving normalized one-to-many tags.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Expand tokens before normalizing and deduplicating at contact-and-tag grain."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Unnest each split list, filter trimmed empties, then select distinct contact/tag pairs."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Repeated red collapses within a contact but remains for both contacts 1 and 5."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "contact_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "tag",
+        "type": "VARCHAR",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "contact_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "tag",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/clean.04/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/clean.04/expected-boundary.json",
+    "variant": "/bundle/challenges/clean.04/expected-variant.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

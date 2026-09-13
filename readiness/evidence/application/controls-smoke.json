@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-13T03:04:14.032Z",
+  "browser": "153.0.8010.12",
+  "checks": [
+    "File New/Save/Save As preserve distinct documents",
+    "Editor names follow Save As; Save shortcut remains scoped to the IDE",
+    "Edit clipboard, undo/redo, find/replace text, and Go to Line",
+    "Query library search, rename, duplicate, soft delete and identity-preserving restore",
+    "Practice backup export and import via desktop controls",
+    "SQL import creates a document without executing it",
+    "Explorer filter, table schema, expand/collapse and real metadata refresh",
+    "Pane visibility, collapse/expand, and layout reset",
+    "F5 executes; virtual and paginated grids navigate and copy exact decimals, NULL and empty text",
+    "Result tabs, explicit Parse/Show Plan, keyboard splitter",
+    "Thirteen-skill map, locked requirements, five selectable basics objectives, keyboard navigation, current skill, next challenge and independent drafts",
+    "Judge drag, keyboard move, float/dock/hide, persistent hush and diagnostics",
+    "Settings apply editor and judge preferences",
+    "Storage, help, credits, external documentation link and local records",
+    "IDE minimize/maximize/close, taskbar restoration, Show Desktop and Start",
+    "Menu keyboard, F6 regions, 320px reading layout and dialog reflow"
+  ],
+  "errors": [],
+  "pass": true
+}

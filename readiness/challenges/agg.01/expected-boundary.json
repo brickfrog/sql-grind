@@ -1,0 +1,67 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "agg.01",
+    "bundleVersion": "agg.01-bundle-v1",
+    "challengeVersion": "agg.01-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "order_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "gross_revenue",
+      "type": "DECIMAL",
+      "nullable": false,
+      "precision": 38,
+      "scale": 2
+    }
+  ],
+  "complete": true,
+  "rowCount": 9,
+  "rows": [
+    [
+      "1",
+      "100.00"
+    ],
+    [
+      "2",
+      "360.00"
+    ],
+    [
+      "3",
+      "0.00"
+    ],
+    [
+      "4",
+      "160.00"
+    ],
+    [
+      "8",
+      "0.00"
+    ],
+    [
+      "9",
+      "24.68"
+    ],
+    [
+      "12",
+      "0.00"
+    ],
+    [
+      "10001",
+      "2.18"
+    ],
+    [
+      "10002",
+      "17.99"
+    ]
+  ]
+}

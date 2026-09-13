@@ -1,0 +1,33 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "cte.01",
+    "bundleVersion": "cte.01-bundle-v1",
+    "challengeVersion": "cte.01-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "seed-20240908",
+  "columns": [
+    {
+      "name": "order_count",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "customer_count",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 1,
+  "rows": [
+    [
+      "1186",
+      "351"
+    ]
+  ]
+}

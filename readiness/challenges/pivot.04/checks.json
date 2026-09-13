@@ -1,0 +1,8 @@
+{
+  "wrong": [
+    {
+      "sql": "/bundle/challenges/pivot.04/wrong.sql",
+      "variant": "boundary"
+    }
+  ]
+}

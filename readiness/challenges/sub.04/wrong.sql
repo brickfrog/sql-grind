@@ -1,0 +1,1 @@
+SELECT p.product_id,p.category_id,p.unit_price::DECIMAL(38,2) AS unit_price FROM products p WHERE p.unit_price*(SELECT count(*) FROM products q WHERE q.category_id=p.category_id)>=(SELECT sum(q.unit_price) FROM products q WHERE q.category_id=p.category_id) ORDER BY p.product_id,p.category_id;

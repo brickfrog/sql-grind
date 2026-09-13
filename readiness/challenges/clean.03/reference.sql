@@ -1,0 +1,1 @@
+WITH checked AS (SELECT *,regexp_full_match(trim(postal_text),'[0-9]{5}(-[0-9]{4})?') AS valid FROM raw_contacts) SELECT contact_id,CASE WHEN valid THEN trim(postal_text) ELSE NULL END AS postal_code,CASE WHEN postal_text IS NOT NULL AND NOT valid THEN postal_text ELSE NULL END AS rejected_value FROM checked ORDER BY contact_id;

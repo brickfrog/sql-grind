@@ -1,0 +1,70 @@
+{
+  "challengeId": "plan.01",
+  "skillId": "plan",
+  "displayNumber": "plan.01",
+  "version": "plan.01-v1",
+  "bundleVersion": "plan.01-bundle-v1",
+  "assessmentVersion": "plan-lab-v1",
+  "title": "Count output and scanned rows",
+  "brief": "Distinguish output cardinality from scanned work.",
+  "instructions": [
+    "Return every customer and their order count, including customers without orders.",
+    "Count matching orders, not the outer join placeholder.",
+    "Sort by customer_id.",
+    "Measure the complete result and its separate EXPLAIN ANALYZE profile.",
+    "Report outputRows as the complete result count.",
+    "Report scanRows as the sum of leaf operator_rows_scanned values.",
+    "If any required scan metric is absent, report not-reported."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT customer_id, customer_name FROM customers LIMIT 10;\n",
+  "starterExplanation": "The starter shows customer identities. Add order counts without removing customers who have no orders. EXPLAIN wrapper rows are not output cardinality.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Use an outer join and count the matching order identity."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Group at customer identity before you compare output count and scanned work."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "An orderless customer still has one output row, but zero matching orders. A missing scan metric is not zero."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "customer_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "order_count",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "customer_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/plan.01/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/plan.01/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/plan.01/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/plan.01/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "plan-lab",
+    "lab": "cardinality"
+  }
+}

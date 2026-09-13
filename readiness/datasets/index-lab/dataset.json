@@ -1,0 +1,19 @@
+{
+  "id": "index-lab",
+  "version": "index-lab-v1",
+  "tables": [
+    "lookup_orders"
+  ],
+  "schema": "/bundle/datasets/index-lab/schema.sql",
+  "previewVariant": "boundary",
+  "gradingVariants": [
+    "boundary"
+  ],
+  "variants": {
+    "boundary": {
+      "bootstrap": [
+        "/bundle/datasets/index-lab/boundary.sql"
+      ]
+    }
+  }
+}

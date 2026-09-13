@@ -1,0 +1,64 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "clean.03",
+    "bundleVersion": "clean.03-bundle-v1",
+    "challengeVersion": "clean.03-v1",
+    "datasetVersion": "workshop-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "workshop",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "contact_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "postal_code",
+      "type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "name": "rejected_value",
+      "type": "VARCHAR",
+      "nullable": true
+    }
+  ],
+  "complete": true,
+  "rowCount": 6,
+  "rows": [
+    [
+      "1",
+      "12345",
+      null
+    ],
+    [
+      "2",
+      "12345-6789",
+      null
+    ],
+    [
+      "3",
+      null,
+      "1234"
+    ],
+    [
+      "4",
+      null,
+      "123456"
+    ],
+    [
+      "5",
+      null,
+      null
+    ],
+    [
+      "6",
+      "12345",
+      null
+    ]
+  ]
+}

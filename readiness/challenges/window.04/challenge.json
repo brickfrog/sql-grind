@@ -1,0 +1,81 @@
+{
+  "challengeId": "window.04",
+  "skillId": "window",
+  "displayNumber": "window.04",
+  "version": "window.04-v1",
+  "bundleVersion": "window.04-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Adjacent calendar periods",
+  "brief": "Compare adjacent calendar periods rather than adjacent observed periods.",
+  "instructions": [
+    "Return exactly twelve 2024 months with paid transaction revenue, previous calendar-month revenue, and current minus previous. Fill absent revenue with zero. First previous and change are NULL.",
+    "For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_id,ordered_at,status FROM orders LIMIT 10;",
+  "starterExplanation": "This starter exposes order_id,ordered_at,status from orders without solving adjacent calendar periods.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Gap-fill the calendar before applying LAG."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Join monthly revenue onto twelve calendar months, then compare adjacent rows."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "March is zero and February is its predecessor; January has no previous row."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "mon",
+        "type": "DATE",
+        "nullable": false
+      },
+      {
+        "name": "revenue",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      },
+      {
+        "name": "previous_revenue",
+        "type": "DECIMAL",
+        "nullable": true,
+        "precision": 38,
+        "scale": 2
+      },
+      {
+        "name": "change",
+        "type": "DECIMAL",
+        "nullable": true,
+        "precision": 38,
+        "scale": 2
+      }
+    ],
+    "ordering": [
+      {
+        "column": "mon",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/window.04/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/window.04/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/window.04/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/window.04/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

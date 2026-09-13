@@ -1,0 +1,8 @@
+{
+  "wrong": [
+    {
+      "sql": "/bundle/challenges/window.01/wrong.sql",
+      "variant": "boundary"
+    }
+  ]
+}

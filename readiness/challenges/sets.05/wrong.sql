@@ -1,0 +1,1 @@
+WITH only_a AS (SELECT customer_id FROM cohort_a EXCEPT SELECT customer_id FROM cohort_b),only_b AS (SELECT customer_id FROM cohort_b EXCEPT SELECT customer_id FROM cohort_a) SELECT 'only_a' AS side,customer_id FROM only_a UNION ALL SELECT 'only_b' AS side,customer_id FROM only_b ORDER BY side,customer_id NULLS LAST;

@@ -1,0 +1,179 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "joins.01",
+    "bundleVersion": "joins.01-bundle-v1",
+    "challengeVersion": "joins.01-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "order_item_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "order_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "category_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "category_name",
+      "type": "VARCHAR",
+      "nullable": false
+    },
+    {
+      "name": "line_revenue",
+      "type": "DECIMAL",
+      "nullable": false,
+      "precision": 38,
+      "scale": 2
+    }
+  ],
+  "complete": true,
+  "rowCount": 19,
+  "rows": [
+    [
+      "1",
+      "1",
+      "2",
+      "Audio",
+      "60.00"
+    ],
+    [
+      "2",
+      "1",
+      "2",
+      "Audio",
+      "20.00"
+    ],
+    [
+      "3",
+      "1",
+      "2",
+      "Audio",
+      "20.00"
+    ],
+    [
+      "4",
+      "2",
+      "3",
+      "Audio",
+      "100.00"
+    ],
+    [
+      "5",
+      "2",
+      "4",
+      "Kitchen",
+      "90.00"
+    ],
+    [
+      "6",
+      "2",
+      "5",
+      "Outdoor",
+      "90.00"
+    ],
+    [
+      "7",
+      "2",
+      "6",
+      "Toys",
+      "80.00"
+    ],
+    [
+      "8",
+      "3",
+      "6",
+      "Toys",
+      "0.00"
+    ],
+    [
+      "9",
+      "4",
+      "2",
+      "Audio",
+      "50.00"
+    ],
+    [
+      "10",
+      "4",
+      "3",
+      "Audio",
+      "40.00"
+    ],
+    [
+      "11",
+      "4",
+      "4",
+      "Kitchen",
+      "40.00"
+    ],
+    [
+      "12",
+      "4",
+      "5",
+      "Outdoor",
+      "30.00"
+    ],
+    [
+      "16",
+      "8",
+      "6",
+      "Toys",
+      "0.00"
+    ],
+    [
+      "17",
+      "9",
+      "4",
+      "Kitchen",
+      "24.68"
+    ],
+    [
+      "10001",
+      "10001",
+      "2",
+      "Audio",
+      "0.09"
+    ],
+    [
+      "10002",
+      "10001",
+      "2",
+      "Audio",
+      "0.10"
+    ],
+    [
+      "10003",
+      "10001",
+      "2",
+      "Audio",
+      "0.99"
+    ],
+    [
+      "10004",
+      "10001",
+      "2",
+      "Audio",
+      "1.00"
+    ],
+    [
+      "10005",
+      "10002",
+      "2",
+      "Audio",
+      "17.99"
+    ]
+  ]
+}

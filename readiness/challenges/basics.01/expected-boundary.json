@@ -1,0 +1,45 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "basics.01",
+    "bundleVersion": "basics.01-bundle-v1",
+    "challengeVersion": "basics.01-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "customer_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "customer_name",
+      "type": "VARCHAR",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 4,
+  "rows": [
+    [
+      "1",
+      "Ari"
+    ],
+    [
+      "10001",
+      "Ari"
+    ],
+    [
+      "10002",
+      "Only pending"
+    ],
+    [
+      "9007199254740993",
+      "Ari"
+    ]
+  ]
+}

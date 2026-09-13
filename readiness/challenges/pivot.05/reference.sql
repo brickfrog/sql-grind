@@ -1,0 +1,1 @@
+WITH matrix AS (PIVOT return_totals ON reason IN ('damaged','wrong_item','unwanted') USING sum(qty) GROUP BY mon) SELECT mon,reason,qty::BIGINT AS qty FROM matrix UNPIVOT (qty FOR reason IN (damaged,wrong_item,unwanted)) ORDER BY mon,reason;

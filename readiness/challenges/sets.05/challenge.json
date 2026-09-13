@@ -1,0 +1,68 @@
+{
+  "challengeId": "sets.05",
+  "skillId": "sets",
+  "displayNumber": "sets.05",
+  "version": "sets.05-v1",
+  "bundleVersion": "sets.05-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Multiplicity in both directions",
+  "brief": "Reconcile multiplicity differences in both directions.",
+  "instructions": [
+    "Return A EXCEPT ALL B tagged only_a and B EXCEPT ALL A tagged only_b. Preserve duplicate differences and NULLs. Sort side then identity NULLS LAST.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "workshop",
+  "starterSql": "SELECT customer_id FROM cohort_a LIMIT 10;",
+  "starterExplanation": "This starter exposes customer_id from cohort_a without solving multiplicity in both directions.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "EXCEPT ALL subtracts multiplicities rather than mere membership."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Calculate each directed difference separately, attach side labels, and append them."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "A has one extra 1; B has one extra NULL."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "side",
+        "type": "VARCHAR",
+        "nullable": false
+      },
+      {
+        "name": "customer_id",
+        "type": "BIGINT",
+        "nullable": true
+      }
+    ],
+    "ordering": [
+      {
+        "column": "side",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "customer_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/sets.05/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/sets.05/expected-boundary.json",
+    "variant": "/bundle/challenges/sets.05/expected-variant.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

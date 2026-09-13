@@ -1,0 +1,420 @@
+- region "Query results":
+  - text: 1,000 rows · 3 columns
+  - button "Virtual grid" [pressed]
+  - button "Copy cell"
+  - button "First" [disabled]
+  - button "Previous" [disabled]
+  - text: Page 1 of 20 · 1–50 of 1,000 rows
+  - button "Next"
+  - button "Last"
+  - table "Exact query output, page 1. NULL is a missing value; an empty string is blank.":
+    - caption: Exact query output, page 1. NULL is a missing value; an empty string is blank.
+    - rowgroup:
+      - row "Row id BIGINT amount DECIMAL(18,2) text VARCHAR":
+        - columnheader "Row"
+        - columnheader "id BIGINT"
+        - columnheader "amount DECIMAL(18,2)"
+        - columnheader "text VARCHAR"
+    - rowgroup:
+      - row "1 0 0.00 NULL (missing value)":
+        - rowheader "1"
+        - cell "0":
+          - button "0"
+        - cell "0.00":
+          - button "0.00"
+        - cell "NULL (missing value)":
+          - button "NULL (missing value)": "NULL"
+      - row "2 1 1.00 Empty string":
+        - rowheader "2"
+        - cell "1":
+          - button "1"
+        - cell "1.00":
+          - button "1.00"
+        - cell "Empty string":
+          - button "Empty string"
+      - row "3 2 2.00 2":
+        - rowheader "3"
+        - cell "2":
+          - button "2"
+        - cell "2.00":
+          - button "2.00"
+        - cell "2":
+          - button "2"
+      - row "4 3 3.00 3":
+        - rowheader "4"
+        - cell "3":
+          - button "3"
+        - cell "3.00":
+          - button "3.00"
+        - cell "3":
+          - button "3"
+      - row "5 4 4.00 4":
+        - rowheader "5"
+        - cell "4":
+          - button "4"
+        - cell "4.00":
+          - button "4.00"
+        - cell "4":
+          - button "4"
+      - row "6 5 5.00 5":
+        - rowheader "6"
+        - cell "5":
+          - button "5"
+        - cell "5.00":
+          - button "5.00"
+        - cell "5":
+          - button "5"
+      - row "7 6 6.00 6":
+        - rowheader "7"
+        - cell "6":
+          - button "6"
+        - cell "6.00":
+          - button "6.00"
+        - cell "6":
+          - button "6"
+      - row "8 7 7.00 7":
+        - rowheader "8"
+        - cell "7":
+          - button "7"
+        - cell "7.00":
+          - button "7.00"
+        - cell "7":
+          - button "7"
+      - row "9 8 8.00 8":
+        - rowheader "9"
+        - cell "8":
+          - button "8"
+        - cell "8.00":
+          - button "8.00"
+        - cell "8":
+          - button "8"
+      - row "10 9 9.00 9":
+        - rowheader "10"
+        - cell "9":
+          - button "9"
+        - cell "9.00":
+          - button "9.00"
+        - cell "9":
+          - button "9"
+      - row "11 10 10.00 10":
+        - rowheader "11"
+        - cell "10":
+          - button "10"
+        - cell "10.00":
+          - button "10.00"
+        - cell "10":
+          - button "10"
+      - row "12 11 11.00 11":
+        - rowheader "12"
+        - cell "11":
+          - button "11"
+        - cell "11.00":
+          - button "11.00"
+        - cell "11":
+          - button "11"
+      - row "13 12 12.00 12":
+        - rowheader "13"
+        - cell "12":
+          - button "12"
+        - cell "12.00":
+          - button "12.00"
+        - cell "12":
+          - button "12"
+      - row "14 13 13.00 13":
+        - rowheader "14"
+        - cell "13":
+          - button "13"
+        - cell "13.00":
+          - button "13.00"
+        - cell "13":
+          - button "13"
+      - row "15 14 14.00 14":
+        - rowheader "15"
+        - cell "14":
+          - button "14"
+        - cell "14.00":
+          - button "14.00"
+        - cell "14":
+          - button "14"
+      - row "16 15 15.00 15":
+        - rowheader "16"
+        - cell "15":
+          - button "15"
+        - cell "15.00":
+          - button "15.00"
+        - cell "15":
+          - button "15"
+      - row "17 16 16.00 16":
+        - rowheader "17"
+        - cell "16":
+          - button "16"
+        - cell "16.00":
+          - button "16.00"
+        - cell "16":
+          - button "16"
+      - row "18 17 17.00 17":
+        - rowheader "18"
+        - cell "17":
+          - button "17"
+        - cell "17.00":
+          - button "17.00"
+        - cell "17":
+          - button "17"
+      - row "19 18 18.00 18":
+        - rowheader "19"
+        - cell "18":
+          - button "18"
+        - cell "18.00":
+          - button "18.00"
+        - cell "18":
+          - button "18"
+      - row "20 19 19.00 19":
+        - rowheader "20"
+        - cell "19":
+          - button "19"
+        - cell "19.00":
+          - button "19.00"
+        - cell "19":
+          - button "19"
+      - row "21 20 20.00 20":
+        - rowheader "21"
+        - cell "20":
+          - button "20"
+        - cell "20.00":
+          - button "20.00"
+        - cell "20":
+          - button "20"
+      - row "22 21 21.00 21":
+        - rowheader "22"
+        - cell "21":
+          - button "21"
+        - cell "21.00":
+          - button "21.00"
+        - cell "21":
+          - button "21"
+      - row "23 22 22.00 22":
+        - rowheader "23"
+        - cell "22":
+          - button "22"
+        - cell "22.00":
+          - button "22.00"
+        - cell "22":
+          - button "22"
+      - row "24 23 23.00 23":
+        - rowheader "24"
+        - cell "23":
+          - button "23"
+        - cell "23.00":
+          - button "23.00"
+        - cell "23":
+          - button "23"
+      - row "25 24 24.00 24":
+        - rowheader "25"
+        - cell "24":
+          - button "24"
+        - cell "24.00":
+          - button "24.00"
+        - cell "24":
+          - button "24"
+      - row "26 25 25.00 25":
+        - rowheader "26"
+        - cell "25":
+          - button "25"
+        - cell "25.00":
+          - button "25.00"
+        - cell "25":
+          - button "25"
+      - row "27 26 26.00 26":
+        - rowheader "27"
+        - cell "26":
+          - button "26"
+        - cell "26.00":
+          - button "26.00"
+        - cell "26":
+          - button "26"
+      - row "28 27 27.00 27":
+        - rowheader "28"
+        - cell "27":
+          - button "27"
+        - cell "27.00":
+          - button "27.00"
+        - cell "27":
+          - button "27"
+      - row "29 28 28.00 28":
+        - rowheader "29"
+        - cell "28":
+          - button "28"
+        - cell "28.00":
+          - button "28.00"
+        - cell "28":
+          - button "28"
+      - row "30 29 29.00 29":
+        - rowheader "30"
+        - cell "29":
+          - button "29"
+        - cell "29.00":
+          - button "29.00"
+        - cell "29":
+          - button "29"
+      - row "31 30 30.00 30":
+        - rowheader "31"
+        - cell "30":
+          - button "30"
+        - cell "30.00":
+          - button "30.00"
+        - cell "30":
+          - button "30"
+      - row "32 31 31.00 31":
+        - rowheader "32"
+        - cell "31":
+          - button "31"
+        - cell "31.00":
+          - button "31.00"
+        - cell "31":
+          - button "31"
+      - row "33 32 32.00 32":
+        - rowheader "33"
+        - cell "32":
+          - button "32"
+        - cell "32.00":
+          - button "32.00"
+        - cell "32":
+          - button "32"
+      - row "34 33 33.00 33":
+        - rowheader "34"
+        - cell "33":
+          - button "33"
+        - cell "33.00":
+          - button "33.00"
+        - cell "33":
+          - button "33"
+      - row "35 34 34.00 34":
+        - rowheader "35"
+        - cell "34":
+          - button "34"
+        - cell "34.00":
+          - button "34.00"
+        - cell "34":
+          - button "34"
+      - row "36 35 35.00 35":
+        - rowheader "36"
+        - cell "35":
+          - button "35"
+        - cell "35.00":
+          - button "35.00"
+        - cell "35":
+          - button "35"
+      - row "37 36 36.00 36":
+        - rowheader "37"
+        - cell "36":
+          - button "36"
+        - cell "36.00":
+          - button "36.00"
+        - cell "36":
+          - button "36"
+      - row "38 37 37.00 37":
+        - rowheader "38"
+        - cell "37":
+          - button "37"
+        - cell "37.00":
+          - button "37.00"
+        - cell "37":
+          - button "37"
+      - row "39 38 38.00 38":
+        - rowheader "39"
+        - cell "38":
+          - button "38"
+        - cell "38.00":
+          - button "38.00"
+        - cell "38":
+          - button "38"
+      - row "40 39 39.00 39":
+        - rowheader "40"
+        - cell "39":
+          - button "39"
+        - cell "39.00":
+          - button "39.00"
+        - cell "39":
+          - button "39"
+      - row "41 40 40.00 40":
+        - rowheader "41"
+        - cell "40":
+          - button "40"
+        - cell "40.00":
+          - button "40.00"
+        - cell "40":
+          - button "40"
+      - row "42 41 41.00 41":
+        - rowheader "42"
+        - cell "41":
+          - button "41"
+        - cell "41.00":
+          - button "41.00"
+        - cell "41":
+          - button "41"
+      - row "43 42 42.00 42":
+        - rowheader "43"
+        - cell "42":
+          - button "42"
+        - cell "42.00":
+          - button "42.00"
+        - cell "42":
+          - button "42"
+      - row "44 43 43.00 43":
+        - rowheader "44"
+        - cell "43":
+          - button "43"
+        - cell "43.00":
+          - button "43.00"
+        - cell "43":
+          - button "43"
+      - row "45 44 44.00 44":
+        - rowheader "45"
+        - cell "44":
+          - button "44"
+        - cell "44.00":
+          - button "44.00"
+        - cell "44":
+          - button "44"
+      - row "46 45 45.00 45":
+        - rowheader "46"
+        - cell "45":
+          - button "45"
+        - cell "45.00":
+          - button "45.00"
+        - cell "45":
+          - button "45"
+      - row "47 46 46.00 46":
+        - rowheader "47"
+        - cell "46":
+          - button "46"
+        - cell "46.00":
+          - button "46.00"
+        - cell "46":
+          - button "46"
+      - row "48 47 47.00 47":
+        - rowheader "48"
+        - cell "47":
+          - button "47"
+        - cell "47.00":
+          - button "47.00"
+        - cell "47":
+          - button "47"
+      - row "49 48 48.00 48":
+        - rowheader "49"
+        - cell "48":
+          - button "48"
+        - cell "48.00":
+          - button "48.00"
+        - cell "48":
+          - button "48"
+      - row "50 49 49.00 49":
+        - rowheader "50"
+        - cell "49":
+          - button "49"
+        - cell "49.00":
+          - button "49.00"
+        - cell "49":
+          - button "49"
+  - text: "Arrows: move cell · Home/End: row edges · Page Up/Down: page · Ctrl+C / Command+C: exact cell value · Right-click / Shift+F10: copy menu. NULL ≠ empty string."
+  - status: Copied row 2, amount.

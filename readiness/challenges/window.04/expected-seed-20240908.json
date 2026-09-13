@@ -1,0 +1,117 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "window.04",
+    "bundleVersion": "window.04-bundle-v1",
+    "challengeVersion": "window.04-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "seed-20240908",
+  "columns": [
+    {
+      "name": "mon",
+      "type": "DATE",
+      "nullable": false
+    },
+    {
+      "name": "revenue",
+      "type": "DECIMAL",
+      "nullable": false,
+      "precision": 38,
+      "scale": 2
+    },
+    {
+      "name": "previous_revenue",
+      "type": "DECIMAL",
+      "nullable": true,
+      "precision": 38,
+      "scale": 2
+    },
+    {
+      "name": "change",
+      "type": "DECIMAL",
+      "nullable": true,
+      "precision": 38,
+      "scale": 2
+    }
+  ],
+  "complete": true,
+  "rowCount": 12,
+  "rows": [
+    [
+      "2024-01-01",
+      "707523.45",
+      null,
+      null
+    ],
+    [
+      "2024-02-01",
+      "660114.59",
+      "707523.45",
+      "-47408.86"
+    ],
+    [
+      "2024-03-01",
+      "756114.52",
+      "660114.59",
+      "95999.93"
+    ],
+    [
+      "2024-04-01",
+      "609854.98",
+      "756114.52",
+      "-146259.54"
+    ],
+    [
+      "2024-05-01",
+      "551129.33",
+      "609854.98",
+      "-58725.65"
+    ],
+    [
+      "2024-06-01",
+      "527698.80",
+      "551129.33",
+      "-23430.53"
+    ],
+    [
+      "2024-07-01",
+      "548404.27",
+      "527698.80",
+      "20705.47"
+    ],
+    [
+      "2024-08-01",
+      "762306.37",
+      "548404.27",
+      "213902.10"
+    ],
+    [
+      "2024-09-01",
+      "689398.59",
+      "762306.37",
+      "-72907.78"
+    ],
+    [
+      "2024-10-01",
+      "718865.96",
+      "689398.59",
+      "29467.37"
+    ],
+    [
+      "2024-11-01",
+      "687213.38",
+      "718865.96",
+      "-31652.58"
+    ],
+    [
+      "2024-12-01",
+      "709838.27",
+      "687213.38",
+      "22624.89"
+    ]
+  ]
+}

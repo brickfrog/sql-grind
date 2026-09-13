@@ -1,0 +1,1 @@
+SELECT o.order_id,coalesce(sum(i.qty::DECIMAL(18,0)*i.unit_price)::DECIMAL(38,2),0)::DECIMAL(38,2) AS gross_revenue FROM orders o JOIN order_items i USING(order_id) WHERE o.status = 'paid' AND o.ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND o.ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00' GROUP BY o.order_id ORDER BY o.order_id;

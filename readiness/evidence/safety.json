@@ -1,0 +1,86 @@
+{
+  "result": {
+    "failure": {
+      "stage": "attachReadOnly",
+      "error": "Error: Opening the database failed with error: {\"exception_type\":\"IO\",\"exception_message\":\"File protected.db is already locked exclusively\"}"
+    },
+    "savedRecovery": {
+      "same": true,
+      "value": {
+        "sql": "SELECT 123",
+        "progress": {
+          "challenge": "07",
+          "complete": true
+        },
+        "revision": 7
+      },
+      "query": {
+        "ms": 8.899999976158142,
+        "fields": [
+          {
+            "name": "n",
+            "type": "Int32"
+          }
+        ],
+        "rows": [
+          {
+            "n": 123
+          }
+        ]
+      }
+    },
+    "snapshotRestore": {
+      "original": {
+        "ms": 10.300000011920929,
+        "fields": [
+          {
+            "name": "n",
+            "type": "Int64"
+          }
+        ],
+        "rows": [
+          {
+            "n": "3"
+          }
+        ]
+      },
+      "poisoned": {
+        "ms": 1,
+        "fields": [
+          {
+            "name": "n",
+            "type": "Int64"
+          }
+        ],
+        "rows": [
+          {
+            "n": "0"
+          }
+        ]
+      },
+      "restored": {
+        "ms": 8,
+        "fields": [
+          {
+            "name": "n",
+            "type": "Int64"
+          }
+        ],
+        "rows": [
+          {
+            "n": "3"
+          }
+        ]
+      },
+      "restoreMs": 960.5,
+      "pass": true
+    }
+  },
+  "logs": [
+    "[vite] connecting...",
+    "[vite] connected.",
+    "Buffering missing file: protected.db",
+    "Buffering missing file: protected.db.wal",
+    "Error: Opening the database failed with error: {\"exception_type\":\"IO\",\"exception_message\":\"File protected.db is already locked exclusively\"}\n    at ha.open (http://127.0.0.1:5173/engine/duckdb-browser-eh.worker.js:1:737816)\n    at xo.onMessage (http://127.0.0.1:5173/engine/duckdb-browser-eh.worker.js:1:748669)\n    at globalThis.onmessage (http://127.0.0.1:5173/engine/duckdb-browser-eh.worker.js:1:772861)"
+  ]
+}

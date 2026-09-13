@@ -1,0 +1,76 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "cte.05",
+    "bundleVersion": "cte.05-bundle-v1",
+    "challengeVersion": "cte.05-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "customer_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "paid_order_count",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "gross_revenue",
+      "type": "DECIMAL",
+      "nullable": false,
+      "precision": 38,
+      "scale": 2
+    },
+    {
+      "name": "refund_amount",
+      "type": "DECIMAL",
+      "nullable": false,
+      "precision": 38,
+      "scale": 2
+    },
+    {
+      "name": "cohort",
+      "type": "VARCHAR",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 4,
+  "rows": [
+    [
+      "1",
+      "8",
+      "304.85",
+      "40.00",
+      "paid"
+    ],
+    [
+      "10001",
+      "0",
+      "0.00",
+      "0.00",
+      "no_paid"
+    ],
+    [
+      "10002",
+      "0",
+      "0.00",
+      "0.00",
+      "no_paid"
+    ],
+    [
+      "9007199254740993",
+      "1",
+      "360.00",
+      "0.00",
+      "paid"
+    ]
+  ]
+}

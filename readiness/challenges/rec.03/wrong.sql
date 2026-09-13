@@ -1,0 +1,1 @@
+WITH RECURSIVE paths(node_id,visited,path) AS (SELECT 1::BIGINT,[1::BIGINT],'1'::VARCHAR UNION ALL SELECT e.child_id,list_append(p.visited,e.child_id),p.path||'>'||e.child_id::VARCHAR FROM paths p JOIN category_edges e ON e.parent_id=p.node_id WHERE NOT list_contains(p.visited,e.child_id)) SELECT node_id,path FROM paths WHERE length(visited)>1 ORDER BY node_id,path;

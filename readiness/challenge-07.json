@@ -1,0 +1,88 @@
+{
+  "challengeId": "window.03",
+  "skillId": "window",
+  "displayNumber": "07",
+  "version": "challenge-07-v1",
+  "bundleVersion": "window.03-bundle-v2",
+  "assessmentVersion": "exact-v1",
+  "title": "Top categories by monthly paid gross revenue",
+  "brief": "Rank monthly category revenue while preserving qualifying ties.",
+  "instructions": [
+    "Return UTC 2024 paid gross transaction revenue by month and category identity, with category name and competition rank.",
+    "Use the half-open interval from 2024-01-01 00:00:00 UTC through, but not including, 2025-01-01 00:00:00 UTC.",
+    "Rank revenue descending within each month and retain every competition rank at most three, including all cutoff ties.",
+    "Use transaction quantity times transaction price, not catalog price. Months and categories without qualifying items are absent.",
+    "Sort month then rank ascending; ordering within equal month/rank peers is free."
+  ],
+  "datasetId": "commerce-ranking",
+  "starterSql": "SELECT\n  CAST(date_trunc('month', o.ordered_at AT TIME ZONE 'UTC') AS DATE) AS mon,\n  c.category_id,\n  c.c_name,\n  CAST(sum(CAST(i.qty AS DECIMAL(18,0)) * i.unit_price) AS DECIMAL(38,2)) AS revenue\nFROM orders o\nJOIN order_items i ON i.order_id = o.order_id\nJOIN products p ON p.product_id = i.product_id\nJOIN categories c ON c.category_id = p.category_id\nWHERE o.status = 'paid'\n  AND o.ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00'\n  AND o.ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'\nGROUP BY mon, c.category_id, c.c_name\nORDER BY mon, revenue DESC, c.category_id;",
+  "starterExplanation": "This valid starter computes monthly totals. Add competition ranking and the rank cutoff to solve the challenge.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "RANK gives equal revenues the same rank and leaves gaps afterward. DENSE_RANK does not leave those gaps."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Use the monthly totals as a CTE. Apply RANK with PARTITION BY mon and ORDER BY revenue DESC. Filter ranks in an outer query."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Keep every rank-three tie. Do not include category_id in the window ordering. Sort the final result by mon and rnk. January has four qualifying rows."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "mon",
+        "type": "DATE",
+        "nullable": false
+      },
+      {
+        "name": "category_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "c_name",
+        "type": "VARCHAR",
+        "nullable": false
+      },
+      {
+        "name": "revenue",
+        "type": "DECIMAL",
+        "precision": 38,
+        "scale": 2,
+        "nullable": false
+      },
+      {
+        "name": "rnk",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "mon",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "rnk",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/reference-07.sql",
+  "expected": {
+    "boundary-v1": "/bundle/challenges/window.03/expected-boundary.json",
+    "small-v1": "/bundle/challenges/window.03/expected-small-v1.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

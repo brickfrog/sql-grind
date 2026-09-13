@@ -1,0 +1,45 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "basics.03",
+    "bundleVersion": "basics.03-bundle-v1",
+    "challengeVersion": "basics.03-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "customer_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "email_state",
+      "type": "VARCHAR",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 4,
+  "rows": [
+    [
+      "1",
+      "missing"
+    ],
+    [
+      "10001",
+      "empty"
+    ],
+    [
+      "10002",
+      "missing"
+    ],
+    [
+      "9007199254740993",
+      "value"
+    ]
+  ]
+}

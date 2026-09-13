@@ -1,0 +1,71 @@
+{
+  "challengeId": "basics.04",
+  "skillId": "basics",
+  "displayNumber": "basics.04",
+  "version": "basics.04-v1",
+  "bundleVersion": "basics.04-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Repeatable top five",
+  "brief": "A shortlist that names the same five rows every time you ask for it, ties included.",
+  "instructions": [
+    "Return the five greatest catalog prices. Equal prices are broken by ascending product identity. Return fewer rows only when the data holds fewer than five products.",
+    "Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT product_id,unit_price FROM products LIMIT 10;",
+  "starterExplanation": "The starter reads product_id and unit_price out of products. It runs. It does not answer the question.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "A limit without a total order returns whichever rows the engine finds convenient."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Order by price descending, then by identity ascending, and only then take five."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Products 3 and 10002 both cost 888.88, so the tie must resolve the same way twice."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "product_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "unit_price",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      }
+    ],
+    "ordering": [
+      {
+        "column": "unit_price",
+        "direction": "DESC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "product_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/basics.04/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/basics.04/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/basics.04/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/basics.04/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

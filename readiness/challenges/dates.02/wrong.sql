@@ -1,0 +1,1 @@
+SELECT date_trunc('month',o.ordered_at AT TIME ZONE 'UTC')::DATE AS mon,count(DISTINCT customer_id) AS paid_order_count FROM orders o WHERE o.status = 'paid' AND o.ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND o.ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00' GROUP BY mon ORDER BY mon;

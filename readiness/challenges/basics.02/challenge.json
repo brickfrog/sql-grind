@@ -1,0 +1,60 @@
+{
+  "challengeId": "basics.02",
+  "skillId": "basics",
+  "displayNumber": "basics.02",
+  "version": "basics.02-v1",
+  "bundleVersion": "basics.02-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Paid reporting year",
+  "brief": "Paid work inside one reporting year, with the year's edges defined exactly rather than approximately.",
+  "instructions": [
+    "Return the IDs of paid orders from 2024-01-01 00:00:00 UTC onward and strictly before 2025-01-01 00:00:00 UTC.",
+    "Include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC. The interval is half open.",
+    "Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_id,status,ordered_at FROM orders LIMIT 10;",
+  "starterExplanation": "The starter reads order_id, status and ordered_at out of orders. It runs. It does not answer the question.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Two conditions apply: the status, and a half-open interval in time."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "The lower bound is inclusive and the upper bound is not, so a closed range will not do."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Order 1 sits on the included edge; order 10 sits on the excluded one."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "order_id",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "order_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/basics.02/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/basics.02/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/basics.02/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/basics.02/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

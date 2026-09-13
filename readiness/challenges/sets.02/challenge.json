@@ -1,0 +1,58 @@
+{
+  "challengeId": "sets.02",
+  "skillId": "sets",
+  "displayNumber": "sets.02",
+  "version": "sets.02-v1",
+  "bundleVersion": "sets.02-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Duplicate-preserving union",
+  "brief": "Combine event streams without losing repeated events.",
+  "instructions": [
+    "Combine both cohorts while keeping every repeated event and every NULL.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "workshop",
+  "starterSql": "SELECT customer_id FROM cohort_a LIMIT 10;",
+  "starterExplanation": "This starter exposes customer_id from cohort_a without solving duplicate-preserving union.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "UNION ALL preserves event multiplicity."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Append one cohort projection to the other without deduplication."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "The boundary has eleven rows, including five NULL events."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "customer_id",
+        "type": "BIGINT",
+        "nullable": true
+      }
+    ],
+    "ordering": [
+      {
+        "column": "customer_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/sets.02/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/sets.02/expected-boundary.json",
+    "variant": "/bundle/challenges/sets.02/expected-variant.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

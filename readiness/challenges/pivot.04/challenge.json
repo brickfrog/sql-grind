@@ -1,0 +1,73 @@
+{
+  "challengeId": "pivot.04",
+  "skillId": "pivot",
+  "displayNumber": "pivot.04",
+  "version": "pivot.04-v1",
+  "bundleVersion": "pivot.04-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Missing cells survive unpivot",
+  "brief": "Expand a matrix without silently dropping missing cells.",
+  "instructions": [
+    "Expand every monthly matrix row to exactly three reason rows, including NULL cells. Preserve genuine zero and sort month then reason.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "workshop",
+  "starterSql": "SELECT mon,damaged,wrong_item,unwanted FROM monthly_matrix LIMIT 10;",
+  "starterExplanation": "This starter exposes mon,damaged,wrong_item,unwanted from monthly_matrix without solving missing cells survive unpivot.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "UNPIVOT normally excludes NULL cells; request their inclusion."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Use the standard UNPIVOT INCLUDE NULLS clause with the three named measures."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "January wrong_item and February damaged are NULL, not zero and not absent rows."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "mon",
+        "type": "DATE",
+        "nullable": false
+      },
+      {
+        "name": "reason",
+        "type": "VARCHAR",
+        "nullable": false
+      },
+      {
+        "name": "qty",
+        "type": "BIGINT",
+        "nullable": true
+      }
+    ],
+    "ordering": [
+      {
+        "column": "mon",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "reason",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/pivot.04/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/pivot.04/expected-boundary.json",
+    "variant": "/bundle/challenges/pivot.04/expected-variant.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

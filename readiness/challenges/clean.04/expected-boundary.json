@@ -1,0 +1,49 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "clean.04",
+    "bundleVersion": "clean.04-bundle-v1",
+    "challengeVersion": "clean.04-v1",
+    "datasetVersion": "workshop-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "workshop",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "contact_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "tag",
+      "type": "VARCHAR",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 5,
+  "rows": [
+    [
+      "1",
+      "blue"
+    ],
+    [
+      "1",
+      "red"
+    ],
+    [
+      "2",
+      "blue"
+    ],
+    [
+      "2",
+      "green"
+    ],
+    [
+      "5",
+      "red"
+    ]
+  ]
+}

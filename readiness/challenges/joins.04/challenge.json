@@ -1,0 +1,65 @@
+{
+  "challengeId": "joins.04",
+  "skillId": "joins",
+  "displayNumber": "joins.04",
+  "version": "joins.04-v1",
+  "bundleVersion": "joins.04-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Customer activity cohorts",
+  "brief": "Separate customers with qualifying activity from those without it.",
+  "instructions": [
+    "Return every customer exactly once. Label at least one paid UTC 2024 order as paid; otherwise label no_paid.",
+    "For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT customer_id,customer_name FROM customers LIMIT 10;",
+  "starterExplanation": "This starter exposes customer_id,customer_name from customers without solving customer activity cohorts.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Semi and anti joins classify membership without multiplying rows."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Partition customers by whether a qualifying order exists, then combine both cohorts."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Customer 1 has multiple qualifying orders but appears only once."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "customer_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "cohort",
+        "type": "VARCHAR",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "customer_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/joins.04/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/joins.04/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/joins.04/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/joins.04/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "challengeId": "clean.02",
+  "skillId": "clean",
+  "displayNumber": "clean.02",
+  "version": "clean.02-v1",
+  "bundleVersion": "clean.02-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Blank and missing contact input",
+  "brief": "Separate blank input from missing input before display fallback.",
+  "instructions": [
+    "Classify NULL as missing, trimmed-empty as blank, otherwise value. Display trimmed populated input or [unavailable]. Preserve populated email case.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "workshop",
+  "starterSql": "SELECT contact_id,email_text FROM raw_contacts LIMIT 10;",
+  "starterExplanation": "This starter exposes contact_id,email_text from raw_contacts without solving blank and missing contact input.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Classify original missingness before applying NULLIF and COALESCE for display."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Use separate expressions for the source state and fallback display value."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Three spaces and empty text are blank, while NULL is missing."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "contact_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "email_state",
+        "type": "VARCHAR",
+        "nullable": false
+      },
+      {
+        "name": "email_value",
+        "type": "VARCHAR",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "contact_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/clean.02/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/clean.02/expected-boundary.json",
+    "variant": "/bundle/challenges/clean.02/expected-variant.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

@@ -1,0 +1,1 @@
+SELECT o.order_id,coalesce(sum(i.qty::DECIMAL(18,0)*i.unit_price),0)::DECIMAL(38,2) AS gross_revenue,coalesce(sum(p.amount),0)::DECIMAL(38,2) AS paid_amount FROM orders o LEFT JOIN order_items i USING(order_id) LEFT JOIN payments p ON p.order_id=o.order_id AND p.status='succeeded' GROUP BY o.order_id ORDER BY o.order_id;

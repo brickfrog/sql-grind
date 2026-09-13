@@ -1,0 +1,67 @@
+{
+  "challengeId": "cte.02",
+  "skillId": "cte",
+  "displayNumber": "cte.02",
+  "version": "cte.02-v1",
+  "bundleVersion": "cte.02-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Named summary grains",
+  "brief": "Build summaries through explicitly named grains.",
+  "instructions": [
+    "Return paid UTC 2024 revenue by UTC month. Build order-grain totals before month-grain totals. Preserve a month with only empty paid orders as zero.",
+    "For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_id,ordered_at,status FROM orders LIMIT 10;",
+  "starterExplanation": "This starter exposes order_id,ordered_at,status from orders without solving named summary grains.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Each CTE should declare its result grain."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Build qualifying orders, then left-joined item totals per order, then monthly totals."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Order 12 is empty; an inner join must not define the paid-order population."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "mon",
+        "type": "DATE",
+        "nullable": false
+      },
+      {
+        "name": "revenue",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      }
+    ],
+    "ordering": [
+      {
+        "column": "mon",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/cte.02/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/cte.02/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/cte.02/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/cte.02/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

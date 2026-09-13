@@ -1,0 +1,9 @@
+{
+  "sql": "SELECT *\nFROM orders, order_items;",
+  "firstDiagnosticFocused": true,
+  "notes": [
+    "WARNING · J001\n                        · Ln 2",
+    "STYLE · J002\n                        · Ln 1"
+  ],
+  "judgeLocation": "■ Ln 2, Ln 1 · mood: dry"
+}

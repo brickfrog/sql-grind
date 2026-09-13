@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-13T03:03:42.797Z",
+  "checks": [
+    "Repeated judge drags preserve pointer offset without jumping or selecting text",
+    "Judge grip resizes by pointer and keyboard; scaled drags clamp to the viewport edges",
+    "View zoom keeps the desktop in the viewport and pointer-accurate; the Goal panel pops out, moves, resizes, and docks",
+    "Editor focus leaves Patchouli stationary; her text paints above the IDE menus",
+    "Main window drags and restores its position; controls match; selected explorer hover retains contrast",
+    "Enabled buttons use pointer cursors; editor uses dark text and a stronger monospace face",
+    "Both sidebars resize by pointer and keyboard, survive reload, and reset to defaults",
+    "Middle click closes active and inactive SQL/map/schema tabs; special tabs reopen normally",
+    "Notes help opens a separate example; Parse produces real J001/J002 notes and source navigation",
+    "Real result cells use the darker monospace typography with readable selection"
+  ],
+  "editorStyle": {
+    "color": "rgb(17, 17, 17)",
+    "font": "\"DejaVu Sans Mono\", Consolas, monospace"
+  },
+  "notes": [
+    "WARNING · J001\n                        · Ln 1No supported relationship connects customers (customers) to categories (categories). Explicit CROSS JOIN records intentional combinations.Current JSON AST relation graph; no measured row count or correctness claim.",
+    "STYLE · J002\n                        · Ln 1Name the projected columns to make this query's interface explicit.SELECT-list expansion wildcard in the current JSON AST; no speed claim."
+  ],
+  "errors": []
+}

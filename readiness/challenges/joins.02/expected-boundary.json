@@ -1,0 +1,45 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "joins.02",
+    "bundleVersion": "joins.02-bundle-v1",
+    "challengeVersion": "joins.02-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "customer_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "order_count",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 4,
+  "rows": [
+    [
+      "1",
+      "13"
+    ],
+    [
+      "10001",
+      "0"
+    ],
+    [
+      "10002",
+      "1"
+    ],
+    [
+      "9007199254740993",
+      "1"
+    ]
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "sets.05",
+    "bundleVersion": "sets.05-bundle-v1",
+    "challengeVersion": "sets.05-v1",
+    "datasetVersion": "workshop-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "workshop",
+  "variantId": "variant",
+  "columns": [
+    {
+      "name": "side",
+      "type": "VARCHAR",
+      "nullable": false
+    },
+    {
+      "name": "customer_id",
+      "type": "BIGINT",
+      "nullable": true
+    }
+  ],
+  "complete": true,
+  "rowCount": 5,
+  "rows": [
+    [
+      "only_a",
+      "101"
+    ],
+    [
+      "only_a",
+      "102"
+    ],
+    [
+      "only_a",
+      "104"
+    ],
+    [
+      "only_b",
+      "103"
+    ],
+    [
+      "only_b",
+      null
+    ]
+  ]
+}

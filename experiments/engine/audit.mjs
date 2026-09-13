@@ -1,0 +1,18 @@
+import {readFile,writeFile} from 'node:fs/promises';import {createHash} from 'node:crypto';import assert from 'node:assert/strict';
+const json=async name=>JSON.parse(await readFile('../../readiness/'+name,'utf8'));
+const manifest=await json('manifest.json');const verified=[];
+for(const f of manifest.files){const bytes=await readFile(f.path);assert.equal(createHash('sha256').update(bytes).digest('hex'),f.sha256,f.path);assert.equal(bytes.length,f.bytes);verified.push(f.path);}
+const comparator=await json('evidence/comparator.json');assert.equal(comparator.pass,true);
+assert.equal(comparator.authoredContract.pass,true);assert.equal(comparator.authoredWrongRankType.reason,'types');assert.equal(comparator.authoredEquivalentDecimalWidth.pass,true);
+const publication=await json('evidence/publication.json');assert.equal(publication.identical,true);assert.equal(publication.invariantsPass,true);assert.equal((await json('evidence/publication-large.json')).pass,true);
+for(const [table,hash] of Object.entries(publication.smallA.hashes))assert.equal(manifest.files.find(f=>f.path.endsWith('/'+table+'.parquet')).sha256,hash);
+const safety=await json('evidence/safety.json');assert.equal(safety.result.snapshotRestore.pass,true);assert.equal(safety.result.savedRecovery.same,true);
+const suite=(await json('evidence/suite.json')).result;assert.equal(suite.cancel.value,true);assert.match(suite.cancelResult,/canceled/);assert.match(suite.memoryFailure.error,/Out of Memory/);assert.ok(suite.transfer.rows>=100000);assert.match(suite.restrictions.remote.error,/disabled/);assert.match(suite.restrictions.unlock.error,/locked/);
+const faults=await json('evidence/faults.json');assert.equal(faults.timeoutFallback.cancellation.graceExpired,true);assert.equal(faults.fatalWorker.recovery.rows[0].recovered,45);
+const matrix=await json('evidence/browser-matrix.json');for(const name of ['chromium','firefox']){assert.equal(matrix[name].offset.pass,true);assert.equal(matrix[name].counts.rows[0].n,'8500');}
+const profile=await json('evidence/profile.json');assert.equal(profile.stale.discard,true);const nodes=n=>[n,...(n.children??[]).flatMap(nodes)];assert.equal(nodes(JSON.parse(profile.cases.repeatedScans.plan.rows[0].explain_value)).filter(n=>n.operator_type==='TABLE_SCAN').length,2);
+for(const scale of ['small','illustrated']){const paired=await json(`evidence/paired-${scale}.json`);assert.equal(paired.equivalence.pass,true);assert.equal(paired.pairs.length,9);assert.equal(paired.counts.rows[0].items,scale==='small'?'8500':'5900000');}
+const csp=await json('evidence/csp.json');assert.equal(csp.result.pass,true);assert.equal(csp.result.timezone.rows[0].timezone,'UTC');assert.equal(csp.errors.length,0);assert.match(csp.documentHeaders['content-security-policy'],/worker-src 'self'/);
+const scope=await json('scope.json');assert.equal(scope.runtimeInternetRequired,false);assert.equal(scope.publicationConcernsBlockLocalReadiness,false);
+assert.ok(csp.responses.every(response=>response.url.startsWith('http://127.0.0.1:4173/')));
+const result={date:new Date().toISOString(),scopeVersion:scope.version,verifiedManifestFiles:verified,localEvidencePass:true,implementationReady:true,applicationAlreadyBuilt:false,releaseReady:false,localBlockers:[],deferredPublicationConcerns:scope.deferredPublicationConcerns,unsupportedBrowsers:['Safari/WebKit runtime unavailable on this host'],knownCapabilityLimits:['PIVOT JSON AST unavailable','Read-only database transition failed; fresh snapshot isolation selected','Terminated worker promises require coordinator-owned settlement']};await writeFile('../../readiness/evidence/audit.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));

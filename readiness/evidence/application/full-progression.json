@@ -1,0 +1,465 @@
+{
+  "pass": true,
+  "checks": [
+    {
+      "name": "fresh profile has thirteen nodes and locked reconciliation"
+    },
+    {
+      "name": "fresh profile has thirteen nodes and locked reconciliation"
+    },
+    {
+      "name": "fresh profile has thirteen nodes and locked reconciliation"
+    },
+    {
+      "name": "fresh profile has thirteen nodes and locked reconciliation"
+    },
+    {
+      "name": "fresh profile has thirteen nodes and locked reconciliation"
+    },
+    {
+      "name": "completed basics.01"
+    },
+    {
+      "name": "later failure and reset preserve earlier completion"
+    },
+    {
+      "name": "completed basics.02"
+    },
+    {
+      "name": "independent objective drafts survive navigation"
+    },
+    {
+      "name": "document switch during execution retains original result identity and stale status"
+    },
+    {
+      "name": "completed basics.03"
+    },
+    {
+      "name": "completed basics.04"
+    },
+    {
+      "name": "completed basics.05"
+    },
+    {
+      "name": "skill completed basics"
+    },
+    {
+      "name": "completed agg.01"
+    },
+    {
+      "name": "completed agg.02"
+    },
+    {
+      "name": "completed agg.03"
+    },
+    {
+      "name": "completed agg.04"
+    },
+    {
+      "name": "completed agg.05"
+    },
+    {
+      "name": "skill completed agg"
+    },
+    {
+      "name": "completed joins.01"
+    },
+    {
+      "name": "completed joins.02"
+    },
+    {
+      "name": "completed joins.03"
+    },
+    {
+      "name": "completed joins.04"
+    },
+    {
+      "name": "completed joins.05"
+    },
+    {
+      "name": "skill completed joins"
+    },
+    {
+      "name": "completed sub.01"
+    },
+    {
+      "name": "completed sub.02"
+    },
+    {
+      "name": "completed sub.03"
+    },
+    {
+      "name": "completed sub.04"
+    },
+    {
+      "name": "completed sub.05"
+    },
+    {
+      "name": "skill completed sub"
+    },
+    {
+      "name": "completed sets.01"
+    },
+    {
+      "name": "completed sets.02"
+    },
+    {
+      "name": "completed sets.03"
+    },
+    {
+      "name": "completed sets.04"
+    },
+    {
+      "name": "completed sets.05"
+    },
+    {
+      "name": "skill completed sets"
+    },
+    {
+      "name": "completed cte.01"
+    },
+    {
+      "name": "completed cte.02"
+    },
+    {
+      "name": "completed cte.03"
+    },
+    {
+      "name": "completed cte.04"
+    },
+    {
+      "name": "completed cte.05"
+    },
+    {
+      "name": "skill completed cte"
+    },
+    {
+      "name": "completed window.01"
+    },
+    {
+      "name": "completed window.02"
+    },
+    {
+      "name": "completed window.03"
+    },
+    {
+      "name": "completed window.04"
+    },
+    {
+      "name": "completed window.05"
+    },
+    {
+      "name": "skill completed window"
+    },
+    {
+      "name": "completed dates.01"
+    },
+    {
+      "name": "completed dates.02"
+    },
+    {
+      "name": "completed dates.03"
+    },
+    {
+      "name": "completed dates.04"
+    },
+    {
+      "name": "completed dates.05"
+    },
+    {
+      "name": "skill completed dates"
+    },
+    {
+      "name": "completed rec.01"
+    },
+    {
+      "name": "completed rec.02"
+    },
+    {
+      "name": "completed rec.03"
+    },
+    {
+      "name": "completed rec.04"
+    },
+    {
+      "name": "completed rec.05"
+    },
+    {
+      "name": "skill completed rec"
+    },
+    {
+      "name": "completed pivot.01"
+    },
+    {
+      "name": "completed pivot.02"
+    },
+    {
+      "name": "completed pivot.03"
+    },
+    {
+      "name": "completed pivot.04"
+    },
+    {
+      "name": "completed pivot.05"
+    },
+    {
+      "name": "skill completed pivot"
+    },
+    {
+      "name": "completed plan.01"
+    },
+    {
+      "name": "measured named relation accepts legitimately unreported scan filters"
+    },
+    {
+      "name": "completed plan.02"
+    },
+    {
+      "name": "completed plan.03"
+    },
+    {
+      "name": "restored real UI-earned checkpoint",
+      "details": {
+        "challenges": 53
+      }
+    },
+    {
+      "name": "skill completed basics"
+    },
+    {
+      "name": "skill completed agg"
+    },
+    {
+      "name": "skill completed joins"
+    },
+    {
+      "name": "skill completed sub"
+    },
+    {
+      "name": "skill completed sets"
+    },
+    {
+      "name": "skill completed cte"
+    },
+    {
+      "name": "skill completed window"
+    },
+    {
+      "name": "skill completed dates"
+    },
+    {
+      "name": "skill completed rec"
+    },
+    {
+      "name": "skill completed pivot"
+    },
+    {
+      "name": "restored real UI-earned checkpoint",
+      "details": {
+        "challenges": 53
+      }
+    },
+    {
+      "name": "skill completed basics"
+    },
+    {
+      "name": "skill completed agg"
+    },
+    {
+      "name": "skill completed joins"
+    },
+    {
+      "name": "skill completed sub"
+    },
+    {
+      "name": "skill completed sets"
+    },
+    {
+      "name": "skill completed cte"
+    },
+    {
+      "name": "skill completed window"
+    },
+    {
+      "name": "skill completed dates"
+    },
+    {
+      "name": "skill completed rec"
+    },
+    {
+      "name": "skill completed pivot"
+    },
+    {
+      "name": "completed plan.04"
+    },
+    {
+      "name": "completed plan.05"
+    },
+    {
+      "name": "skill completed plan"
+    },
+    {
+      "name": "completed clean.01"
+    },
+    {
+      "name": "completed clean.02"
+    },
+    {
+      "name": "completed clean.03"
+    },
+    {
+      "name": "completed clean.04"
+    },
+    {
+      "name": "completed clean.05"
+    },
+    {
+      "name": "skill completed clean"
+    },
+    {
+      "name": "completed reconcile.01"
+    },
+    {
+      "name": "completed reconcile.02"
+    },
+    {
+      "name": "completed reconcile.03"
+    },
+    {
+      "name": "completed reconcile.04"
+    },
+    {
+      "name": "restored real UI-earned checkpoint",
+      "details": {
+        "challenges": 64
+      }
+    },
+    {
+      "name": "skill completed basics"
+    },
+    {
+      "name": "skill completed agg"
+    },
+    {
+      "name": "skill completed joins"
+    },
+    {
+      "name": "skill completed sub"
+    },
+    {
+      "name": "skill completed sets"
+    },
+    {
+      "name": "skill completed cte"
+    },
+    {
+      "name": "skill completed window"
+    },
+    {
+      "name": "skill completed dates"
+    },
+    {
+      "name": "skill completed rec"
+    },
+    {
+      "name": "skill completed pivot"
+    },
+    {
+      "name": "skill completed plan"
+    },
+    {
+      "name": "skill completed clean"
+    },
+    {
+      "name": "restored real UI-earned checkpoint",
+      "details": {
+        "challenges": 64
+      }
+    },
+    {
+      "name": "skill completed basics"
+    },
+    {
+      "name": "skill completed agg"
+    },
+    {
+      "name": "skill completed joins"
+    },
+    {
+      "name": "skill completed sub"
+    },
+    {
+      "name": "skill completed sets"
+    },
+    {
+      "name": "skill completed cte"
+    },
+    {
+      "name": "skill completed window"
+    },
+    {
+      "name": "skill completed dates"
+    },
+    {
+      "name": "skill completed rec"
+    },
+    {
+      "name": "skill completed pivot"
+    },
+    {
+      "name": "skill completed plan"
+    },
+    {
+      "name": "skill completed clean"
+    },
+    {
+      "name": "completed reconcile.05"
+    },
+    {
+      "name": "conservative capstone policy completes all variants"
+    },
+    {
+      "name": "inspected missing reference source and pair facts"
+    },
+    {
+      "name": "inspected ambiguous reference source and pair facts"
+    },
+    {
+      "name": "inspected split whole-group evidence"
+    },
+    {
+      "name": "inspected rollup whole-group evidence"
+    },
+    {
+      "name": "capstone rejects wrong.sql"
+    },
+    {
+      "name": "capstone rejects wrong-all-matched.sql"
+    },
+    {
+      "name": "capstone rejects wrong-arbitrary-ties.sql"
+    },
+    {
+      "name": "capstone rejects wrong-greedy-reuse.sql"
+    },
+    {
+      "name": "skill completed reconcile"
+    },
+    {
+      "name": "exported actual completed progression for production verification"
+    },
+    {
+      "name": "current attempt reopens captured challenge SQL"
+    },
+    {
+      "name": "map keyboard navigation reaches reconciliation in narrow viewport"
+    },
+    {
+      "name": "version review preserves previously opened dependent access"
+    },
+    {
+      "name": "attempt deletion recomputes completion without erasing opened review access"
+    }
+  ],
+  "errors": []
+}

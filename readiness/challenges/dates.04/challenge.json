@@ -1,0 +1,64 @@
+{
+  "challengeId": "dates.04",
+  "skillId": "dates",
+  "displayNumber": "dates.04",
+  "version": "dates.04-v1",
+  "bundleVersion": "dates.04-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "July-start fiscal years",
+  "brief": "Assign reporting years that start midway through a calendar year.",
+  "instructions": [
+    "Return every order and the fiscal ending year. July 2024 through June 2025 belongs to fiscal 2025. Use UTC month and year.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_id,ordered_at FROM orders LIMIT 10;",
+  "starterExplanation": "This starter exposes order_id,ordered_at from orders without solving july-start fiscal years.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "A July-start fiscal year is labeled by its ending year."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Add one to the UTC calendar year for months July through December."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "June belongs to the current year; UTC December belongs to the following fiscal year."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "order_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "fiscal_year",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "order_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/dates.04/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/dates.04/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/dates.04/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/dates.04/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

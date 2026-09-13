@@ -1,0 +1,82 @@
+{
+  "challengeId": "joins.01",
+  "skillId": "joins",
+  "displayNumber": "joins.01",
+  "version": "joins.01-v1",
+  "bundleVersion": "joins.01-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Transaction relationship chain",
+  "brief": "Traverse the full transaction relationship chain.",
+  "instructions": [
+    "Return every item on a paid UTC 2024 order, with its order and category identity, category name, and transaction quantity times price.",
+    "For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_item_id,order_id,product_id,qty,unit_price FROM order_items LIMIT 10;",
+  "starterExplanation": "This starter exposes order_item_id,order_id,product_id,qty,unit_price from order_items without solving transaction relationship chain.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Follow foreign-key relationships, not matching display names."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Join item to order, product, and category; compute each line at item grain."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Categories 2 and 3 both have the name Audio but are separate categories."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "order_item_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "order_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "category_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "category_name",
+        "type": "VARCHAR",
+        "nullable": false
+      },
+      {
+        "name": "line_revenue",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      }
+    ],
+    "ordering": [
+      {
+        "column": "order_item_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/joins.01/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/joins.01/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/joins.01/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/joins.01/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

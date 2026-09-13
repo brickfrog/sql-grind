@@ -1,0 +1,57 @@
+{
+  "date": "2026-09-13T01:23:10.706Z",
+  "zoom": [
+    {
+      "zoom": 1,
+      "actualBrowserZoom": 1,
+      "width": 1440,
+      "height": 873,
+      "dpr": 1,
+      "menus": "all eight reachable by keyboard",
+      "start": "all destinations reachable",
+      "dialog": "fits and traps focus",
+      "reading": "no horizontal page overflow"
+    },
+    {
+      "zoom": 1.25,
+      "actualBrowserZoom": 1.25,
+      "width": 1152,
+      "height": 698,
+      "dpr": 1.25,
+      "menus": "all eight reachable by keyboard",
+      "start": "all destinations reachable",
+      "dialog": "fits and traps focus",
+      "reading": "no horizontal page overflow"
+    },
+    {
+      "zoom": 2,
+      "actualBrowserZoom": 2,
+      "width": 720,
+      "height": 436,
+      "dpr": 2,
+      "menus": "all eight reachable by keyboard",
+      "start": "all destinations reachable",
+      "dialog": "fits and traps focus",
+      "reading": "no horizontal page overflow"
+    },
+    {
+      "zoom": 4,
+      "actualBrowserZoom": 3.9999999999999996,
+      "width": 360,
+      "height": 218,
+      "dpr": 4,
+      "menus": "all eight reachable by keyboard",
+      "start": "all destinations reachable",
+      "dialog": "fits and traps focus",
+      "reading": "no horizontal page overflow"
+    }
+  ],
+  "checks": [
+    "Keyboard focus does not reposition the floating judge",
+    "Forced colors retains focus; reduced-motion mode retains controls",
+    "Native accessibility tree captured; actual assistive-technology conformance is not claimed",
+    "Chromium has no native text-only zoom; editor font enlargement is covered separately"
+  ],
+  "errors": [],
+  "pass": true
+}

@@ -1,0 +1,2065 @@
+{
+  "boundary": {
+    "invariants": {
+      "ms": 81.89999997615814,
+      "fields": [
+        {
+          "name": "invariant",
+          "type": "Utf8"
+        },
+        {
+          "name": "violations",
+          "type": "Int64"
+        }
+      ],
+      "rows": [
+        {
+          "invariant": "product_nonleaf",
+          "violations": "0"
+        },
+        {
+          "invariant": "customer_after_order",
+          "violations": "0"
+        },
+        {
+          "invariant": "return_before_order",
+          "violations": "0"
+        },
+        {
+          "invariant": "return_quantity",
+          "violations": "0"
+        },
+        {
+          "invariant": "refund_amount",
+          "violations": "0"
+        },
+        {
+          "invariant": "payment_before_order",
+          "violations": "0"
+        }
+      ]
+    },
+    "counts": {
+      "categories": "7",
+      "customers": "2",
+      "warehouses": "4",
+      "products": "5",
+      "orders": "12",
+      "order_items": "19",
+      "payments": "5",
+      "returns": "3"
+    },
+    "hashes": {},
+    "indexes": {
+      "ms": 3.199999988079071,
+      "fields": [
+        {
+          "name": "database_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "database_oid",
+          "type": "Int64"
+        },
+        {
+          "name": "schema_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "schema_oid",
+          "type": "Int64"
+        },
+        {
+          "name": "index_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "index_oid",
+          "type": "Int64"
+        },
+        {
+          "name": "table_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "table_oid",
+          "type": "Int64"
+        },
+        {
+          "name": "comment",
+          "type": "Utf8"
+        },
+        {
+          "name": "tags",
+          "type": "Map<{key:Utf8, value:Utf8}>"
+        },
+        {
+          "name": "is_unique",
+          "type": "Bool"
+        },
+        {
+          "name": "is_primary",
+          "type": "Bool"
+        },
+        {
+          "name": "expressions",
+          "type": "Utf8"
+        },
+        {
+          "name": "sql",
+          "type": "Utf8"
+        }
+      ],
+      "rows": []
+    },
+    "constraints": {
+      "ms": 18.19999998807907,
+      "fields": [
+        {
+          "name": "table_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "constraint_type",
+          "type": "Utf8"
+        },
+        {
+          "name": "constraint_column_names",
+          "type": "List<Utf8>"
+        }
+      ],
+      "rows": [
+        {
+          "table_name": "categories",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "parent_category_id"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "c_name"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "c_name"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "parent_category_id",
+            "parent_category_id",
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "customer_name"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "created_at"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "qty"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "qty"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "unit_price"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "unit_price"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "ordered_at"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "payment_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "payment_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "amount"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "amount"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status",
+            "paid_at",
+            "status",
+            "paid_at"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "payment_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "product_name"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "unit_price"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "unit_price"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "active"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "return_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "return_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "qty"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "qty"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "reason"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "reason"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "requested_at"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "refund_amount"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "refund_amount"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status",
+            "refunded_at",
+            "refunded_at",
+            "requested_at",
+            "status",
+            "refunded_at",
+            "refund_amount"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "return_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "warehouse_name"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "route_to_warehouse_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "route_minutes"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "route_minutes"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "route_to_warehouse_id",
+            "route_to_warehouse_id",
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "route_to_warehouse_id",
+            "route_minutes",
+            "route_to_warehouse_id",
+            "route_minutes"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        }
+      ]
+    }
+  },
+  "smallA": {
+    "invariants": {
+      "ms": 24,
+      "fields": [
+        {
+          "name": "invariant",
+          "type": "Utf8"
+        },
+        {
+          "name": "violations",
+          "type": "Int64"
+        }
+      ],
+      "rows": [
+        {
+          "invariant": "product_nonleaf",
+          "violations": "0"
+        },
+        {
+          "invariant": "customer_after_order",
+          "violations": "0"
+        },
+        {
+          "invariant": "return_before_order",
+          "violations": "0"
+        },
+        {
+          "invariant": "return_quantity",
+          "violations": "0"
+        },
+        {
+          "invariant": "refund_amount",
+          "violations": "0"
+        },
+        {
+          "invariant": "payment_before_order",
+          "violations": "0"
+        }
+      ]
+    },
+    "counts": {
+      "categories": "48",
+      "customers": "500",
+      "warehouses": "14",
+      "products": "240",
+      "orders": "2000",
+      "order_items": "8500",
+      "payments": "2100",
+      "returns": "126"
+    },
+    "hashes": {
+      "categories": "545e13ec527e9dcfccddd7f62c7cac4e7f28f831e2e7fa682510e3a4a1dc6438",
+      "customers": "dda0985b94640666f37842eb051b9616b097faa26b94fbfe71e5ba8402b1c2e5",
+      "warehouses": "2131d7043087f57260ee25e2168c4305fe5a4db04fac397a29084ddb8f850d20",
+      "products": "276fd2a68aa2433bf452e65689d5969c13ad29eedc56ce200147ec22238efe4c",
+      "orders": "41120791755690a38fffb048d1153c2eb19e702b1004b9280a5bc78bef3531fb",
+      "order_items": "64225e0046c35723b593ff9ed1c898ece32725accc5befe882ecdb36b12dccfd",
+      "payments": "d26fa415095443bfcc0fd53522d41e17194c2dc79f0452d21e053297e913114d",
+      "returns": "422fa6d7531d849e64aeb041d9abf43ad4bc56c11d6bacff9b520cb1356a2898"
+    },
+    "indexes": {
+      "ms": 2.100000023841858,
+      "fields": [
+        {
+          "name": "database_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "database_oid",
+          "type": "Int64"
+        },
+        {
+          "name": "schema_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "schema_oid",
+          "type": "Int64"
+        },
+        {
+          "name": "index_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "index_oid",
+          "type": "Int64"
+        },
+        {
+          "name": "table_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "table_oid",
+          "type": "Int64"
+        },
+        {
+          "name": "comment",
+          "type": "Utf8"
+        },
+        {
+          "name": "tags",
+          "type": "Map<{key:Utf8, value:Utf8}>"
+        },
+        {
+          "name": "is_unique",
+          "type": "Bool"
+        },
+        {
+          "name": "is_primary",
+          "type": "Bool"
+        },
+        {
+          "name": "expressions",
+          "type": "Utf8"
+        },
+        {
+          "name": "sql",
+          "type": "Utf8"
+        }
+      ],
+      "rows": []
+    },
+    "constraints": {
+      "ms": 14.399999976158142,
+      "fields": [
+        {
+          "name": "table_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "constraint_type",
+          "type": "Utf8"
+        },
+        {
+          "name": "constraint_column_names",
+          "type": "List<Utf8>"
+        }
+      ],
+      "rows": [
+        {
+          "table_name": "categories",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "parent_category_id"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "c_name"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "c_name"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "parent_category_id",
+            "parent_category_id",
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "customer_name"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "created_at"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "qty"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "qty"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "unit_price"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "unit_price"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "ordered_at"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "payment_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "payment_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "amount"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "amount"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status",
+            "paid_at",
+            "status",
+            "paid_at"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "payment_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "product_name"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "unit_price"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "unit_price"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "active"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "return_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "return_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "qty"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "qty"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "reason"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "reason"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "requested_at"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "refund_amount"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "refund_amount"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status",
+            "refunded_at",
+            "refunded_at",
+            "requested_at",
+            "status",
+            "refunded_at",
+            "refund_amount"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "return_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "warehouse_name"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "route_to_warehouse_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "route_minutes"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "route_minutes"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "route_to_warehouse_id",
+            "route_to_warehouse_id",
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "route_to_warehouse_id",
+            "route_minutes",
+            "route_to_warehouse_id",
+            "route_minutes"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        }
+      ]
+    }
+  },
+  "smallB": {
+    "invariants": {
+      "ms": 22.899999976158142,
+      "fields": [
+        {
+          "name": "invariant",
+          "type": "Utf8"
+        },
+        {
+          "name": "violations",
+          "type": "Int64"
+        }
+      ],
+      "rows": [
+        {
+          "invariant": "product_nonleaf",
+          "violations": "0"
+        },
+        {
+          "invariant": "customer_after_order",
+          "violations": "0"
+        },
+        {
+          "invariant": "return_before_order",
+          "violations": "0"
+        },
+        {
+          "invariant": "return_quantity",
+          "violations": "0"
+        },
+        {
+          "invariant": "refund_amount",
+          "violations": "0"
+        },
+        {
+          "invariant": "payment_before_order",
+          "violations": "0"
+        }
+      ]
+    },
+    "counts": {
+      "categories": "48",
+      "customers": "500",
+      "warehouses": "14",
+      "products": "240",
+      "orders": "2000",
+      "order_items": "8500",
+      "payments": "2100",
+      "returns": "126"
+    },
+    "hashes": {
+      "categories": "545e13ec527e9dcfccddd7f62c7cac4e7f28f831e2e7fa682510e3a4a1dc6438",
+      "customers": "dda0985b94640666f37842eb051b9616b097faa26b94fbfe71e5ba8402b1c2e5",
+      "warehouses": "2131d7043087f57260ee25e2168c4305fe5a4db04fac397a29084ddb8f850d20",
+      "products": "276fd2a68aa2433bf452e65689d5969c13ad29eedc56ce200147ec22238efe4c",
+      "orders": "41120791755690a38fffb048d1153c2eb19e702b1004b9280a5bc78bef3531fb",
+      "order_items": "64225e0046c35723b593ff9ed1c898ece32725accc5befe882ecdb36b12dccfd",
+      "payments": "d26fa415095443bfcc0fd53522d41e17194c2dc79f0452d21e053297e913114d",
+      "returns": "422fa6d7531d849e64aeb041d9abf43ad4bc56c11d6bacff9b520cb1356a2898"
+    },
+    "indexes": {
+      "ms": 2.199999988079071,
+      "fields": [
+        {
+          "name": "database_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "database_oid",
+          "type": "Int64"
+        },
+        {
+          "name": "schema_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "schema_oid",
+          "type": "Int64"
+        },
+        {
+          "name": "index_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "index_oid",
+          "type": "Int64"
+        },
+        {
+          "name": "table_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "table_oid",
+          "type": "Int64"
+        },
+        {
+          "name": "comment",
+          "type": "Utf8"
+        },
+        {
+          "name": "tags",
+          "type": "Map<{key:Utf8, value:Utf8}>"
+        },
+        {
+          "name": "is_unique",
+          "type": "Bool"
+        },
+        {
+          "name": "is_primary",
+          "type": "Bool"
+        },
+        {
+          "name": "expressions",
+          "type": "Utf8"
+        },
+        {
+          "name": "sql",
+          "type": "Utf8"
+        }
+      ],
+      "rows": []
+    },
+    "constraints": {
+      "ms": 15.299999952316284,
+      "fields": [
+        {
+          "name": "table_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "constraint_type",
+          "type": "Utf8"
+        },
+        {
+          "name": "constraint_column_names",
+          "type": "List<Utf8>"
+        }
+      ],
+      "rows": [
+        {
+          "table_name": "categories",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "parent_category_id"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "c_name"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "c_name"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "parent_category_id",
+            "parent_category_id",
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "categories",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "customer_name"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "created_at"
+          ]
+        },
+        {
+          "table_name": "customers",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "qty"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "qty"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "unit_price"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "unit_price"
+          ]
+        },
+        {
+          "table_name": "order_items",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "ordered_at"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "orders",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "payment_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "payment_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "order_id"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "amount"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "amount"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status",
+            "paid_at",
+            "status",
+            "paid_at"
+          ]
+        },
+        {
+          "table_name": "payments",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "payment_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "category_id"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "product_name"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "unit_price"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "unit_price"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "active"
+          ]
+        },
+        {
+          "table_name": "products",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "product_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "return_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "return_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "order_item_id"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "qty"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "qty"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "reason"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "reason"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "requested_at"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "refund_amount"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "refund_amount"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "status",
+            "refunded_at",
+            "refunded_at",
+            "requested_at",
+            "status",
+            "refunded_at",
+            "refund_amount"
+          ]
+        },
+        {
+          "table_name": "returns",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "return_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "PRIMARY KEY",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "warehouse_name"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "FOREIGN KEY",
+          "constraint_column_names": [
+            "route_to_warehouse_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "route_minutes"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "route_minutes"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "route_to_warehouse_id",
+            "route_to_warehouse_id",
+            "warehouse_id"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "CHECK",
+          "constraint_column_names": [
+            "route_to_warehouse_id",
+            "route_minutes",
+            "route_to_warehouse_id",
+            "route_minutes"
+          ]
+        },
+        {
+          "table_name": "warehouses",
+          "constraint_type": "NOT NULL",
+          "constraint_column_names": [
+            "warehouse_id"
+          ]
+        }
+      ]
+    }
+  },
+  "identical": true,
+  "invariantsPass": true
+}

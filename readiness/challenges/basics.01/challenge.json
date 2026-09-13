@@ -1,0 +1,64 @@
+{
+  "challengeId": "basics.01",
+  "skillId": "basics",
+  "displayNumber": "basics.01",
+  "version": "basics.01-v1",
+  "bundleVersion": "basics.01-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Customer identities",
+  "brief": "Customers are told apart by identity, not by name. Two readers called Ari are still two readers.",
+  "instructions": [
+    "Return every customer identity with its name. Rows sharing a name stay separate; I will not merge people for you.",
+    "Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT customer_id,customer_name,email FROM customers LIMIT 10;",
+  "starterExplanation": "The starter reads customer_id, customer_name and email out of customers. It runs. It does not answer the question.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Projection alone keeps identities apart. Nothing here needs grouping."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Read the identity and the name straight out of the customers table."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Three customers are called Ari. All three must survive."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "customer_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "customer_name",
+        "type": "VARCHAR",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "customer_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/basics.01/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/basics.01/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/basics.01/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/basics.01/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

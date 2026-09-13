@@ -1,0 +1,27 @@
+{
+  "id": "graphs",
+  "version": "graphs-v1",
+  "tables": [
+    "category_edges",
+    "route_edges"
+  ],
+  "schema": "/bundle/datasets/graphs/schema.sql",
+  "previewVariant": "boundary",
+  "gradingVariants": [
+    "boundary",
+    "weighted"
+  ],
+  "variants": {
+    "boundary": {
+      "bootstrap": [
+        "/bundle/datasets/graphs/boundary.sql"
+      ]
+    },
+    "weighted": {
+      "bootstrap": [
+        "/bundle/datasets/graphs/boundary.sql",
+        "/bundle/datasets/graphs/weighted.sql"
+      ]
+    }
+  }
+}

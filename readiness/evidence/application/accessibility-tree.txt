@@ -1,0 +1,148 @@
+- link "Skip to SQL editor":
+  - /url: "#editor-region"
+- link "Skip to output":
+  - /url: "#output-region"
+- navigation "Desktop shortcuts":
+  - button "My Queries"
+  - button "DuckDB Docs — opens in a new tab": DuckDB Docs
+  - button "Schema Reference"
+  - button "Skill Map"
+  - button "Leaderboard"
+  - button "Recycle Bin"
+- main "SQL Grind workbench":
+  - text: SQL Grind - basics.01.sql * - commerce-practice (duckdb, in-browser)
+  - button "Minimize IDE": _
+  - button "Maximize or restore IDE"
+  - button "Close IDE": ×
+  - menubar "Application menus":
+    - menuitem "File"
+    - menuitem "Edit"
+    - menuitem "View"
+    - menuitem "Query"
+    - menuitem "Skills"
+    - menuitem "Tools"
+    - menuitem "Window"
+    - menuitem "Help"
+  - toolbar "Query actions":
+    - button "New Query"
+    - button "Open"
+    - button "Save"
+    - button "Execute" [disabled]
+    - button "Parse" [disabled]
+    - button "Cancel"
+    - combobox "Database" [disabled]:
+      - option "commerce-ranking · immutable"
+      - option "commerce-practice · immutable" [selected]
+      - option "workshop · immutable"
+      - option "graphs · immutable"
+      - option "index-lab · immutable"
+      - option "reconciliation · immutable"
+    - button "Show Plan" [disabled]
+    - button "Judge"
+    - text: SQL basics · 0/5 Completed
+  - complementary "Object Explorer":
+    - text: Object Explorer
+    - button "Object Explorer actions": ▾
+    - button "Hide Object Explorer": ×
+    - button "Refresh schema"
+    - button "Open selected schema details"
+    - button "Filter objects": ▽
+    - text: seed-20240907
+    - tree "Database objects":
+      - treeitem "− commerce-practice" [expanded] [level=1]
+      - treeitem "− Tables" [expanded] [level=2]
+      - treeitem "categories (48)" [level=3] [selected]
+      - treeitem "customers (502)" [level=3]
+      - treeitem "warehouses (14)" [level=3]
+      - treeitem "products (243)" [level=3]
+      - treeitem "orders (2,003)" [level=3]
+      - treeitem "order_items (8,505)" [level=3]
+      - treeitem "payments (2,101)" [level=3]
+      - treeitem "returns (126)" [level=3]
+      - treeitem "+ Views" [level=2]
+      - treeitem "+ Macros" [level=2]
+      - treeitem "+ Indexes / ART" [level=2]
+      - treeitem "− Challenges" [expanded] [level=1]
+      - treeitem "+ SQL basics In progress" [level=2]
+      - treeitem "+ Aggregation Locked" [level=2]
+      - treeitem "+ Joins Locked" [level=2]
+      - treeitem "+ Subqueries & EXISTS Locked" [level=2]
+      - treeitem "+ Set operations Locked" [level=2]
+      - treeitem "+ CTEs Locked" [level=2]
+      - treeitem "+ Window functions Locked" [level=2]
+      - treeitem "+ Date / time Locked" [level=2]
+      - treeitem "+ Recursive CTEs Locked" [level=2]
+      - treeitem "+ Pivot / unpivot Locked" [level=2]
+      - treeitem "+ Plans & indexing Locked" [level=2]
+      - treeitem "+ Cleaning & strings Locked" [level=2]
+      - treeitem "+ Reconciliation Locked" [level=2]
+    - text: Local data · 8 tables commerce-practice · immutable snapshots
+  - slider "Object Explorer width": "220"
+  - region "Documents":
+    - tablist "Open documents":
+      - tab "basics.01.sql *" [selected]
+      - tab "Skill Map.dag"
+      - tab "schema_notes.txt"
+    - textbox "SQL editor — basics.01.sql · basics.01"
+    - text: SQL, PostgreSQL-style highlighting for DuckDB. F5 or Control+Enter runs. Control+S saves. On macOS use Command. Tab leaves the editor; Escape then Tab also leaves it.
+    - slider "Editor and results splitter": "290"
+    - region "Query output":
+      - tablist "Result views":
+        - tab "Results" [selected]
+        - tab "Messages"
+        - tab "Execution plan"
+        - tab "Patchouli’s notes 0"
+        - tab "Assessment"
+      - region "Query results":
+        - text: No result
+        - strong: Running…
+        - button "Accessible table (50 rows)"
+        - button "Copy cell" [disabled]
+        - paragraph: Waiting for a complete result. Editing remains available.
+        - text: "Arrows: move cell · Home/End: row edges · Page Up/Down: page · Ctrl+C / Command+C: exact cell value · Right-click / Shift+F10: copy menu. NULL ≠ empty string."
+  - slider "Goal panel width": "280"
+  - complementary "Goal":
+    - text: Goal
+    - button "Goal panel actions": ▾
+    - button "Hide Goal panel": ×
+    - text: CHALLENGE basics.01 · SQL basics
+    - heading "Customer identities" [level=2]
+    - paragraph: Identify customers without confusing shared names with shared identities.
+    - list:
+      - listitem: Return every customer identity and name. Keep separate identities even when names match.
+      - listitem: Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit.
+    - heading "Expected shape" [level=3]
+    - code: customer_id
+    - text: BIGINT not null
+    - code: customer_name
+    - text: VARCHAR not null
+    - paragraph: "Ordering: customer_id ASC NULLS LAST. Equal ordering keys may appear in either order."
+    - paragraph: This starter exposes customer_id,customer_name,email from customers without solving customer identities.
+    - heading "Scorecard · no submission" [level=3]
+    - term: Correctness
+    - definition: Not submitted
+    - term: Runtime
+    - definition: Not measured
+    - term: Rows returned
+    - definition: No result
+    - term: Diagnostics
+    - definition: 0 current
+    - term: Completion
+    - definition: Available
+    - heading "Compare with Reference" [level=3]
+    - text: runtime Unavailable reference Not collected lines 1
+    - paragraph: Submit a correct answer for the current SQL to enable Compare with Reference. Speed and hints never reduce correctness credit.
+    - paragraph: All five current challenges complete a skill. Hints do not reduce credit.
+    - button "Hint (3 left)"
+    - button "Submit" [disabled]
+  - status: Reading actual local catalog metadata…
+  - text: DuckDB v1.5.4 · 1 thread Not run 0 rows Ln 1 Col 1 INS
+- contentinfo:
+  - button "Start"
+  - button "Show desktop"
+  - button "DuckDB Docs — opens in a new tab"
+  - button "SQL Grind - basics.01.sql * · running"
+  - button "Patchouli — watching"
+  - 'button "SQL engine: initializing"'
+  - 'button "Patchouli: hidden"'
+  - time: 09:23 PM

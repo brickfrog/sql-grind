@@ -1,0 +1,32 @@
+{
+  "id": "workshop",
+  "version": "workshop-v1",
+  "tables": [
+    "cohort_a",
+    "cohort_b",
+    "return_requests",
+    "cohort_customers",
+    "daily_events",
+    "monthly_matrix",
+    "return_totals",
+    "raw_contacts"
+  ],
+  "schema": "/bundle/datasets/workshop/schema.sql",
+  "previewVariant": "boundary",
+  "gradingVariants": [
+    "boundary",
+    "variant"
+  ],
+  "variants": {
+    "boundary": {
+      "bootstrap": [
+        "/bundle/datasets/workshop/boundary.sql"
+      ]
+    },
+    "variant": {
+      "bootstrap": [
+        "/bundle/datasets/workshop/variant.sql"
+      ]
+    }
+  }
+}

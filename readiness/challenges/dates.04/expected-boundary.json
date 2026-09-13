@@ -1,0 +1,89 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "dates.04",
+    "bundleVersion": "dates.04-bundle-v1",
+    "challengeVersion": "dates.04-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "order_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "fiscal_year",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 15,
+  "rows": [
+    [
+      "1",
+      "2024"
+    ],
+    [
+      "2",
+      "2024"
+    ],
+    [
+      "3",
+      "2024"
+    ],
+    [
+      "4",
+      "2024"
+    ],
+    [
+      "5",
+      "2024"
+    ],
+    [
+      "6",
+      "2024"
+    ],
+    [
+      "7",
+      "2024"
+    ],
+    [
+      "8",
+      "2024"
+    ],
+    [
+      "9",
+      "2025"
+    ],
+    [
+      "10",
+      "2025"
+    ],
+    [
+      "11",
+      "2024"
+    ],
+    [
+      "12",
+      "2024"
+    ],
+    [
+      "10001",
+      "2024"
+    ],
+    [
+      "10002",
+      "2024"
+    ],
+    [
+      "10003",
+      "2024"
+    ]
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "challengeId": "pivot.03",
+  "skillId": "pivot",
+  "displayNumber": "pivot.03",
+  "version": "pivot.03-v1",
+  "bundleVersion": "pivot.03-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Complete return calendar",
+  "brief": "Preserve empty periods as well as absent categories.",
+  "instructions": [
+    "Return the three-reason refunded-quantity matrix for exactly twelve DATE months of UTC 2024. Fill absent reasons and months with zero.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT return_id,reason,qty,refunded_at,status FROM returns LIMIT 10;",
+  "starterExplanation": "This starter exposes return_id,reason,qty,refunded_at,status from returns without solving complete return calendar.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "A calendar outer join preserves months that the pivot cannot create."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Build the observed matrix, left join it to twelve months, then fill all missing measures."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "February has no refunded event in the boundary but still needs a zero row."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "mon",
+        "type": "DATE",
+        "nullable": false
+      },
+      {
+        "name": "damaged",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "wrong_item",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "unwanted",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "mon",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/pivot.03/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/pivot.03/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/pivot.03/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/pivot.03/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

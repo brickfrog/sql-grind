@@ -1,0 +1,1 @@
+SELECT contact_id,CASE WHEN email_text IS NULL THEN 'missing' WHEN trim(email_text)='' THEN 'blank' ELSE 'value' END AS email_state,coalesce(nullif(trim(email_text),''),'[unavailable]') AS email_value FROM raw_contacts ORDER BY contact_id;

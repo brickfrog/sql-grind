@@ -1,0 +1,84 @@
+{
+  "challengeId": "reconcile.01",
+  "skillId": "reconcile",
+  "displayNumber": "reconcile.01",
+  "version": "reconcile.01-v1",
+  "bundleVersion": "reconcile.01-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Normalize and block candidates",
+  "brief": "Normalize known inconsistencies and expose plausible candidates without altering the reference.",
+  "instructions": [
+    "Normalize text with lower/trim, replace runs of non-Unicode-letter/digit characters with one space, and collapse whitespace. Do not transliterate Unicode. Account keys use lower/trim with blanks NULL; source keys use trim only with blanks NULL. Keep the smallest partner ID for each non-NULL source key; keep missing keys separate. Map hw, hard ware, and hardware to hardware; supplies remains supplies. Parse strict ISO YYYY-MM-DD, US MM/DD/YYYY, or DD Mon YYYY, in that order; invalid dates become NULL. Preserve all source rows unchanged.",
+    "Emit one row per account-block pair using the normalized partner values; sort by reference then partner."
+  ],
+  "datasetId": "reconciliation",
+  "starterSql": "SELECT ref_id, account_key, category, event_date, description, quantity, business_unit\nFROM reference_events\nORDER BY ref_id\nLIMIT 10;",
+  "starterExplanation": "Inspect immutable reference identities and raw evidence first. This source-only preview intentionally does not yet normalize or enumerate partner candidates.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Normalize first, deduplicate physical replays, then join the complete account blocks."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Use separate normalized reference and partner relations; retain the smallest physical ID for each nonblank event key before joining."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Malformed dates stay in the candidate block. Distinct event keys with identical values are not replays."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "ref_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "partner_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "normalized_category",
+        "type": "VARCHAR",
+        "nullable": true
+      },
+      {
+        "name": "parsed_date",
+        "type": "DATE",
+        "nullable": true
+      },
+      {
+        "name": "normalized_description",
+        "type": "VARCHAR",
+        "nullable": true
+      }
+    ],
+    "ordering": [
+      {
+        "column": "ref_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "partner_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/reconcile.01/reference.sql",
+  "expected": {
+    "boundary-v1": "/bundle/challenges/reconcile.01/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/reconcile.01/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/reconcile.01/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

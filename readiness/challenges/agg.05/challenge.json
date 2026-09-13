@@ -1,0 +1,74 @@
+{
+  "challengeId": "agg.05",
+  "skillId": "agg",
+  "displayNumber": "agg.05",
+  "version": "agg.05-v1",
+  "bundleVersion": "agg.05-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Data NULL and subtotal",
+  "brief": "Distinguish an actual missing group from a subtotal.",
+  "instructions": [
+    "Return counts by literal email plus one grand total. Use is_total 0 for actual groups and 1 for the total. Order is_total then email NULLS LAST.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT customer_id,email FROM customers LIMIT 10;",
+  "starterExplanation": "This starter exposes customer_id,email from customers without solving data null and subtotal.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "GROUPING distinguishes subtotal NULL from data NULL."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Request email and empty grouping sets and expose GROUPING(email)."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "The missing-email group and grand total both contain NULL but are different rows."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "email",
+        "type": "VARCHAR",
+        "nullable": true
+      },
+      {
+        "name": "is_total",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "customer_count",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "is_total",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "email",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/agg.05/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/agg.05/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/agg.05/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/agg.05/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

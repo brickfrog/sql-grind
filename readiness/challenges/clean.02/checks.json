@@ -1,0 +1,8 @@
+{
+  "wrong": [
+    {
+      "sql": "/bundle/challenges/clean.02/wrong.sql",
+      "variant": "boundary"
+    }
+  ]
+}

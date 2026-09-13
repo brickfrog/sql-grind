@@ -1,0 +1,72 @@
+{
+  "challengeId": "window.05",
+  "skillId": "window",
+  "displayNumber": "window.05",
+  "version": "window.05-v1",
+  "bundleVersion": "window.05-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Rows and peer frames",
+  "brief": "Distinguish physical-row frames from equal-date peer frames.",
+  "instructions": [
+    "Return every event. ROWS running total orders by date then identity; RANGE running total orders by date alone. Return both exact totals.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "workshop",
+  "starterSql": "SELECT event_id,event_date,amount FROM daily_events LIMIT 10;",
+  "starterExplanation": "This starter exposes event_id,event_date,amount from daily_events without solving rows and peer frames.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "ROWS advances one ordered row; RANGE includes equal-date peers."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Use a deterministic date-and-identity ordering only for the ROWS expression."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "The first two events share a date; their RANGE totals are both 30.00."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "event_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "rows_total",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      },
+      {
+        "name": "range_total",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      }
+    ],
+    "ordering": [
+      {
+        "column": "event_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/window.05/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/window.05/expected-boundary.json",
+    "variant": "/bundle/challenges/window.05/expected-variant.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

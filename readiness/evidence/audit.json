@@ -1,0 +1,48 @@
+{
+  "date": "2026-09-12T16:08:55.218Z",
+  "scopeVersion": "readiness-scope-v1",
+  "verifiedManifestFiles": [
+    "../../readiness/schema.sql",
+    "../../readiness/fixtures.sql",
+    "../../readiness/generator.sql",
+    "../../readiness/invariants.sql",
+    "../../readiness/reference-07.sql",
+    "../../readiness/expected-07.json",
+    "../../readiness/semantics.md",
+    "package-lock.json",
+    "public/engine/duckdb-eh.wasm",
+    "public/engine/duckdb-browser-eh.worker.js",
+    "public/extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
+    "public/extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
+    "public/extensions/v1.5.4/wasm_eh/parquet.duckdb_extension.wasm",
+    "public/data/small-v1/categories.parquet",
+    "public/data/small-v1/customers.parquet",
+    "public/data/small-v1/warehouses.parquet",
+    "public/data/small-v1/products.parquet",
+    "public/data/small-v1/orders.parquet",
+    "public/data/small-v1/order_items.parquet",
+    "public/data/small-v1/payments.parquet",
+    "public/data/small-v1/returns.parquet",
+    "../../readiness/challenge-07.json",
+    "../../readiness/judge.md",
+    "../../readiness/milestone.md"
+  ],
+  "localEvidencePass": true,
+  "implementationReady": true,
+  "applicationAlreadyBuilt": false,
+  "releaseReady": false,
+  "localBlockers": [],
+  "deferredPublicationConcerns": [
+    "Exact portrait redistribution and crop permission; user accepts the supplied wiki portrait for now and wants to revisit rights later",
+    "Owned public HTTPS hosting and deployed security headers; user chose to keep public deployment blocked",
+    "Additional Safari, mobile, and minimum-device support claims"
+  ],
+  "unsupportedBrowsers": [
+    "Safari/WebKit runtime unavailable on this host"
+  ],
+  "knownCapabilityLimits": [
+    "PIVOT JSON AST unavailable",
+    "Read-only database transition failed; fresh snapshot isolation selected",
+    "Terminated worker promises require coordinator-owned settlement"
+  ]
+}

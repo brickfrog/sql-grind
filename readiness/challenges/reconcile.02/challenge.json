@@ -1,0 +1,110 @@
+{
+  "challengeId": "reconcile.02",
+  "skillId": "reconcile",
+  "displayNumber": "reconcile.02",
+  "version": "reconcile.02-v1",
+  "bundleVersion": "reconcile.02-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Score and rank pair evidence",
+  "brief": "Combine weak evidence and rank candidates without hiding ties.",
+  "instructions": [
+    "Normalize text with lower/trim, replace runs of non-Unicode-letter/digit characters with one space, and collapse whitespace. Do not transliterate Unicode. Account keys use lower/trim with blanks NULL; source keys use trim only with blanks NULL. Keep the smallest partner ID for each non-NULL source key; keep missing keys separate. Map hw, hard ware, and hardware to hardware; supplies remains supplies. Parse strict ISO YYYY-MM-DD, US MM/DD/YYYY, or DD Mon YYYY, in that order; invalid dates become NULL. Preserve all source rows unchanged.",
+    "Candidates share a non-NULL normalized account key, even with malformed dates or weak evidence. Description edit distance <=2 earns 30, <=5 earns 15, otherwise 0; missing/empty earns 0. Dates equal/one day/two or three days apart earn 20/15/10, otherwise 0. Equal quantity earns 30, difference one earns 20, otherwise 0. Equal nonempty normalized category earns 10. At least two distinct shared normalized words earns 10. Sum the integer contributions; this is evidence, not probability.",
+    "Use competition rank within each reference by score descending; equal scores share a rank."
+  ],
+  "datasetId": "reconciliation",
+  "starterSql": "SELECT ref_id, account_key, category, event_date, description, quantity, business_unit\nFROM reference_events\nORDER BY ref_id\nLIMIT 10;",
+  "starterExplanation": "Inspect immutable reference identities and raw evidence first. This source-only preview intentionally does not yet calculate pair contributions or rank ties.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Compute independent integer evidence contributions before a ranking window."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Build candidate pairs, calculate five contributions, sum them, then apply competition rank within each reference."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Equal evidence must retain equal ranks. Empty descriptions and duplicate shared words do not earn text/word points."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "ref_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "partner_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "text_points",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "date_points",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "quantity_points",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "category_points",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "word_points",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "score",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "rnk",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "ref_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "rnk",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "partner_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/reconcile.02/reference.sql",
+  "expected": {
+    "boundary-v1": "/bundle/challenges/reconcile.02/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/reconcile.02/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/reconcile.02/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

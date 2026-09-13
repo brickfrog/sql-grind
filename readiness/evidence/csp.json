@@ -1,0 +1,150 @@
+{
+  "date": "2026-09-12T16:07:06.817Z",
+  "scope": "Built output on localhost with exact public/_headers policy; not a deployed HTTPS header pass",
+  "documentHeaders": {
+    "connection": "keep-alive",
+    "date": "Sat, 12 Sep 2026 16:07:05 GMT",
+    "keep-alive": "timeout=5",
+    "accept-ranges": "bytes",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-length": "239",
+    "content-security-policy": "default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; connect-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+    "content-type": "text/html; charset=utf-8",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "no-referrer",
+    "x-content-type-options": "nosniff"
+  },
+  "workers": [
+    "http://127.0.0.1:4173/engine/duckdb-browser-eh.worker.js"
+  ],
+  "responses": [
+    {
+      "url": "http://127.0.0.1:4173/",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/assets/index-K9sl9lk0.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/engine/duckdb-browser-eh.worker.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/engine/duckdb-eh.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/extensions/v1.5.4/wasm_eh/parquet.duckdb_extension.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/data/small-v1/order_items.parquet",
+      "status": 200
+    }
+  ],
+  "errors": [],
+  "result": {
+    "environment": [
+      {
+        "name": "environment",
+        "value": {
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+          "hardwareConcurrency": 24,
+          "deviceMemory": 32,
+          "crossOriginIsolated": false,
+          "engine": {
+            "ms": 10.399999976158142,
+            "fields": [
+              {
+                "name": "version",
+                "type": "Utf8"
+              }
+            ],
+            "rows": [
+              {
+                "version": "v1.5.4"
+              }
+            ]
+          },
+          "startupMs": 989.5,
+          "bundle": {
+            "mainModule": "/engine/duckdb-eh.wasm",
+            "mainWorker": "/engine/duckdb-browser-eh.worker.js",
+            "pthreadWorker": null
+          }
+        }
+      }
+    ],
+    "timezone": {
+      "ms": 1.800000011920929,
+      "fields": [
+        {
+          "name": "timezone",
+          "type": "Utf8"
+        }
+      ],
+      "rows": [
+        {
+          "timezone": "UTC"
+        }
+      ]
+    },
+    "parser": {
+      "ms": 3.199999988079071,
+      "fields": [
+        {
+          "name": "ast",
+          "type": "Utf8"
+        }
+      ],
+      "rows": [
+        {
+          "ast": "{\"error\":false,\"statements\":[{\"node\":{\"type\":\"SELECT_NODE\",\"modifiers\":[],\"cte_map\":{\"map\":[]},\"select_list\":[{\"class\":\"CONSTANT\",\"type\":\"VALUE_CONSTANT\",\"alias\":\"\",\"query_location\":7,\"value\":{\"type\":{\"id\":\"INTEGER\",\"type_info\":null},\"is_null\":false,\"value\":1}}],\"from_table\":{\"type\":\"EMPTY\",\"alias\":\"\",\"sample\":null,\"query_location\":18446744073709551615},\"where_clause\":null,\"group_expressions\":[],\"group_sets\":[],\"aggregate_handling\":\"STANDARD_HANDLING\",\"having\":null,\"sample\":null,\"qualify\":null},\"named_param_map\":[]}]}"
+        }
+      ]
+    },
+    "data": {
+      "ms": 150.10000002384186,
+      "fields": [
+        {
+          "name": "n",
+          "type": "Int64"
+        }
+      ],
+      "rows": [
+        {
+          "n": "8500"
+        }
+      ]
+    },
+    "profile": {
+      "ms": 9.5,
+      "fields": [
+        {
+          "name": "explain_key",
+          "type": "Utf8"
+        },
+        {
+          "name": "explain_value",
+          "type": "Utf8"
+        }
+      ],
+      "rows": [
+        {
+          "explain_key": "analyzed_plan",
+          "explain_value": "{\n    \"total_memory_allocated\": 0,\n    \"total_bytes_written\": 0,\n    \"total_bytes_read\": 0,\n    \"system_peak_temp_dir_size\": 0,\n    \"system_peak_buffer_memory\": 73754,\n    \"rows_returned\": 0,\n    \"result_set_size\": 0,\n    \"latency\": 0.0071,\n    \"wal_replay_entry_count\": 0,\n    \"extra_info\": {},\n    \"commit_local_storage_latency\": 0.0,\n    \"attach_load_storage_latency\": 0.0,\n    \"query_name\": \"EXPLAIN (ANALYZE, FORMAT JSON) SELECT sum(i) FROM range(1000) t(i)\",\n    \"cpu_time\": 0.0004,\n    \"checkpoint_latency\": 0.0,\n    \"cumulative_cardinality\": 2001,\n    \"waiting_to_attach_latency\": 0.0,\n    \"write_to_wal_latency\": 0.0,\n    \"attach_replay_wal_latency\": 0.0,\n    \"blocked_thread_time\": 0.0,\n    \"cumulative_rows_scanned\": 1000,\n    \"children\": [\n        {\n            \"system_peak_temp_dir_size\": 0,\n            \"result_set_size\": 0,\n            \"operator_type\": \"EXPLAIN_ANALYZE\",\n            \"operator_timing\": 0.0,\n            \"operator_rows_scanned\": 0,\n            \"extra_info\": {},\n            \"system_peak_buffer_memory\": 0,\n            \"cumulative_rows_scanned\": 1000,\n            \"cpu_time\": 0.0004,\n            \"operator_name\": \"EXPLAIN_ANALYZE\",\n            \"cumulative_cardinality\": 2001,\n            \"operator_cardinality\": 0,\n            \"children\": [\n                {\n                    \"cumulative_cardinality\": 2001,\n                    \"operator_cardinality\": 1,\n                    \"cumulative_rows_scanned\": 1000,\n                    \"operator_name\": \"UNGROUPED_AGGREGATE\",\n                    \"cpu_time\": 0.0004,\n                    \"operator_rows_scanned\": 0,\n                    \"system_peak_buffer_memory\": 0,\n                    \"extra_info\": {\n                        \"Aggregates\": \"sum(#0)\"\n                    },\n                    \"operator_timing\": 0.0002,\n                    \"system_peak_temp_dir_size\": 0,\n                    \"result_set_size\": 16,\n                    \"operator_type\": \"UNGROUPED_AGGREGATE\",\n                    \"children\": [\n                        {\n                            \"system_peak_temp_dir_size\": 0,\n                            \"result_set_size\": 8000,\n                            \"operator_type\": \"PROJECTION\",\n                            \"operator_timing\": 0.0,\n                            \"operator_rows_scanned\": 0,\n                            \"extra_info\": {\n                                \"Projections\": \"i\",\n                                \"Estimated Cardinality\": \"1000\"\n                            },\n                            \"system_peak_buffer_memory\": 0,\n                            \"cumulative_rows_scanned\": 1000,\n                            \"cpu_time\": 0.0002,\n                            \"operator_name\": \"PROJECTION\",\n                            \"cumulative_cardinality\": 2000,\n                            \"operator_cardinality\": 1000,\n                            \"children\": [\n                                {\n                                    \"cumulative_cardinality\": 1000,\n                                    \"operator_cardinality\": 1000,\n                                    \"cumulative_rows_scanned\": 1000,\n                                    \"operator_name\": \"RANGE\",\n                                    \"cpu_time\": 0.0002,\n                                    \"operator_rows_scanned\": 1000,\n                                    \"system_peak_buffer_memory\": 0,\n                                    \"extra_info\": {\n                                        \"Function\": \"RANGE\",\n                                        \"Estimated Cardinality\": \"1000\"\n                                    },\n                                    \"operator_timing\": 0.0002,\n                                    \"system_peak_temp_dir_size\": 0,\n                                    \"result_set_size\": 8000,\n                                    \"operator_type\": \"TABLE_SCAN\",\n                                    \"children\": []\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+        }
+      ]
+    },
+    "pass": true
+  }
+}

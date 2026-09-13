@@ -1,0 +1,84 @@
+{
+  "challengeId": "cte.05",
+  "skillId": "cte",
+  "displayNumber": "cte.05",
+  "version": "cte.05-v1",
+  "bundleVersion": "cte.05-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Independent customer report",
+  "brief": "Assemble independent customer summaries into an explainable report.",
+  "instructions": [
+    "Return every customer. Count paid UTC 2024 orders, their transaction revenue, and refunded return amounts on those orders. Label customers paid or no_paid. Fill missing counts and amounts with zero.",
+    "For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT customer_id,customer_name FROM customers LIMIT 10;",
+  "starterExplanation": "This starter exposes customer_id,customer_name from customers without solving independent customer report.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Named, independently grouped summaries prevent fan-out."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Reuse paid orders for counts, item revenue, and refunded returns, then left join each to customers."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "The orderless customer remains; a rejected return is not a refund."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "customer_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "paid_order_count",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "gross_revenue",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      },
+      {
+        "name": "refund_amount",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      },
+      {
+        "name": "cohort",
+        "type": "VARCHAR",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "customer_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/cte.05/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/cte.05/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/cte.05/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/cte.05/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

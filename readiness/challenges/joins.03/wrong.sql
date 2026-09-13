@@ -1,0 +1,1 @@
+SELECT c.customer_id,count(o.order_id) AS paid_order_count FROM customers c JOIN orders o ON o.customer_id=c.customer_id AND o.status = 'paid' AND o.ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND o.ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00' GROUP BY c.customer_id ORDER BY c.customer_id;

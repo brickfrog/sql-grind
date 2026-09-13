@@ -1,0 +1,1 @@
+WITH RECURSIVE tree(root_id,category_id,depth) AS (SELECT category_id,category_id,1::BIGINT FROM categories WHERE parent_category_id IS NULL UNION ALL SELECT t.root_id,c.category_id,(t.depth+1)::BIGINT FROM tree t JOIN categories c ON c.parent_category_id=t.category_id) SELECT root_id,category_id,depth FROM tree ORDER BY root_id,category_id;

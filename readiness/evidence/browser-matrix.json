@@ -1,0 +1,312 @@
+{
+  "chromium": {
+    "environment": [
+      {
+        "name": "environment",
+        "value": {
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+          "hardwareConcurrency": 24,
+          "deviceMemory": 32,
+          "crossOriginIsolated": false,
+          "engine": {
+            "ms": 11.899999976158142,
+            "fields": [
+              {
+                "name": "version",
+                "type": "Utf8"
+              }
+            ],
+            "rows": [
+              {
+                "version": "v1.5.4"
+              }
+            ]
+          },
+          "startupMs": 954.6000000238419,
+          "bundle": {
+            "mainModule": "/engine/duckdb-eh.wasm",
+            "mainWorker": "/engine/duckdb-browser-eh.worker.js",
+            "pthreadWorker": null
+          }
+        }
+      }
+    ],
+    "offset": {
+      "text": "SELECT '😀é' AS s, missing FROM range(1)",
+      "byte": 22,
+      "start": 19,
+      "end": 26,
+      "selected": "missing",
+      "pass": true
+    },
+    "lightweight": [
+      {
+        "sql": "SELECT * FROM",
+        "ms": 0.5,
+        "tree": "Script(Statement(Keyword,Operator,Keyword))",
+        "errors": []
+      },
+      {
+        "sql": "PIVOT (SELECT 'a' AS k, 1 AS v) ON k USING sum(v)",
+        "ms": 0.2999999523162842,
+        "tree": "Script(Statement(Identifier,Parens(\"(\",Keyword,String,Keyword,Identifier,Punctuation,Number,Keyword,Identifier,\")\"),Keyword,Identifier,Keyword,Keyword,Parens(\"(\",Identifier,\")\")))",
+        "errors": []
+      },
+      {
+        "sql": "SELECT i, row_number() OVER () AS r FROM range(3) t(i) QUALIFY r=1",
+        "ms": 0.30000001192092896,
+        "tree": "Script(Statement(Keyword,Identifier,Punctuation,Keyword,Parens(\"(\",\")\"),Keyword,Parens(\"(\",\")\"),Keyword,Identifier,Keyword,Keyword,Parens(\"(\",Number,\")\"),Identifier,Parens(\"(\",Identifier,\")\"),Identifier,Identifier,Operator,Number))",
+        "errors": []
+      }
+    ],
+    "loaded": [
+      {
+        "name": "categories",
+        "ms": 196.4000000357628
+      },
+      {
+        "name": "customers",
+        "ms": 7.699999988079071
+      },
+      {
+        "name": "warehouses",
+        "ms": 6.5
+      },
+      {
+        "name": "products",
+        "ms": 6.300000011920929
+      },
+      {
+        "name": "orders",
+        "ms": 7
+      },
+      {
+        "name": "order_items",
+        "ms": 8.300000011920929
+      },
+      {
+        "name": "payments",
+        "ms": 6.800000011920929
+      },
+      {
+        "name": "returns",
+        "ms": 6.199999988079071
+      }
+    ],
+    "counts": {
+      "ms": 5,
+      "fields": [
+        {
+          "name": "n",
+          "type": "Int64"
+        }
+      ],
+      "rows": [
+        {
+          "n": "8500"
+        }
+      ]
+    },
+    "pivot": {
+      "ms": 22.30000001192093,
+      "fields": [
+        {
+          "name": "a",
+          "type": "Decimal[38e0]"
+        }
+      ],
+      "rows": [
+        {
+          "a": "\"1\""
+        }
+      ]
+    },
+    "extensions": {
+      "ms": 2,
+      "fields": [
+        {
+          "name": "extension_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "loaded",
+          "type": "Bool"
+        }
+      ],
+      "rows": [
+        {
+          "extension_name": "core_functions",
+          "loaded": true
+        },
+        {
+          "extension_name": "icu",
+          "loaded": true
+        },
+        {
+          "extension_name": "json",
+          "loaded": true
+        },
+        {
+          "extension_name": "parquet",
+          "loaded": true
+        }
+      ]
+    }
+  },
+  "firefox": {
+    "environment": [
+      {
+        "name": "environment",
+        "value": {
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64; rv:155.0) Gecko/20100101 Firefox/155.0",
+          "hardwareConcurrency": 24,
+          "crossOriginIsolated": false,
+          "engine": {
+            "ms": 2,
+            "fields": [
+              {
+                "name": "version",
+                "type": "Utf8"
+              }
+            ],
+            "rows": [
+              {
+                "version": "v1.5.4"
+              }
+            ]
+          },
+          "startupMs": 996,
+          "bundle": {
+            "mainModule": "/engine/duckdb-eh.wasm",
+            "mainWorker": "/engine/duckdb-browser-eh.worker.js",
+            "pthreadWorker": null
+          }
+        }
+      }
+    ],
+    "offset": {
+      "text": "SELECT '😀é' AS s, missing FROM range(1)",
+      "byte": 22,
+      "start": 19,
+      "end": 26,
+      "selected": "missing",
+      "pass": true
+    },
+    "lightweight": [
+      {
+        "sql": "SELECT * FROM",
+        "ms": 0,
+        "tree": "Script(Statement(Keyword,Operator,Keyword))",
+        "errors": []
+      },
+      {
+        "sql": "PIVOT (SELECT 'a' AS k, 1 AS v) ON k USING sum(v)",
+        "ms": 2,
+        "tree": "Script(Statement(Identifier,Parens(\"(\",Keyword,String,Keyword,Identifier,Punctuation,Number,Keyword,Identifier,\")\"),Keyword,Identifier,Keyword,Keyword,Parens(\"(\",Identifier,\")\")))",
+        "errors": []
+      },
+      {
+        "sql": "SELECT i, row_number() OVER () AS r FROM range(3) t(i) QUALIFY r=1",
+        "ms": 0,
+        "tree": "Script(Statement(Keyword,Identifier,Punctuation,Keyword,Parens(\"(\",\")\"),Keyword,Parens(\"(\",\")\"),Keyword,Identifier,Keyword,Keyword,Parens(\"(\",Number,\")\"),Identifier,Parens(\"(\",Identifier,\")\"),Identifier,Identifier,Operator,Number))",
+        "errors": []
+      }
+    ],
+    "loaded": [
+      {
+        "name": "categories",
+        "ms": 129
+      },
+      {
+        "name": "customers",
+        "ms": 9
+      },
+      {
+        "name": "warehouses",
+        "ms": 7
+      },
+      {
+        "name": "products",
+        "ms": 9
+      },
+      {
+        "name": "orders",
+        "ms": 7
+      },
+      {
+        "name": "order_items",
+        "ms": 16
+      },
+      {
+        "name": "payments",
+        "ms": 10
+      },
+      {
+        "name": "returns",
+        "ms": 8
+      }
+    ],
+    "counts": {
+      "ms": 1,
+      "fields": [
+        {
+          "name": "n",
+          "type": "Int64"
+        }
+      ],
+      "rows": [
+        {
+          "n": "8500"
+        }
+      ]
+    },
+    "pivot": {
+      "ms": 3,
+      "fields": [
+        {
+          "name": "a",
+          "type": "Decimal[38e0]"
+        }
+      ],
+      "rows": [
+        {
+          "a": "\"1\""
+        }
+      ]
+    },
+    "extensions": {
+      "ms": 1,
+      "fields": [
+        {
+          "name": "extension_name",
+          "type": "Utf8"
+        },
+        {
+          "name": "loaded",
+          "type": "Bool"
+        }
+      ],
+      "rows": [
+        {
+          "extension_name": "core_functions",
+          "loaded": true
+        },
+        {
+          "extension_name": "icu",
+          "loaded": true
+        },
+        {
+          "extension_name": "json",
+          "loaded": true
+        },
+        {
+          "extension_name": "parquet",
+          "loaded": true
+        }
+      ]
+    }
+  },
+  "webkit": {
+    "error": "Error: browserType.launch: \n╔══════════════════════════════════════════════════════╗\n║ Host system is missing dependencies to run browsers. ║\n║ Please install them with the following command:      ║\n║                                                      ║\n║     sudo npx playwright install-deps                 ║\n║                                                      ║\n║ Alternatively, use apt:                              ║\n║     sudo apt-get install libicu74\\                   ║\n║         libxml2\\                                     ║\n║         libflite1                                    ║\n║                                                      ║\n║ <3 Playwright Team                                   ║\n╚══════════════════════════════════════════════════════╝"
+  }
+}

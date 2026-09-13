@@ -1,0 +1,70 @@
+{
+  "challengeId": "plan.05",
+  "skillId": "plan",
+  "displayNumber": "plan.05",
+  "version": "plan.05-v1",
+  "bundleVersion": "plan.05-bundle-v1",
+  "assessmentVersion": "plan-lab-v1",
+  "title": "Measure selection breadth",
+  "brief": "Compare selective and broad work without treating one timing as truth.",
+  "instructions": [
+    "Return order_id for customer_id = 42 in the primary query.",
+    "Return order_id for customer_id <= 900 in the secondary query.",
+    "Sort both results by order_id.",
+    "Use the isolated dataset without a secondary index.",
+    "Measure one warmup per query and nine alternating timing pairs.",
+    "Select the measured medians and MADs into your report.",
+    "Report the lower median, or equal.",
+    "Report whether the median difference exceeds the sum of both MADs.",
+    "No hardware-dependent speed threshold determines completion."
+  ],
+  "datasetId": "index-lab",
+  "starterSql": "SELECT order_id, customer_id FROM lookup_orders LIMIT 10;\n",
+  "starterExplanation": "The starter shows lookup identities before either filter. Correctness is separate from the measured median and median absolute deviation.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Compare different selectivity with repeated paired measurements."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Keep both projections at order identity and alternate the sample order."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "A broad result can be slower because it transfers more rows. A single fast sample does not establish a stable difference."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "order_id",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "order_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/plan.05/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/plan.05/expected-boundary.json"
+  },
+  "assessment": {
+    "kind": "plan-lab",
+    "lab": "selectivity",
+    "secondaryReference": "/bundle/challenges/plan.05/secondary-reference.sql",
+    "secondaryExpected": {
+      "boundary": "/bundle/challenges/plan.05/secondary-expected-boundary.json"
+    },
+    "secondaryStarterSql": "SELECT order_id FROM lookup_orders LIMIT 10;\n"
+  }
+}

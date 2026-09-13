@@ -1,0 +1,82 @@
+{
+  "challengeId": "window.01",
+  "skillId": "window",
+  "displayNumber": "window.01",
+  "version": "window.01-v1",
+  "bundleVersion": "window.01-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Competition and dense ranks",
+  "brief": "Explain how tied values affect competition and dense ranking.",
+  "instructions": [
+    "Return January paid UTC 2024 category transaction totals with competition and dense ranks by revenue descending. Sort competition rank then category identity.",
+    "For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_id,status,ordered_at FROM orders LIMIT 10;",
+  "starterExplanation": "This starter exposes order_id,status,ordered_at from orders without solving competition and dense ranks.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "RANK leaves gaps after peers; DENSE_RANK does not."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Compute January category totals first, then apply both ranking windows."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "January revenues 100,100,90,90,80 produce competition ranks 1,1,3,3,5."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "category_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "revenue",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      },
+      {
+        "name": "rnk",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "dense_rnk",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "rnk",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "category_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/window.01/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/window.01/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/window.01/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/window.01/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

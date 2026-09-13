@@ -1,0 +1,8 @@
+{
+  "pass": true,
+  "checks": [
+    "v1 historical attempt preserves SQL and cannot submit as current",
+    "v2 export preserves original SQL, recovery draft, and historical identity",
+    "fresh-profile v2 restore and rejected import preserve existing records"
+  ]
+}

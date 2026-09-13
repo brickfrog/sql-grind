@@ -1,0 +1,449 @@
+import { chromium } from "playwright";
+import assert from "node:assert/strict";
+import { writeFile } from "node:fs/promises";
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage({ viewport: { width: 1440, height: 960 } });
+const checks = [];
+const errors = [];
+page.on("pageerror", (error) => errors.push(String(error)));
+const mark = (name) => {
+  checks.push(name);
+  console.log("PASS", name);
+};
+async function menu(group, item) {
+  await page.getByRole("menuitem", { name: group, exact: true }).click();
+  await page
+    .getByRole("menuitem", { name: item, exact: true })
+    .or(page.getByRole("menuitemcheckbox", { name: item, exact: true }))
+    .click();
+}
+async function drag(selector, dx, dy) {
+  const box = await page.locator(selector).boundingBox();
+  assert.ok(box);
+  const x = box.x + Math.min(35, box.width / 2),
+    y = box.y + Math.min(12, box.height / 2);
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + dx, y + dy, { steps: 12 });
+  await page.mouse.up();
+}
+try {
+  await page.goto(process.env.APP_URL ?? "http://127.0.0.1:4173");
+  await page.waitForFunction(
+    () =>
+      document.querySelector(".toolbar .execute") &&
+      !document.querySelector(".toolbar .execute").disabled,
+    null,
+    { timeout: 45000 },
+  );
+  let rect = await page.locator("#judge-window").boundingBox();
+  await drag("#judge-window .judge-title", -350, -400);
+  let moved = await page.locator("#judge-window").boundingBox();
+  assert.ok(Math.abs(moved.x - (rect.x - 350)) < 2);
+  assert.ok(Math.abs(moved.y - (rect.y - 400)) < 2);
+  rect = moved;
+  await drag("#judge-window .judge-title", 70, 80);
+  moved = await page.locator("#judge-window").boundingBox();
+  assert.ok(Math.abs(moved.x - (rect.x + 70)) < 2);
+  assert.ok(Math.abs(moved.y - (rect.y + 80)) < 2);
+  assert.equal(await page.evaluate(() => getSelection().toString()), "");
+  assert.equal(await page.locator("body.pointer-dragging").count(), 0);
+  mark(
+    "Repeated judge drags preserve pointer offset without jumping or selecting text",
+  );
+  // Drag-resize grip: growing to 1.5× keeps the top-left corner fixed, and the
+  // move clamps use the scaled window, not 360×210.
+  {
+    const size = page.viewportSize();
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    const before = await page.locator("#judge-window").boundingBox();
+    const grip = await page
+      .locator("#judge-window .judge-resize")
+      .boundingBox();
+    await page.mouse.move(grip.x + grip.width / 2, grip.y + grip.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(
+      grip.x + grip.width / 2 + before.width / 2,
+      grip.y + grip.height / 2 + before.height / 2,
+      { steps: 10 },
+    );
+    await page.mouse.up();
+    const scaled = await page.locator("#judge-window").boundingBox();
+    assert.equal(Math.round(scaled.width), 540, "grip drag reaches 1.5×");
+    assert.ok(Math.abs(scaled.x - before.x) < 2, "top-left stays anchored");
+    assert.ok(Math.abs(scaled.y - before.y) < 2, "top-left stays anchored");
+    await page.locator("#judge-window .judge-resize").focus();
+    await page.keyboard.press("ArrowDown");
+    assert.equal(
+      await page
+        .locator("#judge-window .judge-resize")
+        .getAttribute("aria-valuenow"),
+      "140",
+      "arrow keys step the size",
+    );
+    await page.keyboard.press("ArrowUp");
+    await drag("#judge-window .judge-title", 3000, 3000);
+    const corner = await page.locator("#judge-window").boundingBox();
+    assert.equal(Math.round(corner.x + corner.width), 1920, "right clamp");
+    assert.equal(
+      Math.round(corner.y + corner.height),
+      1080 - 32,
+      "bottom clamp above the taskbar",
+    );
+    await drag("#judge-window .judge-title", -3000, -3000);
+    await page.setViewportSize(size);
+    moved = await page.locator("#judge-window").boundingBox();
+  }
+  mark(
+    "Judge grip resizes by pointer and keyboard; scaled drags clamp to the viewport edges",
+  );
+  // View zoom: the desktop still fits the viewport, and drags under zoom land
+  // exactly where the pointer goes (positions are stored in pre-zoom pixels).
+  {
+    // Park the judge in the corner so it does not cover the menu bar.
+    await drag("#judge-window .judge-title", 3000, 3000);
+    await menu("View", "Zoom In");
+    await menu("View", "Zoom In");
+    assert.equal(
+      await page.evaluate(() => getComputedStyle(document.body).zoom),
+      "1.25",
+      "two zoom steps reach 125%",
+    );
+    assert.equal(
+      await page.evaluate(
+        () =>
+          document.documentElement.scrollHeight <= window.innerHeight &&
+          document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+      true,
+      "zoomed desktop does not overflow the viewport",
+    );
+    const before = await page.locator("#judge-window").boundingBox();
+    await drag("#judge-window .judge-title", -120, -80);
+    const after = await page.locator("#judge-window").boundingBox();
+    assert.ok(Math.abs(after.x - (before.x - 120)) < 2, "zoomed drag x");
+    assert.ok(Math.abs(after.y - (before.y - 80)) < 2, "zoomed drag y");
+    await drag("#judge-window .judge-title", 120, 80);
+    // Context menus are appended to the zoomed <body>; they must still open
+    // under the pointer.
+    const editorBox = await page.locator(".cm-content").boundingBox();
+    await page.mouse.click(editorBox.x + 40, editorBox.y + 20, {
+      button: "right",
+    });
+    const contextBox = await page.locator('[role="menu"]').last().boundingBox();
+    assert.ok(Math.abs(contextBox.x - (editorBox.x + 40)) < 3, "context x");
+    assert.ok(Math.abs(contextBox.y - (editorBox.y + 20)) < 3, "context y");
+    await page.keyboard.press("Escape");
+    // Judge docking and goal floating are independent: the docked judge rides
+    // in the goal panel wherever it lives, and floating or docking one never
+    // silently toggles the other.
+    await menu("Window", "Dock / Float Judge");
+    assert.equal(await page.locator("#judge-docked").count(), 1);
+    const documentArea = await page.locator(".document-area").boundingBox();
+    await menu("Window", "Dock / Float Goal");
+    const goal = await page.locator("#goal-window").boundingBox();
+    assert.ok(goal, "goal pops out as a floating window");
+    assert.equal(await page.locator("#goal-panel").count(), 0);
+    assert.equal(
+      await page.locator("#goal-window #judge-docked").count(),
+      1,
+      "the docked judge follows the goal panel out",
+    );
+    const widerArea = await page.locator(".document-area").boundingBox();
+    assert.ok(
+      widerArea.width > documentArea.width + 200,
+      "the grid releases the goal column when the panel floats",
+    );
+    // Float the judge back out: the goal must stay floating, so its header
+    // button keeps offering Dock, not Pop out.
+    await page
+      .getByRole("button", { name: "Float judge", exact: true })
+      .click();
+    assert.equal(await page.locator("#judge-window").count(), 1);
+    assert.equal(
+      await page.locator("#goal-window").count(),
+      1,
+      "docking the judge back out leaves the goal floating",
+    );
+    assert.equal(
+      await page
+        .getByRole("button", { name: "Dock Goal panel", exact: true })
+        .count(),
+      1,
+      "the floating goal still offers Dock, not Pop out",
+    );
+    await page
+      .getByRole("button", { name: "Show desktop", exact: true })
+      .click();
+    assert.equal(
+      await page.locator("#goal-window").count(),
+      0,
+      "Show Desktop hides the floating goal",
+    );
+    await page
+      .getByRole("button", { name: "Show desktop", exact: true })
+      .click();
+    assert.equal(await page.locator("#goal-window").count(), 1);
+    await drag("#goal-window .goal-title", -200, 100);
+    const movedGoal = await page.locator("#goal-window").boundingBox();
+    assert.ok(Math.abs(movedGoal.x - (goal.x - 200)) < 2, "goal drag x");
+    assert.ok(Math.abs(movedGoal.y - (goal.y + 100)) < 2, "goal drag y");
+    const grip = await page.locator("#goal-window .goal-resize").boundingBox();
+    await page.mouse.move(grip.x + 7, grip.y + 7);
+    await page.mouse.down();
+    await page.mouse.move(grip.x + 107, grip.y + 57, { steps: 8 });
+    await page.mouse.up();
+    const resized = await page.locator("#goal-window").boundingBox();
+    assert.ok(
+      Math.abs(resized.width - movedGoal.width - 100) < 2,
+      "goal grip w",
+    );
+    assert.ok(
+      Math.abs(resized.height - movedGoal.height - 50) < 2,
+      "goal grip h",
+    );
+    await page
+      .getByRole("button", { name: "Dock Goal panel", exact: true })
+      .click();
+    assert.equal(await page.locator("#goal-panel").count(), 1, "goal docks");
+    // The grip changed the shared goal width; put it back for later checks.
+    await page
+      .getByRole("slider", { name: "Goal panel width", exact: true })
+      .fill("280");
+    await menu("View", "Actual Size");
+    assert.equal(
+      await page.evaluate(() => getComputedStyle(document.body).zoom),
+      "1",
+    );
+    moved = await page.locator("#judge-window").boundingBox();
+  }
+  mark(
+    "View zoom keeps the desktop in the viewport and pointer-accurate; the Goal panel pops out, moves, resizes, and docks",
+  );
+  await drag("#judge-window .judge-title", 4 - moved.x, 4 - moved.y);
+  const parkedJudge = await page.locator("#judge-window").boundingBox();
+  await page.locator(".cm-content").focus();
+  assert.deepEqual(
+    await page.locator("#judge-window").boundingBox(),
+    parkedJudge,
+  );
+  assert.equal(
+    await page.evaluate(
+      () => !!document.elementFromPoint(160, 57)?.closest("#judge-window"),
+    ),
+    true,
+  );
+  await page.screenshot({
+    path: "readiness/evidence/application/judge-layering.png",
+  });
+  mark(
+    "Editor focus leaves Patchouli stationary; her text paints above the IDE menus",
+  );
+  await page.getByRole("button", { name: "Hide judge", exact: true }).click();
+  const originalIde = await page.locator(".ide").boundingBox();
+  await drag(".ide-title", -40, 35);
+  const movedIde = await page.locator(".ide").boundingBox();
+  assert.equal(Math.round(movedIde.x), Math.round(originalIde.x - 40));
+  assert.equal(Math.round(movedIde.y), Math.round(originalIde.y + 35));
+  assert.equal(await page.evaluate(() => getSelection().toString()), "");
+  await page.getByRole("button", { name: "Maximize or restore IDE" }).click();
+  assert.equal((await page.locator(".ide").boundingBox()).x, 0);
+  await page.getByRole("button", { name: "Maximize or restore IDE" }).click();
+  assert.deepEqual(await page.locator(".ide").boundingBox(), movedIde);
+  await page.mouse.move(0, 0);
+  const chrome = await page
+    .locator(".ide-title .window-controls button")
+    .evaluateAll((elements) =>
+      elements.map((e) => ({
+        width: e.offsetWidth,
+        height: e.offsetHeight,
+        color: getComputedStyle(e).color,
+        background: getComputedStyle(e).backgroundColor,
+      })),
+    );
+  assert.equal(chrome.length, 3);
+  assert.deepEqual(chrome[0], chrome[1]);
+  assert.deepEqual(chrome[1], chrome[2]);
+  assert.equal(chrome[1].width, 24);
+  const selectedTable = page.locator(".tree-row.selected").first();
+  await selectedTable.hover();
+  assert.equal(
+    await selectedTable.evaluate((e) => getComputedStyle(e).backgroundColor),
+    "rgb(10, 36, 106)",
+  );
+  assert.equal(
+    await selectedTable.evaluate((e) => getComputedStyle(e).color),
+    "rgb(255, 255, 255)",
+  );
+  mark(
+    "Main window drags and restores its position; controls match; selected explorer hover retains contrast",
+  );
+  const wrongCursors = await page
+    .locator("button:enabled")
+    .evaluateAll((elements) =>
+      elements
+        .filter(
+          (e) =>
+            e.getBoundingClientRect().width &&
+            getComputedStyle(e).cursor !== "pointer",
+        )
+        .map((e) => ({
+          text: e.textContent,
+          cursor: getComputedStyle(e).cursor,
+        })),
+    );
+  assert.deepEqual(wrongCursors, []);
+  const editorStyle = await page.locator(".cm-content").evaluate((e) => ({
+    color: getComputedStyle(e).color,
+    font: getComputedStyle(e).fontFamily,
+  }));
+  assert.equal(editorStyle.color, "rgb(17, 17, 17)");
+  assert.match(editorStyle.font, /DejaVu Sans Mono/);
+  mark(
+    "Enabled buttons use pointer cursors; editor uses dark text and a stronger monospace face",
+  );
+  await drag('[aria-label="Object Explorer width"]', 60, 0);
+  await drag('[aria-label="Goal panel width"]', -40, 0);
+  assert.equal(
+    Math.round((await page.locator(".explorer").boundingBox()).width),
+    280,
+  );
+  assert.equal(
+    Math.round((await page.locator(".goal").boundingBox()).width),
+    320,
+  );
+  await page
+    .getByRole("slider", { name: "Object Explorer width", exact: true })
+    .press("ArrowRight");
+  assert.equal(
+    Math.round((await page.locator(".explorer").boundingBox()).width),
+    290,
+  );
+  await menu("File", "Close Window");
+  await page.locator(".ide").waitFor({ state: "hidden" });
+  await page.reload();
+  await page.waitForFunction(
+    () =>
+      document.querySelector(".toolbar .execute") &&
+      !document.querySelector(".toolbar .execute").disabled,
+    null,
+    { timeout: 45000 },
+  );
+  assert.equal(
+    Math.round((await page.locator(".explorer").boundingBox()).width),
+    290,
+  );
+  assert.equal(
+    Math.round((await page.locator(".goal").boundingBox()).width),
+    320,
+  );
+  await menu("View", "Reset Layout");
+  assert.equal(
+    Math.round((await page.locator(".explorer").boundingBox()).width),
+    220,
+  );
+  assert.equal(
+    Math.round((await page.locator(".goal").boundingBox()).width),
+    280,
+  );
+  mark(
+    "Both sidebars resize by pointer and keyboard, survive reload, and reset to defaults",
+  );
+  await menu("File", "New Query");
+  await page.locator(".cm-content").click();
+  await page.keyboard.insertText("SELECT 222 AS retained;");
+  await page
+    .getByRole("tab", { name: /basics\.01\.sql/ })
+    .click({ button: "middle" });
+  await page.waitForFunction(
+    () =>
+      ![...document.querySelectorAll('.document-tabs [role="tab"]')].some((e) =>
+        e.textContent.includes("basics.01.sql"),
+      ),
+  );
+  assert.match(await page.locator(".cm-content").innerText(), /222/);
+  await page
+    .getByRole("tab", { name: /untitled.sql/ })
+    .click({ button: "middle" });
+  await page.getByText("No open SQL document", { exact: true }).waitFor();
+  await page.getByRole("tab", { name: "Skill Map.dag", exact: true }).click();
+  await page
+    .getByRole("tab", { name: "Skill Map.dag", exact: true })
+    .click({ button: "middle" });
+  assert.equal(
+    await page.getByRole("tab", { name: "Skill Map.dag", exact: true }).count(),
+    0,
+  );
+  await page
+    .getByRole("tab", { name: "schema_notes.txt", exact: true })
+    .click({ button: "middle" });
+  assert.equal(await page.locator('.document-tabs [role="tab"]').count(), 0);
+  await page
+    .locator(".desktop-icons")
+    .getByRole("button", { name: "Skill Map", exact: true })
+    .click();
+  await page.getByRole("tab", { name: "Skill Map.dag", exact: true }).waitFor();
+  await menu("File", "New Query");
+  await page.getByRole("button", { name: "Parse", exact: true }).click();
+  await page
+    .getByText("How to trigger Patchouli’s notes", { exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Open example in a new tab", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Parse", exact: true }).click();
+  await page.waitForFunction(
+    () => document.querySelectorAll(".diagnostic").length >= 2,
+  );
+  const notes = await page.locator(".diagnostic").allTextContents();
+  assert.ok(notes.some((note) => note.includes("J001")));
+  assert.ok(notes.some((note) => note.includes("J002")));
+  await page.locator(".diagnostic").first().click();
+  assert.equal(
+    await page
+      .locator(".cm-content")
+      .evaluate((e) => e === document.activeElement),
+    true,
+  );
+  mark(
+    "Middle click closes active and inactive SQL/map/schema tabs; special tabs reopen normally",
+  );
+  mark(
+    "Notes help opens a separate example; Parse produces real J001/J002 notes and source navigation",
+  );
+  await page.locator(".cm-content").press("ControlOrMeta+a");
+  await page.keyboard.insertText("SELECT 42 AS answer;");
+  await page.locator(".toolbar .execute").click();
+  await page.locator(".grid-row").first().waitFor({ timeout: 45000 });
+  const resultStyle = await page
+    .locator(".grid-row > div")
+    .last()
+    .evaluate((e) => ({
+      font: getComputedStyle(e).fontFamily,
+      color: getComputedStyle(e).color,
+      selected: e.classList.contains("selected"),
+    }));
+  assert.match(resultStyle.font, /DejaVu Sans Mono/);
+  assert.equal(
+    resultStyle.color,
+    resultStyle.selected ? "rgb(255, 255, 255)" : "rgb(17, 17, 17)",
+  );
+  mark(
+    "Real result cells use the darker monospace typography with readable selection",
+  );
+  await page.screenshot({
+    path: "readiness/evidence/application/interaction-updates.png",
+    fullPage: true,
+  });
+  assert.deepEqual(errors, []);
+  await writeFile(
+    "readiness/evidence/application/interaction-smoke.json",
+    JSON.stringify(
+      { date: new Date().toISOString(), checks, editorStyle, notes, errors },
+      null,
+      2,
+    ) + "\n",
+  );
+} finally {
+  await browser.close();
+}

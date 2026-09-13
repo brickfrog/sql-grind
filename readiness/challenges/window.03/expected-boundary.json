@@ -1,0 +1,109 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "window.03",
+    "bundleVersion": "window.03-bundle-v2",
+    "challengeVersion": "challenge-07-v1",
+    "datasetVersion": "small-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-ranking",
+  "variantId": "boundary-v1",
+  "columns": [
+    {
+      "name": "mon",
+      "type": "DATE",
+      "nullable": false
+    },
+    {
+      "name": "category_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "c_name",
+      "type": "VARCHAR",
+      "nullable": false
+    },
+    {
+      "name": "revenue",
+      "type": "DECIMAL",
+      "precision": 38,
+      "scale": 2,
+      "nullable": false
+    },
+    {
+      "name": "rnk",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 9,
+  "rows": [
+    [
+      "2024-01-01",
+      "2",
+      "Audio",
+      "100.00",
+      "1"
+    ],
+    [
+      "2024-01-01",
+      "3",
+      "Audio",
+      "100.00",
+      "1"
+    ],
+    [
+      "2024-01-01",
+      "4",
+      "Kitchen",
+      "90.00",
+      "3"
+    ],
+    [
+      "2024-01-01",
+      "5",
+      "Outdoor",
+      "90.00",
+      "3"
+    ],
+    [
+      "2024-02-01",
+      "2",
+      "Audio",
+      "50.00",
+      "1"
+    ],
+    [
+      "2024-02-01",
+      "3",
+      "Audio",
+      "40.00",
+      "2"
+    ],
+    [
+      "2024-02-01",
+      "4",
+      "Kitchen",
+      "40.00",
+      "2"
+    ],
+    [
+      "2024-04-01",
+      "6",
+      "Toys",
+      "0.00",
+      "1"
+    ],
+    [
+      "2024-12-01",
+      "4",
+      "Kitchen",
+      "24.68",
+      "1"
+    ]
+  ]
+}

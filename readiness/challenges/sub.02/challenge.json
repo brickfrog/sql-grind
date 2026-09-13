@@ -1,0 +1,60 @@
+{
+  "challengeId": "sub.02",
+  "skillId": "sub",
+  "displayNumber": "sub.02",
+  "version": "sub.02-v1",
+  "bundleVersion": "sub.02-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Qualifying customer existence",
+  "brief": "Find customers with qualifying activity without duplicate output.",
+  "instructions": [
+    "Return customer identities with at least one paid order in the UTC 2024 interval. Each identity appears once.",
+    "For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT customer_id,customer_name FROM customers LIMIT 10;",
+  "starterExplanation": "This starter exposes customer_id,customer_name from customers without solving qualifying customer existence.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "EXISTS asks about membership rather than joining every match."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Correlate qualifying orders to the outer customer identity."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Customer 1 has many qualifying orders; customer 10002 has none."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "customer_id",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "customer_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/sub.02/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/sub.02/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/sub.02/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/sub.02/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

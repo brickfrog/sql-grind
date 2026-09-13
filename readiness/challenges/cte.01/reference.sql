@@ -1,0 +1,1 @@
+WITH paid AS (SELECT o.* FROM orders o WHERE o.status = 'paid' AND o.ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND o.ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00') SELECT (SELECT count(*) FROM paid) AS order_count,(SELECT count(DISTINCT customer_id) FROM paid) AS customer_count;

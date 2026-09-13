@@ -1,0 +1,51 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "basics.04",
+    "bundleVersion": "basics.04-bundle-v1",
+    "challengeVersion": "basics.04-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "seed-20240907",
+  "columns": [
+    {
+      "name": "product_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "unit_price",
+      "type": "DECIMAL",
+      "nullable": false,
+      "precision": 38,
+      "scale": 2
+    }
+  ],
+  "complete": true,
+  "rowCount": 5,
+  "rows": [
+    [
+      "101",
+      "999.28"
+    ],
+    [
+      "134",
+      "997.21"
+    ],
+    [
+      "167",
+      "995.14"
+    ],
+    [
+      "200",
+      "993.07"
+    ],
+    [
+      "233",
+      "991.00"
+    ]
+  ]
+}

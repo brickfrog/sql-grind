@@ -1,0 +1,49 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "rec.03",
+    "bundleVersion": "rec.03-bundle-v1",
+    "challengeVersion": "rec.03-v1",
+    "datasetVersion": "graphs-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "graphs",
+  "variantId": "weighted",
+  "columns": [
+    {
+      "name": "node_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "path",
+      "type": "VARCHAR",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 5,
+  "rows": [
+    [
+      "1",
+      "1"
+    ],
+    [
+      "2",
+      "1>2"
+    ],
+    [
+      "3",
+      "1>2>3"
+    ],
+    [
+      "4",
+      "1>2>3>4"
+    ],
+    [
+      "4",
+      "1>2>4"
+    ]
+  ]
+}

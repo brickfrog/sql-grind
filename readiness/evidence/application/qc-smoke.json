@@ -1,0 +1,14 @@
+{
+  "date": "2026-09-13T03:08:33.897Z",
+  "checks": [
+    "Pinned Hint/Submit are visible and unobstructed with the default floating judge at five desktop sizes",
+    "Escape closes hints and reset confirmation; focus returns to the persistent opener",
+    "Title double-click toggles maximize and its accessible state; Execute has a clean name and shortcuts",
+    "Keyboard Execute rejects syntax errors without completion credit",
+    "DDL is rejected without creating a table; Query menu exposes the Execute shortcut",
+    "Qualified CTE wildcard points to the line-five star, not the statement start",
+    "Grading shows specific missing columns, per-dataset expected/actual counts, and familiar SQL types",
+    "Comparison requires a correct answer, exposes visible progress and cancellation, and saves no extra attempt"
+  ],
+  "errors": []
+}

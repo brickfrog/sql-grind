@@ -1,0 +1,7 @@
+{
+  "pass": true,
+  "error": "Content unavailable\nContent error: Integrity check failed for /bundle/challenges/basics.01/challenge.json. Your drafts are retained.\nRetry content\nExport SQL",
+  "draftRetained": true,
+  "retryRestoredEngine": true,
+  "errors": []
+}

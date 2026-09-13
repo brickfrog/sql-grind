@@ -1,0 +1,89 @@
+import { mkdir, readFile, writeFile, copyFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const manifest = JSON.parse(
+  await readFile(resolve(root, "readiness/manifest.json"), "utf8"),
+);
+const assets = [];
+async function install(source, destination, expected) {
+  const bytes =
+    typeof source === "string" ? await readFile(resolve(root, source)) : source;
+  const sha256 = createHash("sha256").update(bytes).digest("hex");
+  if (expected && expected !== sha256)
+    throw new Error(`Pinned asset mismatch: ${destination}`);
+  await mkdir(dirname(resolve(root, "public" + destination)), {
+    recursive: true,
+  });
+  await writeFile(resolve(root, "public" + destination), bytes);
+  assets.push({ path: destination, sha256, bytes: bytes.length });
+}
+for (const asset of manifest.files) {
+  if (
+    typeof asset.path !== "string" ||
+    /[\\?#]/.test(asset.path) ||
+    decodeURIComponent(asset.path) !== asset.path ||
+    !(
+      asset.path.startsWith("../../readiness/") ||
+      asset.path.startsWith("public/") ||
+      asset.path === "package-lock.json"
+    ) ||
+    asset.path
+      .replace("../../readiness/", "")
+      .split("/")
+      .some((part) => part === "." || part === "..")
+  )
+    throw new Error(`Unsafe manifest asset: ${asset.path}`);
+  if (asset.path.startsWith("public/engine/")) {
+    await install(
+      "node_modules/@duckdb/duckdb-wasm/dist/" + asset.path.split("/").at(-1),
+      "/" + asset.path.slice(7),
+      asset.sha256,
+    );
+  } else if (asset.path.startsWith("public/extensions/")) {
+    let bytes;
+    try {
+      bytes = await readFile(resolve(root, asset.path));
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+      const response = await fetch(
+        "https://extensions.duckdb.org/" +
+          asset.path.slice("public/extensions/".length),
+      );
+      if (!response.ok)
+        throw new Error(`Extension download failed: ${response.status}`);
+      bytes = Buffer.from(await response.arrayBuffer());
+    }
+    await install(bytes, "/" + asset.path.slice(7), asset.sha256);
+  } else if (asset.path.startsWith("public/data/")) {
+    await install(
+      asset.path.replace("public/data/", "readiness/data/"),
+      "/" + asset.path.slice(7),
+      asset.sha256,
+    );
+  } else if (asset.path.startsWith("../../readiness/")) {
+    await install(
+      asset.path.replace("../../", ""),
+      "/bundle/" + asset.path.slice("../../readiness/".length),
+      asset.sha256,
+    );
+  }
+}
+await install("readiness/manifest.json", "/bundle/manifest.json");
+await writeFile(
+  resolve(root, "public/bundle/assets.json"),
+  JSON.stringify(
+    { bundleVersion: manifest.bundleVersion, files: assets },
+    null,
+    2,
+  ) + "\n",
+);
+await mkdir(resolve(root, "public/assets"), { recursive: true });
+await copyFile(
+  resolve(root, "claude-design/design_handoff_sql_grind/assets/patchouli.webp"),
+  resolve(root, "public/assets/patchouli.webp"),
+);
+console.log(
+  `Provisioned ${assets.length} verified assets. Runtime requires only the local server, not internet access.`,
+);

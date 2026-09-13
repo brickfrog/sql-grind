@@ -1,0 +1,71 @@
+{
+  "challengeId": "plan.02",
+  "skillId": "plan",
+  "displayNumber": "plan.02",
+  "version": "plan.02-v1",
+  "bundleVersion": "plan.02-bundle-v1",
+  "assessmentVersion": "plan-lab-v1",
+  "title": "Observe filter pushdown",
+  "brief": "Check whether a filter reaches a scan instead of assuming it does.",
+  "instructions": [
+    "Return paid order IDs in the exact UTC interval [2024-01-01, 2025-01-01).",
+    "Express the same filter through a named relation in the secondary query.",
+    "Sort both results by order_id.",
+    "Measure both queries separately.",
+    "Report reported when a scan contains Filters text, or not-reported when it does not.",
+    "Neither optimizer shape is required for completion."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_id, ordered_at, status FROM orders LIMIT 10;\n",
+  "starterExplanation": "The starter shows unfiltered activity. Write both filtered forms before measuring whether the engine reports scan Filters.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Use a filter for the exact UTC reporting interval."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Name the filtered population in the secondary query, then read that relation."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "The upper timestamp is excluded. A correct query can report either presence or absence of scan filter text."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "order_id",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "order_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/plan.02/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/plan.02/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/plan.02/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/plan.02/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "plan-lab",
+    "lab": "pushdown",
+    "secondaryReference": "/bundle/challenges/plan.02/secondary-reference.sql",
+    "secondaryExpected": {
+      "boundary": "/bundle/challenges/plan.02/secondary-expected-boundary.json",
+      "seed-20240907": "/bundle/challenges/plan.02/secondary-expected-seed-20240907.json",
+      "seed-20240908": "/bundle/challenges/plan.02/secondary-expected-seed-20240908.json"
+    },
+    "secondaryStarterSql": "WITH reporting_orders AS (SELECT order_id, status FROM orders) SELECT * FROM reporting_orders LIMIT 10;\n"
+  }
+}

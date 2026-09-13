@@ -1,0 +1,79 @@
+{
+  "challengeId": "dates.05",
+  "skillId": "dates",
+  "displayNumber": "dates.05",
+  "version": "dates.05-v1",
+  "bundleVersion": "dates.05-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Activity islands",
+  "brief": "Find activity islands using a declared maximum gap.",
+  "instructions": [
+    "Use all orders in every status and year. Deduplicate customer/UTC dates. Consecutive active dates at most three days apart belong to one island. Return its endpoints and distinct active-day count.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_id,customer_id,ordered_at FROM orders LIMIT 10;",
+  "starterExplanation": "This starter exposes order_id,customer_id,ordered_at from orders without solving activity islands.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Detect gaps with LAG and use a running group marker."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Deduplicate dates first; mark gaps above three days, then aggregate each cumulative group."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Two June orders share a day and count as one active day."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "customer_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "start_date",
+        "type": "DATE",
+        "nullable": false
+      },
+      {
+        "name": "end_date",
+        "type": "DATE",
+        "nullable": false
+      },
+      {
+        "name": "active_days",
+        "type": "BIGINT",
+        "nullable": false
+      }
+    ],
+    "ordering": [
+      {
+        "column": "customer_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      },
+      {
+        "column": "start_date",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/dates.05/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/dates.05/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/dates.05/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/dates.05/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

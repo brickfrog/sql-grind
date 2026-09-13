@@ -1,0 +1,196 @@
+{
+  "reference": {
+    "fields": [
+      {
+        "name": "mon",
+        "type": "Date32<DAY>"
+      },
+      {
+        "name": "category_id",
+        "type": "Int64"
+      },
+      {
+        "name": "c_name",
+        "type": "Utf8"
+      },
+      {
+        "name": "revenue",
+        "type": "Decimal[38e+2]",
+        "scale": 2,
+        "precision": 38
+      },
+      {
+        "name": "rnk",
+        "type": "Int64"
+      }
+    ],
+    "rows": [
+      [
+        "2024-01-01",
+        "2",
+        "Audio",
+        "100.00",
+        "1"
+      ],
+      [
+        "2024-01-01",
+        "3",
+        "Audio",
+        "100.00",
+        "1"
+      ],
+      [
+        "2024-01-01",
+        "4",
+        "Kitchen",
+        "90.00",
+        "3"
+      ],
+      [
+        "2024-01-01",
+        "5",
+        "Outdoor",
+        "90.00",
+        "3"
+      ],
+      [
+        "2024-02-01",
+        "2",
+        "Audio",
+        "50.00",
+        "1"
+      ],
+      [
+        "2024-02-01",
+        "3",
+        "Audio",
+        "40.00",
+        "2"
+      ],
+      [
+        "2024-02-01",
+        "4",
+        "Kitchen",
+        "40.00",
+        "2"
+      ],
+      [
+        "2024-04-01",
+        "6",
+        "Toys",
+        "0.00",
+        "1"
+      ],
+      [
+        "2024-12-01",
+        "4",
+        "Kitchen",
+        "24.68",
+        "1"
+      ]
+    ],
+    "complete": true
+  },
+  "handAnswerMatches": true,
+  "cases": {
+    "equal": {
+      "pass": true
+    },
+    "missingDuplicate": {
+      "pass": false,
+      "reason": "values"
+    },
+    "nullAsString": {
+      "pass": false,
+      "reason": "values"
+    },
+    "wrongIntegerType": {
+      "pass": false,
+      "reason": "types"
+    },
+    "roundedDecimal": {
+      "pass": false,
+      "reason": "values"
+    },
+    "incomplete": {
+      "pass": false,
+      "reason": "incomplete"
+    },
+    "decimalWidth": {
+      "pass": true
+    },
+    "peerOrder": {
+      "pass": true
+    },
+    "wrongOrder": {
+      "pass": false,
+      "reason": "ordering"
+    }
+  },
+  "authoredContract": {
+    "pass": true
+  },
+  "authoredWrongRankType": {
+    "pass": false,
+    "reason": "types"
+  },
+  "authoredEquivalentDecimalWidth": {
+    "pass": true
+  },
+  "exact": {
+    "fields": [
+      {
+        "name": "id",
+        "type": "Int64"
+      },
+      {
+        "name": "money",
+        "type": "Decimal[38e+2]",
+        "scale": 2,
+        "precision": 38
+      },
+      {
+        "name": "label",
+        "type": "Utf8"
+      },
+      {
+        "name": "day",
+        "type": "Date32<DAY>"
+      }
+    ],
+    "rows": [
+      [
+        "9007199254740993",
+        "-12345678901234567890.12",
+        null,
+        "2024-02-29"
+      ],
+      [
+        "9007199254740993",
+        "-12345678901234567890.12",
+        null,
+        "2024-02-29"
+      ]
+    ],
+    "complete": true
+  },
+  "mutations": {
+    "denseRank": {
+      "pass": false,
+      "reason": "values"
+    },
+    "catalogPrice": {
+      "pass": false,
+      "reason": "values"
+    },
+    "missingYear": {
+      "pass": false,
+      "reason": "values"
+    },
+    "distinctItems": {
+      "pass": false,
+      "reason": "values"
+    }
+  },
+  "pass": true
+}

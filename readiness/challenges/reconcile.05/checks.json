@@ -1,0 +1,24 @@
+{
+  "wrong": [
+    {
+      "sql": "/bundle/challenges/reconcile.05/wrong.sql",
+      "variant": "boundary-v1"
+    },
+    {
+      "sql": "/bundle/challenges/reconcile.05/wrong-all-matched.sql",
+      "variant": "boundary-v1"
+    },
+    {
+      "sql": "/bundle/challenges/reconcile.05/wrong-arbitrary-ties.sql",
+      "variant": "boundary-v1"
+    },
+    {
+      "sql": "/bundle/challenges/reconcile.05/wrong-greedy-reuse.sql",
+      "variant": "boundary-v1"
+    }
+  ],
+  "policies": [
+    "/bundle/challenges/reconcile.05/reference.sql",
+    "/bundle/challenges/reconcile.05/conservative.sql"
+  ]
+}

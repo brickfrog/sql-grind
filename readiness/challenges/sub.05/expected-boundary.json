@@ -1,0 +1,89 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "sub.05",
+    "bundleVersion": "sub.05-bundle-v1",
+    "challengeVersion": "sub.05-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "order_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "latest_payment_status",
+      "type": "VARCHAR",
+      "nullable": true
+    }
+  ],
+  "complete": true,
+  "rowCount": 15,
+  "rows": [
+    [
+      "1",
+      "succeeded"
+    ],
+    [
+      "2",
+      null
+    ],
+    [
+      "3",
+      null
+    ],
+    [
+      "4",
+      null
+    ],
+    [
+      "5",
+      "succeeded"
+    ],
+    [
+      "6",
+      "pending"
+    ],
+    [
+      "7",
+      null
+    ],
+    [
+      "8",
+      null
+    ],
+    [
+      "9",
+      null
+    ],
+    [
+      "10",
+      null
+    ],
+    [
+      "11",
+      null
+    ],
+    [
+      "12",
+      null
+    ],
+    [
+      "10001",
+      null
+    ],
+    [
+      "10002",
+      null
+    ],
+    [
+      "10003",
+      null
+    ]
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "challengeId": "clean.01",
+  "skillId": "clean",
+  "displayNumber": "clean.01",
+  "version": "clean.01-v1",
+  "bundleVersion": "clean.01-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Presentation without identity loss",
+  "brief": "Normalize presentation without merging identities.",
+  "instructions": [
+    "Return each contact identity and lower(trim(name_text)). Keep NULL as NULL and whitespace-only input as empty text. Preserve accents and separate identities.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "workshop",
+  "starterSql": "SELECT contact_id,name_text FROM raw_contacts LIMIT 10;",
+  "starterExplanation": "This starter exposes contact_id,name_text from raw_contacts without solving presentation without identity loss.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Normalize presentation with text functions without grouping identities."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Trim surrounding whitespace, then lowercase each original row."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Ari identities remain separate; Zoë and Zoe must not merge."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "contact_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "normalized_name",
+        "type": "VARCHAR",
+        "nullable": true
+      }
+    ],
+    "ordering": [
+      {
+        "column": "contact_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/clean.01/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/clean.01/expected-boundary.json",
+    "variant": "/bundle/challenges/clean.01/expected-variant.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

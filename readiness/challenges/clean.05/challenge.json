@@ -1,0 +1,73 @@
+{
+  "challengeId": "clean.05",
+  "skillId": "clean",
+  "displayNumber": "clean.05",
+  "version": "clean.05-v1",
+  "bundleVersion": "clean.05-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Declared mixed date formats",
+  "brief": "Parse declared date formats and expose rejected input.",
+  "instructions": [
+    "Accept trimmed YYYY-MM-DD, US MM/DD/YYYY, and DD Mon YYYY in that order. Missing input is missing; failed parsing is invalid with original rejected text; successful parsing is valid. Reject DD/MM/YYYY and impossible dates.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "workshop",
+  "starterSql": "SELECT contact_id,date_text FROM raw_contacts LIMIT 10;",
+  "starterExplanation": "This starter exposes contact_id,date_text from raw_contacts without solving declared mixed date formats.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Use explicit format guards and non-throwing date parsers."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Try the three declared formats in order, preserve the original text, and derive parse state separately."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "02/03/2024 means February 3; 31/12/2024 and February 30 are invalid."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "contact_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "parsed_date",
+        "type": "DATE",
+        "nullable": true
+      },
+      {
+        "name": "parse_state",
+        "type": "VARCHAR",
+        "nullable": false
+      },
+      {
+        "name": "rejected_value",
+        "type": "VARCHAR",
+        "nullable": true
+      }
+    ],
+    "ordering": [
+      {
+        "column": "contact_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/clean.05/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/clean.05/expected-boundary.json",
+    "variant": "/bundle/challenges/clean.05/expected-variant.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

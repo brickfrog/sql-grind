@@ -1,0 +1,46 @@
+{
+  "timeoutFallback": {
+    "cancellation": {
+      "graceExpired": true
+    },
+    "terminatedMs": 1600.5,
+    "recovery": {
+      "ms": 3.399999976158142,
+      "fields": [
+        {
+          "name": "recovered",
+          "type": "Int32"
+        }
+      ],
+      "rows": [
+        {
+          "recovered": 45
+        }
+      ]
+    },
+    "oldQuery": {
+      "unsettledAfterTermination": true
+    }
+  },
+  "fatalWorker": {
+    "cancellation": null,
+    "terminatedMs": 100.19999998807907,
+    "recovery": {
+      "ms": 3.300000011920929,
+      "fields": [
+        {
+          "name": "recovered",
+          "type": "Int32"
+        }
+      ],
+      "rows": [
+        {
+          "recovered": 45
+        }
+      ]
+    },
+    "oldQuery": {
+      "unsettledAfterTermination": true
+    }
+  }
+}

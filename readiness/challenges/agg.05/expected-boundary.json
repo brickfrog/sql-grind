@@ -1,0 +1,54 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "agg.05",
+    "bundleVersion": "agg.05-bundle-v1",
+    "challengeVersion": "agg.05-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "email",
+      "type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "name": "is_total",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "customer_count",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 4,
+  "rows": [
+    [
+      "",
+      "0",
+      "1"
+    ],
+    [
+      "ari@example.invalid",
+      "0",
+      "1"
+    ],
+    [
+      null,
+      "0",
+      "2"
+    ],
+    [
+      null,
+      "1",
+      "4"
+    ]
+  ]
+}

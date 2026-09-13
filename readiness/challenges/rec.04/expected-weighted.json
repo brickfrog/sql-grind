@@ -1,0 +1,87 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "rec.04",
+    "bundleVersion": "rec.04-bundle-v1",
+    "challengeVersion": "rec.04-v1",
+    "datasetVersion": "graphs-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "graphs",
+  "variantId": "weighted",
+  "columns": [
+    {
+      "name": "destination_id",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "path",
+      "type": "VARCHAR",
+      "nullable": false
+    },
+    {
+      "name": "hops",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "total_minutes",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 8,
+  "rows": [
+    [
+      "2",
+      "1>2",
+      "1",
+      "10"
+    ],
+    [
+      "2",
+      "1>3>4>2",
+      "3",
+      "26"
+    ],
+    [
+      "3",
+      "1>3",
+      "1",
+      "15"
+    ],
+    [
+      "4",
+      "1>2>4",
+      "2",
+      "20"
+    ],
+    [
+      "4",
+      "1>3>4",
+      "2",
+      "25"
+    ],
+    [
+      "5",
+      "1>2>4>5",
+      "3",
+      "25"
+    ],
+    [
+      "5",
+      "1>3>4>5",
+      "3",
+      "30"
+    ],
+    [
+      "5",
+      "1>5",
+      "1",
+      "60"
+    ]
+  ]
+}

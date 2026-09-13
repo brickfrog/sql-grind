@@ -1,0 +1,83 @@
+{
+  "challengeId": "joins.05",
+  "skillId": "joins",
+  "displayNumber": "joins.05",
+  "version": "joins.05-v1",
+  "bundleVersion": "joins.05-bundle-v1",
+  "assessmentVersion": "exact-v1",
+  "title": "Quantities and processing totals",
+  "brief": "Reconcile quantities and processing totals at their actual grains.",
+  "instructions": [
+    "Return all orders. Independently sum ordered item quantities, refunded return quantities and amounts, and succeeded payments. Fill missing totals with zero. Processing snapshots are not an accounting balance.",
+    "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
+  ],
+  "datasetId": "commerce-practice",
+  "starterSql": "SELECT order_id,status FROM orders LIMIT 10;",
+  "starterExplanation": "This starter exposes order_id,status from orders without solving quantities and processing totals.",
+  "hints": [
+    {
+      "level": 1,
+      "kind": "concept",
+      "text": "Aggregate each detail source at its own grain before joining."
+    },
+    {
+      "level": 2,
+      "kind": "structure",
+      "text": "Join returns to items only to recover the order identity; separately summarize items and payments."
+    },
+    {
+      "level": 3,
+      "kind": "boundary",
+      "text": "Order 1 has two returns for one item and several payment snapshots."
+    }
+  ],
+  "output": {
+    "columns": [
+      {
+        "name": "order_id",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "ordered_qty",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "refunded_qty",
+        "type": "BIGINT",
+        "nullable": false
+      },
+      {
+        "name": "paid_amount",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      },
+      {
+        "name": "refund_amount",
+        "type": "DECIMAL",
+        "nullable": false,
+        "precision": 38,
+        "scale": 2
+      }
+    ],
+    "ordering": [
+      {
+        "column": "order_id",
+        "direction": "ASC",
+        "nulls": "LAST"
+      }
+    ]
+  },
+  "reference": "/bundle/challenges/joins.05/reference.sql",
+  "expected": {
+    "boundary": "/bundle/challenges/joins.05/expected-boundary.json",
+    "seed-20240907": "/bundle/challenges/joins.05/expected-seed-20240907.json",
+    "seed-20240908": "/bundle/challenges/joins.05/expected-seed-20240908.json"
+  },
+  "assessment": {
+    "kind": "exact"
+  }
+}

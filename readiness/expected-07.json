@@ -1,0 +1,44 @@
+{
+  "formatVersion": "typed-result-v1",
+  "challengeVersion": "challenge-07-v1",
+  "schemaVersion": "commerce-v1",
+  "datasetVersion": "boundary-v1",
+  "referenceVersion": "reference-07-v1",
+  "columns": [
+    {"name": "mon", "type": "DATE", "nullable": false},
+    {"name": "category_id", "type": "BIGINT", "nullable": false},
+    {"name": "c_name", "type": "VARCHAR", "nullable": false},
+    {"name": "revenue", "type": "DECIMAL", "precision": 38, "scale": 2, "nullable": false},
+    {"name": "rnk", "type": "BIGINT", "nullable": false}
+  ],
+  "encoding": {
+    "DATE": "ISO 8601 calendar date string",
+    "BIGINT": "base-10 integer string",
+    "DECIMAL": "base-10 fixed-scale string, no exponent",
+    "VARCHAR": "exact Unicode string",
+    "NULL": "JSON null"
+  },
+  "comparison": {
+    "rows": "duplicate-preserving multiset",
+    "decimalPrecision": "accept any declared precision at scale 2 that represents every expected value",
+    "integerTypes": "exact BIGINT required",
+    "columnNamesAndOrder": "exact",
+    "nullabilityMetadata": "ignored; actual NULL values remain significant",
+    "floatTolerance": null,
+    "ordering": [{"column": "mon", "direction": "ASC"}, {"column": "rnk", "direction": "ASC"}],
+    "peers": "arbitrary order within identical (mon, rnk)"
+  },
+  "complete": true,
+  "rowCount": 9,
+  "rows": [
+    ["2024-01-01", "2", "Audio", "100.00", "1"],
+    ["2024-01-01", "3", "Audio", "100.00", "1"],
+    ["2024-01-01", "4", "Kitchen", "90.00", "3"],
+    ["2024-01-01", "5", "Outdoor", "90.00", "3"],
+    ["2024-02-01", "2", "Audio", "50.00", "1"],
+    ["2024-02-01", "3", "Audio", "40.00", "2"],
+    ["2024-02-01", "4", "Kitchen", "40.00", "2"],
+    ["2024-04-01", "6", "Toys", "0.00", "1"],
+    ["2024-12-01", "4", "Kitchen", "24.68", "1"]
+  ]
+}

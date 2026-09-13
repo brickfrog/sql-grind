@@ -1,0 +1,29 @@
+{
+  "version": "readiness-scope-v1",
+  "decidedBy": "user",
+  "decision": "This site should run local.",
+  "target": "Local browser application served on loopback HTTP",
+  "framework": "Svelte 5 + TypeScript + Vite",
+  "readinessObjective": "Prove contracts and engine feasibility before the application build",
+  "runtimeInternetRequired": false,
+  "initialProvisioning": "Dependency installation and version-matched asset downloads can require internet access. After provisioning, the local server serves all engine, worker, extension, and dataset assets.",
+  "runtimeRequirement": "A fresh browser session must load and run SQL from localhost with all external origins blocked.",
+  "localCommandsDirectory": ".",
+  "supportedEvidence": [
+    "Chromium 153.0.8010.12 on Linux",
+    "Firefox 155.0 on Linux"
+  ],
+  "devicePolicy": "Use the measured small dataset and bounded execution. The 8 GiB desktop target is guidance, not a tested minimum-device guarantee or a local-readiness blocker.",
+  "localEvidence": [
+    "evidence/application/smoke.json",
+    "evidence/application/smoke-firefox.json",
+    "evidence/application/deployment-smoke.json"
+  ],
+  "deferredPublicationConcerns": [
+    "Exact portrait redistribution and crop permission; user accepts the supplied wiki portrait for now and wants to revisit rights later",
+    "Owned public HTTPS hosting and deployed security headers; user chose to keep public deployment blocked",
+    "Additional Safari, mobile, and minimum-device support claims"
+  ],
+  "publicationConcernsBlockLocalReadiness": false,
+  "applicationAlreadyBuilt": true
+}

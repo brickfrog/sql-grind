@@ -1,0 +1,111 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "pivot.03",
+    "bundleVersion": "pivot.03-bundle-v1",
+    "challengeVersion": "pivot.03-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "exact-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "mon",
+      "type": "DATE",
+      "nullable": false
+    },
+    {
+      "name": "damaged",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "wrong_item",
+      "type": "BIGINT",
+      "nullable": false
+    },
+    {
+      "name": "unwanted",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 12,
+  "rows": [
+    [
+      "2024-01-01",
+      "1",
+      "0",
+      "1"
+    ],
+    [
+      "2024-02-01",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "2024-03-01",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "2024-04-01",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "2024-05-01",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "2024-06-01",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "2024-07-01",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "2024-08-01",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "2024-09-01",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "2024-10-01",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "2024-11-01",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "2024-12-01",
+      "0",
+      "0",
+      "0"
+    ]
+  ]
+}

@@ -1,0 +1,1 @@
+WITH tokens AS (SELECT c.contact_id,lower(trim(t.token)) AS tag FROM raw_contacts c CROSS JOIN unnest(string_split(c.tags_text,',')) t(token)) SELECT contact_id,tag FROM tokens WHERE tag<>'' ORDER BY contact_id,tag;

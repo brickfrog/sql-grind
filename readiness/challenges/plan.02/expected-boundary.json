@@ -1,0 +1,51 @@
+{
+  "formatVersion": "typed-result-v1",
+  "identity": {
+    "challengeId": "plan.02",
+    "bundleVersion": "plan.02-bundle-v1",
+    "challengeVersion": "plan.02-v1",
+    "datasetVersion": "commerce-practice-v1",
+    "assessmentVersion": "plan-lab-v1",
+    "engineVersion": "v1.5.4"
+  },
+  "datasetId": "commerce-practice",
+  "variantId": "boundary",
+  "columns": [
+    {
+      "name": "order_id",
+      "type": "BIGINT",
+      "nullable": false
+    }
+  ],
+  "complete": true,
+  "rowCount": 9,
+  "rows": [
+    [
+      "1"
+    ],
+    [
+      "2"
+    ],
+    [
+      "3"
+    ],
+    [
+      "4"
+    ],
+    [
+      "8"
+    ],
+    [
+      "9"
+    ],
+    [
+      "12"
+    ],
+    [
+      "10001"
+    ],
+    [
+      "10002"
+    ]
+  ]
+}
