@@ -395,6 +395,8 @@
   let kataPatternId = $state("");
   let kataVariationId = $state("");
   let kataSql = $state("");
+  /** Whether the open drill was due when it started. Early passes advance nothing. */
+  let kataScheduled = $state(true);
   let kataFeedback = $state("");
   let kataOutcome = $state<"" | "pass" | "miss">("");
   let kataRunning = $state(false);
@@ -2014,10 +2016,11 @@
     if (!variation) return;
     kataPatternId = pattern.patternId;
     kataVariationId = variation.variationId;
+    kataScheduled = !!due;
     kataSql = "";
     kataFeedback = due
       ? ""
-      : "Nothing is due for this pattern, so this repetition does not measure recall. The schedule still advances on a pass.";
+      : "Nothing is due for this pattern. Practise as much as you like: an early pass is recorded but does not advance the streak or the schedule, because spacing is what a streak claims.";
     kataOutcome = "";
     kataElapsedMs = 0;
   }
@@ -2112,6 +2115,7 @@
         variation.variationId,
         pass,
         run.elapsedMs,
+        kataScheduled,
       );
       announce(run.message, pass ? "success" : "error");
     } catch (error) {
@@ -5587,7 +5591,9 @@
             Matched in {Math.round(kataElapsedMs)} ms of engine time. Streak {activeKataRecord?.streak ??
               0}; due again {activeKataRecord
               ? new Date(activeKataRecord.dueAt).toLocaleDateString()
-              : "later"}.
+              : "later"}.{kataScheduled
+              ? ""
+              : " This drill was not due, so the streak and the date are unchanged."}
           </p>{/if}
         <p class="kata-meta">
           Drills record their own schedule only. Nothing here completes a

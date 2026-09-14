@@ -608,9 +608,72 @@ try {
       await article.getByRole("button", { name: "Drill early" }).click();
       await dialog.locator(".kata-prompt").waitFor();
       const notice = await dialog.locator(".kata-feedback").innerText();
-      assert.match(notice, /does not measure recall/);
+      assert.match(notice, /does not advance the streak or the schedule/);
+      // An early pass must record the attempt and move nothing: four clicks in
+      // two minutes cannot be allowed to mark a shape retained.
+      const meta = await dialog.locator(".kata-meta").first().innerText();
+      const drilled = patterns
+        .find((entry) => entry.patternId === "anti-join")
+        .variations.find((entry) => meta.includes(entry.variationId));
+      const before = await page.evaluate(async (variationId) => {
+        const { openPracticeStore } = await import("/src/lib/storage.ts");
+        const store = await openPracticeStore(
+          () => {},
+          () => {},
+        );
+        try {
+          return (await store.load()).katas.records.find(
+            (record) => record.variationId === variationId,
+          );
+        } finally {
+          store.close();
+        }
+      }, drilled.variationId);
+      await dialog.locator(".kata-editor .cm-content").click();
+      await page.keyboard.insertText(drilled.reference);
+      await dialog.getByRole("button", { name: "Check drill" }).click();
+      await page.waitForFunction(
+        () => !!document.querySelector(".kata-feedback.kata-pass"),
+        null,
+        { timeout: 180_000 },
+      );
+      const summary = await dialog.locator(".kata-meta").last().innerText();
+      const after = await page.evaluate(async (variationId) => {
+        const { openPracticeStore } = await import("/src/lib/storage.ts");
+        const store = await openPracticeStore(
+          () => {},
+          () => {},
+        );
+        try {
+          return (await store.load()).katas.records.find(
+            (record) => record.variationId === variationId,
+          );
+        } finally {
+          store.close();
+        }
+      }, drilled.variationId);
+      assert.equal(
+        after.attempts,
+        before.attempts + 1,
+        "an early pass is still recorded",
+      );
+      assert.equal(
+        after.passes,
+        before.passes + 1,
+        "an early pass still counts as a pass",
+      );
+      assert.equal(
+        after.streak,
+        before.streak,
+        "an early pass must not advance the streak",
+      );
+      assert.equal(
+        after.dueAt,
+        before.dueAt,
+        "an early pass must not move the schedule",
+      );
       await dialog.getByRole("button", { name: "Back to patterns" }).click();
-      return { passed, status, notice };
+      return { passed, status, notice, summary, before, after };
     },
   );
 

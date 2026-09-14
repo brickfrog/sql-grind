@@ -506,7 +506,11 @@ Correctness is decided at run time: the authored reference is executed beside th
 
 Because nothing in the content pipeline verifies a drill, the reference is checked against its own contract before the learner's answer is compared. A disagreement is reported as a content error naming the kata, never as an incorrect attempt: a mis-authored contract must not tell a learner that a correct answer is wrong.
 
-Drills carry the only time-based schedule in the application. A pass advances a per-variation streak and schedules the next repetition after 1, 3, 7, then 21 days; the last interval repeats, because a drill returning in a year has been silently dropped. A miss resets the streak and schedules it immediately. Four consecutive passes mark a variation retained. The schedule is stored per device in the settings store, travels in a practice backup, and merges by most recent attempt on import. It never writes an attempt, a document, a hint level, or a completion.
+Drills carry the only time-based schedule in the application. A scheduled pass advances a per-variation streak and schedules the next repetition after 1, 3, 7, then 21 days; the last interval repeats, because a drill returning in a year has been silently dropped. A miss resets the streak and schedules it immediately, whenever it happens: failing is evidence of not knowing regardless of when it was asked. Four consecutive scheduled passes mark a variation retained.
+
+Due-ness recommends rather than gates. Any pattern can be drilled at any time, because passing every drill in one sitting would otherwise leave the surface empty until the next day and read as broken. A pass on a variation that was not due is recorded as an attempt but advances neither the streak nor the date, and the surface says so: spacing is the entire claim a streak makes, so four repetitions in two minutes must not mark a shape retained.
+
+The schedule is stored per device in the settings store, travels in a practice backup, and merges by most recent attempt on import. It never writes an attempt, a document, a hint level, or a completion.
 
 ## Practice Records, accounts, and trust
 

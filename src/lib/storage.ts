@@ -1929,12 +1929,14 @@ export class PracticeStore {
     variationId: string,
     pass: boolean,
     elapsedMs: number,
+    scheduled: boolean,
   ): Promise<KataProgress> {
     text(patternId);
     text(variationId);
     // A wall-clock delta is fractional; recordKataAttempt rounds it before it
     // is stored, and the stored value is re-validated on every load.
     number(elapsedMs, 0, Number.MAX_SAFE_INTEGER, false);
+    bool(scheduled);
     return this.transaction(
       ["meta", "settings"],
       "readwrite",
@@ -1952,6 +1954,7 @@ export class PracticeStore {
           pass,
           elapsedMs,
           Date.now(),
+          scheduled,
         );
         validateKataProgress(next);
         await this.metadata(transaction);

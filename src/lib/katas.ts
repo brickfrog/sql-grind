@@ -90,6 +90,12 @@ export function findKataRecord(
  * Folds one graded attempt into the schedule. Pure: the caller persists the
  * returned progress, so a failed write cannot leave the schedule ahead of
  * storage.
+ *
+ * `scheduled` is false when the learner drilled a variation that was not due.
+ * Such a pass is recorded but advances nothing: spacing is the whole claim a
+ * streak makes, so four clicks in two minutes must not mark a shape retained.
+ * A miss still resets, whenever it happens — failing is evidence of not
+ * knowing regardless of when it was asked.
  */
 export function recordKataAttempt(
   progress: KataProgress,
@@ -98,11 +104,19 @@ export function recordKataAttempt(
   pass: boolean,
   elapsedMs: number,
   now: number,
+  scheduled = true,
 ): KataProgress {
   const previous = findKataRecord(progress, patternId, variationId);
-  const streak = pass ? (previous?.streak ?? 0) + 1 : 0;
+  const early = pass && !scheduled;
+  const streak = early
+    ? (previous?.streak ?? 0)
+    : pass
+      ? (previous?.streak ?? 0) + 1
+      : 0;
   const interval =
-    KATA_INTERVALS_MS[Math.min(streak, KATA_INTERVALS_MS.length) - 1];
+    KATA_INTERVALS_MS[
+      Math.min(Math.max(streak, 1), KATA_INTERVALS_MS.length) - 1
+    ];
   const next: KataRecord = {
     patternId,
     variationId,
@@ -112,7 +126,11 @@ export function recordKataAttempt(
     lastOutcome: pass ? "pass" : "miss",
     lastElapsedMs: Math.max(0, Math.round(elapsedMs)),
     lastAt: now,
-    dueAt: pass ? now + interval : now,
+    dueAt: early
+      ? (previous?.dueAt ?? now + interval)
+      : pass
+        ? now + interval
+        : now,
   };
   return {
     records: [
