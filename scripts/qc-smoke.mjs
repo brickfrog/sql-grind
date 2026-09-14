@@ -592,6 +592,17 @@ try {
     chosen > splits[1],
     `a Down step grows the editor and is kept: ${splits[1]} then ${chosen}`,
   );
+  // The point of storing it is that it outlives the session, and a reload is
+  // the only thing that proves the key was not written and then dropped by a
+  // later layout write.
+  await page.setViewportSize({ width: 1440, height: 700 });
+  await page.reload();
+  await ready();
+  assert.equal(
+    await stored(),
+    chosen,
+    "the stored height survives a reload into a different window size",
+  );
   mark(
     "Editor/results split derives from the window until the learner chooses",
   );

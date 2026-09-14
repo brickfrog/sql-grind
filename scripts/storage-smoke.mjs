@@ -533,6 +533,75 @@ try {
   );
   assert.deepEqual(historyCase.cleared, []);
   record(currentCase, historyCase);
+
+  currentCase = "a layout stores a chosen editor height or omits it entirely";
+  const layoutCase = await evaluate(page, async () => {
+    const h = storageSmoke;
+    const layout = {
+      showExplorer: true,
+      showGoal: true,
+      goalCollapsed: false,
+      judgeX: null,
+      judgeY: null,
+      selectedSkill: "basics",
+      explorerWidth: 240,
+    };
+    // Chosen: the height is a preference and round-trips.
+    await h.store.saveSettings({
+      ...h.preferences,
+      layout: { ...layout, editorHeight: 260 },
+    });
+    const chosen = (await h.store.load()).settings.layout;
+    // Untouched: the key is absent, so every load re-derives from the window.
+    await h.store.saveSettings({ ...h.preferences, layout });
+    const derived = (await h.store.load()).settings.layout;
+    let rejected = "";
+    try {
+      await h.store.saveSettings({
+        ...h.preferences,
+        layout: { ...layout, editorHeight: 9000 },
+      });
+    } catch (error) {
+      rejected = String(error.message);
+    }
+    const result = {
+      chosenHeight: chosen.editorHeight,
+      chosenWidth: chosen.explorerWidth,
+      derivedHasHeight: Object.hasOwn(derived, "editorHeight"),
+      derivedWidth: derived.explorerWidth,
+      rejected,
+      stillDerived: Object.hasOwn(
+        (await h.store.load()).settings.layout,
+        "editorHeight",
+      ),
+    };
+    // Later cases assert on this row, so leave it exactly as it was found.
+    await h.store.saveSettings(h.preferences);
+    return result;
+  });
+  assert.equal(layoutCase.chosenHeight, 260);
+  assert.equal(
+    layoutCase.chosenWidth,
+    240,
+    "an omitted height does not disturb the other layout fields",
+  );
+  assert.equal(
+    layoutCase.derivedHasHeight,
+    false,
+    "a layout without a chosen height stores no height at all",
+  );
+  assert.equal(layoutCase.derivedWidth, 240);
+  assert.match(
+    layoutCase.rejected,
+    /outside its supported range/,
+    "a present height is still range-checked",
+  );
+  assert.equal(
+    layoutCase.stillDerived,
+    false,
+    "the rejected save leaves the stored layout untouched",
+  );
+  record(currentCase, layoutCase);
   // Close all module instances, then actually reload the page and module.
   await evaluate(page, () => storageSmoke.closeStores());
   await page.reload({ waitUntil: "domcontentloaded" });
