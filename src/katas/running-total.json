@@ -1,0 +1,63 @@
+{
+  "patternId": "running-total",
+  "title": "Running totals and explicit frames",
+  "skillId": "window",
+  "why": "A window aggregate keeps every row while adding a total across a frame, which a GROUP BY cannot do. The trap is the default frame: an ORDER BY inside OVER silently means RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, and peer rows sharing a sort key all receive the same cumulative value. Drill the explicit frame so the reflex is to state what you meant. Timestamps are truncated to DATE first, which is itself the reflex being drilled: grouping a TIMESTAMPTZ by its raw value gives one group per microsecond.",
+  "datasetId": "commerce-practice",
+  "variations": [
+    {
+      "variationId": "daily-orders-running-total",
+      "prompt": "By order day, give order_day as a DATE, orders_that_day, and running_orders as the cumulative count through that day, ordered by order_day ascending. State the frame explicitly.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT order_day, orders_that_day, sum(orders_that_day) OVER (ORDER BY order_day ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)::BIGINT AS running_orders FROM (SELECT ordered_at::DATE AS order_day, count(*)::BIGINT AS orders_that_day FROM orders GROUP BY ordered_at::DATE) daily ORDER BY order_day",
+      "output": {
+        "columns": [
+          { "name": "order_day", "type": "DATE", "nullable": false },
+          { "name": "orders_that_day", "type": "BIGINT", "nullable": false },
+          { "name": "running_orders", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "order_day", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "customer-order-sequence",
+      "prompt": "For the ten lowest customer_ids that have orders, number each customer's orders in time order: customer_id, order_id, and sequence starting at 1 per customer. Order by customer_id then sequence, both ascending. Break timestamp ties on the smaller order_id.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT customer_id, order_id, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY ordered_at ASC, order_id ASC)::BIGINT AS sequence FROM orders WHERE customer_id IN (SELECT DISTINCT customer_id FROM orders ORDER BY customer_id LIMIT 10) ORDER BY customer_id ASC, sequence ASC",
+      "output": {
+        "columns": [
+          { "name": "customer_id", "type": "BIGINT", "nullable": false },
+          { "name": "order_id", "type": "BIGINT", "nullable": false },
+          { "name": "sequence", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "customer_id", "direction": "ASC", "nulls": "LAST" },
+          { "column": "sequence", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "cumulative-revenue-by-day",
+      "prompt": "By payment day, using succeeded payments only, give pay_day as a DATE and cumulative_amount as DECIMAL(18,2) summed through that day, ordered by pay_day ascending.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT pay_day, sum(day_amount) OVER (ORDER BY pay_day ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)::DECIMAL(18,2) AS cumulative_amount FROM (SELECT paid_at::DATE AS pay_day, sum(amount)::DECIMAL(18,2) AS day_amount FROM payments WHERE status = 'succeeded' GROUP BY paid_at::DATE) daily ORDER BY pay_day",
+      "output": {
+        "columns": [
+          { "name": "pay_day", "type": "DATE", "nullable": false },
+          {
+            "name": "cumulative_amount",
+            "type": "DECIMAL",
+            "nullable": false,
+            "precision": 18,
+            "scale": 2
+          }
+        ],
+        "ordering": [
+          { "column": "pay_day", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    }
+  ]
+}

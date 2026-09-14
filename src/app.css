@@ -1704,6 +1704,41 @@ small,
   margin-right: 4px;
   margin-bottom: 3px;
 }
+.kata-prompt {
+  margin: 0 0 6px;
+  padding: 7px 8px;
+  background: #fff;
+  border: 1px solid #808080;
+  font-weight: bold;
+  max-width: 72ch;
+}
+.kata-meta {
+  margin: 4px 0;
+  font-size: 11px;
+  color: #303030;
+  max-width: 72ch;
+}
+.kata-editor {
+  height: 190px;
+  border: 1px solid #808080;
+  margin-bottom: 6px;
+}
+.kata-editor > div {
+  height: 100%;
+}
+.kata-feedback {
+  margin: 6px 0 0;
+  padding: 6px 8px;
+  border: 1px solid #808080;
+  background: #fff;
+  max-width: 72ch;
+}
+.kata-feedback.kata-pass {
+  border-left: 4px solid #006400;
+}
+.kata-feedback.kata-miss {
+  border-left: 4px solid #a00;
+}
 .settings-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

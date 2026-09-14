@@ -7,6 +7,7 @@
   - button "DuckDB Docs — opens in a new tab": DuckDB Docs
   - button "Schema Reference"
   - button "Skill Map"
+  - button "Katas"
   - button "Practice Records"
   - button "Recycle Bin"
 - main "SQL Grind workbench":
@@ -149,4 +150,4 @@
   - button "Patchouli — reading"
   - 'button "SQL engine: initializing"'
   - 'button "Patchouli: hidden"'
-  - time: 08:56 PM
+  - time: 12:05 AM

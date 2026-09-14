@@ -1,0 +1,61 @@
+{
+  "patternId": "outer-join-keep",
+  "title": "Keep every row on one side",
+  "skillId": "joins",
+  "why": "An inner join answers \"what matched\"; a report usually needs \"every customer, matched or not, with zero where nothing matched\". Two traps follow: a condition on the right table belongs in ON, because moving it to WHERE turns the outer join back into an inner one, and sum() over no rows is NULL rather than 0. Drill the shape with COALESCE until both are habit.",
+  "datasetId": "commerce-practice",
+  "variations": [
+    {
+      "variationId": "orders-per-customer-with-zero",
+      "prompt": "For the twenty lowest customer_ids, give customer_id and orders, counting zero for customers with no orders. Order by customer_id ascending.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT c.customer_id, count(o.order_id)::BIGINT AS orders FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE c.customer_id <= 20 GROUP BY c.customer_id ORDER BY c.customer_id",
+      "output": {
+        "columns": [
+          { "name": "customer_id", "type": "BIGINT", "nullable": false },
+          { "name": "orders", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "customer_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "refunds-with-zero",
+      "prompt": "For each of the twenty lowest order_item_ids, give order_item_id and refunded_amount as DECIMAL(18,2), summing only refunded returns and reporting 0.00 where there are none. Order by order_item_id ascending. A condition on the returns side belongs in ON.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT i.order_item_id, COALESCE(sum(r.refund_amount), 0)::DECIMAL(18,2) AS refunded_amount FROM order_items i LEFT JOIN returns r ON r.order_item_id = i.order_item_id AND r.status = 'refunded' WHERE i.order_item_id <= 20 GROUP BY i.order_item_id ORDER BY i.order_item_id",
+      "output": {
+        "columns": [
+          { "name": "order_item_id", "type": "BIGINT", "nullable": false },
+          {
+            "name": "refunded_amount",
+            "type": "DECIMAL",
+            "nullable": false,
+            "precision": 18,
+            "scale": 2
+          }
+        ],
+        "ordering": [
+          { "column": "order_item_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "warehouse-route-names",
+      "prompt": "List every warehouse with the name of the warehouse it routes to: warehouse_id, warehouse_name, and route_to_name, which is NULL for a warehouse that routes nowhere. Order by warehouse_id ascending.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT w.warehouse_id, w.warehouse_name, r.warehouse_name AS route_to_name FROM warehouses w LEFT JOIN warehouses r ON r.warehouse_id = w.route_to_warehouse_id ORDER BY w.warehouse_id",
+      "output": {
+        "columns": [
+          { "name": "warehouse_id", "type": "BIGINT", "nullable": false },
+          { "name": "warehouse_name", "type": "VARCHAR", "nullable": false },
+          { "name": "route_to_name", "type": "VARCHAR", "nullable": true }
+        ],
+        "ordering": [
+          { "column": "warehouse_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    }
+  ]
+}

@@ -48,6 +48,16 @@
     type SqlSlot,
   } from "./lib/engine-labs";
   import ReconciliationAssessment from "./components/ReconciliationAssessment.svelte";
+  import { kataPatterns } from "./lib/kata-content";
+  import {
+    emptyKataProgress,
+    findKataRecord,
+    kataStatus,
+    nextKataVariation,
+    KATA_RETAINED_STREAK,
+    type KataProgress,
+  } from "./lib/katas";
+  import type { KataPattern } from "./lib/challenges";
 
   type StatusTone = "neutral" | "working" | "success" | "error";
 
@@ -381,6 +391,43 @@
         "recovering",
       ].includes(engineState),
   );
+  let kataProgress = $state<KataProgress>(emptyKataProgress());
+  let kataPatternId = $state("");
+  let kataVariationId = $state("");
+  let kataSql = $state("");
+  let kataFeedback = $state("");
+  let kataOutcome = $state<"" | "pass" | "miss">("");
+  let kataRunning = $state(false);
+  let kataElapsedMs = $state(0);
+  // Read once when the surface opens. A drill schedule that re-evaluated on
+  // every keystroke would make a variation vanish mid-attempt as it came due.
+  let kataNow = $state(Date.now());
+  const activeKataPattern = $derived(
+    kataPatterns.find((pattern) => pattern.patternId === kataPatternId) ?? null,
+  );
+  const activeKataVariation = $derived(
+    activeKataPattern?.variations.find(
+      (variation) => variation.variationId === kataVariationId,
+    ) ?? null,
+  );
+  const kataStatuses = $derived(
+    kataPatterns.map((pattern) => ({
+      pattern,
+      status: kataStatus(pattern, kataProgress, kataNow),
+    })),
+  );
+  const kataDueTotal = $derived(
+    kataStatuses.reduce((total, entry) => total + entry.status.due, 0),
+  );
+  const activeKataRecord = $derived(
+    activeKataPattern && activeKataVariation
+      ? (findKataRecord(
+          kataProgress,
+          activeKataPattern.patternId,
+          activeKataVariation.variationId,
+        ) ?? null)
+      : null,
+  );
   const currentDiagnostics = $derived(
     diagnostics.filter((d) => d.revision === activeDoc?.revision),
   );
@@ -617,6 +664,7 @@
       "Current Skill",
       "Open Next Challenge",
       "-",
+      "Katas",
       "Practice Records",
     ],
     Tools: [
@@ -659,6 +707,7 @@
     { name: "DuckDB Docs", icon: "globeDesktop" },
     { name: "Schema Reference", icon: "documentDesktop" },
     { name: "Skill Map", icon: "map" },
+    { name: "Katas", icon: "play" },
     { name: "Practice Records", icon: "trophy" },
     { name: "Recycle Bin", icon: "bin" },
   ];
@@ -1015,6 +1064,7 @@
     openedSkillIds = profile.session.openedSkillIds;
     exploredSkillIds = profile.session.exploredSkillIds ?? [];
     history = profile.session.history ?? [];
+    kataProgress = profile.katas;
     if (!preserveCurrent) {
       settings = { ...defaultSettings, ...profile.settings };
       showExplorer = settings.layout?.showExplorer ?? true;
@@ -1934,6 +1984,133 @@
       if (old?.isConnected && old !== document.body) old.focus();
       else document.getElementById("menu-" + focusedMenu)?.focus();
     });
+  }
+  function openKatas() {
+    kataNow = Date.now();
+    kataFeedback = "";
+    kataOutcome = "";
+    kataPatternId = "";
+    kataVariationId = "";
+    showModal("katas", "Katas — repetition drills");
+  }
+  function startKata(pattern: KataPattern) {
+    kataNow = Date.now();
+    const variation = nextKataVariation(pattern, kataProgress, kataNow);
+    if (!variation) {
+      kataFeedback = `Every ${pattern.title} drill is scheduled ahead. Practising early would not measure recall, so nothing is due.`;
+      kataOutcome = "";
+      return;
+    }
+    kataPatternId = pattern.patternId;
+    kataVariationId = variation.variationId;
+    kataSql = "";
+    kataFeedback = "";
+    kataOutcome = "";
+    kataElapsedMs = 0;
+  }
+  function closeKata() {
+    kataPatternId = "";
+    kataVariationId = "";
+    kataFeedback = "";
+    kataOutcome = "";
+    kataNow = Date.now();
+  }
+  /**
+   * Waits for the engine to stop holding an operation. engineState returning
+   * to "ready" is the observable end of a prepare or metadata read; a bounded
+   * wait keeps a stuck engine from hanging the drill surface silently.
+   */
+  async function settleEngine(timeoutMs = 30_000) {
+    const deadline = Date.now() + timeoutMs;
+    while (
+      Date.now() < deadline &&
+      (contentLoading || !["ready", "error"].includes(engineState))
+    )
+      await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  /**
+   * Grades one drill. A kata never writes challenge progression: its only
+   * persistent effect is its own repetition schedule, so a drill can neither
+   * award nor revoke a completion.
+   */
+  async function checkKata() {
+    const pattern = activeKataPattern,
+      variation = activeKataVariation;
+    if (
+      !pattern ||
+      !variation ||
+      !catalog ||
+      busy ||
+      kataRunning ||
+      !storageReady
+    )
+      return;
+    if (!kataSql.trim()) {
+      kataFeedback = "Write a query first.";
+      kataOutcome = "";
+      return;
+    }
+    kataRunning = true;
+    kataFeedback = "";
+    announce(`Checking ${pattern.title} drill…`, "working");
+    // The engine is configured by the document-prepare path, for the active
+    // document's dataset. When a drill names that same dataset — the common
+    // case — reconfiguring would reset the ready state underneath an
+    // in-flight prepare, whose metadata read then holds the engine and
+    // refuses this run. So only configure when the selection is actually
+    // wrong, and wait for the engine to go idle first.
+    const documentDataset = activeDoc?.datasetId ?? "";
+    const configured =
+      !!preparedDocumentId && documentDataset === pattern.datasetId;
+    try {
+      if (!configured) {
+        await settleEngine();
+        await engine.configure(catalog, pattern.datasetId);
+      }
+      const run = await engine.run({
+        id: crypto.randomUUID(),
+        documentId: `kata:${pattern.patternId}/${variation.variationId}`,
+        revision: 0,
+        sql: kataSql,
+        kind: "kata",
+        domain: "challenge",
+        hintLevel: 0,
+        challenge: null,
+        datasetId: pattern.datasetId,
+        kata: {
+          patternId: pattern.patternId,
+          variationId: variation.variationId,
+          variantId: variation.variantId,
+          reference: variation.reference,
+          output: variation.output,
+        },
+      });
+      kataFeedback = run.message;
+      if (run.outcome !== "complete") {
+        kataOutcome = "";
+        announce(run.message, "error");
+        return;
+      }
+      const pass = run.correctness === "correct";
+      kataOutcome = pass ? "pass" : "miss";
+      kataElapsedMs = run.elapsedMs;
+      kataProgress = await store.recordKata(
+        pattern.patternId,
+        variation.variationId,
+        pass,
+        run.elapsedMs,
+      );
+      announce(run.message, pass ? "success" : "error");
+    } catch (error) {
+      kataOutcome = "";
+      kataFeedback = String((error as Error).message ?? error);
+      announce(kataFeedback, "error");
+    } finally {
+      kataRunning = false;
+      // Only a reconfigure discarded the workbench's dataset selection, so
+      // only then is there anything to hand back.
+      if (!configured && documentDataset) await prepareDocument();
+    }
   }
   function confirmAction(title: string, text: string): Promise<boolean> {
     modalText = text;
@@ -3035,6 +3212,9 @@
           break;
         case "Practice Records":
           showModal("records", "Practice Records — this device");
+          break;
+        case "Katas":
+          openKatas();
           break;
         case "Hint":
           if (completed || hints === 3)
@@ -5346,6 +5526,91 @@
         >{/if}{#if !hints}<p>
           No hints were revealed for this challenge. Nothing here was withheld.
         </p>{/if}
+    {:else if modal === "katas"}{#if activeKataPattern && activeKataVariation}<p
+          class="kata-prompt"
+        >
+          {activeKataVariation.prompt}
+        </p>
+        <p class="kata-meta">
+          {activeKataPattern.title} · variation {activeKataVariation.variationId}
+          · dataset {activeKataPattern.datasetId} ({activeKataVariation.variantId})
+        </p>
+        <div class="kata-editor">
+          <SqlEditor
+            id="kata"
+            documentName={`${activeKataPattern.patternId}/${activeKataVariation.variationId}`}
+            value={kataSql}
+            revision={0}
+            selection={{ anchor: 0, head: 0 }}
+            scrollTop={0}
+            diagnostics={[]}
+            fontSize={settings.fontSize}
+            indentation={settings.indentation}
+            wordWrap={settings.wordWrap}
+            {completionSchema}
+            onchange={(value) => (kataSql = value)}
+            onrun={() => void checkKata()}
+            onsave={() => {}}
+          />
+        </div>
+        <div class="library-tools">
+          <button
+            onclick={() => void checkKata()}
+            disabled={kataRunning || busy || !storageReady}
+            >{kataRunning ? "Checking…" : "Check drill"}</button
+          ><button onclick={() => closeKata()}>Back to patterns</button
+          >{#if kataOutcome === "pass"}<button
+              onclick={() => startKata(activeKataPattern!)}>Next drill</button
+            >{/if}
+        </div>
+        {#if kataFeedback}<p
+            class="kata-feedback"
+            class:kata-pass={kataOutcome === "pass"}
+            class:kata-miss={kataOutcome === "miss"}
+          >
+            {kataFeedback}
+          </p>{/if}
+        {#if kataOutcome === "pass"}<p class="kata-meta">
+            Matched in {Math.round(kataElapsedMs)} ms of engine time. Streak {activeKataRecord?.streak ??
+              0}; due again {activeKataRecord
+              ? new Date(activeKataRecord.dueAt).toLocaleDateString()
+              : "later"}.
+          </p>{/if}
+        <p class="kata-meta">
+          Drills record their own schedule only. Nothing here completes a
+          challenge or changes the skill map.
+        </p>
+      {:else}<p>
+          Katas are short repetition drills. They are graded against an authored
+          reference at run time, and they never award or revoke challenge
+          completion — the skill map is unaffected by anything you do here.
+        </p>
+        <p>
+          {formatCount(kataDueTotal, "drill")} due now across {formatCount(
+            kataPatterns.length,
+            "pattern",
+          )}.
+        </p>
+        <div class="library-list">
+          {#each kataStatuses as entry}<article>
+              <h3>{entry.pattern.title}</h3>
+              <p class="kata-meta">
+                {entry.status.due} of {entry.status.total} due · {entry.status
+                  .retained} retained ({KATA_RETAINED_STREAK} clean passes){#if entry.status.due === 0 && entry.status.nextDueAt}{" "}·
+                  next {new Date(
+                    entry.status.nextDueAt,
+                  ).toLocaleDateString()}{/if}
+              </p>
+              <p>{entry.pattern.why}</p>
+              <button
+                onclick={() => startKata(entry.pattern)}
+                disabled={!storageReady}
+                >{entry.status.due ? "Start drill" : "Nothing due"}</button
+              >
+            </article>{/each}
+        </div>
+        {#if kataFeedback}<p class="kata-feedback">{kataFeedback}</p>{/if}
+      {/if}
     {:else if modal === "records"}<p>
         These practice records belong to this browser. They are not verified
         public rankings.

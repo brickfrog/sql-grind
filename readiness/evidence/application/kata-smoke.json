@@ -1,0 +1,497 @@
+{
+  "suite": "kata-smoke",
+  "appURL": "http://127.0.0.1:5176/",
+  "startedAt": "2026-09-14T03:57:37.010Z",
+  "finishedAt": "2026-09-14T03:59:54.898Z",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "every authored kata pattern validates and is unique",
+      "outcome": "pass",
+      "wallMs": 0.13193999999998596,
+      "details": {
+        "patterns": [
+          "anti-join",
+          "dedupe-by-key",
+          "group-having",
+          "null-logic",
+          "outer-join-keep",
+          "running-total",
+          "top-n-per-group"
+        ],
+        "variations": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      }
+    },
+    {
+      "name": "every kata skill id names a real curriculum skill and dataset variant",
+      "outcome": "pass",
+      "wallMs": 116.12056500000006,
+      "details": {
+        "commerce-practice": {
+          "previewVariant": "seed-20240907",
+          "variants": [
+            "boundary",
+            "seed-20240907",
+            "seed-20240908"
+          ]
+        }
+      }
+    },
+    {
+      "name": "anti-join/customers-without-orders: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 6544.027549,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 1,
+        "columns": [
+          "customer_id",
+          "customer_name"
+        ]
+      }
+    },
+    {
+      "name": "anti-join/products-never-ordered: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4250.282509,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 2,
+        "columns": [
+          "product_id",
+          "product_name"
+        ]
+      }
+    },
+    {
+      "name": "anti-join/orders-without-succeeded-payment: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4399.329664999999,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 545,
+        "columns": [
+          "order_id"
+        ]
+      }
+    },
+    {
+      "name": "dedupe-by-key/latest-order-per-customer: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4286.319354000001,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 501,
+        "columns": [
+          "customer_id",
+          "order_id"
+        ]
+      }
+    },
+    {
+      "name": "dedupe-by-key/dearest-item-per-order: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4396.174443,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 2002,
+        "columns": [
+          "order_id",
+          "order_item_id"
+        ]
+      }
+    },
+    {
+      "name": "dedupe-by-key/first-payment-per-order: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4410.7934730000015,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 2000,
+        "columns": [
+          "order_id",
+          "payment_id"
+        ]
+      }
+    },
+    {
+      "name": "group-having/products-with-many-bulk-lines: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4255.197429,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 192,
+        "columns": [
+          "product_id",
+          "bulk_lines"
+        ]
+      }
+    },
+    {
+      "name": "group-having/paid-revenue-by-status: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4333.406838000003,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 3,
+        "columns": [
+          "status",
+          "revenue"
+        ]
+      }
+    },
+    {
+      "name": "group-having/categories-with-active-products: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4222.459812000001,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 6,
+        "columns": [
+          "category_id",
+          "active_products"
+        ]
+      }
+    },
+    {
+      "name": "null-logic/email-three-way-split: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4314.775616999999,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 3,
+        "columns": [
+          "bucket",
+          "customers"
+        ]
+      }
+    },
+    {
+      "name": "null-logic/count-star-versus-column: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4271.040995000003,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 1,
+        "columns": [
+          "total_rows",
+          "with_email"
+        ]
+      }
+    },
+    {
+      "name": "null-logic/unpaid-payments: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4452.409124999998,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 600,
+        "columns": [
+          "payment_id"
+        ]
+      }
+    },
+    {
+      "name": "outer-join-keep/orders-per-customer-with-zero: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4481.161189999999,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 20,
+        "columns": [
+          "customer_id",
+          "orders"
+        ]
+      }
+    },
+    {
+      "name": "outer-join-keep/refunds-with-zero: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4259.527025999996,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 20,
+        "columns": [
+          "order_item_id",
+          "refunded_amount"
+        ]
+      }
+    },
+    {
+      "name": "outer-join-keep/warehouse-route-names: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4321.884214000005,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 14,
+        "columns": [
+          "warehouse_id",
+          "warehouse_name",
+          "route_to_name"
+        ]
+      }
+    },
+    {
+      "name": "running-total/daily-orders-running-total: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4297.34362,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 427,
+        "columns": [
+          "order_day",
+          "orders_that_day",
+          "running_orders"
+        ]
+      }
+    },
+    {
+      "name": "running-total/customer-order-sequence: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4535.456609000001,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 42,
+        "columns": [
+          "customer_id",
+          "order_id",
+          "sequence"
+        ]
+      }
+    },
+    {
+      "name": "running-total/cumulative-revenue-by-day: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4304.026648999992,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 427,
+        "columns": [
+          "pay_day",
+          "cumulative_amount"
+        ]
+      }
+    },
+    {
+      "name": "top-n-per-group/dearest-products-per-category: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4441.62282199999,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 6,
+        "columns": [
+          "category_id",
+          "product_id",
+          "unit_price"
+        ]
+      }
+    },
+    {
+      "name": "top-n-per-group/busiest-warehouses: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4259.535342999996,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 3,
+        "columns": [
+          "warehouse_id",
+          "orders"
+        ]
+      }
+    },
+    {
+      "name": "top-n-per-group/two-largest-lines-per-order: reference agrees with its own contract",
+      "outcome": "pass",
+      "wallMs": 4213.074538999994,
+      "details": {
+        "outcome": "complete",
+        "correctness": "correct",
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "rows": 20,
+        "columns": [
+          "order_id",
+          "order_item_id",
+          "qty"
+        ]
+      }
+    },
+    {
+      "name": "a wrong answer is graded incorrect, not accepted",
+      "outcome": "pass",
+      "wallMs": 4335.794435000003,
+      "details": {
+        "outcome": "complete",
+        "correctness": "incorrect",
+        "message": "Expected 1 rows, received 502. Duplicate rows count separately.",
+        "rows": 502,
+        "columns": [
+          "customer_id",
+          "customer_name"
+        ]
+      }
+    },
+    {
+      "name": "an inner join cannot fake an anti-join, and NOT IN with NULLs is caught",
+      "outcome": "pass",
+      "wallMs": 8614.526741000009,
+      "details": {
+        "inner": "Expected 1 rows, received 2003. Duplicate rows count separately.",
+        "wrongColumns": "Expected 2 columns, received 1. Missing columns: \"customer_name\"."
+      }
+    },
+    {
+      "name": "required ordering is enforced only where the contract names it",
+      "outcome": "pass",
+      "wallMs": 8831.121690999993,
+      "details": {
+        "reversed": "Rows 1 and 2 violate the declared ordering. Rows with equal ordering keys can appear in any order.",
+        "unordered": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering."
+      }
+    },
+    {
+      "name": "both classes of mis-authored contract report a content error, never an incorrect answer",
+      "outcome": "pass",
+      "wallMs": 6744.946729000003,
+      "details": {
+        "wrongColumns": {
+          "outcome": "engine-error",
+          "correctness": "not-evaluated",
+          "message": "Content error: Kata anti-join/customers-without-orders reference disagrees with its own contract: The authored expected result is invalid: expected columns do not match the output contract.",
+          "rows": null
+        },
+        "wrongOrdering": {
+          "outcome": "engine-error",
+          "correctness": "not-evaluated",
+          "message": "Content error: Kata anti-join/orders-without-succeeded-payment reference disagrees with its own contract: The authored expected result is invalid: rows 1 and 2 violate the declared ordering.",
+          "rows": null
+        }
+      }
+    },
+    {
+      "name": "a kata target on a non-kata run is refused",
+      "outcome": "pass",
+      "wallMs": 1.448422000001301,
+      "details": {
+        "outcome": "engine-error",
+        "message": "A kata target belongs to a kata run."
+      }
+    },
+    {
+      "name": "the desktop icon opens the drill list with a due count",
+      "outcome": "pass",
+      "wallMs": 388.5779809999949,
+      "details": {
+        "due": "21 drills due now across 7 patterns.",
+        "articles": 7
+      }
+    },
+    {
+      "name": "a passing drill advances the schedule and survives a reload",
+      "outcome": "pass",
+      "wallMs": 7766.395092999999,
+      "details": {
+        "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
+        "record": {
+          "patternId": "anti-join",
+          "variationId": "customers-without-orders",
+          "streak": 1,
+          "attempts": 1,
+          "passes": 1,
+          "lastOutcome": "pass",
+          "lastElapsedMs": 3,
+          "lastAt": 1789358386980,
+          "dueAt": 1789444786980
+        },
+        "due": "20 drills due now across 7 patterns.",
+        "antiJoin": "2 of 3 due · 0 retained (4 clean passes)"
+      }
+    },
+    {
+      "name": "a missed drill returns immediately",
+      "outcome": "pass",
+      "wallMs": 7258.030184000003,
+      "details": {
+        "message": "Expected 2 columns, received 1. Missing columns: \"bucket\", \"customers\". Unexpected columns: \"wrong\".",
+        "record": {
+          "patternId": "null-logic",
+          "variationId": "email-three-way-split",
+          "streak": 0,
+          "attempts": 1,
+          "passes": 0,
+          "lastOutcome": "miss",
+          "lastElapsedMs": 2,
+          "lastAt": 1789358394857,
+          "dueAt": 1789358394857
+        }
+      }
+    },
+    {
+      "name": "drills never touch challenge progression or the skill map",
+      "outcome": "pass",
+      "wallMs": 1.7194730000046548,
+      "details": {
+        "attempts": 0,
+        "kataDocuments": 0,
+        "completed": 0,
+        "katas": 2
+      }
+    },
+    {
+      "name": "the drill schedule survives a backup round trip",
+      "outcome": "pass",
+      "wallMs": 20.223701000009896,
+      "details": {
+        "before": 2,
+        "after": 2
+      }
+    }
+  ]
+}

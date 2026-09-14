@@ -64,9 +64,10 @@ Evidence: specification lines 14–26 and 71–76. Prototype lines 12–35 and 2
 | D02 | DuckDB Docs, globe                        | Opens `https://duckdb.org/docs/` in a new tab. Its accessible name includes “opens in a new tab”. It uses `noopener noreferrer`.                       |
 | D03 | Schema Reference, document                | Opens `schema.ref`, a read-only reference for the selected dataset version. It shows types, keys, relationships, definitions, and actual counts. |
 | D04 | Skill Map                                 | Opens or activates `Skill Map.dag`. It retains the last selected skill and canvas position.                                                            |
+| D04a | Katas, play icon | Opens “Katas — repetition drills”. It lists every authored drill pattern with its due count, retained count, and the reason the shape is worth practising. Drills are graded at run time against an authored reference and never award or revoke challenge completion. |
 | D05 | Practice Records, gold trophy             | Opens “Practice Records — this device”. It shows local practice records and the trust notice defined below.                                                 |
 | D06 | Recycle Bin                               | Opens deleted queries with deletion dates. Restore preserves identity and SQL. Delete permanently and Empty Bin require explicit acceptance.           |
-| D07 | Start                                     | Opens a menu with SQL Grind, all six desktop destinations, Settings, and About. SQL Grind restores the IDE. No fake operating-system shutdown exists.  |
+| D07 | Start                                     | Opens a menu with SQL Grind, all seven desktop destinations, Settings, and About. SQL Grind restores the IDE. No fake operating-system shutdown exists.  |
 | D08 | First quick-launch button, blue rectangle | “Show desktop” hides application windows without closing documents. A second activation restores their previous visibility.                            |
 | D09 | Second quick-launch button, blue globe    | Opens DuckDB Docs with D02 behavior. Its tooltip and accessible name identify the destination.                                                         |
 | D10 | SQL Grind taskbar button                  | Restores or activates the IDE. If it is already active, the button minimizes it. It shows the active document and unsaved status.                      |
@@ -100,7 +101,7 @@ Repeated names invoke the corresponding inventory action.
 | M02 | Edit   | Undo, Redo, Cut, Copy, Paste, Select All, Find, Replace, Go to Line, Format SQL. They act on the focused editable document or selection. Format SQL reflows the active document as one undoable edit; unparseable SQL is refused with its parser message and left untouched.                                    |
 | M03 | View   | Object Explorer, Patchouli, Goal / Skill Details, then Results, Messages, Execution Plan, Patchouli’s Notes, then Reading Layout, Reset Layout. Separators divide those three groups, and visibility items expose checked state. |
 | M04 | Query  | Execute, Parse, Cancel, Show Plan, Compare with Reference, Submit, Hint, Query History, Reset Challenge SQL. Hint reveals the next hint, or reopens revealed hints once the challenge is complete. Reset restores authored starter SQL after explicit acceptance. |
-| M05 | Skills | Skill Map, Current Skill, Open Next Challenge, Practice Records. Current Skill selects the skill associated with the active challenge.                                          |
+| M05 | Skills | Skill Map, Current Skill, Open Next Challenge, Katas, Practice Records. Current Skill selects the skill associated with the active challenge.                                          |
 | M06 | Tools  | Settings, Storage, Schema Reference, Refresh Schema, Reset Index Lab Session. The index lab reset never deletes saved queries or progress.                                      |
 | M07 | Window | Minimize Workbench, Maximize / Restore Workbench, Close Workbench, Show Desktop, Dock / Float Patchouli, Move Patchouli, Reset Patchouli Position and Size, Dock / Float Goal, Move Goal, Close All Documents, then every open tab. The maximize item shows the action it performs, Maximize Workbench or Restore Workbench. Open documents and the `Skill Map.dag`, `schema.ref` and `schema.dgm` tabs are listed after a separator, numbered from 1 for the first nine, and the active one is marked with `role="menuitemradio"` and `aria-checked`. |
 | M08 | Help   | Keyboard Shortcuts, Challenge Rules, DuckDB Docs, Asset Credits, About. About shows real application and engine versions.                                                       |
@@ -495,6 +496,18 @@ Generic speed comparison is unavailable for the capstone because valid outputs c
 Synthetic truth assets are locally inspectable, not secret examination infrastructure.
 Successful completion establishes outcome quality on these fixtures, not a production matching guarantee.
 
+### Katas: repetition drills
+
+Decision: drills are a separate practice mode, not a second grading authority. A kata is a short prompt drilled repeatedly to build recall of one SQL shape; the 65 challenges remain the only source of completion.
+
+Each authored pattern names a curriculum skill, one dataset, a reason the shape is worth practising, and at least three variations. A variation carries its prompt, one dataset variant, an authored reference query, and its own output contract — the same five column types, the same nullability declaration, and the same explicitly authored ordering keys a challenge uses. Ordering is enforced only where the contract names it, so drilling `ORDER BY` is a stated property rather than an accident of the reference.
+
+Correctness is decided at run time: the authored reference is executed beside the learner's SQL in the named variant, and both are compared with the same comparator that grades challenges. Katas therefore ship no published expectation, hold no content identity, and add no manifest entry, so adding a drill never changes `bundleVersion` and never invalidates a learner's completions.
+
+Because nothing in the content pipeline verifies a drill, the reference is checked against its own contract before the learner's answer is compared. A disagreement is reported as a content error naming the kata, never as an incorrect attempt: a mis-authored contract must not tell a learner that a correct answer is wrong.
+
+Drills carry the only time-based schedule in the application. A pass advances a per-variation streak and schedules the next repetition after 1, 3, 7, then 21 days; the last interval repeats, because a drill returning in a year has been silently dropped. A miss resets the streak and schedules it immediately. Four consecutive passes mark a variation retained. The schedule is stored per device in the settings store, travels in a practice backup, and merges by most recent attempt on import. It never writes an attempt, a document, a hint level, or a completion.
+
 ## Practice Records, accounts, and trust
 
 Decision: local practice records only. Public rankings, accounts, synchronization, and a submission backend are excluded from the planned release.
@@ -540,7 +553,7 @@ The persistent stores are:
 | `drafts`   | Query identifier plus session identifier, complete document snapshot, and persistence time. Drafts preserve conflicting edits from multiple tabs.             |
 | `attempts` | Run identifier, immutable SQL snapshot, full content identity, dataset ID, revision, outcome, hints, and discriminated assessment evidence.                   |
 | `progress` | Challenge ID plus bundle version, accepted attempt identifier, completion date, assistance label, and review status. This derived index is not authoritative. |
-| `settings` | Judge and editor settings, panel dimensions, reading layout, open and active document identifiers, `openedSkillIds`, `exploredSkillIds`, and the query history.               |
+| `settings` | Three keyed records. `preferences`: judge and editor settings, panel dimensions, reading layout. `session`: open and active document identifiers, `openedSkillIds`, `exploredSkillIds`, and the query history. `katas`: the drill repetition schedule, which is never a source of challenge completion.               |
 
 Attempt identity comes from the captured run result, never from the currently selected document or fixed global content metadata.
 Assessment evidence distinguishes exact fixture outcomes, measured labs, and reconciliation metrics.

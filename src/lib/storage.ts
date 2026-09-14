@@ -15,6 +15,12 @@ import {
   summarizeTiming,
   validateLabEvidence as assessLabEvidence,
 } from "./engine-labs";
+import {
+  emptyKataProgress,
+  recordKataAttempt,
+  validateKataProgress,
+  type KataProgress,
+} from "./katas";
 
 const DATABASE = "sql-grind-practice";
 const SCHEMA_VERSION = 2;
@@ -93,7 +99,8 @@ interface MetaRecord {
 }
 type SettingRecord =
   | { id: "preferences"; value: Settings }
-  | { id: "session"; value: Session };
+  | { id: "session"; value: Session }
+  | { id: "katas"; value: KataProgress };
 interface Payload {
   meta: MetaRecord[];
   queries: QueryRecord[];
@@ -1254,9 +1261,16 @@ function validatePayload(
           break;
         case "settings":
           object(row, ["id", "value"]);
-          oneOf(row.id, ["preferences", "session"]);
+          oneOf(row.id, ["preferences", "session", "katas"]);
           if (row.id === "preferences") validateSettings(row.value);
-          else validateSession(row.value, legacy);
+          else if (row.id === "katas") {
+            // A backup written before katas existed simply has no such row.
+            try {
+              validateKataProgress(row.value);
+            } catch (error) {
+              invalid(String((error as Error).message).toLowerCase());
+            }
+          } else validateSession(row.value, legacy);
           break;
       }
     }
@@ -1609,6 +1623,7 @@ export class PracticeStore {
       const data = await this.snapshot(transaction);
       const preferences = data.settings.find((row) => row.id === "preferences");
       const savedSession = data.settings.find((row) => row.id === "session");
+      const savedKatas = data.settings.find((row) => row.id === "katas");
       const hints: Record<string, number> = Object.create(null);
       for (const p of deriveProgress(data.attempts, data.progress))
         hints[p.id] = Math.max(hints[p.id] ?? 0, p.hintLevel);
@@ -1651,6 +1666,9 @@ export class PracticeStore {
           exploredSkillIds: [...(savedSession?.value.exploredSkillIds ?? [])],
           history: [...(savedSession?.value.history ?? [])],
         },
+        katas: savedKatas
+          ? structuredClone(savedKatas.value)
+          : emptyKataProgress(),
       };
     });
   }
@@ -1889,6 +1907,49 @@ export class PracticeStore {
             value: captured,
           } satisfies SettingRecord),
         );
+      },
+    );
+  }
+  /**
+   * Folds one drill outcome into the stored schedule inside the transaction
+   * that reads it, so two windows drilling at once cannot lose an attempt to
+   * a read-modify-write race. Returns the stored progress.
+   */
+  async recordKata(
+    patternId: string,
+    variationId: string,
+    pass: boolean,
+    elapsedMs: number,
+  ): Promise<KataProgress> {
+    text(patternId);
+    text(variationId);
+    // A wall-clock delta is fractional; recordKataAttempt rounds it before it
+    // is stored, and the stored value is re-validated on every load.
+    number(elapsedMs, 0, Number.MAX_SAFE_INTEGER, false);
+    return this.transaction(
+      ["meta", "settings"],
+      "readwrite",
+      async (transaction) => {
+        const store = transaction.objectStore("settings");
+        const row = await request<
+          Extract<SettingRecord, { id: "katas" }> | undefined
+        >(store.get("katas"));
+        const current = row?.value ?? emptyKataProgress();
+        validateKataProgress(current);
+        const next = recordKataAttempt(
+          current,
+          patternId,
+          variationId,
+          pass,
+          elapsedMs,
+          Date.now(),
+        );
+        validateKataProgress(next);
+        await this.metadata(transaction);
+        await request(
+          store.put({ id: "katas", value: next } satisfies SettingRecord),
+        );
+        return next;
       },
     );
   }
@@ -2229,7 +2290,7 @@ export class PracticeStore {
             (localSetting) => localSetting.id === setting.id,
           )
         ) {
-          if (setting.id === "preferences")
+          if (setting.id === "preferences" || setting.id === "katas")
             merged.settings.push(structuredClone(setting));
           else {
             const openIds = setting.value.openIds.map(
@@ -2281,6 +2342,30 @@ export class PracticeStore {
           mergedSession.value.activeId = queryIds.get(
             incomingSession.value.activeId,
           )!;
+      }
+      const mergedKatas = merged.settings.find(
+        (setting) => setting.id === "katas",
+      );
+      const incomingKatas = incoming.settings.find(
+        (setting) => setting.id === "katas",
+      );
+      if (mergedKatas && incomingKatas) {
+        // Drill history is per device and holds no document reference. Keep
+        // the more-practised record for each variation rather than letting an
+        // older export reset a schedule the learner has since advanced.
+        const byKey = new Map(
+          mergedKatas.value.records.map((record) => [
+            `${record.patternId}/${record.variationId}`,
+            record,
+          ]),
+        );
+        for (const record of incomingKatas.value.records) {
+          const key = `${record.patternId}/${record.variationId}`;
+          const existing = byKey.get(key);
+          if (!existing || record.lastAt > existing.lastAt)
+            byKey.set(key, structuredClone(record));
+        }
+        mergedKatas.value = { records: [...byKey.values()] };
       }
       validatePayload(merged);
       for (const store of STORES)

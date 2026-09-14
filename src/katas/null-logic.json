@@ -1,0 +1,51 @@
+{
+  "patternId": "null-logic",
+  "title": "Absent, blank, and present are three things",
+  "skillId": "clean",
+  "why": "NULL is not a value, so nothing equals it — not even another NULL. An empty string, by contrast, is an ordinary value that happens to be zero characters long. Reports that silently merge the two are one of the most common data bugs in production. Drill the three-way split until IS NULL, = '' and the count(column) vs count(*) distinction are automatic.",
+  "datasetId": "commerce-practice",
+  "variations": [
+    {
+      "variationId": "email-three-way-split",
+      "prompt": "Count customers in three buckets: 'absent' when email IS NULL, 'blank' when it is the empty string, 'present' otherwise. Return bucket and customers, ordered by bucket ascending.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT bucket, count(*)::BIGINT AS customers FROM (SELECT CASE WHEN email IS NULL THEN 'absent' WHEN email = '' THEN 'blank' ELSE 'present' END AS bucket FROM customers) labelled GROUP BY bucket ORDER BY bucket",
+      "output": {
+        "columns": [
+          { "name": "bucket", "type": "VARCHAR", "nullable": false },
+          { "name": "customers", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "bucket", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "count-star-versus-column",
+      "prompt": "Return one row: total_rows as count(*) over customers, and with_email as the count of the email column, which skips NULLs but not blanks.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT count(*)::BIGINT AS total_rows, count(email)::BIGINT AS with_email FROM customers",
+      "output": {
+        "columns": [
+          { "name": "total_rows", "type": "BIGINT", "nullable": false },
+          { "name": "with_email", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": []
+      }
+    },
+    {
+      "variationId": "unpaid-payments",
+      "prompt": "List payments that were never paid: payment_id where paid_at IS NULL, ordered by payment_id ascending. Comparing paid_at to NULL with = returns nothing.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT payment_id FROM payments WHERE paid_at IS NULL ORDER BY payment_id",
+      "output": {
+        "columns": [
+          { "name": "payment_id", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "payment_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    }
+  ]
+}

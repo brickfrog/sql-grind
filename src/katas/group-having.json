@@ -1,0 +1,61 @@
+{
+  "patternId": "group-having",
+  "title": "Filter rows, then filter groups",
+  "skillId": "agg",
+  "why": "WHERE runs before grouping and sees individual rows; HAVING runs after and sees aggregates. Put an aggregate in WHERE and the query is rejected; put a row condition in HAVING and you get a slower query that happens to work. Drill both halves in one statement until the order of operations is muscle memory rather than trial and error.",
+  "datasetId": "commerce-practice",
+  "variations": [
+    {
+      "variationId": "products-with-many-bulk-lines",
+      "prompt": "Considering only order lines with a qty of 2 or more, count the lines per product and keep products with at least twenty of them: product_id and bulk_lines, ordered by bulk_lines descending then product_id ascending. The qty condition filters rows, the line count filters groups.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT product_id, count(*)::BIGINT AS bulk_lines FROM order_items WHERE qty >= 2 GROUP BY product_id HAVING count(*) >= 20 ORDER BY bulk_lines DESC, product_id ASC",
+      "output": {
+        "columns": [
+          { "name": "product_id", "type": "BIGINT", "nullable": false },
+          { "name": "bulk_lines", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "bulk_lines", "direction": "DESC", "nulls": "LAST" },
+          { "column": "product_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "paid-revenue-by-status",
+      "prompt": "For orders that are not cancelled, total the succeeded payment amounts per order status: status and revenue as DECIMAL(18,2), keeping only statuses whose total exceeds 1000. Order by status ascending.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT o.status, sum(p.amount)::DECIMAL(18,2) AS revenue FROM orders o JOIN payments p ON p.order_id = o.order_id AND p.status = 'succeeded' WHERE o.status <> 'cancelled' GROUP BY o.status HAVING sum(p.amount) > 1000 ORDER BY o.status",
+      "output": {
+        "columns": [
+          { "name": "status", "type": "VARCHAR", "nullable": false },
+          {
+            "name": "revenue",
+            "type": "DECIMAL",
+            "nullable": false,
+            "precision": 18,
+            "scale": 2
+          }
+        ],
+        "ordering": [
+          { "column": "status", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "categories-with-active-products",
+      "prompt": "Count active products per category, keeping only categories with at least seven: category_id and active_products, ordered by category_id ascending. Filter the rows in WHERE, not the groups.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT category_id, count(*)::BIGINT AS active_products FROM products WHERE active GROUP BY category_id HAVING count(*) >= 7 ORDER BY category_id",
+      "output": {
+        "columns": [
+          { "name": "category_id", "type": "BIGINT", "nullable": false },
+          { "name": "active_products", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "category_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    }
+  ]
+}

@@ -710,10 +710,12 @@ export class EngineCoordinator {
             "Index lab cancelled after navigation.",
           );
       }
-      if (!loaded && !["execute", "plan"].includes(request.kind))
+      if (!loaded && !["execute", "plan", "kata"].includes(request.kind))
         throw new Error(
           "Scratch documents can execute SQL but cannot receive challenge credit.",
         );
+      if (request.kata && request.kind !== "kata")
+        throw new Error("A kata target belongs to a kata run.");
       // The only DDL route is the private, disposable index sequence below.
       // Empty and multi-statement input is rejected outright. A policy
       // rejection first asks the parser whether the statement is even valid,
@@ -821,6 +823,68 @@ export class EngineCoordinator {
             result: measured.result,
             message:
               "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
+          };
+        }
+        if (request.kind === "kata") {
+          const target = request.kata;
+          if (!target) throw new Error("A kata target is required.");
+          if (!context.dataset.variants[target.variantId])
+            throw new Error(
+              `Content error: Unknown dataset variant ${target.variantId}.`,
+            );
+          const reference = await this.freshQuery(
+            work,
+            context,
+            target.variantId,
+            admit(target.reference, "challenge"),
+          );
+          // The authored reference is checked against its own authored
+          // contract first. A kata holds no published expectation, so this is
+          // the only thing standing between a mis-authored contract and
+          // telling a learner their correct answer is wrong — and it must
+          // report as a content error, never as an incorrect attempt.
+          //
+          // Column and type disagreements are raised from inside compare; an
+          // ordering claim the reference does not actually satisfy is
+          // returned. Both are the same authoring mistake, so both are
+          // reported against the kata that owns them.
+          const blame = (detail: string | undefined) =>
+            new Error(
+              `Content error: Kata ${target.patternId}/${target.variationId} reference disagrees with its own contract: ${detail ?? "unspecified."}`,
+            );
+          let selfCheck: { pass: boolean; reason?: string };
+          try {
+            selfCheck = compare(
+              reference.result,
+              reference.result,
+              target.output,
+            );
+          } catch (error) {
+            throw blame((error as Error).message);
+          }
+          if (!selfCheck.pass) throw blame(selfCheck.reason);
+          const actual = await this.freshQuery(
+            work,
+            context,
+            target.variantId,
+            sql,
+          );
+          const checked = compare(
+            reference.result,
+            actual.result,
+            target.output,
+          );
+          return {
+            ...empty,
+            outcome: "complete",
+            diagnostics,
+            result: actual.result,
+            elapsedMs: actual.elapsedMs,
+            correctness: checked.pass ? "correct" : "incorrect",
+            message: checked.pass
+              ? "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering."
+              : (checked.reason ??
+                "The drill output differs from the authored reference."),
           };
         }
       } finally {

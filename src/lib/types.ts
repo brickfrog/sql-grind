@@ -1,6 +1,7 @@
-import type { ContentIdentity } from "./challenges";
+import type { ContentIdentity, OutputContract } from "./challenges";
 import type { LabDocument, LabEvidence } from "./engine-labs";
 import type { ReconciliationAssessment } from "./reconciliation";
+import type { KataProgress } from "./katas";
 
 export interface Diagnostic {
   ruleId: string;
@@ -48,7 +49,25 @@ export type EngineState =
   | "cancelling"
   | "recovering"
   | "error";
-export type RunKind = "execute" | "submit" | "plan" | "compare" | "lab";
+export type RunKind =
+  | "execute"
+  | "submit"
+  | "plan"
+  | "compare"
+  | "lab"
+  | "kata";
+/**
+ * Target of one kata run. Carried on the request because a kata has no
+ * published expectation to load: the reference is authored application
+ * content, executed beside the learner's SQL in the named variant.
+ */
+export interface KataTarget {
+  patternId: string;
+  variationId: string;
+  variantId: string;
+  reference: string;
+  output: OutputContract;
+}
 export interface RunRequest {
   id: string;
   documentId: string;
@@ -61,6 +80,7 @@ export interface RunRequest {
   datasetId: string;
   lab?: LabDocument;
   labEvidence?: LabEvidence;
+  kata?: KataTarget;
 }
 export interface RunResult {
   id: string;
@@ -198,6 +218,8 @@ export interface StoredProfile {
   hints: Record<string, number>;
   settings: Settings;
   session: Session;
+  /** Drill repetition state. Never a source of challenge completion. */
+  katas: KataProgress;
 }
 export const defaultSettings: Settings = {
   hush: false,

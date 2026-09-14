@@ -1,0 +1,65 @@
+{
+  "patternId": "top-n-per-group",
+  "title": "Top N within each group",
+  "skillId": "cte",
+  "why": "\"The three dearest products in every category\" cannot be expressed with LIMIT, which truncates the whole result rather than each group. The shape is a ranking window computed in a CTE and then filtered — and the choice of RANK over ROW_NUMBER is a decision about ties, not a style preference. Drill the two-step so the reflex is to name the intermediate result instead of nesting deeper.",
+  "datasetId": "commerce-practice",
+  "variations": [
+    {
+      "variationId": "dearest-products-per-category",
+      "prompt": "For each of the five lowest category_ids, give the three dearest active products: category_id, product_id, unit_price as DECIMAL(18,2). Order by category_id ascending then unit_price descending. Break price ties on the smaller product_id and return exactly three per category.",
+      "variantId": "seed-20240907",
+      "reference": "WITH ranked AS (SELECT category_id, product_id, unit_price, ROW_NUMBER() OVER (PARTITION BY category_id ORDER BY unit_price DESC, product_id ASC) AS rn FROM products WHERE active AND category_id <= 5) SELECT category_id, product_id, unit_price::DECIMAL(18,2) AS unit_price FROM ranked WHERE rn <= 3 ORDER BY category_id ASC, unit_price DESC",
+      "output": {
+        "columns": [
+          { "name": "category_id", "type": "BIGINT", "nullable": false },
+          { "name": "product_id", "type": "BIGINT", "nullable": false },
+          {
+            "name": "unit_price",
+            "type": "DECIMAL",
+            "nullable": false,
+            "precision": 18,
+            "scale": 2
+          }
+        ],
+        "ordering": [
+          { "column": "category_id", "direction": "ASC", "nulls": "LAST" },
+          { "column": "unit_price", "direction": "DESC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "busiest-warehouses",
+      "prompt": "Rank warehouses by order count and return the top three: warehouse_id and orders, ordered by orders descending then warehouse_id ascending. Use a CTE for the counts.",
+      "variantId": "seed-20240907",
+      "reference": "WITH counted AS (SELECT warehouse_id, count(*)::BIGINT AS orders FROM orders GROUP BY warehouse_id) SELECT warehouse_id, orders FROM counted ORDER BY orders DESC, warehouse_id ASC LIMIT 3",
+      "output": {
+        "columns": [
+          { "name": "warehouse_id", "type": "BIGINT", "nullable": false },
+          { "name": "orders", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "orders", "direction": "DESC", "nulls": "LAST" },
+          { "column": "warehouse_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "two-largest-lines-per-order",
+      "prompt": "For orders 1 through 10, give the two largest lines by qty: order_id, order_item_id, qty. Order by order_id ascending then qty descending. Break qty ties on the smaller order_item_id.",
+      "variantId": "seed-20240907",
+      "reference": "WITH ranked AS (SELECT order_id, order_item_id, qty, ROW_NUMBER() OVER (PARTITION BY order_id ORDER BY qty DESC, order_item_id ASC) AS rn FROM order_items WHERE order_id BETWEEN 1 AND 10) SELECT order_id, order_item_id, qty::BIGINT AS qty FROM ranked WHERE rn <= 2 ORDER BY order_id ASC, qty DESC",
+      "output": {
+        "columns": [
+          { "name": "order_id", "type": "BIGINT", "nullable": false },
+          { "name": "order_item_id", "type": "BIGINT", "nullable": false },
+          { "name": "qty", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "order_id", "direction": "ASC", "nulls": "LAST" },
+          { "column": "qty", "direction": "DESC", "nulls": "LAST" }
+        ]
+      }
+    }
+  ]
+}

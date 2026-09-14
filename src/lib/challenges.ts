@@ -103,6 +103,31 @@ export interface Curriculum {
   skills: CurriculumSkill[];
   datasets: { id: string; path: string }[];
 }
+/**
+ * A kata is a repetition drill, not graded content: it carries no identity, no
+ * published expectation and no manifest entry, so it can never award or revoke
+ * a challenge completion. Correctness is decided at runtime by executing the
+ * authored reference beside the learner's SQL in one dataset variant and
+ * comparing both against this authored contract — the same comparator, the
+ * same ordering policy, and the same five column types as a challenge.
+ */
+export interface KataVariation {
+  variationId: string;
+  prompt: string;
+  variantId: string;
+  reference: string;
+  output: OutputContract;
+}
+export interface KataPattern {
+  patternId: string;
+  title: string;
+  skillId: string;
+  /** Why the shape is worth drilling, shown before the first prompt. */
+  why: string;
+  datasetId: string;
+  variations: KataVariation[];
+}
+
 export interface LoadedChallenge {
   definition: ChallengeDefinition;
   dataset: DatasetDefinition;
@@ -304,6 +329,24 @@ export function validateChallenge(input: unknown): ChallengeDefinition {
     }
   }
   return value as ChallengeDefinition;
+}
+export function validateKata(input: unknown): KataPattern {
+  const value = record(input, "Kata");
+  for (const key of ["patternId", "title", "skillId", "why", "datasetId"])
+    text(value[key], key);
+  if (!Array.isArray(value.variations) || !value.variations.length)
+    fail("A kata needs at least one variation.");
+  for (const item of value.variations) {
+    const variation = record(item, "Kata variation");
+    for (const key of ["variationId", "prompt", "variantId", "reference"])
+      text(variation[key], `Kata ${key}`);
+    validateOutput(variation.output);
+  }
+  unique(
+    value.variations.map((v: KataVariation) => v.variationId),
+    "kata variation",
+  );
+  return value as KataPattern;
 }
 export function validateDataset(input: unknown): DatasetDefinition {
   const value = record(input, "Dataset");

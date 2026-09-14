@@ -1,0 +1,53 @@
+{
+  "patternId": "anti-join",
+  "title": "Anti-join: rows with no match",
+  "skillId": "sub",
+  "why": "\"Which rows have nothing on the other side?\" is one of the most common real questions and one of the easiest to get quietly wrong. NOT IN collapses to zero rows the moment the subquery yields a single NULL, and an inner join can never express absence at all. Drill the shape until NOT EXISTS is what your hands reach for, and the NULL trap stops being a surprise.",
+  "datasetId": "commerce-practice",
+  "variations": [
+    {
+      "variationId": "customers-without-orders",
+      "prompt": "List every customer who has never placed an order: customer_id and customer_name, ordered by customer_id ascending.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT c.customer_id, c.customer_name FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id) ORDER BY c.customer_id",
+      "output": {
+        "columns": [
+          { "name": "customer_id", "type": "BIGINT", "nullable": false },
+          { "name": "customer_name", "type": "VARCHAR", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "customer_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "products-never-ordered",
+      "prompt": "List every product that appears in no order item: product_id and product_name, ordered by product_id ascending.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT p.product_id, p.product_name FROM products p WHERE NOT EXISTS (SELECT 1 FROM order_items i WHERE i.product_id = p.product_id) ORDER BY p.product_id",
+      "output": {
+        "columns": [
+          { "name": "product_id", "type": "BIGINT", "nullable": false },
+          { "name": "product_name", "type": "VARCHAR", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "product_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "orders-without-succeeded-payment",
+      "prompt": "List every order with no succeeded payment: order_id only, ordered by order_id ascending. An order with a failed or pending payment still counts as having none.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT o.order_id FROM orders o WHERE NOT EXISTS (SELECT 1 FROM payments p WHERE p.order_id = o.order_id AND p.status = 'succeeded') ORDER BY o.order_id",
+      "output": {
+        "columns": [
+          { "name": "order_id", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "order_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    }
+  ]
+}
