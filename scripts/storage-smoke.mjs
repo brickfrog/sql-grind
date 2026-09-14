@@ -602,6 +602,9 @@ try {
     "the rejected save leaves the stored layout untouched",
   );
   record(currentCase, layoutCase);
+  // Its own label: this block inherited whatever case ran before it, so the
+  // evidence recorded two entries under one name.
+  currentCase = "a real page reload reopens the identical profile";
   // Close all module instances, then actually reload the page and module.
   await evaluate(page, () => storageSmoke.closeStores());
   await page.reload({ waitUntil: "domcontentloaded" });
