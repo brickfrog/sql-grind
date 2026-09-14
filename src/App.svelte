@@ -234,6 +234,7 @@
     );
   }
   let editorHeight = $state(defaultEditorHeight());
+  let editorHeightChosen = $state(false);
   let ideX = $state(0);
   let ideY = $state(0);
   let explorerWidth = $state(220);
@@ -1019,6 +1020,7 @@
       showExplorer = settings.layout?.showExplorer ?? true;
       showGoal = settings.layout?.showGoal ?? true;
       goalCollapsed = settings.layout?.goalCollapsed ?? false;
+      editorHeightChosen = settings.layout?.editorHeight !== undefined;
       editorHeight = settings.layout?.editorHeight ?? defaultEditorHeight();
       explorerWidth = settings.layout?.explorerWidth ?? 220;
       goalWidth = settings.layout?.goalWidth ?? 280;
@@ -1061,6 +1063,8 @@
           activeId,
           openedSkillIds: [...openedSkillIds],
           exploredSkillIds: [...exploredSkillIds],
+          // Ignored by the store, which owns the history; passed because the
+          // Session contract is one record.
           history: $state.snapshot(history) as HistoryEntry[],
         });
       } catch (e) {
@@ -1068,17 +1072,26 @@
       }
     }
   }
-  function recordHistory(sql: string, datasetId: string, kind: RunKind) {
+  async function recordHistory(sql: string, datasetId: string, kind: RunKind) {
     const text = sql.trim();
-    if (!text) return;
-    // Re-running the same statement is normal practice; recording it twice in
-    // a row would push the rest of the list off the end for nothing.
-    if (history[0]?.sql === text && history[0]?.kind === kind) return;
-    history = [
-      { sql: text, datasetId, ranAt: new Date().toISOString(), kind },
-      ...history,
-    ].slice(0, HISTORY_LIMIT);
-    void persistSession();
+    if (!text || !store) return;
+    try {
+      // The store owns the cap, the per-entry byte bound and the repeat check,
+      // so the list here is whatever was actually written.
+      history = await store.appendHistory({
+        sql: text,
+        datasetId,
+        ranAt: new Date().toISOString(),
+        kind,
+      });
+    } catch (e) {
+      // Recall is a convenience. A failed history write must never turn a
+      // successful run into an error the learner has to deal with.
+      messages = [
+        ...messages.slice(-99),
+        `Query history not recorded: ${e instanceof Error ? e.message : String(e)}`,
+      ];
+    }
   }
   async function persistDocument(document: QueryDocument) {
     const snapshot = structuredClone($state.snapshot(document));
@@ -1709,7 +1722,7 @@
         labEvidence: labEvidence[doc.id],
       });
       runs = { ...runs, [run.documentId]: { run, kind, sql: doc.sql } };
-      recordHistory(doc.sql, doc.datasetId, kind);
+      void recordHistory(doc.sql, doc.datasetId, kind);
       if (
         run.outcome === "engine-error" &&
         run.message.includes("Content error:")
@@ -1978,7 +1991,12 @@
       showExplorer,
       showGoal,
       goalCollapsed,
-      editorHeight,
+      // Omitted until the learner actually moves the splitter. Storing the
+      // derived default on first load would pin a pixel height forever, so a
+      // later window resize would inherit the old window's proportions. The
+      // key is absent, not undefined: the validator allow-list counts a
+      // present key.
+      ...(editorHeightChosen ? { editorHeight } : {}),
       explorerWidth,
       goalWidth,
       judgeX,
@@ -2109,11 +2127,16 @@
     if (
       await confirmAction(
         "Clear query history",
-        `Forget the last ${formatCount(history.length, "statement")} this device ran? Saved queries, attempts, and progress are unaffected.`,
+        `Forget the last ${formatCount(history.length, "statement")} in the query history? Saved queries, attempts, and progress are unaffected.`,
       )
     ) {
+      try {
+        await store?.clearHistory();
+      } catch (e) {
+        fail(e, "storage");
+        return;
+      }
       history = [];
-      await persistSession();
       announce("Query history cleared.");
     }
   }
@@ -2423,6 +2446,7 @@
   }
   function resizeEditor(event: PointerEvent) {
     event.preventDefault();
+    editorHeightChosen = true;
     const start = event.clientY,
       height = editorHeight;
     const move = (e: PointerEvent) => {
@@ -2438,6 +2462,7 @@
   function splitterKey(e: KeyboardEvent) {
     if (["ArrowUp", "ArrowDown", "Home", "End"].includes(e.key)) {
       e.preventDefault();
+      editorHeightChosen = true;
       editorHeight =
         e.key === "Home"
           ? 120
@@ -2517,7 +2542,9 @@
       derivation.kind === "sort"
         ? `sort_${derivation.column}${derivation.descending ? "_desc" : "_asc"}.sql`
         : `filter_${derivation.column}.sql`;
-    await addDocument(sql, name);
+    // The run's dataset, not the document's current one: switching datasets
+    // after a run must not point the derived query at data it never described.
+    await addDocument(sql, name, null, activeSlot?.run.datasetId);
     await tick();
     editor?.focus();
     announce(
@@ -2960,6 +2987,8 @@
           goalY = null;
           maximized = false;
           editorHeight = defaultEditorHeight();
+          // Back to derived: Reset Layout gives up the stored pixel height too.
+          editorHeightChosen = false;
           explorerWidth = 220;
           goalWidth = 280;
           ideX = 0;
@@ -4128,6 +4157,7 @@
               max="650"
               step="10"
               bind:value={editorHeight}
+              oninput={() => (editorHeightChosen = true)}
               onpointerdown={resizeEditor}
               onkeydown={splitterKey}
             />
@@ -5396,8 +5426,9 @@
           </p>{/each}
       </div>
     {:else if modal === "history"}<p>
-        The last {HISTORY_LIMIT} statements this device executed, newest first. Opening
-        one puts its SQL in a new document; nothing runs until you run it.
+        The last {HISTORY_LIMIT} statements executed here or restored from a backup,
+        newest first. Opening one puts its SQL in a new document; nothing runs until
+        you run it.
       </p>
       <div class="library-list">
         {#each history as entry, index}<article>

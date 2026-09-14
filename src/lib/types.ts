@@ -159,7 +159,8 @@ export interface Settings {
     showExplorer: boolean;
     showGoal: boolean;
     goalCollapsed: boolean;
-    editorHeight: number;
+    /** Absent until the learner moves the splitter; then a stored pixel height. */
+    editorHeight?: number;
     explorerWidth?: number;
     goalWidth?: number;
     judgeZoom?: number;

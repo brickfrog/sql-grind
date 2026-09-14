@@ -916,12 +916,14 @@ function validateSettings(value: unknown): asserts value is Settings {
         "showExplorer",
         "showGoal",
         "goalCollapsed",
-        "editorHeight",
         "judgeX",
         "judgeY",
         "selectedSkill",
       ],
       [
+        // Absent whenever the learner has not moved the splitter, so the
+        // default follows the window instead of an old window's pixels.
+        "editorHeight",
         "explorerWidth",
         "goalWidth",
         "judgeZoom",
@@ -941,7 +943,8 @@ function validateSettings(value: unknown): asserts value is Settings {
       bool(value.layout.goalFloating);
     for (const key of ["mapTabOpen", "schemaTabOpen", "erdTabOpen"])
       if (value.layout[key] !== undefined) bool(value.layout[key]);
-    number(value.layout.editorHeight, 120, 650, false);
+    if (value.layout.editorHeight !== undefined)
+      number(value.layout.editorHeight, 120, 650, false);
     for (const key of ["explorerWidth", "goalWidth"])
       if (value.layout[key] !== undefined)
         number(value.layout[key], 180, 480, false);
@@ -963,13 +966,27 @@ function validateSettings(value: unknown): asserts value is Settings {
 // point of writing, and a stored profile that somehow exceeds the cap is
 // rejected rather than silently truncated on read.
 export const HISTORY_LIMIT = 50;
+// Per entry, far below the 1 MiB a saved query may hold. The whole row is
+// rewritten on every run, so 50 × 1 MiB would make each Execute a megabyte-
+// scale write against a quota that has no automatic eviction.
+export const HISTORY_SQL_BYTES = 16 * 1024;
+const HISTORY_TRUNCATED =
+  "\n-- truncated: this statement exceeds the history entry limit";
+/** Bounds one entry's SQL, marking the cut so a recalled statement never looks complete when it is not. */
+export function historySql(sql: string): string {
+  if (encoder.encode(sql).length <= HISTORY_SQL_BYTES) return sql;
+  const room = HISTORY_SQL_BYTES - encoder.encode(HISTORY_TRUNCATED).length;
+  let kept = sql.slice(0, room);
+  while (encoder.encode(kept).length > room) kept = kept.slice(0, -1);
+  return kept + HISTORY_TRUNCATED;
+}
 function validateHistory(value: unknown): asserts value is HistoryEntry[] {
   list(value);
   if (value.length > HISTORY_LIMIT)
     invalid("the query history exceeds its retention limit");
   for (const entry of value) {
     object(entry, ["sql", "datasetId", "ranAt", "kind"]);
-    text(entry.sql, MAX_SQL_BYTES);
+    text(entry.sql, HISTORY_SQL_BYTES);
     text(entry.datasetId, 512, true);
     date(entry.ranAt);
     oneOf(entry.kind, ["execute", "submit", "plan", "compare", "lab"]);
@@ -1731,12 +1748,74 @@ export class PracticeStore {
         // Opening is monotonic, so it unions. Practising ahead is reversible:
         // unioning would resurrect a skill the learner just returned to the path.
         captured.exploredSkillIds = [...new Set(captured.exploredSkillIds)];
+        // History belongs to appendHistory and clearHistory, never to an
+        // ordinary session save: a save carrying a stale in-memory copy would
+        // otherwise drop entries recorded since it was read.
+        captured.history = previous?.value.history ?? [];
         await this.metadata(transaction);
         await request(
           transaction
             .objectStore("settings")
             .put({ id: "session", value: captured } satisfies SettingRecord),
         );
+      },
+    );
+  }
+  /**
+   * Records one executed statement. Deliberately not routed through
+   * saveSession: that reads every query to re-check open-document identity and
+   * throws SessionConflictError, which would let an ordinary Execute raise a
+   * storage banner. Recall is not worth that risk, so this touches two stores
+   * and asserts nothing about documents.
+   */
+  async appendHistory(entry: HistoryEntry): Promise<HistoryEntry[]> {
+    const captured = { ...entry, sql: historySql(entry.sql) };
+    validateHistory([captured]);
+    return this.transaction(
+      ["meta", "settings"],
+      "readwrite",
+      async (transaction) => {
+        const store = transaction.objectStore("settings");
+        const row = await request<
+          Extract<SettingRecord, { id: "session" }> | undefined
+        >(store.get("session"));
+        const value = row?.value ?? {
+          openIds: [],
+          activeId: "",
+          openedSkillIds: [],
+          exploredSkillIds: [],
+          history: [],
+        };
+        const history = value.history ?? [];
+        // Re-running the same statement is ordinary practice; recording it
+        // twice would push an older statement off the end for nothing.
+        if (
+          history[0]?.sql === captured.sql &&
+          history[0]?.kind === captured.kind
+        )
+          return history;
+        value.history = [captured, ...history].slice(0, HISTORY_LIMIT);
+        await this.metadata(transaction);
+        await request(
+          store.put({ id: "session", value } satisfies SettingRecord),
+        );
+        return value.history;
+      },
+    );
+  }
+  async clearHistory(): Promise<void> {
+    return this.transaction(
+      ["meta", "settings"],
+      "readwrite",
+      async (transaction) => {
+        const store = transaction.objectStore("settings");
+        const row = await request<
+          Extract<SettingRecord, { id: "session" }> | undefined
+        >(store.get("session"));
+        if (!row?.value.history?.length) return;
+        row.value.history = [];
+        await this.metadata(transaction);
+        await request(store.put(row satisfies SettingRecord));
       },
     );
   }

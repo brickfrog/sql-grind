@@ -249,7 +249,8 @@ References: [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [ARIA patterns](https:
 The editor/results splitter uses a named native vertical range control with an accessible current value and limits.
 Up/Down changes editor height by 10 CSS pixels. Shift increases the step to 50 pixels.
 Home and End select the permitted extremes. Both panes retain at least 120 CSS pixels.
-Without a stored preference the editor takes a fixed share of the window height rather than a fixed pixel height, bounded by those same limits, so a short window does not surrender its result grid and a tall one does not waste the space. A stored preference always wins.
+Without a stored preference the editor takes a fixed share of the window height rather than a fixed pixel height, bounded by those same limits, so a short window does not surrender its result grid and a tall one does not waste the space. Nothing is stored until the learner moves the splitter, so the share is re-derived on every load; after a deliberate move the stored height always wins, and Reset Layout gives it up again.
+If the window cannot contain those limits, the document region scrolls instead of compressing a pane to zero.
 
 The inner sidebar borders support horizontal pointer dragging and keyboard width adjustments.
 Widths range from 180 to 480 CSS pixels and persist with the layout. Reset Layout restores 220/280-pixel defaults.
@@ -548,7 +549,8 @@ Plans and result buffers can regenerate only when their recorded content remains
 Timestamps use UTC ISO strings. Exact decimal metrics and large integers use typed decimal strings in portable records.
 Imported or historical SQL never runs automatically. Recalling a statement from the query history opens it in a new document and waits for the learner to run it.
 
-The query history keeps the last 50 executed statements on this device, newest first, with the dataset and the kind of run. Consecutive repeats of the same statement are recorded once. It is a fixed retention limit chosen for recall, not automatic deletion to free space, and the learner can clear it after explicit acceptance. It travels in the backup, holds no document reference, and never awards completion.
+The query history keeps the last 50 executed statements, newest first, with the dataset and the kind of run. Consecutive repeats of the same statement are recorded once. One entry holds at most 16 KiB of SQL; a longer statement is stored truncated and says so, because the whole row is rewritten on every run. These are fixed retention limits chosen for recall, not automatic deletion to free space, and the learner can clear the history after explicit acceptance. It travels in the backup, so a restored history may describe runs from another device; it holds no document reference and never awards completion.
+Recording one statement writes the history alone. It never re-checks open-document identity, so a failed history write reports itself in Messages and cannot turn a successful run into a storage error. An ordinary session save never rewrites the history.
 
 Draft persistence occurs after 500 milliseconds without an edit and before a deliberate document switch.
 Save persists the captured revision immediately.

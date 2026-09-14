@@ -505,7 +505,96 @@ try {
     "recalled SQL waits for the learner: it never runs on open",
   );
   assert.equal(firstBefore.length > 0, true);
-  mark("Query history recalls executed SQL without running it");
+  // Claimed persistence has to be observed, not asserted: reload and look.
+  await page.reload();
+  await ready();
+  await menu("Query", "Query History");
+  await page.locator("dialog[open]").waitFor();
+  assert.match(
+    await page.locator("dialog .history-sql").first().innerText(),
+    /FROM customers ORDER BY 1/,
+    "the history is on disk, not only in memory",
+  );
+  await page
+    .locator("dialog")
+    .getByRole("button", { name: "Close", exact: true })
+    .click();
+  mark("Query history recalls executed SQL without running it, across reloads");
+  // The split default is a share of the window, not a fixed 290 px. Reset
+  // Layout first: this origin is shared with the other suites, and a stored
+  // pixel height would (correctly) win over the derived default.
+  await menu("View", "Reset Layout");
+  const stored = () =>
+    page.evaluate(
+      () =>
+        new Promise((resolve) => {
+          const open = indexedDB.open("sql-grind-practice");
+          open.onsuccess = () => {
+            const row = open.result
+              .transaction("settings")
+              .objectStore("settings")
+              .get("preferences");
+            row.onsuccess = () =>
+              resolve(
+                Object.hasOwn(row.result?.value?.layout ?? {}, "editorHeight")
+                  ? row.result.value.layout.editorHeight
+                  : "absent",
+              );
+          };
+        }),
+    );
+  const splits = [];
+  for (const height of [700, 1100]) {
+    await page.setViewportSize({ width: 1440, height });
+    await page.reload();
+    await ready();
+    splits.push(
+      await page.evaluate(() =>
+        Math.round(
+          document
+            .querySelector('[data-context="editor"]')
+            .getBoundingClientRect().height,
+        ),
+      ),
+    );
+  }
+  assert.equal(
+    await stored(),
+    "absent",
+    "an untouched splitter stores nothing, so every load re-derives",
+  );
+  assert.ok(
+    splits[1] > splits[0] + 80,
+    `the editor grows with the window: ${splits.join(" then ")}`,
+  );
+  assert.ok(
+    splits.every((height) => height >= 160 && height <= 650),
+    "the derived default stays inside the splitter's own limits",
+  );
+  // A deliberate adjustment is a preference, and preferences are kept. The
+  // range snaps to its step="10" grid while the derived height does not, so
+  // the assertion is "a number greater than the default was stored", not an
+  // exact step arithmetic on the rendered value.
+  const splitter = page.getByLabel("Editor and results splitter");
+  await splitter.focus();
+  await page.keyboard.press("ArrowDown");
+  let chosen = "absent";
+  for (let attempt = 0; attempt < 40 && chosen === "absent"; attempt++) {
+    await page.waitForTimeout(250);
+    chosen = await stored();
+  }
+  assert.equal(
+    typeof chosen,
+    "number",
+    "moving the splitter stores a height, so the choice outlives the window",
+  );
+  assert.ok(
+    chosen > splits[1],
+    `a Down step grows the editor and is kept: ${splits[1]} then ${chosen}`,
+  );
+  mark(
+    "Editor/results split derives from the window until the learner chooses",
+  );
   await page.screenshot({
     path: "readiness/evidence/application/qc-updates.png",
     fullPage: true,

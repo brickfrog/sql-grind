@@ -455,7 +455,7 @@ try {
   );
   record(currentCase, explored);
 
-  currentCase = "query history persists, caps, and rejects an overlong list";
+  currentCase = "query history appends, caps, bounds each entry, and clears";
   const historyCase = await evaluate(page, async () => {
     const h = storageSmoke;
     const module = await import("/src/lib/storage.ts");
@@ -465,43 +465,37 @@ try {
       ranAt: new Date(1700000000000 + n * 1000).toISOString(),
       kind: "execute",
     });
-    const session = (history) => ({
+    // One more than the cap, so the oldest must fall off the end.
+    for (let index = 0; index <= module.HISTORY_LIMIT; index++)
+      await h.store.appendHistory(entry(index));
+    const stored = (await h.store.load()).session.history;
+    // Re-running the same statement must not consume a slot.
+    const repeated = await h.store.appendHistory(entry(module.HISTORY_LIMIT));
+    const oversize = await h.store.appendHistory({
+      ...entry(999),
+      sql: `SELECT '${"x".repeat(module.HISTORY_SQL_BYTES * 2)}';`,
+    });
+    // An ordinary session save carries a stale in-memory copy; it must not
+    // drop what was recorded since that copy was read.
+    await h.store.saveSession({
       openIds: [h.second.id, h.first.id],
       activeId: h.first.id,
       openedSkillIds: [],
       exploredSkillIds: [],
-      history,
+      history: [],
     });
-    await h.store.saveSession(
-      session(
-        Array.from({ length: module.HISTORY_LIMIT }, (_, index) =>
-          entry(index),
-        ),
-      ),
-    );
-    const stored = (await h.store.load()).session.history;
-    let rejected = "";
-    try {
-      await h.store.saveSession(
-        session(
-          Array.from({ length: module.HISTORY_LIMIT + 1 }, (_, index) =>
-            entry(index),
-          ),
-        ),
-      );
-    } catch (error) {
-      rejected = String(error.message);
-    }
-    const afterRejection = (await h.store.load()).session.history.length;
-    // A newest-first list is replaced wholesale, never unioned: the learner's
-    // clear must not be undone by the next ordinary session save.
-    await h.store.saveSession(session([]));
+    const afterSessionSave = (await h.store.load()).session.history.length;
+    await h.store.clearHistory();
     return {
       limit: module.HISTORY_LIMIT,
+      bytes: module.HISTORY_SQL_BYTES,
       count: stored.length,
       newest: stored[0],
-      rejected,
-      afterRejection,
+      oldestKept: stored[stored.length - 1].sql,
+      repeatedCount: repeated.length,
+      storedSqlBytes: new TextEncoder().encode(oversize[0].sql).length,
+      truncationMarked: /truncated/.test(oversize[0].sql),
+      afterSessionSave,
       cleared: (await h.store.load()).session.history,
       inBackup: JSON.parse(JSON.parse(await h.store.exportBackup()).payload)
         .settings.length,
@@ -509,26 +503,35 @@ try {
   });
   assert.equal(historyCase.count, historyCase.limit);
   assert.deepEqual(historyCase.newest, {
-    sql: "SELECT 0;",
+    sql: `SELECT ${historyCase.limit};`,
     datasetId: "commerce-practice",
-    ranAt: new Date(1700000000000).toISOString(),
+    ranAt: new Date(1700000000000 + historyCase.limit * 1000).toISOString(),
     kind: "execute",
   });
-  assert.match(
-    historyCase.rejected,
-    /retention limit/,
-    "a list longer than the cap is refused, not silently truncated",
+  assert.equal(
+    historyCase.oldestKept,
+    "SELECT 1;",
+    "the cap drops the oldest statement, keeping the newest fifty",
   );
   assert.equal(
-    historyCase.afterRejection,
+    historyCase.repeatedCount,
     historyCase.limit,
-    "the refused save leaves the stored history untouched",
+    "an immediate repeat is recorded once, not twice",
   );
-  assert.deepEqual(
-    historyCase.cleared,
-    [],
-    "clearing the history survives the next session save",
+  assert.ok(
+    historyCase.storedSqlBytes <= historyCase.bytes,
+    "one entry cannot exceed the per-entry byte bound",
   );
+  assert.ok(
+    historyCase.truncationMarked,
+    "a truncated statement says so, so recalled SQL never looks complete",
+  );
+  assert.equal(
+    historyCase.afterSessionSave,
+    historyCase.limit,
+    "an ordinary session save never rewrites the history",
+  );
+  assert.deepEqual(historyCase.cleared, []);
   record(currentCase, historyCase);
   // Close all module instances, then actually reload the page and module.
   await evaluate(page, () => storageSmoke.closeStores());

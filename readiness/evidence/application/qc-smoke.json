@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-14T00:22:15.676Z",
+  "date": "2026-09-14T00:48:56.989Z",
   "checks": [
     "Pinned Hint/Submit are visible and unobstructed with the default floating judge at five desktop sizes",
     "Escape closes hints and reset confirmation; focus returns to the persistent opener",
@@ -13,7 +13,8 @@
     "Go to Line resolves to the editor's own panel and moves the caret",
     "Documented shortcuts are generated from the menu accelerator table",
     "Grid sorting derives a new query and leaves the displayed rows alone",
-    "Query history recalls executed SQL without running it"
+    "Query history recalls executed SQL without running it, across reloads",
+    "Editor/results split derives from the window until the learner chooses"
   ],
   "errors": []
 }
