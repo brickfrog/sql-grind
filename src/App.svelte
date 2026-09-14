@@ -48,7 +48,7 @@
     type SqlSlot,
   } from "./lib/engine-labs";
   import ReconciliationAssessment from "./components/ReconciliationAssessment.svelte";
-  import { kataPatterns } from "./lib/kata-content";
+  import { kataPatterns, kataContentErrors } from "./lib/kata-content";
   import {
     emptyKataProgress,
     findKataRecord,
@@ -1993,18 +1993,31 @@
     kataVariationId = "";
     showModal("katas", "Katas — repetition drills");
   }
+  /** The variation whose next repetition falls soonest, due or not. */
+  function earliestScheduled(pattern: KataPattern) {
+    return [...pattern.variations].sort(
+      (a, b) =>
+        (findKataRecord(kataProgress, pattern.patternId, a.variationId)
+          ?.dueAt ?? 0) -
+        (findKataRecord(kataProgress, pattern.patternId, b.variationId)
+          ?.dueAt ?? 0),
+    )[0];
+  }
   function startKata(pattern: KataPattern) {
     kataNow = Date.now();
-    const variation = nextKataVariation(pattern, kataProgress, kataNow);
-    if (!variation) {
-      kataFeedback = `Every ${pattern.title} drill is scheduled ahead. Practising early would not measure recall, so nothing is due.`;
-      kataOutcome = "";
-      return;
-    }
+    // Due-ness is a recommendation, not a gate. Passing every drill in one
+    // sitting would otherwise leave the surface empty until tomorrow, which
+    // reads as broken; so when nothing is due, drill the one scheduled
+    // soonest and say that recall is not being measured.
+    const due = nextKataVariation(pattern, kataProgress, kataNow);
+    const variation = due ?? earliestScheduled(pattern);
+    if (!variation) return;
     kataPatternId = pattern.patternId;
     kataVariationId = variation.variationId;
     kataSql = "";
-    kataFeedback = "";
+    kataFeedback = due
+      ? ""
+      : "Nothing is due for this pattern, so this repetition does not measure recall. The schedule still advances on a pass.";
     kataOutcome = "";
     kataElapsedMs = 0;
   }
@@ -5537,7 +5550,7 @@
         </p>
         <div class="kata-editor">
           <SqlEditor
-            id="kata"
+            id={`kata:${activeKataPattern.patternId}/${activeKataVariation.variationId}`}
             documentName={`${activeKataPattern.patternId}/${activeKataVariation.variationId}`}
             value={kataSql}
             revision={0}
@@ -5591,6 +5604,10 @@
             "pattern",
           )}.
         </p>
+        {#if kataContentErrors.length}<p class="kata-feedback kata-miss">
+            {formatCount(kataContentErrors.length, "drill pattern")} could not be
+            loaded and are unavailable: {kataContentErrors.join(" ")}
+          </p>{/if}
         <div class="library-list">
           {#each kataStatuses as entry}<article>
               <h3>{entry.pattern.title}</h3>
@@ -5605,7 +5622,7 @@
               <button
                 onclick={() => startKata(entry.pattern)}
                 disabled={!storageReady}
-                >{entry.status.due ? "Start drill" : "Nothing due"}</button
+                >{entry.status.due ? "Start drill" : "Drill early"}</button
               >
             </article>{/each}
         </div>

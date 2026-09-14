@@ -1489,6 +1489,54 @@ try {
   assert.deepEqual(failedLegacy.restored, legacyMigration.profile);
   record(currentCase, failedLegacy);
 
+  currentCase = "a v1 backup carrying drill state is rejected, not relabelled";
+  const legacyKataPage = await freshPage();
+  const legacyKata = await evaluate(legacyKataPage, async () => {
+    const h = storageSmoke;
+    h.store = await h.open();
+    const source = h.legacyFixture();
+    // A v1 backup predates katas, so such a row is never legitimate there.
+    // Accepting it would send drill state through the legacy migration, which
+    // relabels any non-preferences settings row as a session.
+    source.settings = [
+      ...source.settings.filter((setting) => setting.id !== "katas"),
+      {
+        id: "katas",
+        value: {
+          records: [
+            {
+              patternId: "anti-join",
+              variationId: "customers-without-orders",
+              streak: 1,
+              attempts: 1,
+              passes: 1,
+              lastOutcome: "pass",
+              lastElapsedMs: 4,
+              lastAt: 1,
+              dueAt: 2,
+            },
+          ],
+        },
+      },
+    ];
+    const payload = await h.backup(source, 1);
+    const error = await h.error(() => h.store.importBackup(payload));
+    const profile = await h.store.load();
+    return { error, session: profile.session, katas: profile.katas };
+  });
+  assert.equal(legacyKata.error?.name, "BackupValidationError");
+  assert.deepEqual(
+    legacyKata.katas.records,
+    [],
+    "a rejected import writes no drill state",
+  );
+  assert.equal(
+    legacyKata.session.activeId,
+    "",
+    "the session is untouched by the rejected file",
+  );
+  record(currentCase, legacyKata);
+
   currentCase = "failed native schema migration rolls back and can retry";
   const migrationPage = await freshPage();
   const migration = await evaluate(migrationPage, async () => {

@@ -334,8 +334,10 @@ export function validateKata(input: unknown): KataPattern {
   const value = record(input, "Kata");
   for (const key of ["patternId", "title", "skillId", "why", "datasetId"])
     text(value[key], key);
-  if (!Array.isArray(value.variations) || !value.variations.length)
-    fail("A kata needs at least one variation.");
+  // Three is the contract (product.md): one prompt teaches an answer, several
+  // teach the shape. Enforced where content loads, not only where it is tested.
+  if (!Array.isArray(value.variations) || value.variations.length < 3)
+    fail("A kata needs at least three variations.");
   for (const item of value.variations) {
     const variation = record(item, "Kata variation");
     for (const key of ["variationId", "prompt", "variantId", "reference"])

@@ -134,6 +134,76 @@ try {
     );
     return { patterns: ids, variations };
   });
+  await check(
+    "a malformed drill asset is reported, not fatal, and thin patterns are rejected",
+    async () => {
+      const result = await page.evaluate(async () => {
+        const { validateKata } = await import("/src/lib/challenges.ts");
+        const { kataContentErrors } = await import("/src/lib/kata-content.ts");
+        const reject = (input) => {
+          try {
+            validateKata(input);
+            return null;
+          } catch (error) {
+            return String(error.message);
+          }
+        };
+        const sound = {
+          patternId: "x",
+          title: "x",
+          skillId: "basics",
+          why: "x",
+          datasetId: "commerce-practice",
+          variations: [],
+        };
+        const variation = {
+          variationId: "a",
+          prompt: "p",
+          variantId: "seed-20240907",
+          reference: "SELECT 1 AS one",
+          output: {
+            columns: [{ name: "one", type: "BIGINT", nullable: false }],
+            ordering: [],
+          },
+        };
+        return {
+          // Loading is non-fatal: the application itself must survive a broken
+          // drill asset, so the surface reports rejections instead.
+          shippedErrors: [...kataContentErrors],
+          tooFew: reject({
+            ...sound,
+            variations: [variation, { ...variation, variationId: "b" }],
+          }),
+          duplicateVariation: reject({
+            ...sound,
+            variations: [variation, variation, variation],
+          }),
+          badContract: reject({
+            ...sound,
+            variations: [0, 1, 2].map((index) => ({
+              ...variation,
+              variationId: `v${index}`,
+              output: {
+                columns: [
+                  { name: "one", type: "TIMESTAMPTZ", nullable: false },
+                ],
+                ordering: [],
+              },
+            })),
+          }),
+        };
+      });
+      assert.deepEqual(
+        result.shippedErrors,
+        [],
+        "every shipped drill asset loads",
+      );
+      assert.match(result.tooFew, /at least three variations/);
+      assert.match(result.duplicateVariation, /Duplicate kata variation/);
+      assert.match(result.badContract, /Invalid output type/);
+      return result;
+    },
+  );
 
   await check(
     "every kata skill id names a real curriculum skill and dataset variant",
@@ -491,6 +561,59 @@ try {
     },
   );
 
+  await check(
+    "nothing due still offers the drill, with recall disclaimed",
+    async () => {
+      // Passing every drill in one sitting must not leave a surface that looks
+      // broken until tomorrow, so due-ness recommends rather than gates.
+      const dialog = page.locator("dialog");
+      const article = dialog.locator("article", { hasText: "Anti-join" });
+      const antiJoin = patterns.find(
+        (entry) => entry.patternId === "anti-join",
+      );
+      const passed = [];
+      // One variation was already passed above; drill the pattern out.
+      for (
+        let remaining = antiJoin.variations.length - 1;
+        remaining > 0;
+        remaining--
+      ) {
+        await article.getByRole("button", { name: "Start drill" }).click();
+        const prompt = await dialog.locator(".kata-prompt").innerText();
+        const meta = await dialog.locator(".kata-meta").first().innerText();
+        const variation = antiJoin.variations.find((entry) =>
+          meta.includes(entry.variationId),
+        );
+        assert.ok(variation, `no variation named in ${meta}`);
+        await dialog.locator(".kata-editor .cm-content").click();
+        await page.keyboard.insertText(variation.reference);
+        await dialog.getByRole("button", { name: "Check drill" }).click();
+        await page.waitForFunction(
+          () => !!document.querySelector(".kata-feedback.kata-pass"),
+          null,
+          { timeout: 180_000 },
+        );
+        passed.push(variation.variationId);
+        await dialog.getByRole("button", { name: "Back to patterns" }).click();
+        void prompt;
+      }
+      const status = await article.locator(".kata-meta").innerText();
+      assert.match(
+        status,
+        /0 of 3 due/,
+        "the pattern is fully scheduled ahead",
+      );
+      const label = await article.locator("button").first().innerText();
+      assert.equal(label, "Drill early");
+      await article.getByRole("button", { name: "Drill early" }).click();
+      await dialog.locator(".kata-prompt").waitFor();
+      const notice = await dialog.locator(".kata-feedback").innerText();
+      assert.match(notice, /does not measure recall/);
+      await dialog.getByRole("button", { name: "Back to patterns" }).click();
+      return { passed, status, notice };
+    },
+  );
+
   await check("a missed drill returns immediately", async () => {
     const dialog = page.locator("dialog");
     await dialog
@@ -572,7 +695,8 @@ try {
         0,
         "a drill must not record hint or completion progress",
       );
-      assert.equal(state.katas, 2);
+      // Three anti-join passes and one null-logic miss have been recorded.
+      assert.equal(state.katas, 4);
       return state;
     },
   );

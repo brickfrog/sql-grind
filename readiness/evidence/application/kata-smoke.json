@@ -1,14 +1,14 @@
 {
   "suite": "kata-smoke",
   "appURL": "http://127.0.0.1:5176/",
-  "startedAt": "2026-09-14T03:57:37.010Z",
-  "finishedAt": "2026-09-14T03:59:54.898Z",
+  "startedAt": "2026-09-14T04:14:43.775Z",
+  "finishedAt": "2026-09-14T04:16:59.466Z",
   "status": "passed",
   "checks": [
     {
       "name": "every authored kata pattern validates and is unique",
       "outcome": "pass",
-      "wallMs": 0.13193999999998596,
+      "wallMs": 0.13011099999994258,
       "details": {
         "patterns": [
           "anti-join",
@@ -31,9 +31,20 @@
       }
     },
     {
+      "name": "a malformed drill asset is reported, not fatal, and thin patterns are rejected",
+      "outcome": "pass",
+      "wallMs": 12.12158700000009,
+      "details": {
+        "shippedErrors": [],
+        "tooFew": "Content error: A kata needs at least three variations.",
+        "duplicateVariation": "Content error: Duplicate kata variation.",
+        "badContract": "Content error: Invalid output type or nullability."
+      }
+    },
+    {
       "name": "every kata skill id names a real curriculum skill and dataset variant",
       "outcome": "pass",
-      "wallMs": 116.12056500000006,
+      "wallMs": 7.8027340000001,
       "details": {
         "commerce-practice": {
           "previewVariant": "seed-20240907",
@@ -48,7 +59,7 @@
     {
       "name": "anti-join/customers-without-orders: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 6544.027549,
+      "wallMs": 6151.507052000001,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -63,7 +74,7 @@
     {
       "name": "anti-join/products-never-ordered: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4250.282509,
+      "wallMs": 3992.124264,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -78,7 +89,7 @@
     {
       "name": "anti-join/orders-without-succeeded-payment: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4399.329664999999,
+      "wallMs": 3949.761604000001,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -92,7 +103,7 @@
     {
       "name": "dedupe-by-key/latest-order-per-customer: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4286.319354000001,
+      "wallMs": 3997.0159539999986,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -107,7 +118,7 @@
     {
       "name": "dedupe-by-key/dearest-item-per-order: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4396.174443,
+      "wallMs": 3848.4547759999987,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -122,7 +133,7 @@
     {
       "name": "dedupe-by-key/first-payment-per-order: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4410.7934730000015,
+      "wallMs": 4025.1484859999982,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -137,7 +148,7 @@
     {
       "name": "group-having/products-with-many-bulk-lines: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4255.197429,
+      "wallMs": 3878.7615320000004,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -152,7 +163,7 @@
     {
       "name": "group-having/paid-revenue-by-status: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4333.406838000003,
+      "wallMs": 3863.8955970000025,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -167,7 +178,7 @@
     {
       "name": "group-having/categories-with-active-products: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4222.459812000001,
+      "wallMs": 3809.4278919999997,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -182,7 +193,7 @@
     {
       "name": "null-logic/email-three-way-split: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4314.775616999999,
+      "wallMs": 3873.328229999999,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -197,7 +208,7 @@
     {
       "name": "null-logic/count-star-versus-column: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4271.040995000003,
+      "wallMs": 4168.809542000003,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -212,7 +223,7 @@
     {
       "name": "null-logic/unpaid-payments: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4452.409124999998,
+      "wallMs": 4074.1242439999987,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -226,7 +237,7 @@
     {
       "name": "outer-join-keep/orders-per-customer-with-zero: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4481.161189999999,
+      "wallMs": 3914.692974000005,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -241,7 +252,7 @@
     {
       "name": "outer-join-keep/refunds-with-zero: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4259.527025999996,
+      "wallMs": 3771.715943999996,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -256,7 +267,7 @@
     {
       "name": "outer-join-keep/warehouse-route-names: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4321.884214000005,
+      "wallMs": 3799.084692000004,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -272,7 +283,7 @@
     {
       "name": "running-total/daily-orders-running-total: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4297.34362,
+      "wallMs": 3873.3131959999955,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -288,7 +299,7 @@
     {
       "name": "running-total/customer-order-sequence: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4535.456609000001,
+      "wallMs": 3894.719941000003,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -304,7 +315,7 @@
     {
       "name": "running-total/cumulative-revenue-by-day: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4304.026648999992,
+      "wallMs": 3748.2806199999904,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -319,7 +330,7 @@
     {
       "name": "top-n-per-group/dearest-products-per-category: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4441.62282199999,
+      "wallMs": 3909.5021600000036,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -335,7 +346,7 @@
     {
       "name": "top-n-per-group/busiest-warehouses: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4259.535342999996,
+      "wallMs": 3770.976219999997,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -350,7 +361,7 @@
     {
       "name": "top-n-per-group/two-largest-lines-per-order: reference agrees with its own contract",
       "outcome": "pass",
-      "wallMs": 4213.074538999994,
+      "wallMs": 3820.0620009999984,
       "details": {
         "outcome": "complete",
         "correctness": "correct",
@@ -366,7 +377,7 @@
     {
       "name": "a wrong answer is graded incorrect, not accepted",
       "outcome": "pass",
-      "wallMs": 4335.794435000003,
+      "wallMs": 3729.6677990000026,
       "details": {
         "outcome": "complete",
         "correctness": "incorrect",
@@ -381,7 +392,7 @@
     {
       "name": "an inner join cannot fake an anti-join, and NOT IN with NULLs is caught",
       "outcome": "pass",
-      "wallMs": 8614.526741000009,
+      "wallMs": 7766.256432000009,
       "details": {
         "inner": "Expected 1 rows, received 2003. Duplicate rows count separately.",
         "wrongColumns": "Expected 2 columns, received 1. Missing columns: \"customer_name\"."
@@ -390,7 +401,7 @@
     {
       "name": "required ordering is enforced only where the contract names it",
       "outcome": "pass",
-      "wallMs": 8831.121690999993,
+      "wallMs": 7664.097347999996,
       "details": {
         "reversed": "Rows 1 and 2 violate the declared ordering. Rows with equal ordering keys can appear in any order.",
         "unordered": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering."
@@ -399,7 +410,7 @@
     {
       "name": "both classes of mis-authored contract report a content error, never an incorrect answer",
       "outcome": "pass",
-      "wallMs": 6744.946729000003,
+      "wallMs": 6026.574818999987,
       "details": {
         "wrongColumns": {
           "outcome": "engine-error",
@@ -418,7 +429,7 @@
     {
       "name": "a kata target on a non-kata run is refused",
       "outcome": "pass",
-      "wallMs": 1.448422000001301,
+      "wallMs": 4.181941999995615,
       "details": {
         "outcome": "engine-error",
         "message": "A kata target belongs to a kata run."
@@ -427,7 +438,7 @@
     {
       "name": "the desktop icon opens the drill list with a due count",
       "outcome": "pass",
-      "wallMs": 388.5779809999949,
+      "wallMs": 396.38334100000793,
       "details": {
         "due": "21 drills due now across 7 patterns.",
         "articles": 7
@@ -436,7 +447,7 @@
     {
       "name": "a passing drill advances the schedule and survives a reload",
       "outcome": "pass",
-      "wallMs": 7766.395092999999,
+      "wallMs": 7776.4372770000045,
       "details": {
         "message": "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering.",
         "record": {
@@ -446,18 +457,31 @@
           "attempts": 1,
           "passes": 1,
           "lastOutcome": "pass",
-          "lastElapsedMs": 3,
-          "lastAt": 1789358386980,
-          "dueAt": 1789444786980
+          "lastElapsedMs": 4,
+          "lastAt": 1789359402080,
+          "dueAt": 1789445802080
         },
         "due": "20 drills due now across 7 patterns.",
         "antiJoin": "2 of 3 due · 0 retained (4 clean passes)"
       }
     },
     {
+      "name": "nothing due still offers the drill, with recall disclaimed",
+      "outcome": "pass",
+      "wallMs": 12426.819935000007,
+      "details": {
+        "passed": [
+          "products-never-ordered",
+          "orders-without-succeeded-payment"
+        ],
+        "status": "0 of 3 due · 0 retained (4 clean passes) · next 9/15/2026",
+        "notice": "Nothing is due for this pattern, so this repetition does not measure recall. The schedule still advances on a pass."
+      }
+    },
+    {
       "name": "a missed drill returns immediately",
       "outcome": "pass",
-      "wallMs": 7258.030184000003,
+      "wallMs": 4185.827779000014,
       "details": {
         "message": "Expected 2 columns, received 1. Missing columns: \"bucket\", \"customers\". Unexpected columns: \"wrong\".",
         "record": {
@@ -468,29 +492,29 @@
           "passes": 0,
           "lastOutcome": "miss",
           "lastElapsedMs": 2,
-          "lastAt": 1789358394857,
-          "dueAt": 1789358394857
+          "lastAt": 1789359419430,
+          "dueAt": 1789359419430
         }
       }
     },
     {
       "name": "drills never touch challenge progression or the skill map",
       "outcome": "pass",
-      "wallMs": 1.7194730000046548,
+      "wallMs": 2.1669609999808017,
       "details": {
         "attempts": 0,
         "kataDocuments": 0,
         "completed": 0,
-        "katas": 2
+        "katas": 4
       }
     },
     {
       "name": "the drill schedule survives a backup round trip",
       "outcome": "pass",
-      "wallMs": 20.223701000009896,
+      "wallMs": 20.797500999993645,
       "details": {
-        "before": 2,
-        "after": 2
+        "before": 4,
+        "after": 4
       }
     }
   ]

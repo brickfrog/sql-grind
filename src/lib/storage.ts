@@ -1261,7 +1261,16 @@ function validatePayload(
           break;
         case "settings":
           object(row, ["id", "value"]);
-          oneOf(row.id, ["preferences", "session", "katas"]);
+          // A v1 backup predates katas, so such a row is never legitimate
+          // there. Accepting it would send kata state through migrateLegacy,
+          // which relabels any non-preferences row as a session — corrupting
+          // the session from a user-supplied file.
+          oneOf(
+            row.id,
+            legacy
+              ? ["preferences", "session"]
+              : ["preferences", "session", "katas"],
+          );
           if (row.id === "preferences") validateSettings(row.value);
           else if (row.id === "katas") {
             // A backup written before katas existed simply has no such row.
