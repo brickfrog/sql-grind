@@ -1597,9 +1597,22 @@ small,
   width: 620px;
   max-height: calc(var(--view-height) - 32px);
   padding: 2px;
-  overflow: auto;
+  overflow: hidden;
   font-size: 12px;
   z-index: 30;
+}
+/* Scoped to [open]: an author `display` on a dialog overrides the user-agent
+   `dialog:not([open]) { display: none }`, which would leave every closed
+   dialog on screen. The body scrolls rather than the dialog, so focusing the
+   footer Close cannot drag the title and the first rows out of view. */
+.app-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.app-dialog .dialog-content {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow: auto;
 }
 .app-dialog::backdrop {
   background: #001c3655;

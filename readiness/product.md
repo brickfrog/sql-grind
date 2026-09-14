@@ -36,6 +36,7 @@ Design changes are explicit:
 ## Shared interaction rules
 
 Every command has one implementation, whether invoked from a menu, toolbar, desktop icon, or keyboard shortcut.
+The Keyboard Shortcuts dialog is generated from the same table that supplies the menu accelerators, so a documented key and its menu hint cannot disagree. Keys with no menu command are listed separately.
 Buttons support Enter and Space. Links support Enter and retain browser link behavior.
 Disabled commands expose their reason through adjacent text or a described status message.
 Unavailable metrics show “Unavailable” and their reason, not zero or a fabricated score.
@@ -96,9 +97,9 @@ Repeated names invoke the corresponding inventory action.
 | ID  | Menu   | Items and meaning                                                                                                                                                               |
 | --- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | M01 | File   | New Query, Open, Save, Save As, Export SQL, Export Practice Backup, Import Practice Backup, Close Document, Close Window.                                                       |
-| M02 | Edit   | Undo, Redo, Cut, Copy, Paste, Select All, Find, Replace, Go to Line. They act on the focused editable document or selection.                                                    |
+| M02 | Edit   | Undo, Redo, Cut, Copy, Paste, Select All, Find, Replace, Go to Line, Format SQL. They act on the focused editable document or selection. Format SQL reflows the active document as one undoable edit; unparseable SQL is refused with its parser message and left untouched.                                    |
 | M03 | View   | Object Explorer, Patchouli, Goal / Skill Details, then Results, Messages, Execution Plan, Patchouli’s Notes, then Reading Layout, Reset Layout. Separators divide those three groups, and visibility items expose checked state. |
-| M04 | Query  | Execute, Parse, Cancel, Show Plan, Compare with Reference, Submit, Hint, Reset Challenge SQL. Hint reveals the next hint, or reopens revealed hints once the challenge is complete. Reset restores authored starter SQL after explicit acceptance. |
+| M04 | Query  | Execute, Parse, Cancel, Show Plan, Compare with Reference, Submit, Hint, Query History, Reset Challenge SQL. Hint reveals the next hint, or reopens revealed hints once the challenge is complete. Reset restores authored starter SQL after explicit acceptance. |
 | M05 | Skills | Skill Map, Current Skill, Open Next Challenge, Practice Records. Current Skill selects the skill associated with the active challenge.                                          |
 | M06 | Tools  | Settings, Storage, Schema Reference, Refresh Schema, Reset Index Lab Session. The index lab reset never deletes saved queries or progress.                                      |
 | M07 | Window | Minimize Workbench, Maximize / Restore Workbench, Close Workbench, Show Desktop, Dock / Float Patchouli, Move Patchouli, Reset Patchouli Position and Size, Dock / Float Goal, Move Goal, Close All Documents, then every open tab. The maximize item shows the action it performs, Maximize Workbench or Restore Workbench. Open documents and the `Skill Map.dag`, `schema.ref` and `schema.dgm` tabs are listed after a separator, numbered from 1 for the first nine, and the active one is marked with `role="menuitemradio"` and `aria-checked`. |
@@ -169,7 +170,7 @@ Evidence: specification lines 40–69. Prototype lines 73–165 and 176–244.
 | W09  | Execution plan tab                                          | Shows the available plan with query revision and collection method. It never invents a plan before collection.                                                                                                 |
 | W10  | `Patchouli's notes` tab and count                           | Shows current deterministic diagnostics, severity, evidence, and source ranges. The count excludes discarded stale diagnostics.                                                                                |
 | W11  | Grid headers and row numbers                                | Identify columns, types, and absolute row positions. They do not sort output or alter the grading order. Each header exposes a resize grip: pointer drag, Left/Right arrow adjustment, and double-click reset to the type-derived default width. |
-| W12  | Grid cells and selected row                                 | Support keyboard cell navigation and exact-value copy. Arrow keys move cells. Home/End move across a row. Copy preserves decimal and integer text. The cell menu also copies the whole result with headers, and Export CSV writes `result.csv` as RFC 4180 text. Both reuse the cell rendering, so a NULL leaves as the text `NULL` and an empty string leaves empty. |
+| W12  | Grid cells and selected row                                 | Support keyboard cell navigation and exact-value copy. Arrow keys move cells. Home/End move across a row. Copy preserves decimal and integer text. The cell menu also copies the whole result with headers, and Export CSV writes `result.csv` as RFC 4180 text. Both reuse the cell rendering, so a NULL leaves as the text `NULL` and an empty string leaves empty. The cell menu additionally derives a sorted or filtered query: it wraps the SQL that produced the displayed rows in a new document and never reorders or hides the rows on screen. |
 | W13  | Goal / Skill Details header arrow                           | Opens Collapse content / Expand content / Pop out / Hide panel actions. Collapse retains its header and restore action.                                                                                        |
 | W14  | Goal / Skill Details header `⇲` and `×`                     | `⇲` pops the panel out as a floating window; `×` hides the panel. View restores it. Docked Patchouli hides with the panel but remains available through View → Patchouli.                                                   |
 | W15  | Challenge chips, expected shape, scorecard, reference boxes | Informational only. Correctness shows pass/fail or no submission. Performance shows measured values or unavailable reasons.                                                                                    |
@@ -248,7 +249,7 @@ References: [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [ARIA patterns](https:
 The editor/results splitter uses a named native vertical range control with an accessible current value and limits.
 Up/Down changes editor height by 10 CSS pixels. Shift increases the step to 50 pixels.
 Home and End select the permitted extremes. Both panes retain at least 120 CSS pixels.
-If the window cannot contain those limits, the document region scrolls instead of compressing a pane to zero.
+Without a stored preference the editor takes a fixed share of the window height rather than a fixed pixel height, bounded by those same limits, so a short window does not surrender its result grid and a tall one does not waste the space. A stored preference always wins.
 
 The inner sidebar borders support horizontal pointer dragging and keyboard width adjustments.
 Widths range from 180 to 480 CSS pixels and persist with the layout. Reset Layout restores 220/280-pixel defaults.
@@ -538,14 +539,16 @@ The persistent stores are:
 | `drafts`   | Query identifier plus session identifier, complete document snapshot, and persistence time. Drafts preserve conflicting edits from multiple tabs.             |
 | `attempts` | Run identifier, immutable SQL snapshot, full content identity, dataset ID, revision, outcome, hints, and discriminated assessment evidence.                   |
 | `progress` | Challenge ID plus bundle version, accepted attempt identifier, completion date, assistance label, and review status. This derived index is not authoritative. |
-| `settings` | Judge and editor settings, panel dimensions, reading layout, open and active document identifiers, `openedSkillIds`, and `exploredSkillIds`.                  |
+| `settings` | Judge and editor settings, panel dimensions, reading layout, open and active document identifiers, `openedSkillIds`, `exploredSkillIds`, and the query history.               |
 
 Attempt identity comes from the captured run result, never from the currently selected document or fixed global content metadata.
 Assessment evidence distinguishes exact fixture outcomes, measured labs, and reconciliation metrics.
 Lab evidence preserves measurements and report answers. Worker handles and full Arrow results remain disposable.
 Plans and result buffers can regenerate only when their recorded content remains available.
 Timestamps use UTC ISO strings. Exact decimal metrics and large integers use typed decimal strings in portable records.
-Imported or historical SQL never runs automatically.
+Imported or historical SQL never runs automatically. Recalling a statement from the query history opens it in a new document and waits for the learner to run it.
+
+The query history keeps the last 50 executed statements on this device, newest first, with the dataset and the kind of run. Consecutive repeats of the same statement are recorded once. It is a fixed retention limit chosen for recall, not automatic deletion to free space, and the learner can clear it after explicit acceptance. It travels in the backup, holds no document reference, and never awards completion.
 
 Draft persistence occurs after 500 milliseconds without an edit and before a deliberate document switch.
 Save persists the captured revision immediately.

@@ -346,6 +346,166 @@ try {
   mark(
     "Comparison requires a correct answer, exposes visible progress and cancellation, and saves no extra attempt",
   );
+  // Format SQL is one undoable edit, and it refuses text it cannot parse.
+  const typed = "select customer_name,count(*) from orders group by 1";
+  await edit(typed);
+  await menu("Edit", "Format SQL");
+  // CodeMirror renders each line as its own element, so only innerText carries
+  // the newlines a reflow produces.
+  await page.waitForFunction(
+    () => /\n/.test(document.querySelector(".cm-content")?.innerText ?? ""),
+    null,
+    { timeout: 15000 },
+  );
+  const formatted = await page.locator(".cm-content").innerText();
+  assert.match(formatted, /^SELECT\n {2}customer_name,/);
+  await page.locator(".cm-content").click();
+  await page.locator(".cm-content").press("ControlOrMeta+z");
+  // One undo, not two: the replacement must not be merged into the typing
+  // group that preceded it.
+  await page.waitForFunction(
+    (text) => document.querySelector(".cm-content")?.innerText?.trim() === text,
+    typed,
+    { timeout: 15000 },
+  );
+  await edit("SELECT ((( FROM");
+  await menu("Edit", "Format SQL");
+  await page.waitForFunction(
+    () =>
+      /could not be formatted/.test(
+        document.querySelector(".status-message")?.textContent ?? "",
+      ),
+    null,
+    { timeout: 15000 },
+  );
+  assert.equal(
+    (await page.locator(".cm-content").innerText()).trim(),
+    "SELECT ((( FROM",
+    "unparseable SQL is left exactly as the learner wrote it",
+  );
+  mark("Format SQL reflows as one undo step and refuses unparseable SQL");
+  // Go to Line has one implementation: CodeMirror's own panel.
+  await edit("SELECT 1;\nSELECT 2;\nSELECT 3;\nSELECT 4;");
+  await menu("Edit", "Go to Line");
+  await page.locator(".cm-panels .cm-goto-line").waitFor();
+  assert.equal(
+    await page.locator("dialog[open]").count(),
+    0,
+    "Go to Line never opens a second, app-level prompt",
+  );
+  await page.keyboard.type("3");
+  await page.keyboard.press("Enter");
+  await page.waitForFunction(
+    () => document.querySelector(".cm-activeLine")?.textContent === "SELECT 3;",
+    null,
+    { timeout: 15000 },
+  );
+  mark("Go to Line resolves to the editor's own panel and moves the caret");
+  // The documented keys are generated from the menu hints, so they agree.
+  await menu("Help", "Keyboard Shortcuts");
+  await page.locator("dialog[open]").waitFor();
+  const documented = await page
+    .locator("dialog .shortcuts dt")
+    .allTextContents();
+  await page
+    .locator("dialog")
+    .getByRole("button", { name: "Close", exact: true })
+    .click();
+  await page.getByRole("menuitem", { name: "Edit", exact: true }).click();
+  const hint = await page
+    .getByRole("menuitem", { name: /Go to Line/ })
+    .innerText();
+  await page.keyboard.press("Escape");
+  assert.ok(
+    documented.includes("Ctrl+Alt+G") && hint.includes("Ctrl+Alt+G"),
+    "the dialog and the menu advertise the same key",
+  );
+  mark("Documented shortcuts are generated from the menu accelerator table");
+
+  // A dialog taller than the viewport scrolls its body, not itself: focusing
+  // the footer Close used to drag the title and the first rows out of view.
+  // Pinned small on purpose: the assertion is about what happens when the list
+  // cannot fit, so the viewport must guarantee it does not.
+  const priorViewport = page.viewportSize();
+  await page.setViewportSize({ width: 1280, height: 700 });
+  await menu("Help", "Keyboard Shortcuts");
+  await page.locator("dialog[open]").waitFor();
+  const overflow = await page.evaluate(() => {
+    const dialog = document.querySelector("dialog[open]");
+    const first = dialog.querySelector(".shortcuts dt");
+    return {
+      dialogScroll: dialog.scrollHeight - dialog.clientHeight,
+      firstRowTop: first.getBoundingClientRect().top,
+      titleTop: dialog.querySelector(".titlebar").getBoundingClientRect().top,
+      bodyScrolls:
+        dialog.querySelector(".dialog-content").scrollHeight >
+        dialog.querySelector(".dialog-content").clientHeight,
+    };
+  });
+  assert.equal(overflow.dialogScroll, 0);
+  assert.ok(overflow.bodyScrolls, "the long list scrolls inside the body");
+  assert.ok(
+    overflow.firstRowTop > overflow.titleTop,
+    "the first documented shortcut stays below the title, never scrolled off",
+  );
+  await page
+    .locator("dialog")
+    .getByRole("button", { name: "Close", exact: true })
+    .click();
+  await page.setViewportSize(priorViewport);
+  // Sorting derives readable SQL instead of reordering the grid in place.
+  await edit("SELECT customer_id, customer_name FROM customers ORDER BY 1;");
+  await run();
+  const firstBefore = await page.locator("#result-cell-0-1").innerText();
+  await page.locator("#result-cell-0-1").click({ button: "right" });
+  await page
+    .getByRole("menuitem", { name: /Sort by customer_name Descending/ })
+    .click();
+  await page.waitForFunction(
+    () =>
+      /ORDER BY "customer_name" DESC/.test(
+        document.querySelector(".cm-content")?.textContent ?? "",
+      ),
+    null,
+    { timeout: 20000 },
+  );
+  assert.match(
+    await page.locator("#document-tabs [aria-selected='true']").innerText(),
+    /^sort_customer_name_desc\.sql/,
+  );
+  assert.equal(
+    await page.locator("#result-cell-0-1").count(),
+    0,
+    "the derived query opens unrun: the grid never shows rows nobody executed",
+  );
+  await page.getByRole("menuitem", { name: "Window", exact: true }).click();
+  await page.keyboard.press("Escape");
+  mark("Grid sorting derives a new query and leaves the displayed rows alone");
+  // History records what ran, survives reload, and recall never executes.
+  await menu("Query", "Query History");
+  await page.locator("dialog[open]").waitFor();
+  const recalled = await page
+    .locator("dialog .history-sql")
+    .first()
+    .innerText();
+  assert.match(recalled, /FROM customers ORDER BY 1/);
+  await page
+    .getByRole("button", { name: "Open in new query", exact: true })
+    .first()
+    .click();
+  await page.waitForFunction(
+    (text) =>
+      document.querySelector(".cm-content")?.textContent?.includes(text),
+    "FROM customers ORDER BY 1",
+    { timeout: 20000 },
+  );
+  assert.equal(
+    await page.locator(".run-identity").count(),
+    0,
+    "recalled SQL waits for the learner: it never runs on open",
+  );
+  assert.equal(firstBefore.length > 0, true);
+  mark("Query history recalls executed SQL without running it");
   await page.screenshot({
     path: "readiness/evidence/application/qc-updates.png",
     fullPage: true,

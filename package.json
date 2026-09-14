@@ -25,6 +25,7 @@
     "@lezer/highlight": "^1.0.0",
     "@tanstack/svelte-virtual": "^3.13.0",
     "apache-arrow": "17.0.0",
+    "sql-formatter": "^15.8.2",
     "svelte": "^5.0.0"
   },
   "devDependencies": {

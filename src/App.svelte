@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, tick, untrack } from "svelte";
+  import { format as formatDialect } from "sql-formatter";
   import SqlEditor from "./components/SqlEditor.svelte";
   import ResultGrid from "./components/ResultGrid.svelte";
   import SkillMap from "./components/SkillMap.svelte";
@@ -12,6 +13,7 @@
   import {
     openPracticeStore,
     DocumentConflictError,
+    HISTORY_LIMIT,
     type PracticeStore,
   } from "./lib/storage";
   import {
@@ -26,6 +28,7 @@
     type Diagnostic,
     type SchemaTable,
     type Attempt,
+    type HistoryEntry,
   } from "./lib/types";
   import {
     assetUrl,
@@ -59,6 +62,9 @@
   let definitions = $state<Record<string, LoadedChallenge>>({});
   let openedSkillIds = $state<string[]>([]);
   let exploredSkillIds = $state<string[]>([]);
+  // Newest first, capped: a recall list, not an archive. Executed SQL only,
+  // and recall opens it in a document — it never runs on its own.
+  let history = $state<HistoryEntry[]>([]);
   let hintLevels = $state<Record<string, number>>({});
   let contentError = $state("");
   let contentLoading = $state(false);
@@ -114,7 +120,9 @@
   let domain = $state<"challenge" | "sandbox">("challenge");
   // Run evidence is keyed by document: a result only ever describes the
   // document it ran for, so switching tabs can never attach one to another.
-  type RunSlot = { run: RunResult; kind: RunKind };
+  // `sql` is the text the engine actually ran, not the editor's current text:
+  // it is what a derived query must wrap to describe the rows on screen.
+  type RunSlot = { run: RunResult; kind: RunKind; sql: string };
   const INDEX_LAB_DATASET = "index-lab";
   let runs = $state.raw<Record<string, RunSlot>>({});
   const activeSlot = $derived(activeId ? (runs[activeId] ?? null) : null);
@@ -146,17 +154,53 @@
   const comparisonStep = $derived(
     Number(status.match(/Comparison (\d+)\/9/)?.[1] ?? 0),
   );
+  // Every Edit verb is one editor command. The former `name.toLowerCase()`
+  // guess silently missed "Go to Line" -> "go to line", which is why a second
+  // implementation grew beside CodeMirror's own panel.
+  const editorCommands: Record<string, string> = {
+    Undo: "undo",
+    Redo: "redo",
+    Cut: "cut",
+    Copy: "copy",
+    Paste: "paste",
+    "Select All": "selectAll",
+    Find: "find",
+    Replace: "replace",
+    "Go to Line": "gotoLine",
+  };
   const shortcutHints: Record<string, string> = {
     Execute: "F5 / Ctrl+Enter",
     Save: "Ctrl+S",
     "Save As": "Ctrl+Shift+S",
     Undo: "Ctrl+Z",
-    Redo: "Ctrl+Shift+Z",
+    // Redo is Ctrl+Y on Windows and Ctrl+Shift+Z on Linux and macOS: the
+    // history keymap binds them per platform, so advertising one would be
+    // false on the other.
+    Redo: "Ctrl+Shift+Z / Ctrl+Y",
     Cut: "Ctrl+X",
     Copy: "Ctrl+C",
     Paste: "Ctrl+V",
     "Select All": "Ctrl+A",
     Find: "Ctrl+F",
+    "Go to Line": "Ctrl+Alt+G",
+    "Format SQL": "Ctrl+Shift+F",
+  };
+  // The Keyboard Shortcuts dialog is generated from the table above, so a menu
+  // hint and its documentation cannot drift apart. Only keys with no menu
+  // command are authored separately below.
+  const shortcutPurpose: Record<string, string> = {
+    Execute: "Run the SQL in the active document.",
+    Save: "Save the active query.",
+    "Save As": "Save the active query as a new copy.",
+    Undo: "Undo the last edit.",
+    Redo: "Redo the last undone edit.",
+    Cut: "Cut the selection.",
+    Copy: "Copy the selection.",
+    Paste: "Paste at the caret.",
+    "Select All": "Select the whole document.",
+    Find: "Open the editor's find panel. F3 repeats the search.",
+    "Go to Line": "Jump to a line number.",
+    "Format SQL": "Reflow the active document. One undo restores it.",
   };
   let running = $state(false);
   let storageReady = $state(false);
@@ -180,7 +224,16 @@
   });
   let filterVisible = $state(false);
   let objectFilter = $state("");
-  let editorHeight = $state(290);
+  // A flat 290 px was two thirds of a 450 px-tall workbench and a quarter of a
+  // tall one. The editor keeps a constant share of the window instead, inside
+  // the same bounds the splitter enforces.
+  function defaultEditorHeight() {
+    return Math.max(
+      160,
+      Math.min(650, Math.round((globalThis.innerHeight ?? 900) * 0.34)),
+    );
+  }
+  let editorHeight = $state(defaultEditorHeight());
   let ideX = $state(0);
   let ideY = $state(0);
   let explorerWidth = $state(220);
@@ -528,6 +581,8 @@
       "Find",
       "Replace",
       "Go to Line",
+      "-",
+      "Format SQL",
     ],
     View: [
       "Object Explorer",
@@ -553,6 +608,7 @@
       "Submit",
       "Hint",
       "-",
+      "Query History",
       "Reset Challenge SQL",
     ],
     Skills: [
@@ -957,12 +1013,13 @@
     hintLevels = profile.hints;
     openedSkillIds = profile.session.openedSkillIds;
     exploredSkillIds = profile.session.exploredSkillIds ?? [];
+    history = profile.session.history ?? [];
     if (!preserveCurrent) {
       settings = { ...defaultSettings, ...profile.settings };
       showExplorer = settings.layout?.showExplorer ?? true;
       showGoal = settings.layout?.showGoal ?? true;
       goalCollapsed = settings.layout?.goalCollapsed ?? false;
-      editorHeight = settings.layout?.editorHeight ?? 290;
+      editorHeight = settings.layout?.editorHeight ?? defaultEditorHeight();
       explorerWidth = settings.layout?.explorerWidth ?? 220;
       goalWidth = settings.layout?.goalWidth ?? 280;
       goalHeight = settings.layout?.goalHeight ?? 420;
@@ -1004,11 +1061,24 @@
           activeId,
           openedSkillIds: [...openedSkillIds],
           exploredSkillIds: [...exploredSkillIds],
+          history: $state.snapshot(history) as HistoryEntry[],
         });
       } catch (e) {
         fail(e, "storage");
       }
     }
+  }
+  function recordHistory(sql: string, datasetId: string, kind: RunKind) {
+    const text = sql.trim();
+    if (!text) return;
+    // Re-running the same statement is normal practice; recording it twice in
+    // a row would push the rest of the list off the end for nothing.
+    if (history[0]?.sql === text && history[0]?.kind === kind) return;
+    history = [
+      { sql: text, datasetId, ranAt: new Date().toISOString(), kind },
+      ...history,
+    ].slice(0, HISTORY_LIMIT);
+    void persistSession();
   }
   async function persistDocument(document: QueryDocument) {
     const snapshot = structuredClone($state.snapshot(document));
@@ -1100,6 +1170,44 @@
       diagnostics = [];
       scheduleParse();
     }
+  }
+  // Formatting is an ordinary edit: it goes through changeDocument like Reset
+  // Challenge SQL, so it bumps one revision, schedules one save, reparses, and
+  // lands in the editor as a single undoable transaction. The caret is clamped
+  // rather than carried: its old byte offset points at an unrelated token once
+  // the text is reflowed.
+  function formatSql() {
+    if (!activeDoc) return;
+    const source = activeDoc.sql;
+    if (!source.trim()) {
+      announce("Nothing to format: this document is empty.");
+      return;
+    }
+    let formatted: string;
+    try {
+      formatted = formatDialect(source, {
+        language: "duckdb",
+        keywordCase: "upper",
+        tabWidth: 2,
+      });
+    } catch (e) {
+      // Unparseable SQL is the learner's normal working state. Refuse the
+      // reflow and say so; never rewrite text the formatter did not understand.
+      announce(
+        `SQL could not be formatted: ${e instanceof Error ? e.message.split("\n")[0] : "unrecognised syntax"}. The text is unchanged.`,
+      );
+      return;
+    }
+    if (formatted === source) {
+      announce("SQL is already formatted.");
+      return;
+    }
+    const caret = Math.min(
+      editor?.getSelection().anchor ?? 0,
+      formatted.length,
+    );
+    changeDocument(formatted, { anchor: caret, head: caret }, 0);
+    announce("SQL formatted. Undo restores the previous text.");
   }
   function scheduleParse() {
     clearTimeout(parseTimer);
@@ -1600,7 +1708,8 @@
         lab: doc.lab,
         labEvidence: labEvidence[doc.id],
       });
-      runs = { ...runs, [run.documentId]: { run, kind } };
+      runs = { ...runs, [run.documentId]: { run, kind, sql: doc.sql } };
+      recordHistory(doc.sql, doc.datasetId, kind);
       if (
         run.outcome === "engine-error" &&
         run.message.includes("Content error:")
@@ -1982,6 +2091,32 @@
       showModal("bin", "Recycle Bin");
     }
   }
+  async function openHistory(entry: HistoryEntry, index: number) {
+    closeModal();
+    // The recorded dataset may have been retired between sessions; fall back
+    // rather than opening a document bound to a dataset that cannot load.
+    const datasetId = catalog?.curriculum.datasets.some(
+      (dataset) => dataset.id === entry.datasetId,
+    )
+      ? entry.datasetId
+      : (catalog?.curriculum.datasets[0]?.id ?? "");
+    await addDocument(entry.sql, `history_${index + 1}.sql`, null, datasetId);
+    await tick();
+    editor?.focus();
+    announce("History SQL opened as a new query. Run it when you are ready.");
+  }
+  async function clearHistory() {
+    if (
+      await confirmAction(
+        "Clear query history",
+        `Forget the last ${formatCount(history.length, "statement")} this device ran? Saved queries, attempts, and progress are unaffected.`,
+      )
+    ) {
+      history = [];
+      await persistSession();
+      announce("Query history cleared.");
+    }
+  }
   async function openAttempt(attempt: Attempt) {
     closeModal();
     const current = sameIdentity(
@@ -2354,6 +2489,43 @@
     editor?.focus();
     if (run) await execute();
   }
+  // Sorting and filtering are taught, not simulated: the grid keeps showing
+  // exactly what the engine returned, and the request becomes readable SQL in
+  // a new document. The source is the text that produced those rows, not the
+  // editor's current text, so an edited-but-unrun document cannot silently
+  // change what is being wrapped.
+  async function deriveQuery(
+    derivation:
+      | { kind: "sort"; column: string; descending: boolean }
+      | { kind: "filter"; column: string; value: string | null },
+  ) {
+    const source = activeSlot?.sql.trim().replace(/;\s*$/, "");
+    if (!source) return;
+    const quote = (name: string) => `"${name.replaceAll('"', '""')}"`;
+    const column = quote(derivation.column);
+    const clause =
+      derivation.kind === "sort"
+        ? `ORDER BY ${column}${derivation.descending ? " DESC" : ""}`
+        : derivation.value === null
+          ? `WHERE ${column} IS NULL`
+          : `WHERE ${column} = '${derivation.value.replaceAll("'", "''")}'`;
+    const sql = `SELECT *\nFROM (\n${source
+      .split("\n")
+      .map((line) => (line.trim() ? `  ${line}` : line))
+      .join("\n")}\n) AS source\n${clause};`;
+    const name =
+      derivation.kind === "sort"
+        ? `sort_${derivation.column}${derivation.descending ? "_desc" : "_asc"}.sql`
+        : `filter_${derivation.column}.sql`;
+    await addDocument(sql, name);
+    await tick();
+    editor?.focus();
+    announce(
+      derivation.kind === "sort"
+        ? `Sorted query written to ${name}. Run it to see the ordered rows.`
+        : `Filtered query written to ${name}. Run it to see the matching rows.`,
+    );
+  }
   function contextRequest(event: MouseEvent | KeyboardEvent): boolean {
     if (modal || event.defaultPrevented || !(event.target instanceof Element))
       return false;
@@ -2651,6 +2823,7 @@
       );
     if (command === "Cancel") return !busy || engineState === "cancelling";
     if (command === "Hint") return !storageReady || !challenge;
+    if (command === "Query History") return !storageReady;
     if (command === "Close All Documents")
       return !storageReady || !openIds.length;
     if (
@@ -2758,6 +2931,12 @@
               resetLab();
             }
           break;
+        case "Format SQL":
+          formatSql();
+          break;
+        case "Query History":
+          showModal("history", "Query History");
+          break;
         case "Object Explorer":
           showExplorer = !showExplorer;
           break;
@@ -2780,7 +2959,7 @@
           goalX = null;
           goalY = null;
           maximized = false;
-          editorHeight = 290;
+          editorHeight = defaultEditorHeight();
           explorerWidth = 220;
           goalWidth = 280;
           ideX = 0;
@@ -2938,26 +3117,9 @@
         case "About":
           showModal("about", "About SQL Grind");
           break;
-        case "Go to Line": {
-          const line = await promptText("Go to Line", "Line number", "1");
-          if (line && activeDoc) {
-            const index = Math.max(
-              0,
-              Math.min(activeDoc.sql.split("\n").length - 1, Number(line) - 1),
-            );
-            const offset = activeDoc.sql
-              .split("\n")
-              .slice(0, index)
-              .reduce((n, s) => n + s.length + 1, 0);
-            editor?.selectRange(offset, offset);
-          }
-          break;
-        }
         default:
-          if (menuItems.Edit.includes(name)) {
-            editor?.command(
-              name === "Select All" ? "selectAll" : name.toLowerCase(),
-            );
+          if (editorCommands[name]) {
+            editor?.command(editorCommands[name]);
             break;
           }
       }
@@ -3161,6 +3323,20 @@
     ) {
       e.preventDefault();
       void command(e.shiftKey ? "Save As" : "Save");
+    }
+    // Ctrl+F alone belongs to the editor's find panel; the Shift variant does
+    // not match that binding, so it reaches here unclaimed.
+    if (
+      (e.ctrlKey || e.metaKey) &&
+      e.shiftKey &&
+      e.key.toLowerCase() === "f" &&
+      !modal &&
+      ideVisible &&
+      !e.defaultPrevented &&
+      document.querySelector(".ide")?.contains(document.activeElement)
+    ) {
+      e.preventDefault();
+      void command("Format SQL");
     }
   }
   function moveIde(event: PointerEvent) {
@@ -3993,6 +4169,7 @@
                   result={result?.result ?? null}
                   {stale}
                   {busy}
+                  onderive={(derivation) => void deriveQuery(derivation)}
                 />
               {:else if outputTab === "Assessment"}<div class="plan-view inset">
                   {#if activeDoc?.lab && activeContent}
@@ -5218,17 +5395,48 @@
             No matching attempts. Submit creates a local practice record.
           </p>{/each}
       </div>
+    {:else if modal === "history"}<p>
+        The last {HISTORY_LIMIT} statements this device executed, newest first. Opening
+        one puts its SQL in a new document; nothing runs until you run it.
+      </p>
+      <div class="library-list">
+        {#each history as entry, index}<article>
+            <h3>
+              {entry.kind === "submit"
+                ? "Submitted"
+                : entry.kind === "plan"
+                  ? "Planned"
+                  : entry.kind === "compare"
+                    ? "Compared"
+                    : entry.kind === "lab"
+                      ? "Lab"
+                      : "Executed"}
+              <small>{entry.datasetId}</small>
+            </h3>
+            <p>{new Date(entry.ranAt).toLocaleString()}</p>
+            <pre class="history-sql">{entry.sql}</pre>
+            <button onclick={() => openHistory(entry, index)}
+              >Open in new query</button
+            >
+          </article>{:else}<p>
+            No SQL has run on this device yet. Execute a query and it appears
+            here.
+          </p>{/each}
+      </div>
+      {#if history.length}<button onclick={() => clearHistory()}
+          >Clear query history</button
+        >{/if}
     {:else if modal === "shortcuts"}<dl class="shortcuts">
-        <dt>F5 / Ctrl+Enter / Command+Enter</dt>
-        <dd>Execute SQL while the editor has focus.</dd>
-        <dt>Ctrl+S / Command+S</dt>
-        <dd>Save the active query.</dd>
-        <dt>Ctrl+Shift+S / Command+Shift+S</dt>
-        <dd>Save the active query as a new copy.</dd>
+        {#each Object.keys(shortcutPurpose) as name}<dt>
+            {shortcutHints[name]}
+          </dt>
+          <dd>{shortcutPurpose[name]}</dd>{/each}
         <dt>Escape, then Tab</dt>
         <dd>Leave the SQL editor without inserting indentation.</dd>
         <dt>F6 / Shift+F6</dt>
         <dd>Move between major regions.</dd>
+        <dt>Alt + menu letter</dt>
+        <dd>Open that menubar menu. The underlined letter is the key.</dd>
         <dt>Shift+F10 / Context Menu key</dt>
         <dd>
           Open the menu for a table, editor, document tab, result cell, or tray
@@ -5242,9 +5450,9 @@
         <dd>Up/Down resize 10 px; Shift changes 50 px. Home/End use limits.</dd>
       </dl>
       <p>
-        Browser reload, close-tab, and zoom shortcuts remain browser actions
-        outside the editor. Use the browser's own zoom to scale the whole
-        interface.
+        On macOS use Command wherever this list says Ctrl. Browser reload,
+        close-tab, and zoom shortcuts remain browser actions outside the editor.
+        Use the browser's own zoom to scale the whole interface.
       </p>
     {:else if modal === "rules"}<h3>{challenge?.title ?? "Scratch query"}</h3>
       {#if challenge}

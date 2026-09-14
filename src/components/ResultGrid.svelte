@@ -8,7 +8,20 @@
     result,
     stale,
     busy,
-  }: { result: ResultHandle | null; stale: boolean; busy: boolean } = $props();
+    onderive,
+  }: {
+    result: ResultHandle | null;
+    stale: boolean;
+    busy: boolean;
+    // The grid never reorders or hides rows itself: W11 reserves the displayed
+    // result for what the engine actually returned. Sorting and filtering are
+    // handed up as a request to write SQL the learner can read and run.
+    onderive?: (
+      derivation:
+        | { kind: "sort"; column: string; descending: boolean }
+        | { kind: "filter"; column: string; value: string | null },
+    ) => void;
+  } = $props();
   let viewport = $state<HTMLDivElement>();
   let grid = $state<HTMLDivElement>();
   let panel = $state<HTMLElement>();
@@ -262,6 +275,38 @@
           label: "Copy All with Headers",
           action: () => void copySelection("all", index, col),
         },
+        ...(onderive
+          ? [
+              {
+                label: `Sort by ${columns[col].name} Ascending as New Query`,
+                separatorBefore: true,
+                action: () =>
+                  onderive({
+                    kind: "sort",
+                    column: columns[col].name,
+                    descending: false,
+                  }),
+              },
+              {
+                label: `Sort by ${columns[col].name} Descending as New Query`,
+                action: () =>
+                  onderive({
+                    kind: "sort",
+                    column: columns[col].name,
+                    descending: true,
+                  }),
+              },
+              {
+                label: "Filter to This Value as New Query",
+                action: () =>
+                  onderive({
+                    kind: "filter",
+                    column: columns[col].name,
+                    value: result?.getRow(index)[col] ?? null,
+                  }),
+              },
+            ]
+          : []),
       ],
     };
   }

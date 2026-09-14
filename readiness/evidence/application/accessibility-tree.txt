@@ -85,7 +85,7 @@
       - tab "schema.ref"
     - textbox "SQL editor — basics.01.sql · basics.01"
     - text: SQL, PostgreSQL-style highlighting for DuckDB. F5 or Control+Enter runs. Control+S saves. On macOS use Command. Tab leaves the editor; Escape then Tab also leaves it.
-    - slider "Editor and results splitter": "290"
+    - slider "Editor and results splitter": "300"
     - region "Query output":
       - tablist "Result views":
         - tab "Results" [selected]
@@ -149,4 +149,4 @@
   - button "Patchouli — reading"
   - 'button "SQL engine: initializing"'
   - 'button "Patchouli: hidden"'
-  - time: 07:14 PM
+  - time: 08:25 PM

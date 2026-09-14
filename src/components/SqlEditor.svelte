@@ -29,6 +29,7 @@
     redo,
     selectAll,
     undo,
+    isolateHistory,
   } from "@codemirror/commands";
   import {
     autocompletion,
@@ -304,6 +305,11 @@
         editor.dispatch({
           changes: { from: 0, to: editor.state.doc.length, insert: text },
           selection: nextSelection,
+          // A whole-document replacement is its own undo step. Without this,
+          // CodeMirror merges it into the typing group that preceded it, so one
+          // Ctrl+Z reverts the replacement *and* the learner's last sentence of
+          // typing.
+          annotations: isolateHistory.of("full"),
         });
       } else if (!editor.state.selection.eq(nextSelection)) {
         editor.dispatch({ selection: nextSelection });

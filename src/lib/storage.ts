@@ -2,6 +2,7 @@ import {
   defaultSettings,
   type Attempt,
   type QueryDocument,
+  type HistoryEntry,
   type Session,
   type Settings,
   type StoredProfile,
@@ -958,6 +959,22 @@ function validateSettings(value: unknown): asserts value is Settings {
     text(value.layout.selectedSkill);
   }
 }
+// The history is a bounded recall list, not an archive: it is capped at the
+// point of writing, and a stored profile that somehow exceeds the cap is
+// rejected rather than silently truncated on read.
+export const HISTORY_LIMIT = 50;
+function validateHistory(value: unknown): asserts value is HistoryEntry[] {
+  list(value);
+  if (value.length > HISTORY_LIMIT)
+    invalid("the query history exceeds its retention limit");
+  for (const entry of value) {
+    object(entry, ["sql", "datasetId", "ranAt", "kind"]);
+    text(entry.sql, MAX_SQL_BYTES);
+    text(entry.datasetId, 512, true);
+    date(entry.ranAt);
+    oneOf(entry.kind, ["execute", "submit", "plan", "compare", "lab"]);
+  }
+}
 function validateSession(
   value: unknown,
   legacy = false,
@@ -969,7 +986,7 @@ function validateSession(
   object(
     value,
     ["openIds", "activeId", ...(legacy ? [] : ["openedSkillIds"])],
-    legacy ? [] : ["exploredSkillIds"],
+    legacy ? [] : ["exploredSkillIds", "history"],
   );
   if (!legacy) {
     stringList(value.openedSkillIds, true);
@@ -977,6 +994,8 @@ function validateSession(
     // read site would otherwise need `?? []` to avoid a crash on old profiles.
     if (value.exploredSkillIds === undefined) value.exploredSkillIds = [];
     else stringList(value.exploredSkillIds, true);
+    if (value.history === undefined) value.history = [];
+    else validateHistory(value.history);
   }
   text(value.activeId, 512, true);
   if (!Array.isArray(value.openIds) || value.openIds.length > 100000)
@@ -1367,7 +1386,10 @@ function migrateV1(input: unknown): Payload {
       | { id: "preferences"; value: Settings }
       | {
           id: "session";
-          value: Omit<Session, "openedSkillIds" | "exploredSkillIds">;
+          value: Omit<
+            Session,
+            "openedSkillIds" | "exploredSkillIds" | "history"
+          >;
         }
     )[];
   };
@@ -1408,7 +1430,12 @@ function migrateV1(input: unknown): Payload {
       ? setting
       : {
           id: "session",
-          value: { ...setting.value, openedSkillIds, exploredSkillIds: [] },
+          value: {
+            ...setting.value,
+            openedSkillIds,
+            exploredSkillIds: [],
+            history: [],
+          },
         },
   );
   if (
@@ -1422,6 +1449,7 @@ function migrateV1(input: unknown): Payload {
         activeId: "",
         openedSkillIds,
         exploredSkillIds: [],
+        history: [],
       },
     });
   const result: Payload = {
@@ -1604,6 +1632,7 @@ export class PracticeStore {
               : (openIds[0] ?? ""),
           openedSkillIds: [...(savedSession?.value.openedSkillIds ?? [])],
           exploredSkillIds: [...(savedSession?.value.exploredSkillIds ?? [])],
+          history: [...(savedSession?.value.history ?? [])],
         },
       };
     });
@@ -1726,6 +1755,7 @@ export class PracticeStore {
           activeId: "",
           openedSkillIds: [],
           exploredSkillIds: [],
+          history: [],
         };
         if (value.openedSkillIds.includes(skillId)) return;
         value.openedSkillIds.push(skillId);
@@ -1752,6 +1782,7 @@ export class PracticeStore {
           activeId: "",
           openedSkillIds: [],
           exploredSkillIds: [],
+          history: [],
         };
         const current = value.exploredSkillIds ?? [];
         if (current.includes(skillId) === explored) return;
@@ -2134,6 +2165,9 @@ export class PracticeStore {
                   : "",
                 openedSkillIds: [...setting.value.openedSkillIds],
                 exploredSkillIds: [...(setting.value.exploredSkillIds ?? [])],
+                // Document ids are remapped on import; history holds SQL text
+                // and no document reference, so it transfers verbatim.
+                history: [...(setting.value.history ?? [])],
               },
             });
           }

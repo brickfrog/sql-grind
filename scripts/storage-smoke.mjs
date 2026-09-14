@@ -336,6 +336,7 @@ try {
     activeId: "",
     openedSkillIds: [],
     exploredSkillIds: [],
+    history: [],
   });
   record(currentCase, fresh);
 
@@ -368,6 +369,7 @@ try {
       activeId: h.first.id,
       openedSkillIds: [],
       exploredSkillIds: [],
+      history: [],
     });
     return {
       first: h.first,
@@ -394,6 +396,7 @@ try {
     activeId: "query-primary",
     openedSkillIds: ["window"],
     exploredSkillIds: [],
+    history: [],
   });
   for (const document of [saved.first, saved.second]) {
     assert.deepEqual(
@@ -416,6 +419,7 @@ try {
       activeId: h.first.id,
       openedSkillIds: [],
       exploredSkillIds,
+      history: [],
     });
     await h.store.setSkillExplored("ahead-skill", true);
     const recorded = (await h.store.load()).session.exploredSkillIds;
@@ -450,6 +454,82 @@ try {
     "opened access remains append-only across the same saves",
   );
   record(currentCase, explored);
+
+  currentCase = "query history persists, caps, and rejects an overlong list";
+  const historyCase = await evaluate(page, async () => {
+    const h = storageSmoke;
+    const module = await import("/src/lib/storage.ts");
+    const entry = (n) => ({
+      sql: `SELECT ${n};`,
+      datasetId: "commerce-practice",
+      ranAt: new Date(1700000000000 + n * 1000).toISOString(),
+      kind: "execute",
+    });
+    const session = (history) => ({
+      openIds: [h.second.id, h.first.id],
+      activeId: h.first.id,
+      openedSkillIds: [],
+      exploredSkillIds: [],
+      history,
+    });
+    await h.store.saveSession(
+      session(
+        Array.from({ length: module.HISTORY_LIMIT }, (_, index) =>
+          entry(index),
+        ),
+      ),
+    );
+    const stored = (await h.store.load()).session.history;
+    let rejected = "";
+    try {
+      await h.store.saveSession(
+        session(
+          Array.from({ length: module.HISTORY_LIMIT + 1 }, (_, index) =>
+            entry(index),
+          ),
+        ),
+      );
+    } catch (error) {
+      rejected = String(error.message);
+    }
+    const afterRejection = (await h.store.load()).session.history.length;
+    // A newest-first list is replaced wholesale, never unioned: the learner's
+    // clear must not be undone by the next ordinary session save.
+    await h.store.saveSession(session([]));
+    return {
+      limit: module.HISTORY_LIMIT,
+      count: stored.length,
+      newest: stored[0],
+      rejected,
+      afterRejection,
+      cleared: (await h.store.load()).session.history,
+      inBackup: JSON.parse(JSON.parse(await h.store.exportBackup()).payload)
+        .settings.length,
+    };
+  });
+  assert.equal(historyCase.count, historyCase.limit);
+  assert.deepEqual(historyCase.newest, {
+    sql: "SELECT 0;",
+    datasetId: "commerce-practice",
+    ranAt: new Date(1700000000000).toISOString(),
+    kind: "execute",
+  });
+  assert.match(
+    historyCase.rejected,
+    /retention limit/,
+    "a list longer than the cap is refused, not silently truncated",
+  );
+  assert.equal(
+    historyCase.afterRejection,
+    historyCase.limit,
+    "the refused save leaves the stored history untouched",
+  );
+  assert.deepEqual(
+    historyCase.cleared,
+    [],
+    "clearing the history survives the next session save",
+  );
+  record(currentCase, historyCase);
   // Close all module instances, then actually reload the page and module.
   await evaluate(page, () => storageSmoke.closeStores());
   await page.reload({ waitUntil: "domcontentloaded" });
@@ -1265,6 +1345,7 @@ try {
     ...legacyMigration.source.settings[1].value,
     openedSkillIds: ["window"],
     exploredSkillIds: [],
+    history: [],
   });
   assert.equal(JSON.parse(legacyMigration.exported).formatVersion, 2);
   record(currentCase, legacyMigration);

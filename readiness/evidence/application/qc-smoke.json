@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-13T23:26:20.057Z",
+  "date": "2026-09-14T00:22:15.676Z",
   "checks": [
     "Pinned Hint/Submit are visible and unobstructed with the default floating judge at five desktop sizes",
     "Escape closes hints and reset confirmation; focus returns to the persistent opener",
@@ -8,7 +8,12 @@
     "DDL is rejected without creating a table; Query menu exposes the Execute shortcut",
     "Qualified CTE wildcard points to the line-five star, not the statement start",
     "Grading shows specific missing columns, per-dataset expected/actual counts, and familiar SQL types",
-    "Comparison requires a correct answer, exposes visible progress and cancellation, and saves no extra attempt"
+    "Comparison requires a correct answer, exposes visible progress and cancellation, and saves no extra attempt",
+    "Format SQL reflows as one undo step and refuses unparseable SQL",
+    "Go to Line resolves to the editor's own panel and moves the caret",
+    "Documented shortcuts are generated from the menu accelerator table",
+    "Grid sorting derives a new query and leaves the displayed rows alone",
+    "Query history recalls executed SQL without running it"
   ],
   "errors": []
 }

@@ -181,6 +181,15 @@ export interface Session {
   openedSkillIds: string[];
   /** Skills opened ahead of their prerequisites. Access only: never completion. */
   exploredSkillIds: string[];
+  /** Executed SQL, newest first. Recall only: it never runs on its own. */
+  history: HistoryEntry[];
+}
+export interface HistoryEntry {
+  sql: string;
+  datasetId: string;
+  /** UTC ISO. */
+  ranAt: string;
+  kind: RunKind;
 }
 export interface StoredProfile {
   documents: QueryDocument[];

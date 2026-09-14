@@ -160,7 +160,11 @@ try {
   await visible(".cm-search");
   await page.keyboard.press("Escape");
   await menu("Edit", "Go to Line");
-  await name("1");
+  // One implementation: the menu verb reaches CodeMirror's own panel, so there
+  // is no app-level prompt dialog to fill.
+  await visible(".cm-panels .cm-goto-line");
+  await page.keyboard.type("1");
+  await page.keyboard.press("Enter");
   await menu("Edit", "Replace");
   await visible(".cm-search");
   await page.locator(".cm-search input[name=search]").fill("42");
