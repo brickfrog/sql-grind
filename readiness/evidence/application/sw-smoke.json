@@ -1,0 +1,309 @@
+{
+  "date": "2026-09-15T03:52:49.968Z",
+  "origin": "http://127.0.0.1:4173",
+  "checks": [
+    {
+      "name": "Cold visit boots the engine and runs a query",
+      "detail": {
+        "readyMs": 2956,
+        "rows": 11
+      }
+    },
+    {
+      "name": "Service worker activated and controls the first visit",
+      "detail": {
+        "scope": "http://127.0.0.1:4173/",
+        "script": "http://127.0.0.1:4173/sw.js",
+        "state": "activated",
+        "controller": "http://127.0.0.1:4173/sw.js"
+      }
+    },
+    {
+      "name": "Every engine and extension asset is durably cached, whole",
+      "detail": {
+        "assets": 5,
+        "cachedEngineBytes": 47115868,
+        "warmedEngineBytes": 47489,
+        "warmedEngineAssets": [
+          "bundle/curriculum.json",
+          "bundle/challenges/basics.01/challenge.json"
+        ],
+        "alreadyPresent": 13,
+        "shellEntriesStored": 26,
+        "shellBytesStored": 1496908
+      }
+    },
+    {
+      "name": "Install precaches the document and its built assets",
+      "detail": {
+        "shellCache": "sql-grind-shell-curriculum-v1-064db1f6925786b0",
+        "entries": 27,
+        "document": true,
+        "assets": [
+          {
+            "path": "/assets/index-DRqkRRek.js",
+            "cached": true
+          },
+          {
+            "path": "/assets/index-CbSCTIXj.css",
+            "cached": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "Background warming restores an evicted engine asset",
+      "detail": {
+        "asset": "/engine/duckdb-eh.wasm",
+        "redownloadedBytes": 35913747
+      }
+    },
+    {
+      "name": "Network-first shell serves a redeployed asset instead of a stale copy"
+    },
+    {
+      "name": "Foreign-version cache is purged while the current one survives",
+      "detail": {
+        "planted": "sql-grind-assets-foreign-version",
+        "before": [
+          "sql-grind-meta",
+          "sql-grind-shell-curriculum-v1-064db1f6925786b0",
+          "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+          "sql-grind-assets-foreign-version"
+        ],
+        "after": [
+          "sql-grind-meta",
+          "sql-grind-shell-curriculum-v1-064db1f6925786b0",
+          "sql-grind-assets-curriculum-v1-064db1f6925786b0"
+        ]
+      }
+    },
+    {
+      "name": "Offline reload reaches engine-ready and runs a query",
+      "detail": {
+        "readyMs": 2712,
+        "rows": 11,
+        "requestFailures": 0
+      }
+    },
+    {
+      "name": "No page error and no failed request in the offline run"
+    },
+    {
+      "name": "Second visit ever works offline without any priming",
+      "detail": {
+        "requestFailures": [],
+        "errors": [],
+        "firstQueryRows": 11,
+        "warm": {
+          "type": "sql-grind:warmed",
+          "assets": {
+            "warmed": [
+              "bundle/curriculum.json",
+              "bundle/challenges/basics.01/challenge.json",
+              "bundle/datasets/commerce-practice/dataset.json"
+            ],
+            "present": [
+              "engine/duckdb-eh.wasm",
+              "engine/duckdb-browser-eh.worker.js",
+              "extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
+              "extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
+              "extensions/v1.5.4/wasm_eh/parquet.duckdb_extension.wasm",
+              "bundle/schema.sql",
+              "bundle/datasets/commerce-practice/config-20240907.sql",
+              "bundle/generator.sql",
+              "bundle/datasets/commerce-practice/prepare-seeded.sql",
+              "bundle/datasets/commerce-practice/restore-seeded.sql",
+              "bundle/datasets/commerce-practice/supplements.sql",
+              "bundle/invariants.sql"
+            ],
+            "skipped": [],
+            "bytes": 48892
+          },
+          "shell": {
+            "stored": 26,
+            "bytes": 1496908
+          },
+          "failed": [],
+          "version": "curriculum-v1-064db1f6925786b0"
+        },
+        "offlineReadyMs": 2585,
+        "offlineQueryRows": 11
+      }
+    }
+  ],
+  "errors": [],
+  "offlineRequestFailures": [],
+  "deployedVersion": "curriculum-v1-064db1f6925786b0",
+  "engineAndExtensionBytes": 47115868,
+  "coldReadyMs": 2956,
+  "coldQueryRows": 11,
+  "worker": {
+    "scope": "http://127.0.0.1:4173/",
+    "script": "http://127.0.0.1:4173/sw.js",
+    "state": "activated",
+    "controller": "http://127.0.0.1:4173/sw.js"
+  },
+  "warmReport": {
+    "type": "sql-grind:warmed",
+    "assets": {
+      "warmed": [
+        "bundle/curriculum.json",
+        "bundle/challenges/basics.01/challenge.json"
+      ],
+      "present": [
+        "engine/duckdb-eh.wasm",
+        "engine/duckdb-browser-eh.worker.js",
+        "extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
+        "extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
+        "extensions/v1.5.4/wasm_eh/parquet.duckdb_extension.wasm",
+        "bundle/datasets/commerce-practice/dataset.json",
+        "bundle/schema.sql",
+        "bundle/datasets/commerce-practice/config-20240907.sql",
+        "bundle/generator.sql",
+        "bundle/datasets/commerce-practice/prepare-seeded.sql",
+        "bundle/datasets/commerce-practice/restore-seeded.sql",
+        "bundle/datasets/commerce-practice/supplements.sql",
+        "bundle/invariants.sql"
+      ],
+      "skipped": [],
+      "bytes": 47489
+    },
+    "shell": {
+      "stored": 26,
+      "bytes": 1496908
+    },
+    "failed": [],
+    "version": "curriculum-v1-064db1f6925786b0"
+  },
+  "cachedEngineAssets": [
+    {
+      "path": "/engine/duckdb-eh.wasm",
+      "cached": true,
+      "bytes": 35913747
+    },
+    {
+      "path": "/engine/duckdb-browser-eh.worker.js",
+      "cached": true,
+      "bytes": 773223
+    },
+    {
+      "path": "/extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
+      "cached": true,
+      "bytes": 6389178
+    },
+    {
+      "path": "/extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
+      "cached": true,
+      "bytes": 821413
+    },
+    {
+      "path": "/extensions/v1.5.4/wasm_eh/parquet.duckdb_extension.wasm",
+      "cached": true,
+      "bytes": 3218307
+    }
+  ],
+  "cachedEngineBytes": 47115868,
+  "caches": {
+    "sql-grind-meta": 1,
+    "sql-grind-shell-curriculum-v1-064db1f6925786b0": 27,
+    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 15
+  },
+  "shellPrecache": {
+    "entries": 27,
+    "document": true,
+    "assets": [
+      {
+        "path": "/assets/index-DRqkRRek.js",
+        "cached": true
+      },
+      {
+        "path": "/assets/index-CbSCTIXj.css",
+        "cached": true
+      }
+    ]
+  },
+  "rewarmReport": {
+    "type": "sql-grind:warmed",
+    "assets": {
+      "warmed": [
+        "engine/duckdb-eh.wasm"
+      ],
+      "present": [
+        "engine/duckdb-browser-eh.worker.js",
+        "extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
+        "extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
+        "extensions/v1.5.4/wasm_eh/parquet.duckdb_extension.wasm"
+      ],
+      "skipped": [],
+      "bytes": 35913747
+    },
+    "shell": {
+      "stored": 0,
+      "bytes": 0
+    },
+    "failed": [],
+    "version": "curriculum-v1-064db1f6925786b0"
+  },
+  "shellFreshness": {
+    "asset": "/icon-credits.txt",
+    "cachedFirstBytes": 3578,
+    "afterRedeployBytes": 3597,
+    "offlineFallbackBytes": 3597
+  },
+  "cachesWithForeign": {
+    "sql-grind-meta": 1,
+    "sql-grind-shell-curriculum-v1-064db1f6925786b0": 28,
+    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 15,
+    "sql-grind-assets-foreign-version": 1
+  },
+  "onlineReloadReadyMs": 2690,
+  "cachesAfterPurge": {
+    "sql-grind-meta": 1,
+    "sql-grind-shell-curriculum-v1-064db1f6925786b0": 28,
+    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 15
+  },
+  "offlineReloadReadyMs": 2712,
+  "offlineQueryRows": 11,
+  "secondVisit": {
+    "requestFailures": [],
+    "errors": [],
+    "firstQueryRows": 11,
+    "warm": {
+      "type": "sql-grind:warmed",
+      "assets": {
+        "warmed": [
+          "bundle/curriculum.json",
+          "bundle/challenges/basics.01/challenge.json",
+          "bundle/datasets/commerce-practice/dataset.json"
+        ],
+        "present": [
+          "engine/duckdb-eh.wasm",
+          "engine/duckdb-browser-eh.worker.js",
+          "extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
+          "extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
+          "extensions/v1.5.4/wasm_eh/parquet.duckdb_extension.wasm",
+          "bundle/schema.sql",
+          "bundle/datasets/commerce-practice/config-20240907.sql",
+          "bundle/generator.sql",
+          "bundle/datasets/commerce-practice/prepare-seeded.sql",
+          "bundle/datasets/commerce-practice/restore-seeded.sql",
+          "bundle/datasets/commerce-practice/supplements.sql",
+          "bundle/invariants.sql"
+        ],
+        "skipped": [],
+        "bytes": 48892
+      },
+      "shell": {
+        "stored": 26,
+        "bytes": 1496908
+      },
+      "failed": [],
+      "version": "curriculum-v1-064db1f6925786b0"
+    },
+    "offlineReadyMs": 2585,
+    "offlineQueryRows": 11
+  },
+  "status": "passed",
+  "browser": "153.0.8010.12"
+}

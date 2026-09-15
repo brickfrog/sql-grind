@@ -175,6 +175,13 @@ export interface Settings {
   announceDiagnostics: boolean;
   judgeVisible: boolean;
   judgeDocked: boolean;
+  /**
+   * Absent on every install and backup written before the theme existed, so it
+   * is optional: validateSettings treats the keys of defaultSettings as
+   * required, and promoting this to a default would reject stored preferences
+   * that predate it. Absent means "system".
+   */
+  theme?: "system" | "light" | "dark";
   layout?: {
     showExplorer: boolean;
     showGoal: boolean;

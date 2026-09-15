@@ -500,7 +500,7 @@ try {
   await page.keyboard.press("PageDown");
   await page
     .getByRole("button", {
-      name: "Accessible table (50 rows per page)",
+      name: /Switch to the accessible table/,
       exact: true,
     })
     .click();
@@ -527,7 +527,9 @@ try {
     "readiness/evidence/application/accessible-results.txt",
     await page.locator(".result-panel").ariaSnapshot(),
   );
-  await page.getByRole("button", { name: "Virtual grid", exact: true }).click();
+  await page
+    .getByRole("button", { name: /Switch to the virtual grid/ })
+    .click();
   mark(
     "F5 executes; virtual and paginated grids navigate and copy exact decimals, NULL and empty text",
   );
@@ -552,6 +554,75 @@ try {
   mark("Result tabs, explicit Parse/Show Plan, keyboard splitter");
   await menu("Skills", "Skill Map");
   assert.equal(await page.locator(".skill-node").count(), 13);
+  await page.getByLabel("Map zoom", { exact: true }).selectOption("150");
+  // Fit must scale past the old 1.5x ceiling, which is the whole bug. Both of
+  // the pane's axes have to exceed the canvas for the ceiling to bind at all:
+  // in an ordinary window the map pane is smaller than the graph and Fit
+  // correctly scales down, so an assertion there would pass with the cap
+  // restored. Hence a tall viewport.
+  await page.getByLabel("Map zoom", { exact: true }).selectOption("fit");
+  await page.setViewportSize({ width: 2200, height: 2600 });
+  // The pane measures itself through a ResizeObserver, so wait for the pane
+  // itself to reach its new size — a condition independent of whatever scale
+  // Fit then chooses, so restoring the cap fails the assertion below rather
+  // than hanging here.
+  await page.waitForFunction(
+    () => {
+      const pane = document.querySelector(".scaled-canvas")?.parentElement;
+      return !!pane && pane.getBoundingClientRect().width > 1400;
+    },
+    null,
+    { timeout: 10000 },
+  );
+  await page.waitForTimeout(250);
+  const fitted = await page.evaluate(() => {
+    const canvas = document.querySelector(".scaled-canvas");
+    const inner = canvas?.querySelector(".canvas");
+    const viewport = canvas?.parentElement;
+    if (!canvas || !inner || !viewport) return null;
+    const c = canvas.getBoundingClientRect(),
+      v = viewport.getBoundingClientRect();
+    const naturalWidth = parseFloat(inner.style.width),
+      naturalHeight = parseFloat(inner.style.height);
+    return {
+      // The inner canvas carries its unscaled pixel size as a style, so the
+      // ratio of the two is the applied scale.
+      scale: c.width / naturalWidth,
+      // What an uncapped fit would choose for this pane.
+      available: Math.min(v.width / naturalWidth, v.height / naturalHeight),
+      contained: c.height <= v.height + 1 && c.width <= v.width + 1,
+    };
+  });
+  assert.ok(
+    fitted && fitted.available > 1.6,
+    `this viewport must be able to exceed the former ceiling, or the assertion below proves nothing: ${JSON.stringify(fitted)}`,
+  );
+  assert.ok(
+    fitted.scale > 1.6,
+    `Fit must scale past the former 1.5x ceiling: ${JSON.stringify(fitted)}`,
+  );
+  assert.ok(
+    fitted.scale <= 3.01,
+    `Fit stays bounded so labels do not become cartoonish: ${JSON.stringify(fitted)}`,
+  );
+  assert.ok(
+    fitted.contained,
+    `Fit must not overflow its pane: ${JSON.stringify(fitted)}`,
+  );
+  await page.setViewportSize({ width: 1440, height: 960 });
+  // A manual step above the old 150% ceiling must be selectable and applied.
+  await page.getByLabel("Map zoom", { exact: true }).selectOption("300");
+  assert.ok(
+    await page.evaluate(() => {
+      const canvas = document.querySelector(".scaled-canvas");
+      const viewport = canvas?.parentElement;
+      return !!canvas && !!viewport
+        ? canvas.getBoundingClientRect().width >
+            viewport.getBoundingClientRect().width
+        : false;
+    }),
+    "300% must scale the canvas past its pane",
+  );
   await page.getByLabel("Map zoom", { exact: true }).selectOption("150");
   await page.locator("#skill-map-rec").click();
   assert.equal(
@@ -707,6 +778,48 @@ try {
     .getByRole("button", { name: "Request persistent storage", exact: true })
     .click();
   await close();
+  // The practice loop is edit, run, submit, and Submit was the only step with
+  // no key. Assert the mappings reach the same commands the menus use, and
+  // that the generated Shortcuts dialog documents them.
+  await menu("Help", "Keyboard Shortcuts");
+  await visible("dialog");
+  const documented = await page.locator("dialog").textContent();
+  for (const [key, label] of [
+    ["Ctrl+Shift+Enter", "Submit"],
+    ["F7", "Parse"],
+    ["Ctrl+Shift+H", "Hint"],
+    ["F8", "Open Next Challenge"],
+  ])
+    assert.ok(
+      documented.includes(key),
+      `Keyboard Shortcuts must document ${key} for ${label}`,
+    );
+  await close();
+  await page.locator(".cm-content").press("ControlOrMeta+a");
+  await page.keyboard.insertText("SELCT 1 AS broken;");
+  await page.keyboard.press("F7");
+  await page.waitForFunction(
+    () =>
+      /[Ss]yntax/.test(
+        document.querySelector(".parser-info")?.textContent ?? "",
+      ),
+    null,
+    { timeout: 45000 },
+  );
+  // Parse checks without running: a rejected statement produces no result.
+  assert.equal(await page.locator(".grid-row").count(), 0);
+  const hintsBefore = await page.locator(".goal").innerText();
+  await page.keyboard.press("ControlOrMeta+Shift+H");
+  await page.waitForFunction(
+    (before) => document.querySelector(".goal")?.innerText !== before,
+    hintsBefore,
+    { timeout: 45000 },
+  );
+  assert.match(await page.locator(".goal").innerText(), /1 of 3/);
+  await close();
+  mark(
+    "Parse and Hint carry keys; the dialog documents all four practice-loop keys",
+  );
   for (const item of [
     "Keyboard Shortcuts",
     "Challenge Rules",
@@ -891,6 +1004,31 @@ try {
     ),
     true,
   );
+  // The desktop keeps a 1100px minimum, and Reading Layout below it is the
+  // documented answer (product.md:283). Checked here, with the setting still
+  // off, so the switch is genuinely automatic; the suite previously verified
+  // only 320px and left the range in between unexamined.
+  for (const [width, reading] of [
+    [1100, false],
+    [1099, true],
+    [900, true],
+    [700, true],
+  ]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.waitForFunction(
+      (expected) => !!document.querySelector(".desktop.reading") === expected,
+      reading,
+      { timeout: 10000 },
+    );
+    assert.ok(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+      `${width}px must not scroll horizontally`,
+    );
+  }
+  await page.setViewportSize({ width: 1400, height: 900 });
+  await page.waitForFunction(() => !document.querySelector(".desktop.reading"));
   await menu("View", "Reading Layout");
   await page.setViewportSize({ width: 320, height: 800 });
   assert.ok(
@@ -904,12 +1042,174 @@ try {
   const rect = await page.locator("dialog").boundingBox();
   assert.ok(rect.width <= 320);
   await close();
+  // Captured here, in the state the filename names: 320 pixels wide with
+  // Reading Layout applied. Later blocks widen the viewport and open the
+  // diagram, so a capture at the end of the suite would not be a reading
+  // layout at all.
   await mkdir("readiness/evidence/application", { recursive: true });
   await page.screenshot({
     path: "readiness/evidence/application/reading-layout.png",
     fullPage: true,
   });
   mark("Menu keyboard, F6 regions, 320px reading layout and dialog reflow");
+  // Practice Records showed a raw log of data it already had. Seed attempts
+  // with known values and assert the arithmetic exactly, including that an
+  // Execute run is not counted as a submission. Seeded last: these rows must
+  // not perturb the progression assertions above.
+  await page.setViewportSize({ width: 1400, height: 1000 });
+  await menu("View", "Reading Layout");
+  const seeded = await page.evaluate(async () => {
+    const { openPracticeStore } = await import("/src/lib/storage.ts");
+    const { ChallengeCatalog } = await import("/src/lib/challenges.ts");
+    const catalog = await ChallengeCatalog.load();
+    const first = await catalog.load("basics.01");
+    const second = await catalog.load("basics.02");
+    const store = await openPracticeStore(
+      () => {},
+      () => {},
+    );
+    const day = 86_400_000;
+    const now = Date.now();
+    const rows = [
+      // basics.01: failed, then passed with hints revealed.
+      {
+        id: "summary-1",
+        challenge: first.identity,
+        correctness: "incorrect",
+        hintLevel: 0,
+        elapsedMs: 10,
+        createdAt: now - day,
+      },
+      {
+        id: "summary-2",
+        challenge: first.identity,
+        correctness: "correct",
+        hintLevel: 2,
+        elapsedMs: 6,
+        createdAt: now - day + 1000,
+      },
+      // basics.02: passed on the first graded attempt, unassisted.
+      {
+        id: "summary-3",
+        challenge: second.identity,
+        correctness: "correct",
+        hintLevel: 0,
+        elapsedMs: 2,
+        createdAt: now,
+      },
+      // An Execute run, which is not a submission.
+      {
+        id: "summary-4",
+        challenge: second.identity,
+        correctness: "not-evaluated",
+        hintLevel: 0,
+        elapsedMs: 999,
+        createdAt: now,
+      },
+    ];
+    for (const row of rows)
+      await store.recordAttempt({
+        documentId: "summary-doc",
+        revision: 1,
+        sql: "SELECT 1",
+        datasetId: first.dataset.id,
+        outcome: "complete",
+        message: "seeded for the records summary",
+        ...row,
+      });
+    store.close();
+    return rows.length;
+  });
+  assert.equal(seeded, 4);
+  await page.reload();
+  await ready();
+  await page
+    .locator(".desktop-icons")
+    .getByRole("button", { name: "Practice Records", exact: true })
+    .click();
+  await page.locator("dialog .status-card").first().waitFor();
+  const summary = await page.evaluate(() =>
+    [...document.querySelectorAll("dialog .status-card")].map((card) =>
+      [...card.children].map((node) =>
+        node.textContent.trim().replace(/\s+/g, " "),
+      ),
+    ),
+  );
+  assert.deepEqual(
+    summary[0],
+    [
+      "Graded submissions",
+      "3 across 2 challenges",
+      "Correct",
+      "2 · 67%",
+      "Correct without a hint",
+      "1 of 2",
+      "Correct on the first graded attempt",
+      "1 of 2 challenges",
+      "Median engine time, correct attempts",
+      "4.0 ms",
+      "Days practiced",
+      "2 days · 2 days in a row",
+    ],
+    `records summary must aggregate stored attempts exactly: ${JSON.stringify(summary)}`,
+  );
+  assert.deepEqual(summary[1], ["SQL basics", "2/3 correct · 67%"]);
+  await close();
+  mark("Practice Records aggregates stored attempts and excludes Execute runs");
+  // The relationship diagram had no coverage at all, which is how its edges
+  // could have stopped painting unnoticed: the SVG is aria-hidden, so no
+  // accessibility assertion touches it. Assert the pixels.
+  await page.locator(".tree-row").first().click({ button: "right" });
+  await page.getByRole("menuitem", { name: "View Diagram" }).click();
+  await page.locator(".table-node").first().waitFor();
+  const diagram = await page.evaluate(() => {
+    const stroke = (node) => (node ? getComputedStyle(node).stroke : "missing");
+    return {
+      lineStroke: stroke(document.querySelector(".erd-edge-line")),
+      headFill: document.querySelector(".edge-head")
+        ? getComputedStyle(document.querySelector(".edge-head")).fill
+        : "missing",
+      labels: [...document.querySelectorAll(".edge-label")].map((n) =>
+        n.textContent.trim(),
+      ),
+      foreignKeys: [...document.querySelectorAll(".node-fk")].map((n) =>
+        n.textContent.trim(),
+      ),
+      nodes: document.querySelectorAll(".table-node").length,
+    };
+  });
+  // A colour that failed to resolve renders as none or fully transparent, which
+  // is exactly what a var() in an SVG presentation attribute produces.
+  for (const [name, value] of [
+    ["edge stroke", diagram.lineStroke],
+    ["arrowhead fill", diagram.headFill],
+  ]) {
+    assert.ok(
+      /^rgb/.test(value),
+      `${name} must resolve to a colour, got ${value}`,
+    );
+    assert.ok(
+      !/rgba\(0, 0, 0, 0\)/.test(value),
+      `${name} must not be transparent`,
+    );
+  }
+  assert.ok(diagram.labels.length >= 7, "every reference must carry a label");
+  for (const label of diagram.labels)
+    assert.match(
+      label,
+      /^[a-z_]+ [1N]:1$/,
+      "each edge names its foreign-key column and its cardinality",
+    );
+  assert.equal(
+    diagram.foreignKeys.length,
+    diagram.nodes,
+    "every table box states its foreign keys",
+  );
+  assert.ok(
+    diagram.foreignKeys.some((text) => /^FK \w/.test(text)),
+    `at least one box names a real foreign key: ${JSON.stringify(diagram.foreignKeys)}`,
+  );
+  mark("Relationship diagram paints edges, cardinality and foreign keys");
   assert.deepEqual(errors, []);
   await writeFile(
     "readiness/evidence/application/controls-smoke.json",

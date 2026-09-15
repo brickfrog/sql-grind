@@ -462,7 +462,7 @@ try {
         new RegExp(
           `${totalVariations} drills due now across ${patterns.length} patterns`,
         ),
-        "an unpractised profile has every drill due",
+        "an unpracticed profile has every drill due",
       );
       const articles = await dialog.locator(".library-list article").count();
       assert.equal(articles, patterns.length);
@@ -480,7 +480,7 @@ try {
         .click();
       const prompt = await dialog.locator(".kata-prompt").innerText();
       assert.match(prompt, /never placed an order/);
-      // An unpractised profile always starts with the first unseen variation,
+      // An unpracticed profile always starts with the first unseen variation,
       // which the prompt assertion above pins.
       const reference = patterns
         .find((entry) => entry.patternId === "anti-join")
@@ -555,7 +555,7 @@ try {
       assert.match(
         antiJoin,
         new RegExp(`${antiJoinTotal - 1} of ${antiJoinTotal} due`),
-        "the practised variation is no longer due for its own pattern",
+        "the practiced variation is no longer due for its own pattern",
       );
       return { message, record, due, antiJoin };
     },
@@ -567,6 +567,9 @@ try {
       // Passing every drill in one sitting must not leave a surface that looks
       // broken until tomorrow, so due-ness recommends rather than gates.
       const dialog = page.locator("dialog");
+      // The list defaults to patterns with drills due, which is the useful
+      // view; a fully scheduled pattern is reachable through the filter.
+      await dialog.getByRole("combobox", { name: /^Show/ }).selectOption("all");
       const article = dialog.locator("article", { hasText: "Anti-join" });
       const antiJoin = patterns.find(
         (entry) => entry.patternId === "anti-join",

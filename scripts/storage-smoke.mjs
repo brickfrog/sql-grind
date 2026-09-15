@@ -411,7 +411,7 @@ try {
     assert.equal(draft.document.scrollTop, document.scrollTop);
   }
 
-  currentCase = "practising ahead persists, and reversing it survives a save";
+  currentCase = "practicing ahead persists, and reversing it survives a save";
   const explored = await evaluate(page, async () => {
     const h = storageSmoke;
     const session = (exploredSkillIds) => ({
@@ -533,6 +533,46 @@ try {
   );
   assert.deepEqual(historyCase.cleared, []);
   record(currentCase, historyCase);
+  currentCase =
+    "a profile written before the theme setting existed still loads and stores a choice";
+  const themeCase = await evaluate(page, async () => {
+    const h = storageSmoke;
+    // Every install and backup predating the theme has no such key.
+    // validateSettings treats the keys of defaultSettings as required, so a
+    // theme with a default would reject these rows and discard the profile.
+    const { theme: _dropped, ...withoutTheme } = h.preferences;
+    await h.store.saveSettings(withoutTheme);
+    const legacy = (await h.store.load()).settings;
+    await h.store.saveSettings({ ...withoutTheme, theme: "dark" });
+    const chosen = (await h.store.load()).settings;
+    let rejected = "";
+    try {
+      await h.store.saveSettings({ ...withoutTheme, theme: "solarized" });
+    } catch (error) {
+      rejected = String(error.message ?? error);
+    }
+    // Later cases assert on this row, so leave it exactly as it was found.
+    await h.store.saveSettings(h.preferences);
+    return {
+      legacyTheme: legacy.theme ?? null,
+      legacyLoaded: typeof legacy.fontSize === "number",
+      chosenTheme: chosen.theme,
+      rejected,
+    };
+  });
+  assert.equal(
+    themeCase.legacyLoaded,
+    true,
+    "a preferences row without a theme must still load",
+  );
+  assert.equal(
+    themeCase.legacyTheme,
+    null,
+    "an absent theme must stay absent rather than being invented",
+  );
+  assert.equal(themeCase.chosenTheme, "dark");
+  assert.match(themeCase.rejected, /unsupported|missing|invalid/i);
+  record(currentCase, themeCase);
 
   currentCase = "a layout stores a chosen editor height or omits it entirely";
   const layoutCase = await evaluate(page, async () => {
@@ -1415,7 +1455,7 @@ try {
     ],
     3,
   );
-  // A v1 profile predates practise-ahead, so migration supplies an empty set.
+  // A v1 profile predates practice-ahead, so migration supplies an empty set.
   assert.deepEqual(legacyMigration.profile.session, {
     ...legacyMigration.source.settings[1].value,
     openedSkillIds: ["window"],

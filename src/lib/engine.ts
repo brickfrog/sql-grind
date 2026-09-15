@@ -111,11 +111,36 @@ interface Selection {
   catalog: ChallengeCatalog;
   datasetId: string;
 }
-interface Slot {
+// A DuckDB open() call is the engine's unit of isolation: it discards the
+// previous database instance entirely — base tables, temp tables, macros, the
+// configuration lock and even TimeZone all return to defaults. That is what
+// lets a worker be reused without weakening the fresh-snapshot guarantee.
+const OPEN_OPTIONS: duckdb.DuckDBConfig = {
+  maximumThreads: 1,
+  query: {
+    castBigIntToDouble: false,
+    castDecimalToDouble: false,
+    castTimestampToDate: false,
+  },
+};
+// Instantiating a worker costs ~600ms (755 KB of JS plus a 35 MB wasm module)
+// against ~13ms to reopen one, and grading creates a slot per variant in
+// series. Three is the high-water mark of simultaneously live slots: a
+// preview, a parser and a per-variant snapshot.
+const POOL_MAX = 3;
+interface Host {
   db: duckdb.AsyncDuckDB;
   worker: Worker;
+}
+interface Slot extends Host {
   conn?: duckdb.AsyncDuckDBConnection;
   dead: boolean;
+  /** Set when the worker itself failed, which makes the host unreusable. */
+  failed: boolean;
+  /** The work that owns this slot; a cancelled work may still be executing. */
+  work: Work;
+  /** Worker listeners bound to this slot, removed before the host is pooled. */
+  listeners: [string, EventListener][];
   failure: Promise<never>;
   reject: (error: Error) => void;
 }
@@ -206,15 +231,41 @@ export class EngineCoordinator {
   private navigation = 0;
   private parserQueue: Promise<unknown> = Promise.resolve();
   private disposed = false;
+  /** Instantiated workers with no open database, ready to be reopened. */
+  private readonly pool: Host[] = [];
+  /** Slots on their way into the pool, counted against POOL_MAX. */
+  private recycling = 0;
   private readonly background = new Set<Work>();
 
   constructor(
     private readonly onState: (state: EngineState, message?: string) => void,
   ) {}
 
+  /**
+   * Retire a slot. A slot that finished cleanly hands its worker back to the
+   * warm pool; anything else is destroyed. Cancellation and worker failure
+   * both fall through to destruction, because a cancelled query may still be
+   * executing inside the worker and a failed worker cannot be trusted to
+   * reset. Every call site retires slots through here, so the safe path is
+   * the default and reuse is the exception that has to earn itself.
+   */
   private terminate = (slot: Slot): void => {
     if (slot.dead) return;
-    slot.dead = true;
+    if (
+      slot.failed ||
+      slot.work.reason ||
+      this.disposed ||
+      this.pool.length + this.recycling >= POOL_MAX
+    ) {
+      this.discard(slot);
+      return;
+    }
+    this.release(slot);
+  };
+
+  private discard = (slot: Slot): void => {
+    if (slot.dead) return;
+    this.detach(slot);
     // DuckDB's pending library requests need not settle after worker termination.
     // Every host await also races our own rejection promise.
     slot.reject(
@@ -225,10 +276,51 @@ export class EngineCoordinator {
     );
     slot.worker.terminate();
     slot.db.detach();
+  };
+
+  /** Unbind a slot from the coordinator without touching its worker. */
+  private detach(slot: Slot): void {
+    slot.dead = true;
+    for (const [type, listener] of slot.listeners)
+      slot.worker.removeEventListener(type, listener);
+    slot.listeners.length = 0;
     this.slots.delete(slot);
     if (this.parser === slot) this.parser = undefined;
     if (this.sandbox === slot) this.sandbox = undefined;
-  };
+  }
+
+  /**
+   * Return a clean slot's worker to the pool. Closing the connection is the
+   * only teardown needed: the next acquisition opens a new database instance,
+   * which is the same reset a cold worker gets. A close that hangs or throws
+   * leaves the worker in an unknown state, so it is destroyed instead.
+   */
+  private release(slot: Slot): void {
+    const { conn } = slot;
+    this.detach(slot);
+    this.recycling++;
+    void (async () => {
+      const { promise: expired, reject: expire } =
+        Promise.withResolvers<never>();
+      void expired.catch(() => {});
+      const timer = window.setTimeout(
+        () => expire(new Error("Connection close timed out.")),
+        2000,
+      );
+      try {
+        await Promise.race([conn?.close() ?? Promise.resolve(), expired]);
+        if (this.disposed || this.pool.length >= POOL_MAX)
+          throw new Error("Pool is closed.");
+        this.pool.push({ db: slot.db, worker: slot.worker });
+      } catch {
+        slot.worker.terminate();
+        slot.db.detach();
+      } finally {
+        clearTimeout(timer);
+        this.recycling--;
+      }
+    })();
+  }
 
   private newWork(visible = true): Work {
     if (this.disposed)
@@ -294,17 +386,36 @@ export class EngineCoordinator {
             [WORKER, WASM, ...EXTENSIONS].map((path) => assets.bytes(path)),
           ),
         );
-        const worker = new Worker(assetUrl(WORKER));
+        // A pooled worker has already parsed 755 KB of JS and instantiated a
+        // 35 MB wasm module; only the database instance is rebuilt below.
+        const pooled = this.pool.pop();
+        const worker = pooled?.worker ?? new Worker(assetUrl(WORKER));
         const { promise: failure, reject } = Promise.withResolvers<never>();
         void failure.catch(() => {});
-        const db = new duckdb.AsyncDuckDB(
-          new duckdb.ConsoleLogger(duckdb.LogLevel.WARNING),
+        const db =
+          pooled?.db ??
+          new duckdb.AsyncDuckDB(
+            new duckdb.ConsoleLogger(duckdb.LogLevel.WARNING),
+            worker,
+          );
+        const slot: Slot = {
+          db,
           worker,
-        );
-        const slot: Slot = { db, worker, dead: false, failure, reject };
+          dead: false,
+          failed: false,
+          work,
+          listeners: [],
+          failure,
+          reject,
+        };
         this.slots.add(slot);
         work.slots.add(slot);
-        worker.addEventListener("error", (event) => {
+        const listen = (type: string, listener: EventListener) => {
+          slot.listeners.push([type, listener]);
+          worker.addEventListener(type, listener);
+        };
+        listen("error", ((event: ErrorEvent) => {
+          slot.failed = true;
           reject(
             new EngineFailure(
               "engine-error",
@@ -312,8 +423,9 @@ export class EngineCoordinator {
             ),
           );
           this.terminate(slot);
-        });
-        worker.addEventListener("messageerror", () => {
+        }) as EventListener);
+        listen("messageerror", (() => {
+          slot.failed = true;
           reject(
             new EngineFailure(
               "engine-error",
@@ -321,20 +433,13 @@ export class EngineCoordinator {
             ),
           );
           this.terminate(slot);
-        });
+        }) as EventListener);
         try {
-          await work.wait(db.instantiate(assetUrl(WASM)), slot);
-          await work.wait(
-            db.open({
-              maximumThreads: 1,
-              query: {
-                castBigIntToDouble: false,
-                castDecimalToDouble: false,
-                castTimestampToDate: false,
-              },
-            }),
-            slot,
-          );
+          if (!pooled) await work.wait(db.instantiate(assetUrl(WASM)), slot);
+          // Always reopen, pooled or cold. This single call is the isolation
+          // boundary: it discards any previous database instance, so a reused
+          // worker starts from the same blank state as a new one.
+          await work.wait(db.open(OPEN_OPTIONS), slot);
           slot.conn = await work.wait(db.connect(), slot);
           const query = (sql: string) => work.wait(slot.conn!.query(sql), slot);
           await query(
@@ -433,7 +538,9 @@ export class EngineCoordinator {
           );
           return slot;
         } catch (error) {
-          this.terminate(slot);
+          // A slot that failed mid-build may have an unusable wasm instance or
+          // a half-loaded snapshot, so it is destroyed rather than pooled.
+          this.discard(slot);
           throw error;
         }
       },
@@ -1627,6 +1734,12 @@ export class EngineCoordinator {
     this.disposed = true;
     this.active?.dispose();
     for (const work of this.background) work.dispose();
+    // `disposed` forces terminate down the destroying path, so nothing can be
+    // pooled from here on; the workers already parked there still need killing.
     for (const slot of this.slots) this.terminate(slot);
+    for (const host of this.pool.splice(0)) {
+      host.worker.terminate();
+      host.db.detach();
+    }
   }
 }

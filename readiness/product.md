@@ -64,7 +64,7 @@ Evidence: specification lines 14–26 and 71–76. Prototype lines 12–35 and 2
 | D02 | DuckDB Docs, globe                        | Opens `https://duckdb.org/docs/` in a new tab. Its accessible name includes “opens in a new tab”. It uses `noopener noreferrer`.                       |
 | D03 | Schema Reference, document                | Opens `schema.ref`, a read-only reference for the selected dataset version. It shows types, keys, relationships, definitions, and actual counts. |
 | D04 | Skill Map                                 | Opens or activates `Skill Map.dag`. It retains the last selected skill and canvas position.                                                            |
-| D04a | Katas, play icon | Opens “Katas — repetition drills”. It lists every authored drill pattern with its due count, retained count, and the reason the shape is worth practising. Drills are graded at run time against an authored reference and never award or revoke challenge completion. |
+| D04a | Katas, play icon | Opens “Katas — repetition drills”. It lists every authored drill pattern with its due count, retained count, and the reason the shape is worth practicing. Drills are graded at run time against an authored reference and never award or revoke challenge completion. |
 | D05 | Practice Records, gold trophy             | Opens “Practice Records — this device”. It shows local practice records and the trust notice defined below.                                                 |
 | D06 | Recycle Bin                               | Opens deleted queries with deletion dates. Restore preserves identity and SQL. Delete permanently and Empty Bin require explicit acceptance.           |
 | D07 | Start                                     | Opens a menu with SQL Grind, all seven desktop destinations, Settings, and About. SQL Grind restores the IDE. No fake operating-system shutdown exists.  |
@@ -113,7 +113,7 @@ If a draft is unsaved, Close Document uses the same failed-save choices as D14.
 Read-only documents disable mutating Edit items.
 Paste uses browser permission and the native editor action. A denied clipboard request shows the standard keyboard alternative.
 
-Settings includes Hush, editor font size, editor indentation, word wrap, reading layout, and diagnostic announcement preference.
+Settings includes theme, Hush, editor font size, editor indentation, word wrap, reading layout, and diagnostic announcement preference.
 Patchouli has one voice. Her phrasing never changes the supported facts or rule identifiers.
 Storage shows usage estimates, persistence permission, backup actions, and separate controls for cache and practice data.
 The index lab uses a disposable sandbox, separate from immutable learning data.
@@ -164,7 +164,7 @@ Evidence: specification lines 40–69. Prototype lines 73–165 and 176–244.
 | W03  | `schema.ref` tab                                            | Activates the read-only schema reference. Internal table links select the corresponding reference heading.                                                                                                     |
 | W03a | `schema.dgm` tab                                            | Activates the relationship diagram. Nodes are the dataset's tables; edges are typed foreign keys drawn from a table to the table it references, with a `self` badge where a table references itself. Right-click ▸ View Diagram on a table in the explorer or the reference opens it. Reading layout replaces the canvas with a linear list of the same references. |
 | W04  | SQL editor                                                  | Supports text editing, selection, completion, search, and undo through CodeMirror. A named editor exposes its language and challenge.                                                                          |
-| W05  | Line gutter and diagnostic highlights                       | Line numbers are informational. A diagnostic list entry selects its current source range and focuses the editor. Stale entries cannot select unrelated text.                                                   |
+| W05  | Line gutter and diagnostic highlights                       | Line numbers are informational. A diagnostic marks its own line in the gutter and underlines its source range, and a syntax rejection underlines the whole token the parser stopped on rather than its first character. A diagnostic list entry selects its current source range and focuses the editor. Stale entries cannot select unrelated text.                                                   |
 | W06  | Editor/results splitter                                     | Resizes the panes without hiding either pane. It supports keyboard adjustment and the limits below.                                                                                                            |
 | W07  | Results tab                                                 | Shows the complete-result count and a bounded visible window. It distinguishes no run, zero rows, loading, cancelled, incomplete, stale, and successful results.                                               |
 | W08  | Messages tab                                                | Shows syntax, execution, cancellation, recovery, and grading messages for the selected run. Messages contain plain text, not imported HTML.                                                                    |
@@ -193,6 +193,9 @@ The correctness area does not convert partial row matches into a percentage pass
 Style and diagnostic counts remain separate from correctness.
 The reference area consistently uses “Compare with Reference”. It makes no claim of optimality.
 Line counts can describe SQL length, but they never imply quality or performance.
+The section that explains the comparison also carries the control that starts it, in addition to Patchouli's dock and the Query menu.
+
+Grading restores an isolated snapshot per variant, and reuses a pool of warm SQL workers to do it. Isolation rests on DuckDB's `open()`, which discards the previous database instance entirely: base tables, temporary tables, macros, the configuration lock and the session time zone all return to their defaults, and every setting is reapplied. A worker is returned to the pool only after a clean finish; a cancelled run or a failed worker is destroyed, because a cancelled query may still be executing. Instantiating a worker costs roughly 600 ms against 13 ms to reopen one, so the pool is what makes a graded submission take about two seconds rather than ten.
 A profile comparison names its dataset, engine configuration, repeated-run method, and variability.
 Exact submission scorecards show named outcomes for every grading variant.
 Lab scorecards show measured evidence and report answers. Reconciliation scorecards show the applicable decision or outcome assessment.
@@ -241,8 +244,9 @@ References: [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [ARIA patterns](https:
 - Editor Escape followed by Tab leaves CodeMirror without inserting indentation. Keyboard Shortcuts explains this escape route.
 - F5 runs SQL only while an editable SQL document has focus. Elsewhere, the browser retains its F5 behavior.
 - Ctrl+Enter also runs SQL in the editor. Ctrl+S saves while the IDE has focus.
+- The rest of the practice loop carries keys while the workbench has focus: Ctrl+Shift+Enter submits, F7 parses, Ctrl+Shift+H reveals the next hint, and F8 opens the next challenge. Each dispatches the same command as its menu item, so an ineligible command stays ineligible from the keyboard. F1 and Ctrl+Shift+N are deliberately unused: browsers reserve them.
 - macOS uses Command+Enter and Command+S equivalents. No application shortcut captures browser close-tab, reload, or zoom shortcuts. The application has no zoom of its own: the browser's own zoom scales the whole interface.
-- Submit has no global Enter binding. The default-button bevel does not authorize accidental grading from unrelated controls.
+- Submit has no *bare* Enter binding. Ctrl+Shift+Enter is an explicit chord; the default-button bevel does not authorize accidental grading from unrelated controls.
 - Cancel remains reachable through Tab and Query → Cancel during a run.
 
 ### Splitters, movement, and hit areas
@@ -292,6 +296,12 @@ Only SQL, result tables, and the graph retain justified two-dimensional scroll r
 The map also supplies an equivalent linear skill list in Reading Layout.
 This alternative preserves the desktop rather than pretending that a fixed-width IDE satisfies reflow by itself.
 Reading Layout limits prose to a bounded measure so wide viewports do not produce unreadable line lengths. SQL, result tables, and the graph keep their justified scroll regions and are never clamped.
+
+The palette is defined once as a set of role tokens — chrome faces, bevel edges, fields, ink, accents, status colours and syntax colours — with light values identical to the ones the application shipped with. A dark theme supplies a second set of values for the same roles, and the Settings theme control offers System, Light and Dark. System is resolved through `matchMedia` and reacts to a change while the application is open, so the dark values live in one block rather than being duplicated under a media query. A theme is stored per device; a profile written before the theme existed has no such key, is loaded unchanged, and resolves to System.
+
+The skill map and the relationship diagram both offer 75% to 400% plus Fit. Fit means fit: it scales to the binding axis of the pane it is given, with no fixed ceiling, because a capped fit left both canvases in a corner of a large display.
+
+The relationship diagram draws one labelled edge per declared foreign key. The label names the referencing column and its cardinality — `N:1`, or `1:1` where the referencing column is itself unique — and each box lists its primary key and its foreign-key columns, so the column a relationship runs on is visible without opening the schema reference. Columns are ordered by the mean row of their neighbours, which removes most edge crossings. Edge colours are CSS rules rather than SVG presentation attributes, which do not accept custom properties.
 
 Acceptance includes 100%, 125%, 200%, and 400% browser zoom, plus text-only enlargement to 200% where available.
 At each size, all commands remain reachable, focus stays visible, and dialogs fit the visible viewport.
@@ -390,10 +400,10 @@ Previously opened skills remain accessible for review after prerequisite complet
 Review access does not complete prerequisites or unlock further skills by itself.
 
 A locked skill can be opened early through Practice ahead, from its map context menu or its detail panel.
-Practising ahead is recorded in `exploredSkillIds`. It grants access only: the skill stays unavailable, and it reads In progress with an ahead marker.
-Availability is still derived from completion alone, so practising ahead never satisfies a prerequisite and never unlocks a later skill by itself.
-A challenge completed while practising ahead is an ordinary current completion. It counts toward its own skill and unlocks what that skill gates.
-Practising ahead is reversible while the skill holds no completion. Returning to the recommended path re-locks it.
+Practicing ahead is recorded in `exploredSkillIds`. It grants access only: the skill stays unavailable, and it reads In progress with an ahead marker.
+Availability is still derived from completion alone, so practicing ahead never satisfies a prerequisite and never unlocks a later skill by itself.
+A challenge completed while practicing ahead is an ordinary current completion. It counts toward its own skill and unlocks what that skill gates.
+Practicing ahead is reversible while the skill holds no completion. Returning to the recommended path re-locks it.
 Once any challenge there is completed, the skill stays open and the reversal is withdrawn with its reason. Dropping access would re-lock that skill's own unfinished objectives and strand the passes beside them, and it never reports Needs review, because nothing has regressed.
 Open next challenge continues to follow the recommended path and never retargets to a skill opened ahead.
 Every surface that shows a lock names the specific prerequisite skills that remain incomplete.
@@ -500,7 +510,7 @@ Successful completion establishes outcome quality on these fixtures, not a produ
 
 Decision: drills are a separate practice mode, not a second grading authority. A kata is a short prompt drilled repeatedly to build recall of one SQL shape; the 65 challenges remain the only source of completion.
 
-Each authored pattern names a curriculum skill, one dataset, a reason the shape is worth practising, and at least three variations. A variation carries its prompt, one dataset variant, an authored reference query, and its own output contract — the same five column types, the same nullability declaration, and the same explicitly authored ordering keys a challenge uses. Ordering is enforced only where the contract names it, so drilling `ORDER BY` is a stated property rather than an accident of the reference.
+Each authored pattern names a curriculum skill, one dataset, a reason the shape is worth practicing, and at least three variations. A variation carries its prompt, one dataset variant, an authored reference query, and its own output contract — the same five column types, the same nullability declaration, and the same explicitly authored ordering keys a challenge uses. Ordering is enforced only where the contract names it, so drilling `ORDER BY` is a stated property rather than an accident of the reference.
 
 Correctness is decided at run time: the authored reference is executed beside the learner's SQL in the named variant, and both are compared with the same comparator that grades challenges. Katas therefore ship no published expectation, hold no content identity, and add no manifest entry, so adding a drill never changes `bundleVersion` and never invalidates a learner's completions.
 
@@ -511,6 +521,8 @@ Drills carry the only time-based schedule in the application. A scheduled pass a
 Due-ness recommends rather than gates. Any pattern can be drilled at any time, because passing every drill in one sitting would otherwise leave the surface empty until the next day and read as broken. A pass on a variation that was not due is recorded as an attempt but advances neither the streak nor the date, and the surface says so: spacing is the entire claim a streak makes, so four repetitions in two minutes must not mark a shape retained.
 
 The schedule is stored per device in the settings store, travels in a practice backup, and merges by most recent attempt on import. It never writes an attempt, a document, a hint level, or a completion.
+
+The drill surface lists every variation under the pattern that owns it, each with its own state: never drilled, due, retained, or the date it next comes due. A filter shows either the patterns with drills due or all of them, so a count of drills in the introduction is always reachable as individual drills below it.
 
 ## Practice Records, accounts, and trust
 
@@ -524,6 +536,8 @@ It shows completion, first accepted attempt, latest attempt, hint use, and compa
 Correctness and assistance filters are explicit. Empty state explains how Submit creates a record.
 A learner can reopen attempt SQL, export records, or delete selected history after explicit acceptance.
 Imported records carry an Imported label. No invented competitors, percentile, or global rank appears.
+
+A summary describes every recorded attempt, deliberately not the filtered list: graded submissions and the number of challenges they cover, correct count and share, how many correct answers used no hint, how many challenges were correct on their first graded attempt, the median engine time of correct attempts, and the number of calendar days practiced with the current consecutive run. Filtering by correctness would make accuracy and first-attempt rate tautological — select “Correct” and every earliest shown attempt is correct by construction — so the summary names its own scope and ignores the filters. Every figure is derived from stored attempt fields, and a per-skill breakdown gives correct-over-graded for each skill. Execute runs are not submissions and are excluded from every figure. Engine time is labelled as the time the graded SQL ran, never as time spent solving: the application does not measure that, so it does not report it.
 
 Local performance ordering applies only within one recorded comparison session with identical dataset and engine configuration.
 Cross-device imports and different configurations never compete through one “best runtime” column.
@@ -680,10 +694,13 @@ After initial provisioning, a local server must serve all runtime assets without
 A fresh browser session and an engine restart must work with external origins blocked.
 The local server must remain available. This requirement does not mean opening files through `file://`.
 
-No service worker or OPFS cache is required. The server reads the provisioned assets from disk.
+A service worker now caches the engine, the extensions and the content bundle in Cache Storage, and is registered only in a production build so the development server is unaffected. It exists for durability rather than for offline support as a feature: the HTTP cache may evict a 36 MB wasm module at any time, and re-downloading it is the slowest thing the application can do. The content bundle, the datasets and the extension payloads are SHA-256 verified against the manifest before use. The worker script and the wasm module are verified as bytes and then loaded again by URL, so what executes is whatever the fetch layer returns: the cache is trusted for those two, and the manifest hash bounds what a *content* asset can be, not what the runtime is.
+
+Immutable, hash-verified assets are served cache-first. The document and the built application assets are served network-first with a cache fallback, so a deployment is never masked by a superseded copy. Cache names carry the bundle version and configuration hash, and caches that do not match the current version are deleted.
+
 Missing local assets stop the affected action without changing the dataset or awarding a correctness pass.
 Saving, exporting, and importing local work remain independent from engine recovery.
-Stopping the local server prevents a fresh page load. Browser cache availability is not a substitute for the server.
+The Storage dialog reports what is actually cached and whether a service worker controls the page, rather than describing a deployment it cannot verify.
 
 Persistence sources:
 

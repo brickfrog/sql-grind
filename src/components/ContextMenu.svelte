@@ -231,17 +231,17 @@
     max-height: calc(100dvh - 8px);
     overflow: auto;
     overscroll-behavior: contain;
-    border: 2px outset #d4d0c8;
-    background: #d4d0c8;
-    color: #111;
-    box-shadow: 2px 2px #404040;
+    border: 2px outset var(--face);
+    background: var(--face);
+    color: var(--ink);
+    box-shadow: 2px 2px var(--bevel-shadow);
     padding: 3px;
     font-family: Tahoma, Verdana, sans-serif;
     font-size: 11px;
   }
 
   .context-menu:focus-visible {
-    outline: 2px solid #0a246a;
+    outline: 2px solid var(--focus);
     outline-offset: -4px;
   }
 
@@ -266,24 +266,24 @@
   .context-menu button:hover:not(:disabled),
   .context-menu button:focus:not(:disabled),
   .context-menu button:active:not(:disabled) {
-    background: #0a246a;
-    color: #fff;
+    background: var(--accent);
+    color: var(--accent-ink);
   }
 
   .context-menu button:focus-visible {
-    outline: 2px solid #fff;
+    outline: 2px solid var(--bevel-light);
     outline-offset: -3px;
   }
 
   .context-menu button:disabled {
-    color: #616161;
+    color: var(--ink-dim);
     cursor: default;
   }
 
   .context-separator {
     height: 0;
-    border-top: 1px solid #808080;
-    border-bottom: 1px solid #fff;
+    border-top: 1px solid var(--bevel-mid);
+    border-bottom: 1px solid var(--bevel-light);
     margin: 3px 1px;
   }
 

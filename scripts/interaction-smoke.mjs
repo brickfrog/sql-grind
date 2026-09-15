@@ -564,6 +564,28 @@ try {
   mark(
     "Notes help opens a separate example; Parse produces real J001/J002 notes and source navigation",
   );
+  // A syntax error was reported in four places and marked in none of them.
+  // The line itself must carry the report: a gutter marker on the failing
+  // line, and an underline covering the token the parser rejected rather than
+  // its first character.
+  await page.locator(".cm-content").press("ControlOrMeta+a");
+  await page.keyboard.insertText("SELCT 1 AS x FROM customers;");
+  await page.getByRole("button", { name: "Parse", exact: true }).click();
+  await page.waitForFunction(
+    () => document.querySelectorAll(".cm-lint-marker").length > 0,
+    null,
+    { timeout: 45000 },
+  );
+  assert.deepEqual(
+    await page.evaluate(() =>
+      [...document.querySelectorAll(".cm-lintRange-error")].map(
+        (node) => node.textContent,
+      ),
+    ),
+    ["SELCT"],
+    "the rejected token must be underlined, not just its first character",
+  );
+  mark("A syntax error marks its own line in the gutter and under the token");
   await page.locator(".cm-content").press("ControlOrMeta+a");
   await page.keyboard.insertText("SELECT 42 AS answer;");
   await page.locator(".toolbar .execute").click();

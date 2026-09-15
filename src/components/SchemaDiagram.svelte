@@ -4,6 +4,11 @@
 </script>
 
 <script lang="ts">
+  // Scale is a CSS transform, so labels grow with it: an unbounded Fit renders a
+  // small graph at ~4.8x on an ultrawide, which reads worse than the old cap. The
+  // manual steps up to 400% cover anyone who wants more.
+  const FIT_MAX = 3;
+
   import { onMount, tick } from "svelte";
   import { formatCount, type SchemaTable } from "../lib/types";
 
@@ -25,8 +30,8 @@
 
   // Tables carry no authored coordinates, so the layout is derived from the
   // foreign keys: depth 0 is a table that references nothing.
-  const NODE_WIDTH = 180;
-  const NODE_HEIGHT = 64;
+  const NODE_WIDTH = 200;
+  const NODE_HEIGHT = 84;
   const byName = $derived(new Map(schema.map((table) => [table.name, table])));
   const outgoing = $derived(
     new Map(
@@ -65,6 +70,8 @@
     y: number;
     selfReferencing: boolean;
     primaryKey: string;
+    /** Columns that carry a foreign key, so the relationship is visible. */
+    foreignKeys: string[];
   };
   const nodes = $derived.by<DiagramNode[]>(() => {
     const columns = new Map<number, SchemaTable[]>();
@@ -76,43 +83,105 @@
       bucket.push(table);
       columns.set(level, bucket);
     }
-    return [...columns.entries()].flatMap(([level, tables]) =>
-      tables.map((table, index) => ({
+    // Lines crossed because each column was ordered alphabetically, ignoring
+    // what it connects to. Two barycenter sweeps order every column by the
+    // mean row of its neighbours, which is the standard crossing-reduction
+    // heuristic and removes most crossings on this schema.
+    const levels = [...columns.keys()].sort((a, b) => a - b);
+    const rowOf = new Map<string, number>();
+    for (const level of levels)
+      columns.get(level)!.forEach((table, index) => {
+        rowOf.set(table.name, index);
+      });
+    const neighbours = (table: SchemaTable) => [
+      ...table.references.map((reference) => reference.table),
+      ...schema
+        .filter((other) =>
+          other.references.some((reference) => reference.table === table.name),
+        )
+        .map((other) => other.name),
+    ];
+    for (let sweep = 0; sweep < 2; sweep++)
+      for (const level of levels) {
+        const bucket = columns.get(level)!;
+        const weight = new Map<string, number>();
+        for (const table of bucket) {
+          const rows = neighbours(table)
+            .filter((name) => name !== table.name)
+            .map((name) => rowOf.get(name))
+            .filter((row): row is number => row !== undefined);
+          weight.set(
+            table.name,
+            rows.length
+              ? rows.reduce((total, row) => total + row, 0) / rows.length
+              : (rowOf.get(table.name) ?? 0),
+          );
+        }
+        bucket.sort(
+          (a, b) =>
+            weight.get(a.name)! - weight.get(b.name)! ||
+            a.name.localeCompare(b.name),
+        );
+        bucket.forEach((table, index) => {
+          rowOf.set(table.name, index);
+        });
+      }
+    return levels.flatMap((level) =>
+      columns.get(level)!.map((table, index) => ({
         table,
-        x: 40 + level * 240,
-        y: 40 + index * 120,
+        x: 40 + level * 340,
+        y: 40 + index * (NODE_HEIGHT + 40),
         selfReferencing: table.references.some(
           (reference) => reference.table === table.name,
         ),
         primaryKey:
           table.columns.find((column) => column.key?.includes("PRIMARY KEY"))
             ?.name ?? "",
+        foreignKeys: [
+          ...new Set(table.references.map((reference) => reference.column)),
+        ],
       })),
     );
   });
+  /**
+   * Many-to-one unless the referencing column is itself unique. The drawn edge
+   * and the reading-layout list both read this, so the textual equivalent can
+   * never say less than the picture.
+   */
+  function cardinality(table: SchemaTable, column: string): string {
+    const declared = table.columns.find((entry) => entry.name === column);
+    return /PRIMARY KEY|UNIQUE/.test(declared?.key ?? "") ? "1:1" : "N:1";
+  }
   const nodeByName = $derived(
     new Map(nodes.map((node) => [node.table.name, node])),
   );
   // Referencing tables sit to the right of what they reference, so an edge
   // leaves and enters the sides that face each other: a fixed right-to-left
   // pair would draw every line back across its own node.
-  const edges = $derived(
-    nodes.flatMap((node) =>
-      (outgoing.get(node.table.name) ?? []).flatMap((reference) => {
+  const edges = $derived.by(() =>
+    nodes.flatMap((node) => {
+      const references = outgoing.get(node.table.name) ?? [];
+      return references.flatMap((reference, index) => {
         const target = nodeByName.get(reference.table);
         if (!target) return [];
         const rightward = target.x > node.x;
+        // Several references leaving one table used to overlap exactly. Fan
+        // their departure points so each line is followable.
+        const spread = (index - (references.length - 1) / 2) * 12;
         return [
           {
             reference,
+            from: node,
+            to: target,
+            cardinality: cardinality(node.table, reference.column),
             x1: rightward ? node.x + NODE_WIDTH : node.x,
-            y1: node.y + NODE_HEIGHT / 2,
+            y1: node.y + NODE_HEIGHT / 2 + spread,
             x2: rightward ? target.x : target.x + NODE_WIDTH,
             y2: target.y + NODE_HEIGHT / 2,
           },
         ];
-      }),
-    ),
+      });
+    }),
   );
   const canvasWidth = $derived(
     Math.max(720, ...nodes.map((node) => node.x + NODE_WIDTH + 20)),
@@ -120,9 +189,14 @@
   const canvasHeight = $derived(
     Math.max(520, ...nodes.map((node) => node.y + NODE_HEIGHT + 36)),
   );
+  // Fit means fit; see SkillMap. A capped fit put a 675x228 diagram in the
+  // corner of a 2066x1462 canvas.
   const scale = $derived(
     zoom === "fit"
-      ? Math.max(0.1, Math.min(width / canvasWidth, height / canvasHeight, 1.5))
+      ? Math.max(
+          0.1,
+          Math.min(width / canvasWidth, height / canvasHeight, FIT_MAX),
+        )
       : Number(zoom) / 100,
   );
   const edgeCount = $derived(
@@ -220,7 +294,9 @@
       >
         <option value="75">75%</option><option value="100">100%</option><option
           value="125">125%</option
-        ><option value="150">150%</option><option value="fit">Fit</option>
+        ><option value="150">150%</option><option value="200">200%</option
+        ><option value="300">300%</option><option value="400">400%</option
+        ><option value="fit">Fit</option>
       </select>
     </label>
   </header>
@@ -247,7 +323,11 @@
             </button>
             <p>
               References: {#if node.table.references.length}{#each node.table.references as reference, index}{#if index},
-                  {/if}{reference.column} → {reference.table}.{reference.toColumn}{/each}{:else}None{/if}
+                  {/if}{reference.column} → {reference.table}.{reference.toColumn}
+                  ({cardinality(
+                    node.table,
+                    reference.column,
+                  )}){/each}{:else}None{/if}
             </p>
           </li>
         {/each}
@@ -272,18 +352,22 @@
             focusable="false"
           >
             <defs>
-              <!-- refX places the tip at the line end, so arrows point into the referenced table. -->
+              <!-- refX places the tip at the line end, so arrows point into the
+                   referenced table. The head is sized in user space: at
+                   strokeWidth units it was barely visible at default zoom. -->
               <marker
                 id="erd-edge"
-                viewBox="0 0 4 4"
-                refX="4"
-                refY="2"
-                markerWidth="4"
-                markerHeight="4"
-                markerUnits="strokeWidth"
+                viewBox="0 0 12 12"
+                refX="11"
+                refY="6"
+                markerWidth="12"
+                markerHeight="12"
+                markerUnits="userSpaceOnUse"
                 orient="auto"
               >
-                <path d="M0 0 L4 2 L0 4 z" fill="#515151" />
+                <!-- var() is invalid in an SVG presentation attribute: as an
+                     attribute this fill was dropped and the head vanished. -->
+                <path class="edge-head" d="M0 0 L12 6 L0 12 z" />
               </marker>
             </defs>
             {#each edges as edge}
@@ -292,10 +376,21 @@
                 y1={edge.y1}
                 x2={edge.x2}
                 y2={edge.y2}
-                stroke="#515151"
+                class="erd-edge-line"
                 stroke-width="2"
                 marker-end="url(#erd-edge)"
               />
+              <!-- One label per edge. Separate markers at each end collided
+                   with the column name on short spans, so the cardinality
+                   travels with the column it describes: "customer_id N:1"
+                   reads as many rows here, one row there. -->
+              <text
+                class="edge-label"
+                x={(edge.x1 + edge.x2) / 2}
+                y={(edge.y1 + edge.y2) / 2 - 4}
+                text-anchor="middle"
+                >{edge.reference.column} {edge.cardinality}</text
+              >
             {/each}
           </svg>
           {#each nodes as node}
@@ -313,6 +408,10 @@
               aria-pressed={selected === node.table.name}
               aria-label={`${node.table.name}. ${formatCount(node.table.count, "row")}.${
                 node.primaryKey ? ` Primary key ${node.primaryKey}.` : ""
+              }${
+                node.foreignKeys.length
+                  ? ` Foreign ${node.foreignKeys.length === 1 ? "key" : "keys"} ${node.foreignKeys.join(", ")}.`
+                  : ""
               }${node.selfReferencing ? " References itself." : ""}`}
               onkeydown={(event) => navigate(event, node)}
               onclick={() => selectTable(node.table.name)}
@@ -329,6 +428,13 @@
                 >{node.primaryKey
                   ? `PK ${node.primaryKey}`
                   : "No primary key"}</span
+              >
+              <!-- Which column the relationship runs on was invisible: the box
+                   showed only its primary key. -->
+              <span class="node-key node-fk"
+                >{node.foreignKeys.length
+                  ? `FK ${node.foreignKeys.join(", ")}`
+                  : "No foreign keys"}</span
               >
             </button>
           {/each}
@@ -348,8 +454,8 @@
     min-height: 300px;
     display: flex;
     flex-direction: column;
-    color: #000;
-    background: #fff;
+    color: var(--ink-strong);
+    background: var(--field);
     font:
       11px Tahoma,
       sans-serif;
@@ -360,8 +466,8 @@
     flex-wrap: wrap;
     align-items: center;
     padding: 4px 7px;
-    background: #d4d0c8;
-    border-bottom: 1px solid #808080;
+    background: var(--face);
+    border-bottom: 1px solid var(--bevel-mid);
   }
   .map-toolbar label {
     margin-left: auto;
@@ -371,27 +477,46 @@
   }
   select {
     min-height: 24px;
-    color: #000;
-    background: #fff;
-    border: 2px inset #d4d0c8;
+    color: var(--ink-strong);
+    background: var(--field);
+    border: 2px inset var(--face);
     font: inherit;
   }
   .preview-note {
     margin: 0;
     padding: 5px 8px;
-    background: #ffffe1;
-    border-bottom: 1px solid #c0bcb4;
+    background: var(--tooltip);
+    border-bottom: 1px solid var(--face-sunken);
     line-height: 1.4;
   }
   .map-viewport {
     flex: 1;
     min-height: 120px;
     overflow: auto;
-    background-color: #fff;
+    background-color: var(--field);
     background-image:
-      linear-gradient(#f0f0f0 1px, transparent 1px),
-      linear-gradient(90deg, #f0f0f0 1px, transparent 1px);
+      linear-gradient(var(--panel-alt) 1px, transparent 1px),
+      linear-gradient(90deg, var(--panel-alt) 1px, transparent 1px);
     background-size: 20px 20px;
+  }
+  /* SVG presentation attributes do not accept var(), so these are real CSS
+     rules. As attributes the stroke and fill were dropped and every edge and
+     arrowhead disappeared. */
+  .erd-edge-line {
+    stroke: var(--edge-strong);
+  }
+  .edge-head {
+    fill: var(--edge-strong);
+  }
+  .edge-label {
+    fill: var(--ink);
+    font-size: 10px;
+    paint-order: stroke;
+    stroke: var(--field);
+    stroke-width: 3px;
+  }
+  .node-fk {
+    color: var(--ink-soft);
   }
   .scaled-canvas {
     position: relative;
@@ -407,16 +532,17 @@
   }
   .table-node {
     position: absolute;
-    width: 180px;
-    height: 64px;
+    width: 200px;
+    height: 84px;
     box-sizing: border-box;
     padding: 4px 7px;
     text-align: left;
-    background: #c0bcb4;
-    color: #303030;
+    background: var(--face-sunken);
+    color: var(--ink-mid);
     border: 1px solid;
-    border-color: #fff #707070 #707070 #fff;
-    box-shadow: 2px 2px 0 #0005;
+    border-color: var(--bevel-light) var(--bevel-dim) var(--bevel-dim)
+      var(--bevel-light);
+    box-shadow: 2px 2px 0 var(--veil);
     border-radius: 0;
     font:
       11px Tahoma,
@@ -431,17 +557,17 @@
     line-height: 14px;
   }
   .table-node.selected {
-    background: #0a246a;
-    color: #fff;
-    border-color: #0a246a;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
   }
   .self-badge {
     font-size: 9px;
     font-weight: normal;
     padding: 0 3px;
-    border: 1px solid #707070;
-    background: #ffffe1;
-    color: #303030;
+    border: 1px solid var(--bevel-dim);
+    background: var(--tooltip);
+    color: var(--ink-mid);
   }
   .node-rows,
   .node-key {
@@ -450,10 +576,10 @@
     line-height: 13px;
   }
   .node-key {
-    color: #404040;
+    color: var(--ink-muted);
   }
   .table-node.selected .node-key {
-    color: #e9efff;
+    color: var(--accent-ink-soft);
   }
   .linear-tables {
     margin: 0;
@@ -471,8 +597,8 @@
     font: inherit;
   }
   .linear-tables button.selected {
-    background: #0a246a;
-    color: #fff;
+    background: var(--accent);
+    color: var(--accent-ink);
   }
   .linear-tables p {
     margin: 3px 0 0;
@@ -480,8 +606,8 @@
   }
   footer {
     padding: 5px 8px;
-    background: #d4d0c8;
-    border-top: 1px solid #808080;
+    background: var(--face);
+    border-top: 1px solid var(--bevel-mid);
     line-height: 1.4;
   }
   @media (forced-colors: active) {

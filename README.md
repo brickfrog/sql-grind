@@ -75,11 +75,15 @@ Challenge 07 retains its original monthly paid gross-revenue ranking task and un
 The schema explorer follows the selected dataset. Source data remains immutable.
 The index lab uses a separate disposable sandbox for its CREATE/probe/DROP sequence.
 Reference SQL, expected answers, and synthetic truth are inspectable client assets, not secret examination material.
-The Leaderboard contains local practice records, not public rankings or synchronized accounts.
+Practice Records contains local practice records, not public rankings or synchronized accounts. It summarizes the attempts it shows: graded submissions, correct share, hint-free passes, first-attempt passes, median engine time, and days practiced. Execute runs are not submissions and are excluded.
+
+Settings offers a theme: System, Light, or Dark. System follows the operating system and reacts while the application is open.
+
+The practice loop carries keys: F5 or Ctrl+Enter executes, F7 parses, Ctrl+Shift+Enter submits, Ctrl+Shift+H reveals the next hint, and F8 opens the next challenge.
 
 ## Execution and recovery
 
-Runs use fresh snapshots and isolated workers. The parser remains independent, and the editor remains available during a run.
+Runs restore a fresh snapshot per grading variant. SQL workers are pooled and reused: isolation comes from reopening the DuckDB database, which discards the previous instance entirely, so a reused worker starts as blank as a new one. Only a cleanly finished worker returns to the pool; a cancelled or failed one is destroyed. Reuse is what takes a graded submission from about ten seconds to about two.
 The engine uses one thread, UTC, and a 512 MiB memory limit.
 Execution has a 10-second deadline. Initialization has a separate 30-second deadline.
 Output limits are 100,000 rows and 32 MiB of retained Arrow data.
@@ -166,6 +170,15 @@ With the built application served on port 4173, also run:
 APP_URL=http://127.0.0.1:4173 node scripts/deployment-smoke.mjs
 ```
 
+The service worker suite builds and serves the site itself. It loads the
+application once, then removes the network and requires a full engine boot and
+a real query from Cache Storage alone, so it cannot pass on the presence of a
+registration:
+
+```sh
+node scripts/sw-smoke.mjs
+```
+
 To verify a subpath deployment, run this suite. It builds with
 `BASE_PATH=/sql-grind/` into its own output directory, serves that build with no
 custom headers, and requires a working engine, unbroken images, real asset
@@ -203,6 +216,7 @@ Post-cutover evidence:
 - [Desktop workflow checks](readiness/evidence/application/workflows-smoke.json)
 - [Recovery and cross-tab conflicts](readiness/evidence/application/ui-recovery-smoke.json)
 - [Deployment headers, ranges, and offline runtime](readiness/evidence/application/deployment-smoke.json)
+- [Service worker durability and offline engine boot](readiness/evidence/application/sw-smoke.json)
 - [Subpath deployment under a base path](readiness/evidence/application/subpath-smoke.json)
 - [Selected-content loading](readiness/evidence/application/catalog-loading-smoke.json)
 

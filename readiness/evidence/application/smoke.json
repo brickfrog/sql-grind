@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-14T04:40:00.104Z",
+  "date": "2026-09-15T03:52:21.510Z",
   "origin": "http://127.0.0.1:5176",
   "browser": "153.0.8010.12",
   "checks": [
@@ -31,7 +31,7 @@
       "name": "thirteen-node real skill map"
     },
     {
-      "name": "practising ahead grants access, unlocks nothing, and reverses"
+      "name": "practicing ahead grants access, unlocks nothing, and reverses"
     },
     {
       "name": "run evidence stays keyed to its own document across tab switches"

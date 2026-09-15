@@ -194,6 +194,14 @@
     Find: "Ctrl+F",
     "Go to Line": "Ctrl+Alt+G",
     "Format SQL": "Ctrl+Shift+F",
+    // The practice loop is edit, run, submit. Submit was the only step that
+    // forced a reach for the mouse. Ctrl+Shift+Enter pairs with Execute's
+    // Ctrl+Enter; F7 and F8 are free in the editor keymap and unreserved by
+    // the browser, unlike F1 (help) and Ctrl+Shift+N (private window).
+    Submit: "Ctrl+Shift+Enter",
+    Parse: "F7",
+    Hint: "Ctrl+Shift+H",
+    "Open Next Challenge": "F8",
   };
   // The Keyboard Shortcuts dialog is generated from the table above, so a menu
   // hint and its documentation cannot drift apart. Only keys with no menu
@@ -211,6 +219,10 @@
     Find: "Open the editor's find panel. F3 repeats the search.",
     "Go to Line": "Jump to a line number.",
     "Format SQL": "Reflow the active document. One undo restores it.",
+    Submit: "Grade the active SQL on every grading variant.",
+    Parse: "Check syntax and collect style notes without executing.",
+    Hint: "Reveal the next hint for the current challenge.",
+    "Open Next Challenge": "Open the next challenge in the current skill.",
   };
   let running = $state(false);
   let storageReady = $state(false);
@@ -310,6 +322,7 @@
   let recordFilter = $state("all");
   let recordAssistance = $state("all");
   let storageInfo = $state("");
+  let cacheInfo = $state("");
   let credits = $state("");
   let dialog: HTMLDialogElement;
   let importSqlInput: HTMLInputElement;
@@ -412,14 +425,43 @@
       (variation) => variation.variationId === kataVariationId,
     ) ?? null,
   );
+  /**
+   * Defaults to every pattern: hiding the ones with nothing due would empty
+   * the surface exactly when a learner has just passed everything, which is
+   * the failure product.md warns against. The filter narrows on request.
+   */
+  let kataFilter = $state<"due" | "all">("all");
   const kataStatuses = $derived(
     kataPatterns.map((pattern) => ({
       pattern,
       status: kataStatus(pattern, kataProgress, kataNow),
+      // The intro counted 21 drills and the list showed 7 patterns, so the
+      // drills themselves were invisible. Each variation reports its own
+      // state under the pattern that owns it.
+      variations: pattern.variations.map((variation) => {
+        const record = findKataRecord(
+          kataProgress,
+          pattern.patternId,
+          variation.variationId,
+        );
+        return {
+          variation,
+          due: !record || record.dueAt <= kataNow,
+          retained: (record?.streak ?? 0) >= KATA_RETAINED_STREAK,
+          streak: record?.streak ?? 0,
+          dueAt: record?.dueAt ?? null,
+          attempts: record?.attempts ?? 0,
+        };
+      }),
     })),
   );
   const kataDueTotal = $derived(
     kataStatuses.reduce((total, entry) => total + entry.status.due, 0),
+  );
+  const kataVisible = $derived(
+    kataFilter === "all"
+      ? kataStatuses
+      : kataStatuses.filter((entry) => entry.status.due > 0),
   );
   const activeKataRecord = $derived(
     activeKataPattern && activeKataVariation
@@ -549,6 +591,105 @@
       )
       .sort((a, b) => b.createdAt - a.createdAt),
   );
+  /**
+   * Aggregates over every recorded attempt, deliberately not the filtered
+   * list: filtering by correctness would make accuracy and first-attempt rate
+   * tautological — select "Correct" and every earliest shown attempt is
+   * correct by construction. Every figure is computed
+   * from stored fields: correctness, hintLevel, createdAt and elapsedMs.
+   *
+   * elapsedMs is engine time for the graded SQL, not time spent solving, and
+   * is labelled as such. Nothing here estimates a duration the application
+   * never measured.
+   */
+  const recordSummary = $derived.by(() => {
+    const graded = attempts.filter(
+      (a) => a.correctness === "correct" || a.correctness === "incorrect",
+    );
+    const correct = graded.filter((a) => a.correctness === "correct");
+    const median = (values: number[]) => {
+      if (!values.length) return null;
+      const sorted = [...values].sort((a, b) => a - b);
+      const middle = sorted.length >> 1;
+      return sorted.length % 2
+        ? sorted[middle]
+        : (sorted[middle - 1] + sorted[middle]) / 2;
+    };
+    // A challenge counts as first-attempt correct when its earliest graded
+    // attempt passed. Ordering is by createdAt, so this survives filtering.
+    const byChallenge = new Map<string, Attempt[]>();
+    for (const attempt of graded) {
+      const list = byChallenge.get(attempt.challenge.challengeId) ?? [];
+      list.push(attempt);
+      byChallenge.set(attempt.challenge.challengeId, list);
+    }
+    let firstTry = 0;
+    for (const list of byChallenge.values())
+      if (
+        [...list].sort((a, b) => a.createdAt - b.createdAt)[0].correctness ===
+        "correct"
+      )
+        firstTry++;
+    // Calendar days in this browser's time zone, newest first.
+    const days = [
+      ...new Set(
+        graded.map((a) => new Date(a.createdAt).toLocaleDateString("en-CA")),
+      ),
+    ].sort((a, b) => b.localeCompare(a));
+    const dayMs = 86_400_000;
+    const startOfToday = new Date().setHours(0, 0, 0, 0);
+    let streak = 0;
+    while (
+      days[streak] ===
+      new Date(startOfToday - streak * dayMs).toLocaleDateString("en-CA")
+    )
+      streak++;
+    // Yesterday still counts: a streak that breaks at midnight would report
+    // zero to anyone practising before their next session.
+    if (!streak)
+      while (
+        days[streak] ===
+        new Date(startOfToday - (streak + 1) * dayMs).toLocaleDateString(
+          "en-CA",
+        )
+      )
+        streak++;
+    const medianCorrectMs = median(correct.map((a) => a.elapsedMs));
+    return {
+      graded: graded.length,
+      correct: correct.length,
+      accuracy: graded.length ? correct.length / graded.length : null,
+      unassisted: correct.filter((a) => a.hintLevel === 0).length,
+      challenges: byChallenge.size,
+      firstTry,
+      medianCorrectMs,
+      days: days.length,
+      streak,
+    };
+  });
+  /** Per-skill accuracy. The skill id is the challenge id before its dot. */
+  const recordBySkill = $derived.by(() => {
+    const rows = new Map<string, { graded: number; correct: number }>();
+    for (const attempt of attempts) {
+      if (
+        attempt.correctness !== "correct" &&
+        attempt.correctness !== "incorrect"
+      )
+        continue;
+      const skillId = attempt.challenge.challengeId.split(".")[0];
+      const row = rows.get(skillId) ?? { graded: 0, correct: 0 };
+      row.graded++;
+      if (attempt.correctness === "correct") row.correct++;
+      rows.set(skillId, row);
+    }
+    return [...rows.entries()]
+      .map(([skillId, row]) => ({
+        skillId,
+        label: skills.find((skill) => skill.id === skillId)?.label ?? skillId,
+        ...row,
+      }))
+      .sort((a, b) => b.graded - a.graded);
+  });
   const title = $derived(
     view === "map"
       ? "Skill Map.dag"
@@ -752,7 +893,7 @@
       (objective) => objective.completed,
     );
   }
-  // Practising ahead grants access, never availability: a prerequisite is still
+  // Practicing ahead grants access, never availability: a prerequisite is still
   // only ever satisfied by completing it. The choice is reversible until work
   // lands here. Dropping access afterwards would re-lock this skill's own
   // unfinished objectives and strand the passes beside them, and routing that
@@ -781,7 +922,7 @@
       : exploredSkillIds.filter((id) => id !== skillId);
     announce(
       ahead
-        ? `Practising ahead in ${label}. Its challenges are open now. Finishing them counts for good; they do not complete its prerequisites.`
+        ? `Practicing ahead in ${label}. Its challenges are open now. Finishing them counts for good; they do not complete its prerequisites.`
         : `${label} is back on the recommended path.`,
     );
   }
@@ -1069,6 +1210,7 @@
     kataProgress = profile.katas;
     if (!preserveCurrent) {
       settings = { ...defaultSettings, ...profile.settings };
+      themeSetting = settings.theme ?? "system";
       showExplorer = settings.layout?.showExplorer ?? true;
       showGoal = settings.layout?.showGoal ?? true;
       goalCollapsed = settings.layout?.goalCollapsed ?? false;
@@ -1875,6 +2017,42 @@
     view = "sql";
     void tick().then(() => editor?.selectRange(d.from, d.to));
   }
+  /**
+   * Describe where the engine assets are actually coming from. The dialog used
+   * to claim "the local server serves matched data and engine assets from
+   * disk", which is untrue on any static host, and it hardcoded "no service
+   * worker" — a claim that stops being true the moment one is registered.
+   */
+  async function describeAssetCache(): Promise<string> {
+    const parts: string[] = [];
+    const controller = navigator.serviceWorker?.controller;
+    if (!("caches" in window)) {
+      parts.push("This browser exposes no Cache Storage.");
+    } else {
+      let bytes = 0,
+        entries = 0;
+      for (const name of await caches.keys()) {
+        const cache = await caches.open(name);
+        for (const request of await cache.keys()) {
+          entries++;
+          const response = await cache.match(request);
+          const length = Number(response?.headers.get("content-length") ?? 0);
+          bytes += Number.isFinite(length) ? length : 0;
+        }
+      }
+      parts.push(
+        entries
+          ? `${formatCount(entries, "asset")} held in Cache Storage${bytes ? ` (${(bytes / 1048576).toFixed(1)} MiB reported)` : ""}.`
+          : "No assets are held in Cache Storage.",
+      );
+    }
+    parts.push(
+      controller
+        ? "A service worker is serving this page, so the engine survives an HTTP cache eviction."
+        : "No service worker is serving this page; assets rely on the HTTP cache, which the browser may evict.",
+    );
+    return parts.join(" ");
+  }
   async function refreshSchema() {
     try {
       schema = await engine.refreshSchema(domain);
@@ -2020,7 +2198,7 @@
     kataSql = "";
     kataFeedback = due
       ? ""
-      : "Nothing is due for this pattern. Practise as much as you like: an early pass is recorded but does not advance the streak or the schedule, because spacing is what a streak claims.";
+      : "Nothing is due for this pattern. Practice as much as you like: an early pass is recorded but does not advance the streak or the schedule, because spacing is what a streak claims.";
     kataOutcome = "";
     kataElapsedMs = 0;
   }
@@ -2208,6 +2386,7 @@
   }
   async function updateSettings() {
     if (!storageReady) return;
+    settings.theme = themeSetting;
     settings.layout = layoutSnapshot();
     pendingWrites++;
     try {
@@ -2218,6 +2397,27 @@
       pendingWrites--;
     }
   }
+  // The setting offers System, Light and Dark; the palette in app.css keys off
+  // a single resolved attribute. Resolving here keeps one block of dark values
+  // instead of duplicating all of them under a media query, and it means a
+  // learner on a light system can still force dark.
+  let themeSetting = $state<"system" | "light" | "dark">("system");
+  const darkSystem = $state({ matches: false });
+  onMount(() => {
+    const query = window.matchMedia("(prefers-color-scheme: dark)");
+    darkSystem.matches = query.matches;
+    const listener = (event: MediaQueryListEvent) => {
+      darkSystem.matches = event.matches;
+    };
+    query.addEventListener("change", listener);
+    return () => query.removeEventListener("change", listener);
+  });
+  $effect(() => {
+    const dark =
+      themeSetting === "dark" ||
+      (themeSetting === "system" && darkSystem.matches);
+    document.documentElement.dataset.theme = dark ? "dark" : "light";
+  });
   $effect(() => {
     if (!storageReady) return;
     layoutSnapshot();
@@ -3274,6 +3474,10 @@
           storageInfo = estimate
             ? `${((estimate.usage ?? 0) / 1048576).toFixed(2)} MiB used of ${((estimate.quota ?? 0) / 1048576).toFixed(0)} MiB estimated quota.`
             : "Storage estimates unavailable.";
+          // Report what is actually here rather than asserting a deployment.
+          // The previous copy claimed a local server serves the assets, which
+          // is false on a static host.
+          cacheInfo = await describeAssetCache();
           showModal("storage", "Local Storage");
           break;
         }
@@ -3563,6 +3767,33 @@
     ) {
       e.preventDefault();
       void command("Format SQL");
+    }
+    // The rest of the practice loop. These keys are unclaimed by the editor
+    // keymap, so they arrive here whether or not the caret is in the SQL. The
+    // same command() path the menus use enforces eligibility, so a disabled
+    // command stays disabled from the keyboard.
+    if (
+      !modal &&
+      ideVisible &&
+      !e.defaultPrevented &&
+      document.querySelector(".ide")?.contains(document.activeElement)
+    ) {
+      const loop =
+        e.key === "Enter" && (e.ctrlKey || e.metaKey) && e.shiftKey
+          ? "Submit"
+          : e.key === "F7"
+            ? "Parse"
+            : e.key === "F8"
+              ? "Open Next Challenge"
+              : e.key.toLowerCase() === "h" &&
+                  (e.ctrlKey || e.metaKey) &&
+                  e.shiftKey
+                ? "Hint"
+                : "";
+      if (loop && !disabled(loop)) {
+        e.preventDefault();
+        void command(loop);
+      }
     }
   }
   function moveIde(event: PointerEvent) {
@@ -4182,7 +4413,7 @@
                     aria-expanded={!!expanded[mapSkill.id]}
                     aria-label={progression.skills[mapSkill.id]?.accessible
                       ? undefined
-                      : `${mapSkill.label}. ${blockedByText(mapSkill.id)} Right-click the skill on the map to practise ahead.`}
+                      : `${mapSkill.label}. ${blockedByText(mapSkill.id)} Right-click the skill on the map to practice ahead.`}
                     title={progression.skills[mapSkill.id]?.accessible
                       ? undefined
                       : blockedByText(mapSkill.id)}
@@ -5041,7 +5272,7 @@
                 >Practice ahead anyway</button
               >
               <p>
-                Practising ahead opens these five challenges now. It does not
+                Practicing ahead opens these five challenges now. It does not
                 mark the prerequisites complete. Anything you finish here counts
                 for good.
               </p>
@@ -5049,7 +5280,7 @@
           {:else if progression.skills[skill.id]?.ahead}
             <div class="ahead-offer">
               <p>
-                <strong>Practising ahead.</strong> You opened this before
+                <strong>Practicing ahead.</strong> You opened this before
                 {joinNames(blockingSkills(skill.id))}. Completions here count
                 for good.
               </p>
@@ -5191,7 +5422,12 @@
                 >
               </div>
               <div>
-                lines<b>{activeDoc?.sql.split("\n").length ?? 0}</b>
+                your SQL<b
+                  >{formatCount(
+                    activeDoc?.sql.split("\n").length ?? 0,
+                    "line",
+                  )}</b
+                >
               </div>
             </div>
             <p class="quiet">
@@ -5200,6 +5436,20 @@
                 : "Submit a correct answer for the current SQL to enable Compare with Reference."}
               Speed and hints never reduce correctness credit.
             </p>
+            <!-- The section that explains the comparison now carries the
+                 control that starts it. It remains in Patchouli's dock and the
+                 Query menu; a learner reading the methodology should not have
+                 to hunt another window for the button. -->
+            <button
+              class="goal-compare"
+              disabled={disabled("Compare with Reference")}
+              title={!comparisonEligible
+                ? "Submit a correct answer for the current SQL first."
+                : "Compare nine pairs against the reference"}
+              onclick={() => command("Compare with Reference")}
+              >{#if comparisonRunning}<span class="spinner" aria-hidden="true"
+                ></span>Comparing…{:else}Compare with Reference{/if}</button
+            >
           {:else}<p>
               Use the assessment panel for {challenge.assessment.kind ===
               "plan-lab"
@@ -5445,6 +5695,13 @@
       >
     {:else if modal === "settings"}<div class="settings-grid">
         <label
+          >Theme<select bind:value={themeSetting} onchange={updateSettings}
+            ><option value="system">System</option><option value="light"
+              >Light</option
+            ><option value="dark">Dark</option></select
+          ></label
+        >
+        <label
           >Editor font size<select
             bind:value={settings.fontSize}
             onchange={updateSettings}
@@ -5508,10 +5765,12 @@
       ><button onclick={() => importBackupInput.click()}
         >Import Practice Backup</button
       >
-      <h3>Dataset cache</h3>
+      <h3>Engine and dataset assets</h3>
+      <p>{cacheInfo}</p>
       <p>
-        No service worker or OPFS cache. The local server serves matched data
-        and engine assets from disk.
+        Content assets — the bundle, datasets and extensions — are checked
+        against their published SHA-256 before use. The engine worker and wasm
+        module are fetched by URL, so for those two the cache is trusted.
       </p>
       <h3>Practice data</h3>
       <button
@@ -5614,8 +5873,17 @@
             {formatCount(kataContentErrors.length, "drill pattern")} could not be
             loaded and are unavailable: {kataContentErrors.join(" ")}
           </p>{/if}
+        <div class="library-tools">
+          <label
+            >Show<select bind:value={kataFilter}
+              ><option value="due">Patterns with drills due</option><option
+                value="all">All patterns</option
+              ></select
+            ></label
+          >
+        </div>
         <div class="library-list">
-          {#each kataStatuses as entry}<article>
+          {#each kataVisible as entry}<article>
               <h3>{entry.pattern.title}</h3>
               <p class="kata-meta">
                 {entry.status.due} of {entry.status.total} due · {entry.status
@@ -5625,12 +5893,29 @@
                   ).toLocaleDateString()}{/if}
               </p>
               <p>{entry.pattern.why}</p>
+              <ul class="kata-variations">
+                {#each entry.variations as item}<li>
+                    <span>{item.variation.prompt}</span>
+                    <small
+                      >{item.retained
+                        ? `Retained · streak ${item.streak}`
+                        : item.due
+                          ? item.attempts
+                            ? `Due · streak ${item.streak}`
+                            : "Never drilled"
+                          : `Next ${new Date(item.dueAt!).toLocaleDateString()} · streak ${item.streak}`}</small
+                    >
+                  </li>{/each}
+              </ul>
               <button
                 onclick={() => startKata(entry.pattern)}
                 disabled={!storageReady}
                 >{entry.status.due ? "Start drill" : "Drill early"}</button
               >
-            </article>{/each}
+            </article>{:else}<p class="kata-meta">
+              Nothing is due. Choose “All patterns” to drill early; an early
+              pass is recorded but does not advance a streak.
+            </p>{/each}
         </div>
         {#if kataFeedback}<p class="kata-feedback">{kataFeedback}</p>{/if}
       {/if}
@@ -5663,6 +5948,61 @@
           "current challenge",
         )} completed.
       </p>
+      <!-- The log alone showed none of what it already records. Every figure
+           below is derived from stored attempts, and describes every one of
+           them rather than the filtered list. -->
+      {#if recordSummary.graded}<h3>Summary of all recorded attempts</h3>
+        <dl class="status-card">
+          <dt>Graded submissions</dt>
+          <dd>
+            {recordSummary.graded} across {formatCount(
+              recordSummary.challenges,
+              "challenge",
+            )}
+          </dd>
+          <dt>Correct</dt>
+          <dd>
+            {recordSummary.correct} · {Math.round(
+              (recordSummary.accuracy ?? 0) * 100,
+            )}%
+          </dd>
+          <dt>Correct without a hint</dt>
+          <dd>{recordSummary.unassisted} of {recordSummary.correct}</dd>
+          <dt>Correct on the first graded attempt</dt>
+          <dd>
+            {recordSummary.firstTry} of {formatCount(
+              recordSummary.challenges,
+              "challenge",
+            )}
+          </dd>
+          <dt>Median engine time, correct attempts</dt>
+          <dd>
+            {recordSummary.medianCorrectMs === null
+              ? "Not measured"
+              : `${recordSummary.medianCorrectMs.toFixed(1)} ms`}
+          </dd>
+          <dt>Days practiced</dt>
+          <dd>
+            {formatCount(recordSummary.days, "day")}{recordSummary.streak
+              ? ` · ${formatCount(recordSummary.streak, "day")} in a row`
+              : ""}
+          </dd>
+        </dl>
+        <p class="quiet">
+          These figures cover every recorded attempt, not the filtered list
+          below. Engine time is how long the graded SQL ran, not how long the
+          challenge took to solve; the application never measures the latter.
+          Execute runs are not submissions and are excluded.
+        </p>
+        <h3>By skill</h3>
+        <dl class="status-card">
+          {#each recordBySkill as row}<dt>{row.label}</dt>
+            <dd>
+              {row.correct}/{row.graded} correct · {Math.round(
+                (row.correct / row.graded) * 100,
+              )}%
+            </dd>{/each}
+        </dl>{/if}
       <div class="library-list">
         {#each filteredAttempts as attempt}<article>
             <h3>

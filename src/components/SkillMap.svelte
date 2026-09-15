@@ -4,6 +4,11 @@
 </script>
 
 <script lang="ts">
+  // Scale is a CSS transform, so labels grow with it: an unbounded Fit renders a
+  // small graph at ~4.8x on an ultrawide, which reads worse than the old cap. The
+  // manual steps up to 400% cover anyone who wants more.
+  const FIT_MAX = 3;
+
   import { onMount, tick } from "svelte";
   import { type Skill } from "../lib/catalog";
   import type { Progression, ProgressState } from "../lib/progression";
@@ -32,9 +37,15 @@
   const canvasHeight = $derived(
     Math.max(520, ...skills.map((skill) => skill.y + 82)),
   );
+  // Fit means fit. A ceiling here left the graph marooned in the top-left
+  // corner of a large display, and the manual steps could not recover it
+  // because they stopped below the ratio the viewport allowed.
   const scale = $derived(
     zoom === "fit"
-      ? Math.max(0.1, Math.min(width / canvasWidth, height / canvasHeight, 1.5))
+      ? Math.max(
+          0.1,
+          Math.min(width / canvasWidth, height / canvasHeight, FIT_MAX),
+        )
       : Number(zoom) / 100,
   );
   const byId = $derived(new Map(skills.map((skill) => [skill.id, skill])));
@@ -167,7 +178,9 @@
       >
         <option value="75">75%</option><option value="100">100%</option><option
           value="125">125%</option
-        ><option value="150">150%</option><option value="fit">Fit</option>
+        ><option value="150">150%</option><option value="200">200%</option
+        ><option value="300">300%</option><option value="400">400%</option
+        ><option value="fit">Fit</option>
       </select>
     </label>
   </header>
@@ -275,7 +288,9 @@
                 markerUnits="strokeWidth"
                 orient="auto"
               >
-                <path d="M0 0 L4 2 L0 4 z" fill="#286b28" />
+                <!-- var() is invalid in an SVG presentation attribute, so the
+                     fill is a CSS rule; as an attribute the arrow vanished. -->
+                <path class="edge-head-done" d="M0 0 L4 2 L0 4 z" />
               </marker>
               <marker
                 id="skill-edge-todo"
@@ -287,7 +302,7 @@
                 markerUnits="strokeWidth"
                 orient="auto"
               >
-                <path d="M0 0 L4 2 L0 4 z" fill="#909090" />
+                <path class="edge-head-todo" d="M0 0 L4 2 L0 4 z" />
               </marker>
             </defs>
             {#each edges as edge}
@@ -296,9 +311,9 @@
                 y1={edge.from.y + 26}
                 x2={edge.to.x}
                 y2={edge.to.y + 26}
-                stroke={progression.skills[edge.from.id]?.completed
-                  ? "#286b28"
-                  : "#909090"}
+                class={progression.skills[edge.from.id]?.completed
+                  ? "skill-edge-done"
+                  : "skill-edge-todo"}
                 stroke-width="2"
                 stroke-dasharray="4 4"
                 marker-end={progression.skills[edge.from.id]?.completed
@@ -338,7 +353,7 @@
                 count(skill),
                 skill.objectives.length,
                 "challenge",
-              )}.${blockedBy(skill)}${progression.skills[skill.id]?.ahead ? " Practising ahead." : ""}`}
+              )}.${blockedBy(skill)}${progression.skills[skill.id]?.ahead ? " Practicing ahead." : ""}`}
               onkeydown={(event) => navigate(event, skill)}
               onclick={() => selectSkill(skill.id)}
             >
@@ -378,17 +393,17 @@
 <style>
   .skill-map {
     /* One source of truth: a legend swatch is definitionally its node fill. */
-    --state-completed: #d0e8d0;
-    --state-progress: #ffd966;
-    --state-available: #fff;
-    --state-review: #fff0c0;
-    --state-locked: #c0bcb4;
+    --state-completed: var(--state-completed-fill);
+    --state-progress: var(--state-progress-fill);
+    --state-available: var(--field);
+    --state-review: var(--state-review-fill);
+    --state-locked: var(--face-sunken);
     height: 100%;
     min-height: 300px;
     display: flex;
     flex-direction: column;
-    color: #000;
-    background: #fff;
+    color: var(--ink-strong);
+    background: var(--field);
     font:
       11px Tahoma,
       sans-serif;
@@ -399,8 +414,8 @@
     flex-wrap: wrap;
     align-items: center;
     padding: 4px 7px;
-    background: #d4d0c8;
-    border-bottom: 1px solid #808080;
+    background: var(--face);
+    border-bottom: 1px solid var(--bevel-mid);
   }
   .map-toolbar label {
     margin-left: auto;
@@ -410,9 +425,9 @@
   }
   select {
     min-height: 24px;
-    color: #000;
-    background: #fff;
-    border: 2px inset #d4d0c8;
+    color: var(--ink-strong);
+    background: var(--field);
+    border: 2px inset var(--face);
     font: inherit;
   }
   .legend {
@@ -420,7 +435,7 @@
     gap: 12px;
     flex-wrap: wrap;
     padding: 6px 8px;
-    background: #f0eee8;
+    background: var(--face-alt);
   }
   .legend > span {
     display: inline-flex;
@@ -430,14 +445,14 @@
   .legend i {
     width: 10px;
     height: 10px;
-    border: 1px solid #555;
+    border: 1px solid var(--ink-soft);
   }
   .legend-locked {
     gap: 2px;
   }
   .legend-locked .node-lock {
     margin-left: 2px;
-    color: #303030;
+    color: var(--ink-mid);
   }
   .completed {
     background: var(--state-completed);
@@ -457,19 +472,33 @@
   .preview-note {
     margin: 0;
     padding: 5px 8px;
-    background: #ffffe1;
-    border-bottom: 1px solid #c0bcb4;
+    background: var(--tooltip);
+    border-bottom: 1px solid var(--face-sunken);
     line-height: 1.4;
   }
   .map-viewport {
     flex: 1;
     min-height: 120px;
     overflow: auto;
-    background-color: #fff;
+    background-color: var(--field);
     background-image:
-      linear-gradient(#f0f0f0 1px, transparent 1px),
-      linear-gradient(90deg, #f0f0f0 1px, transparent 1px);
+      linear-gradient(var(--panel-alt) 1px, transparent 1px),
+      linear-gradient(90deg, var(--panel-alt) 1px, transparent 1px);
     background-size: 20px 20px;
+  }
+  /* SVG presentation attributes do not accept var(), so edge colours are real
+     CSS rules. As attributes they were dropped and the arrows disappeared. */
+  .edge-head-done {
+    fill: var(--ok-edge);
+  }
+  .edge-head-todo {
+    fill: var(--edge);
+  }
+  .skill-edge-done {
+    stroke: var(--ok-edge);
+  }
+  .skill-edge-todo {
+    stroke: var(--edge);
   }
   .scaled-canvas {
     position: relative;
@@ -492,10 +521,11 @@
     padding: 4px 7px;
     text-align: left;
     background: var(--state-locked);
-    color: #303030;
+    color: var(--ink-mid);
     border: 1px solid;
-    border-color: #fff #707070 #707070 #fff;
-    box-shadow: 2px 2px 0 #0005;
+    border-color: var(--bevel-light) var(--bevel-dim) var(--bevel-dim)
+      var(--bevel-light);
+    box-shadow: 2px 2px 0 var(--veil);
     border-radius: 0;
     font:
       11px Tahoma,
@@ -509,31 +539,31 @@
   }
   .skill-node.progress {
     background: var(--state-progress);
-    color: #282000;
+    color: var(--caution-ink);
   }
   .skill-node.available {
     background: var(--state-available);
-    color: #000;
+    color: var(--ink-strong);
   }
   .skill-node.completed {
     background: var(--state-completed);
-    color: #153d15;
+    color: var(--ok-ink);
   }
   .skill-node.review {
     background: var(--state-review);
-    color: #493800;
+    color: var(--caution-ink);
   }
   .skill-node.locked {
     background: var(--state-locked);
-    color: #303030;
+    color: var(--ink-mid);
   }
   .skill-node.selected {
     box-shadow:
-      0 0 0 2px #0a246a,
-      3px 3px 0 #0005;
+      0 0 0 2px var(--accent),
+      3px 3px 0 var(--veil);
   }
   .skill-node:focus-visible {
-    outline: 2px dashed #000;
+    outline: 2px dashed var(--ink-strong);
     outline-offset: -4px;
   }
   .node-state {
@@ -556,31 +586,31 @@
     font-size: 9px;
     line-height: 11px;
     padding: 0 3px;
-    background: #0a246a;
-    color: #fff;
+    background: var(--accent);
+    color: var(--accent-ink);
   }
   .node-progress {
     display: block;
     height: 4px;
     margin-top: 3px;
-    background: #fff;
-    border: 1px solid #888;
+    background: var(--field);
+    border: 1px solid var(--rule-strong);
   }
   .node-progress > span {
     display: block;
     height: 100%;
-    background: #6b4900;
+    background: var(--ahead-bg);
   }
   footer {
-    background: #d4d0c8;
+    background: var(--face);
     padding: 4px 8px;
-    border-top: 1px solid #808080;
+    border-top: 1px solid var(--bevel-mid);
     line-height: 1.4;
   }
   .linear-skills {
     margin: 0;
     padding: 12px 12px 12px 32px;
-    background: #f5f4ef;
+    background: var(--panel-quiet);
   }
   .linear-skills li {
     margin-bottom: 18px;
@@ -591,15 +621,16 @@
     gap: 8px;
     flex-wrap: wrap;
     padding: 5px 8px;
-    background: #d4d0c8;
-    color: #000;
+    background: var(--face);
+    color: var(--ink-strong);
     border: 1px solid;
-    border-color: #fff #404040 #404040 #fff;
+    border-color: var(--bevel-light) var(--bevel-shadow) var(--bevel-shadow)
+      var(--bevel-light);
     border-radius: 0;
     font: inherit;
   }
   .linear-skills .selected {
-    outline: 2px solid #0a246a;
+    outline: 2px solid var(--focus);
   }
   .linear-skills p {
     margin: 5px 0;
@@ -609,7 +640,7 @@
     display: inline;
     min-height: 24px;
     background: none;
-    color: #0000a0;
+    color: var(--syn-keyword);
     border: 0;
     padding: 0 2px;
     text-decoration: underline;

@@ -171,7 +171,7 @@
   }
   th,
   td {
-    border: 1px solid #888;
+    border: 1px solid var(--rule-strong);
     padding: 4px;
     text-align: left;
   }

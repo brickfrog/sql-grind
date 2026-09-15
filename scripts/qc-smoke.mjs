@@ -254,12 +254,24 @@ try {
     String(expected.length),
   );
   await page.getByRole("button", { name: "Patchouli", exact: true }).click();
-  assert.equal(
-    await page
-      .getByRole("button", { name: "Compare with Reference", exact: true })
-      .isDisabled(),
-    true,
+  // Two entry points exist by design: Patchouli's dock and the Goal section
+  // that explains the comparison. Eligibility is a property of the command,
+  // so every one of them must be disabled before a correct submission.
+  const compareButtons = page.getByRole("button", {
+    name: "Compare with Reference",
+    exact: true,
+  });
+  const compareCount = await compareButtons.count();
+  assert.ok(
+    compareCount >= 2,
+    `expected both Compare controls, saw ${compareCount}`,
   );
+  for (let index = 0; index < compareCount; index++)
+    assert.equal(
+      await compareButtons.nth(index).isDisabled(),
+      true,
+      `Compare control ${index} must be disabled before a correct submission`,
+    );
   await page
     .getByRole("button", { name: "Hide Patchouli", exact: true })
     .click();
@@ -312,6 +324,7 @@ try {
   const attemptsBeforeComparison = await recordCount();
   await page.getByRole("button", { name: "Patchouli", exact: true }).click();
   await page
+    .locator(".judge")
     .getByRole("button", { name: "Compare with Reference", exact: true })
     .click();
   await page.locator("dialog[open]").waitFor();

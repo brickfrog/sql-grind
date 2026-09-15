@@ -206,6 +206,20 @@ try {
   await page
     .getByRole("combobox", { name: /^Editor font size/ })
     .selectOption("16");
+  // The theme has to repaint, not just store a string: assert a real computed
+  // colour changes, and that the choice survives the reload below.
+  const lightInk = await page.evaluate(
+    () => getComputedStyle(document.body).color,
+  );
+  await page.getByRole("combobox", { name: /^Theme/ }).selectOption("dark");
+  await page.waitForFunction(
+    (before) => getComputedStyle(document.body).color !== before,
+    lightInk,
+  );
+  assert.equal(
+    await page.evaluate(() => document.documentElement.dataset.theme),
+    "dark",
+  );
   await page.getByLabel("Hush unsolicited commentary", { exact: true }).check();
   await page
     .locator("dialog")
@@ -228,6 +242,15 @@ try {
       .getByRole("combobox", { name: /^Editor font size/ })
       .inputValue(),
     "16",
+  );
+  assert.equal(
+    await page.getByRole("combobox", { name: /^Theme/ }).inputValue(),
+    "dark",
+    "the chosen theme must survive a reload",
+  );
+  assert.equal(
+    await page.evaluate(() => document.documentElement.dataset.theme),
+    "dark",
   );
   assert.equal(
     await page

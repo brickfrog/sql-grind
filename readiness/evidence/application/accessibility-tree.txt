@@ -65,18 +65,18 @@
       - treeitem "Indexes / ART" [level=2]
       - treeitem "Challenges" [expanded] [level=1]
       - treeitem "SQL basics In progress" [level=2]
-      - treeitem "Aggregation. Locked by SQL basics. Right-click the skill on the map to practise ahead." [level=2]: Aggregation Locked
-      - treeitem "Joins. Locked by SQL basics. Right-click the skill on the map to practise ahead." [level=2]: Joins Locked
-      - treeitem "Subqueries & EXISTS. Locked by SQL basics. Right-click the skill on the map to practise ahead." [level=2]: Subqueries & EXISTS Locked
-      - treeitem "Set operations. Locked by Aggregation. Right-click the skill on the map to practise ahead." [level=2]: Set operations Locked
-      - treeitem "CTEs. Locked by Aggregation, Joins and Subqueries & EXISTS. Right-click the skill on the map to practise ahead." [level=2]: CTEs Locked
-      - treeitem "Window functions. Locked by Aggregation and Joins. Right-click the skill on the map to practise ahead." [level=2]: Window functions Locked
-      - treeitem "Date / time. Locked by Joins. Right-click the skill on the map to practise ahead." [level=2]: Date / time Locked
-      - treeitem "Recursive CTEs. Locked by CTEs. Right-click the skill on the map to practise ahead." [level=2]: Recursive CTEs Locked
-      - treeitem "Pivot / unpivot. Locked by CTEs and Window functions. Right-click the skill on the map to practise ahead." [level=2]: Pivot / unpivot Locked
-      - treeitem "Plans & indexing. Locked by Window functions and Joins. Right-click the skill on the map to practise ahead." [level=2]: Plans & indexing Locked
-      - treeitem "Cleaning & strings. Locked by Date / time and Subqueries & EXISTS. Right-click the skill on the map to practise ahead." [level=2]: Cleaning & strings Locked
-      - treeitem "Reconciliation. Locked by CTEs, Window functions, Set operations and Cleaning & strings. Right-click the skill on the map to practise ahead." [level=2]: Reconciliation Locked
+      - treeitem "Aggregation. Locked by SQL basics. Right-click the skill on the map to practice ahead." [level=2]: Aggregation Locked
+      - treeitem "Joins. Locked by SQL basics. Right-click the skill on the map to practice ahead." [level=2]: Joins Locked
+      - treeitem "Subqueries & EXISTS. Locked by SQL basics. Right-click the skill on the map to practice ahead." [level=2]: Subqueries & EXISTS Locked
+      - treeitem "Set operations. Locked by Aggregation. Right-click the skill on the map to practice ahead." [level=2]: Set operations Locked
+      - treeitem "CTEs. Locked by Aggregation, Joins and Subqueries & EXISTS. Right-click the skill on the map to practice ahead." [level=2]: CTEs Locked
+      - treeitem "Window functions. Locked by Aggregation and Joins. Right-click the skill on the map to practice ahead." [level=2]: Window functions Locked
+      - treeitem "Date / time. Locked by Joins. Right-click the skill on the map to practice ahead." [level=2]: Date / time Locked
+      - treeitem "Recursive CTEs. Locked by CTEs. Right-click the skill on the map to practice ahead." [level=2]: Recursive CTEs Locked
+      - treeitem "Pivot / unpivot. Locked by CTEs and Window functions. Right-click the skill on the map to practice ahead." [level=2]: Pivot / unpivot Locked
+      - treeitem "Plans & indexing. Locked by Window functions and Joins. Right-click the skill on the map to practice ahead." [level=2]: Plans & indexing Locked
+      - treeitem "Cleaning & strings. Locked by Date / time and Subqueries & EXISTS. Right-click the skill on the map to practice ahead." [level=2]: Cleaning & strings Locked
+      - treeitem "Reconciliation. Locked by CTEs, Window functions, Set operations and Cleaning & strings. Right-click the skill on the map to practice ahead." [level=2]: Reconciliation Locked
     - text: Local data · 8 tables commerce-practice · immutable snapshots
   - slider "Object Explorer width": "220"
   - region "Documents":
@@ -96,7 +96,7 @@
       - region "Query results":
         - text: No result
         - strong: Running…
-        - button "Accessible table (50 rows per page)"
+        - button "Showing the virtual grid. Switch to the accessible table, 50 rows per page.": Virtual grid
         - button "Copy cell" [disabled]
         - button "Export CSV" [disabled]
         - paragraph: Waiting for a complete result. Editing remains available.
@@ -135,8 +135,9 @@
     - term: Style and syntax notes
     - definition: 0 notes for this revision
     - heading "Compare with Reference" [level=3]
-    - text: runtime Unavailable reference Not collected lines 1
+    - text: runtime Unavailable reference Not collected your SQL 1 line
     - paragraph: Submit a correct answer for the current SQL to enable Compare with Reference. Speed and hints never reduce correctness credit.
+    - button "Compare with Reference" [disabled]
     - paragraph: All five current challenges complete a skill. Hints do not reduce credit.
     - button "Hint (3 left)"
     - button "Submit" [disabled]
@@ -150,4 +151,4 @@
   - button "Patchouli — reading"
   - 'button "SQL engine: initializing"'
   - 'button "Patchouli: hidden"'
-  - time: 12:41 AM
+  - time: 11:52 PM

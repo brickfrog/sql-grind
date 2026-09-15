@@ -461,6 +461,7 @@ try {
   );
   await edit(reference);
   await page
+    .locator(".judge")
     .getByRole("button", { name: "Compare with Reference", exact: true })
     .click();
   await page.locator("dialog").waitFor();
@@ -469,6 +470,7 @@ try {
     .getByRole("button", { name: "Cancel", exact: true })
     .click();
   await page
+    .locator(".judge")
     .getByRole("button", { name: "Compare with Reference", exact: true })
     .click();
   await confirm();

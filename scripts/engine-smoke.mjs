@@ -1089,6 +1089,95 @@ try {
     },
   );
   await check(
+    "a reused SQL worker is indistinguishable from a cold one",
+    async () => {
+      // Workers are pooled across runs, so isolation can no longer be taken
+      // from process boundaries: it rests entirely on DuckDB open() discarding
+      // the previous database instance. Count constructions to prove reuse
+      // really happened, then assert the state a stale instance would expose.
+      await page.evaluate(() => {
+        const Real = window.Worker;
+        window.workerProof = { constructed: 0, Real };
+        window.Worker = class extends Real {
+          constructor(...args) {
+            window.workerProof.constructed++;
+            super(...args);
+          }
+        };
+      });
+      let constructed, snapshots;
+      try {
+        const first = await run(reference, "submit");
+        complete(first);
+        assert.equal(first.correctness, "correct");
+        const second = await run(reference, "submit");
+        complete(second);
+        assert.equal(second.correctness, "correct");
+        ({ constructed, snapshots } = await page.evaluate(() => ({
+          constructed: window.workerProof.constructed,
+          snapshots: window.engineProof.states.filter((event) =>
+            /Restoring isolated/.test(event.message ?? ""),
+          ).length,
+        })));
+      } finally {
+        await page.evaluate(() => {
+          window.Worker = window.workerProof.Real;
+        });
+      }
+      // Two graded submissions restore several isolated snapshots each. If
+      // every snapshot still cost a worker, pooling would be doing nothing and
+      // the isolation assertions below would prove nothing about reuse.
+      assert.ok(
+        snapshots >= 4,
+        `expected several isolated snapshots, saw ${snapshots}`,
+      );
+      assert.ok(
+        constructed < snapshots,
+        `expected fewer workers than snapshots; built ${constructed} for ${snapshots}`,
+      );
+      // Row counts are the loudest symptom of a failed reset: reloading a
+      // snapshot into a surviving database either doubles every table or
+      // violates a primary key.
+      const tables = await run(
+        Object.keys(counts)
+          .map(
+            (name) =>
+              `SELECT '${name}' AS table_name, count(*)::BIGINT AS n FROM ${name}`,
+          )
+          .join(" UNION ALL ") + " ORDER BY table_name",
+      );
+      complete(tables);
+      assert.deepEqual(
+        Object.fromEntries(
+          tables.result.rows.map(([name, n]) => [name, Number(n)]),
+        ),
+        counts,
+        "a reused worker must reload exactly one copy of every table",
+      );
+      // open() resets these to host defaults and unlocks configuration, so a
+      // pooled worker that skipped re-application would silently shift every
+      // timestamp and run without its published limits. Read through
+      // current_setting: a `SET` would never reach DuckDB, because the
+      // read-only admission policy rejects it first, so asserting on a
+      // rejected SET would pass whether or not the lock was re-applied.
+      const settings = await run(
+        "SELECT current_setting('TimeZone') AS tz, current_setting('threads')::BIGINT AS threads, current_setting('memory_limit') AS memory, current_setting('lock_configuration') AS locked, current_setting('enable_external_access') AS external",
+      );
+      complete(settings);
+      assert.deepEqual(settings.result.rows, [
+        ["UTC", "1", "488.2 MiB", "true", "false"],
+      ]);
+      // Loading leaves temp scaffolding behind on self-referencing tables; a
+      // survivor would collide with the next load.
+      const temps = await run(
+        "SELECT count(*)::BIGINT AS n FROM duckdb_tables() WHERE temporary",
+      );
+      complete(temps);
+      assert.deepEqual(temps.result.rows, [["0"]]);
+      return { constructed, snapshots };
+    },
+  );
+  await check(
     "document and dataset switch cannot change dispatched identity",
     async () => {
       const captured = await page.evaluate(async (req) => {

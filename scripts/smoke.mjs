@@ -221,12 +221,12 @@ try {
   );
   assert.ok(
     await page.locator(".objectives button").first().isEnabled(),
-    "practising ahead opens that skill's challenges",
+    "practicing ahead opens that skill's challenges",
   );
   assert.match(
     await page.locator("#skill-map-cte").getAttribute("aria-label"),
     /Locked by/,
-    "practising ahead never unlocks a later skill",
+    "practicing ahead never unlocks a later skill",
   );
   await page
     .getByRole("button", {
@@ -244,7 +244,7 @@ try {
     /Locked by SQL basics/,
     "returning to the recommended path re-locks the skill",
   );
-  mark("practising ahead grants access, unlocks nothing, and reverses");
+  mark("practicing ahead grants access, unlocks nothing, and reverses");
   await page.getByRole("tab", { name: "my_solution.sql", exact: true }).click();
   // Run evidence is keyed by document. A map round trip keeps this document's
   // own scorecard, and a document without a run shows no foreign evidence.

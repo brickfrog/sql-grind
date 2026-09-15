@@ -235,7 +235,7 @@ try {
   );
   await page
     .getByRole("button", {
-      name: "Accessible table (50 rows per page)",
+      name: /Switch to the accessible table/,
       exact: true,
     })
     .click();

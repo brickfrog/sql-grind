@@ -904,7 +904,16 @@ function validateAssessment(
 function validateSettings(value: unknown): asserts value is Settings {
   // mood and judgeSize were short-lived preferences; stored rows may still
   // carry them. They are tolerated here and dropped by load().
-  object(value, Object.keys(defaultSettings), ["layout", "judgeSize", "mood"]);
+  // theme is optional for the same reason: rows written before it existed have
+  // no such key, and rejecting them would discard a learner's whole profile.
+  object(value, Object.keys(defaultSettings), [
+    "layout",
+    "judgeSize",
+    "mood",
+    "theme",
+  ]);
+  if (value.theme !== undefined)
+    oneOf(value.theme, ["system", "light", "dark"]);
   number(value.fontSize, 8, 40);
   number(value.indentation, 1, 8);
   for (const key of [

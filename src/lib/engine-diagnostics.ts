@@ -275,6 +275,15 @@ export function analyze(
       };
     // Parser-error positions count Unicode code points; AST locations use bytes.
     const offset = codePointToUtf16(sql, Number(ast.position));
+    // A one-character underline under the first letter of a misspelled keyword
+    // is invisible in practice. Mark the whole token the parser stopped on, so
+    // the editor shows which word it rejected.
+    const word =
+      offset == null
+        ? undefined
+        : tokens(sql).find(
+            (token) => token.from <= offset && offset < token.to,
+          );
     return {
       revision,
       valid: false,
@@ -285,14 +294,15 @@ export function analyze(
           severity: "error",
           message: ast.error_message,
           revision,
-          from: offset ?? 0,
+          from: word?.from ?? offset ?? 0,
           to:
-            offset == null
+            word?.to ??
+            (offset == null
               ? 0
               : Math.min(
                   sql.length,
                   offset + ((sql.codePointAt(offset) ?? 0) > 0xffff ? 2 : 1),
-                ),
+                )),
         },
       ],
     };

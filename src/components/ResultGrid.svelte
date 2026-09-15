@@ -64,8 +64,12 @@
     /TIMESTAMP/i.test(type) ? 220 : /DATE|TIME/i.test(type) ? 120 : 160;
   const columnWidth = (index: number) =>
     widths[index] ?? defaultWidth(columns[index]?.type ?? "");
+  // A trailing filler track. Column widths are measured from content, so a
+  // narrow result used to end mid-pane and leave dead grey to its right; the
+  // filler carries the row background across the remaining width without
+  // stretching any measured column or disturbing a width the learner set.
   const template = $derived(
-    `48px ${columns.map((_, index) => `${columnWidth(index)}px`).join(" ")}`,
+    `48px ${columns.map((_, index) => `${columnWidth(index)}px`).join(" ")} 1fr`,
   );
   const gridWidth = $derived(
     48 + columns.reduce((total, _, index) => total + columnWidth(index), 0),
@@ -464,6 +468,10 @@
     >
     {#if busy}<strong>Running…</strong>{/if}
     {#if stale && result}<strong class="stale">Stale — SQL changed</strong>{/if}
+    <!-- The label used to name the destination while aria-pressed reported the
+         state, so the two contradicted each other and neither said which view
+         was current. The visible label is now the current view; the accessible
+         name carries the action. -->
     <button
       type="button"
       onclick={() => {
@@ -471,9 +479,12 @@
         page = Math.floor(row / pageSize);
       }}
       aria-pressed={paginated}
+      aria-label={paginated
+        ? "Showing the accessible table. Switch to the virtual grid."
+        : `Showing the virtual grid. Switch to the accessible table, ${pageSize} rows per page.`}
       >{paginated
-        ? "Virtual grid"
-        : `Accessible table (${pageSize} rows per page)`}</button
+        ? `Accessible table · ${pageSize}/page`
+        : "Virtual grid"}</button
     >
     <button
       type="button"
@@ -704,8 +715,8 @@
     height: 100%;
     min-height: 120px;
     min-width: 0;
-    background: #fff;
-    color: #000;
+    background: var(--field);
+    color: var(--ink-strong);
     font:
       11px Tahoma,
       sans-serif;
@@ -717,8 +728,8 @@
     flex-wrap: wrap;
     gap: 6px;
     padding: 3px 5px;
-    background: #d4d0c8;
-    border-bottom: 1px solid #808080;
+    background: var(--face);
+    border-bottom: 1px solid var(--bevel-mid);
     flex: none;
   }
   .result-tools > button:first-of-type {
@@ -727,22 +738,23 @@
   button {
     min-height: 24px;
     border: 1px solid;
-    border-color: #fff #404040 #404040 #fff;
+    border-color: var(--bevel-light) var(--bevel-shadow) var(--bevel-shadow)
+      var(--bevel-light);
     border-radius: 0;
-    background: #d4d0c8;
-    color: #000;
+    background: var(--face);
+    color: var(--ink-strong);
     font: inherit;
     padding: 2px 7px;
   }
   button:disabled {
-    color: #666;
+    color: var(--ink-faint);
   }
   button:focus-visible {
-    outline: 2px solid #0a246a;
+    outline: 2px solid var(--focus);
     outline-offset: -3px;
   }
   .stale {
-    color: #704500;
+    color: var(--caution-ink);
   }
   .grid-scroll,
   .table-scroll {
@@ -752,7 +764,7 @@
     position: relative;
   }
   .grid:focus-visible {
-    outline: 2px solid #0a246a;
+    outline: 2px solid var(--focus);
     outline-offset: -2px;
   }
   .grid-header,
@@ -763,14 +775,15 @@
     position: sticky;
     top: 0;
     z-index: 1;
-    background: #d4d0c8;
+    background: var(--face);
     height: 42px;
   }
   .grid-header > div {
     padding: 3px 6px;
     font-weight: bold;
     border: 1px solid;
-    border-color: #fff #808080 #808080 #fff;
+    border-color: var(--bevel-light) var(--bevel-mid) var(--bevel-mid)
+      var(--bevel-light);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -784,8 +797,8 @@
      rest so the resize affordance is discoverable without hovering. */
   .column-grip {
     border: 0;
-    border-left: 1px solid #808080;
-    box-shadow: inset 1px 0 0 #fff;
+    border-left: 1px solid var(--bevel-mid);
+    box-shadow: inset 1px 0 0 var(--bevel-light);
     padding: 0;
     border-radius: 0;
     position: absolute;
@@ -799,14 +812,14 @@
   }
   .column-grip:hover,
   .column-grip:focus-visible {
-    border-left-color: #0a246a;
-    box-shadow: inset 2px 0 0 #0a246a;
+    border-left-color: var(--accent);
+    box-shadow: inset 2px 0 0 var(--accent);
     outline: none;
   }
   small {
     display: block;
     font-size: 10px;
-    color: #484848;
+    color: var(--ink-muted);
     font-weight: normal;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -823,47 +836,47 @@
   }
   .grid-row > div {
     padding: 4px 6px;
-    border-right: 1px solid #d4d0c8;
-    border-bottom: 1px solid #e4e0d8;
+    border-right: 1px solid var(--face);
+    border-bottom: 1px solid var(--active-gutter);
     overflow: hidden;
     /* `pre`, not `nowrap`: exact spacing stays visible, and the value is
        still single-line so the ellipsis marks any truncation. */
     white-space: pre;
     text-overflow: ellipsis;
     font-family: "DejaVu Sans Mono", Consolas, monospace;
-    color: #111;
+    color: var(--ink);
   }
   .grid-row:nth-child(even) {
-    background: #f6f5f2;
+    background: var(--panel);
   }
   .row-number {
     text-align: right;
-    background: #eeece6;
-    color: #444;
+    background: var(--panel-alt);
+    color: var(--ink-muted);
   }
   .selected {
-    background: #0a246a !important;
+    background: var(--accent) !important;
     color: white !important;
     box-shadow: inset 0 0 0 1px white;
   }
   .null-value {
     font-style: italic;
-    color: #444;
+    color: var(--ink-muted);
   }
   .grid-help {
-    background: #f0eee8;
+    background: var(--face-alt);
     padding: 3px 6px;
     font-size: 10px;
     flex: none;
   }
   .copy-status {
-    background: #ffffe1;
+    background: var(--tooltip);
     padding: 3px 6px;
   }
   .empty {
     margin: 0;
     padding: 14px;
-    color: #444;
+    color: var(--ink-muted);
   }
   table {
     border-collapse: collapse;
@@ -875,14 +888,14 @@
     padding: 5px;
   }
   th {
-    background: #d4d0c8;
+    background: var(--face);
     text-align: left;
     padding: 3px 6px;
-    border: 1px solid #808080;
+    border: 1px solid var(--bevel-mid);
     white-space: nowrap;
   }
   td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--rule-soft);
     padding: 0;
   }
   .table-value {

@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-14T04:36:11.463Z",
+  "date": "2026-09-15T03:49:16.582Z",
   "browser": "153.0.8010.12",
   "checks": [
     "File New/Save/Save As preserve distinct documents",
@@ -15,10 +15,13 @@
     "Thirteen-skill map, locked requirements, five selectable basics objectives, keyboard navigation, current skill, next challenge and independent drafts",
     "Judge drag, keyboard move, float/dock/hide, persistent hush and diagnostics",
     "Settings apply editor and judge preferences",
+    "Parse and Hint carry keys; the dialog documents all four practice-loop keys",
     "Storage, help, credits, external documentation link and local records",
     "IDE minimize/maximize/close, taskbar restoration, Show Desktop and Start",
     "Menu separators, Alt mnemonics and the Window tab list",
-    "Menu keyboard, F6 regions, 320px reading layout and dialog reflow"
+    "Menu keyboard, F6 regions, 320px reading layout and dialog reflow",
+    "Practice Records aggregates stored attempts and excludes Execute runs",
+    "Relationship diagram paints edges, cardinality and foreign keys"
   ],
   "errors": [],
   "pass": true

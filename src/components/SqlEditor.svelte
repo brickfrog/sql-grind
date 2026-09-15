@@ -52,7 +52,7 @@
     search,
     searchKeymap,
   } from "@codemirror/search";
-  import { setDiagnostics } from "@codemirror/lint";
+  import { setDiagnostics, lintGutter } from "@codemirror/lint";
   import { tags } from "@lezer/highlight";
   import type { Diagnostic } from "../lib/types";
 
@@ -100,15 +100,15 @@
   const appearance = new Compartment();
   const language = new Compartment();
   const sqlColors = HighlightStyle.define([
-    { tag: tags.keyword, color: "#0000a0" },
+    { tag: tags.keyword, color: "var(--syn-keyword)" },
     {
       tag: [tags.function(tags.variableName), tags.standard(tags.name)],
-      color: "#a000a0",
+      color: "var(--syn-type)",
     },
-    { tag: tags.string, color: "#a31515" },
-    { tag: tags.number, color: "#005f5f" },
-    { tag: tags.comment, color: "#006400" },
-    { tag: tags.operator, color: "#303030" },
+    { tag: tags.string, color: "var(--syn-string)" },
+    { tag: tags.number, color: "var(--syn-number)" },
+    { tag: tags.comment, color: "var(--ok-edge)" },
+    { tag: tags.operator, color: "var(--ink-mid)" },
   ]);
 
   function appearanceExtensions() {
@@ -124,20 +124,24 @@
         "&": {
           height: "100%",
           fontSize: `${fontSize}px`,
-          backgroundColor: "#fff",
-          color: "#000",
+          backgroundColor: "var(--field)",
+          color: "var(--ink)",
         },
         ".cm-scroller": {
           fontFamily: '"DejaVu Sans Mono", Consolas, monospace',
           overflow: "auto",
         },
-        ".cm-content": { padding: "5px 0", color: "#111", caretColor: "#000" },
-        ".cm-gutters": {
-          backgroundColor: "#f0eee8",
-          color: "#444",
-          borderRight: "1px solid #c0bcb4",
+        ".cm-content": {
+          padding: "5px 0",
+          color: "var(--ink)",
+          caretColor: "var(--ink)",
         },
-        ".cm-activeLine": { backgroundColor: "#ffffe5" },
+        ".cm-gutters": {
+          backgroundColor: "var(--face-alt)",
+          color: "var(--ink-muted)",
+          borderRight: "1px solid var(--face-sunken)",
+        },
+        ".cm-activeLine": { backgroundColor: "var(--line-highlight)" },
         // CodeMirror paints the selection layer at z-index -2, behind the line
         // boxes, and drawSelection() clears the native ::selection colour. An
         // opaque active-line fill therefore hides the selection on the very
@@ -145,17 +149,17 @@
         "&.cm-has-selection .cm-activeLine": {
           backgroundColor: "transparent",
         },
-        ".cm-activeLineGutter": { backgroundColor: "#e4e0d8" },
+        ".cm-activeLineGutter": { backgroundColor: "var(--active-gutter)" },
         "&.cm-focused .cm-selectionBackground, .cm-selectionBackground, ::selection":
-          { backgroundColor: "#b8d4f3 !important" },
-        ".cm-panels": { backgroundColor: "#d4d0c8", color: "#000" },
+          { backgroundColor: "var(--selection) !important" },
+        ".cm-panels": { backgroundColor: "var(--face)", color: "var(--ink)" },
         ".cm-tooltip": {
-          backgroundColor: "#ffffe1",
-          color: "#000",
-          border: "1px solid #808080",
+          backgroundColor: "var(--tooltip)",
+          color: "var(--ink)",
+          border: "1px solid var(--bevel-mid)",
         },
-        ".cm-diagnostic-error": { borderLeftColor: "#b00000" },
-        ".cm-diagnostic-warning": { borderLeftColor: "#805500" },
+        ".cm-diagnostic-error": { borderLeftColor: "var(--danger-ink)" },
+        ".cm-diagnostic-warning": { borderLeftColor: "var(--caution-ink)" },
         "&.cm-focused": { outline: "none" },
       }),
     ];
@@ -198,6 +202,10 @@
       bracketMatching(),
       autocompletion(),
       search({ top: true }),
+      // The status bar, the message log and Patchouli's notes all reported the
+      // failing line; the line itself carried nothing. A gutter marker puts the
+      // report where the mistake is, and hovering it shows the message.
+      lintGutter(),
       keymap.of([
         {
           key: "F5",
@@ -487,7 +495,7 @@
     background: white;
   }
   .sql-editor:focus-within {
-    outline: 2px solid #0a246a;
+    outline: 2px solid var(--focus);
     outline-offset: -2px;
   }
   .editor-help {
@@ -501,7 +509,7 @@
   }
   .clipboard-message {
     padding: 4px 8px;
-    color: #700000;
-    background: #ffffe1;
+    color: var(--danger-ink);
+    background: var(--tooltip);
   }
 </style>
