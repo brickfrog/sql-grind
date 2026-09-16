@@ -1,11 +1,11 @@
 {
-  "date": "2026-09-16T23:22:52.307Z",
+  "date": "2026-09-16T23:52:14.240Z",
   "origin": "http://127.0.0.1:4173",
   "checks": [
     {
       "name": "Cold visit boots the engine and runs a query",
       "detail": {
-        "readyMs": 3243,
+        "readyMs": 2996,
         "rows": 11
       }
     },
@@ -23,15 +23,13 @@
       "detail": {
         "assets": 5,
         "cachedEngineBytes": 47115868,
-        "warmedEngineBytes": 48892,
+        "warmedEngineBytes": 45117,
         "warmedEngineAssets": [
-          "bundle/curriculum.json",
-          "bundle/challenges/basics.01/challenge.json",
-          "bundle/datasets/commerce-practice/dataset.json"
+          "bundle/curriculum.json"
         ],
-        "alreadyPresent": 12,
+        "alreadyPresent": 14,
         "shellEntriesStored": 26,
-        "shellBytesStored": 1504461
+        "shellBytesStored": 1504542
       }
     },
     {
@@ -42,11 +40,11 @@
         "document": true,
         "assets": [
           {
-            "path": "/assets/index-DZNC2ytt.js",
+            "path": "/assets/index-Dyvx0wYp.js",
             "cached": true
           },
           {
-            "path": "/assets/index-B-qOlMwW.css",
+            "path": "/assets/index-DEo5m1Ly.css",
             "cached": true
           }
         ]
@@ -82,7 +80,7 @@
     {
       "name": "Offline reload reaches engine-ready and runs a query",
       "detail": {
-        "readyMs": 2763,
+        "readyMs": 2613,
         "rows": 11,
         "requestFailures": 0
       }
@@ -123,12 +121,12 @@
           },
           "shell": {
             "stored": 26,
-            "bytes": 1504461
+            "bytes": 1504542
           },
           "failed": [],
           "version": "curriculum-v1-064db1f6925786b0"
         },
-        "offlineReadyMs": 2785,
+        "offlineReadyMs": 2618,
         "offlineQueryRows": 11
       }
     }
@@ -137,7 +135,7 @@
   "offlineRequestFailures": [],
   "deployedVersion": "curriculum-v1-064db1f6925786b0",
   "engineAndExtensionBytes": 47115868,
-  "coldReadyMs": 3243,
+  "coldReadyMs": 2996,
   "coldQueryRows": 11,
   "worker": {
     "scope": "http://127.0.0.1:4173/",
@@ -149,9 +147,7 @@
     "type": "sql-grind:warmed",
     "assets": {
       "warmed": [
-        "bundle/curriculum.json",
-        "bundle/challenges/basics.01/challenge.json",
-        "bundle/datasets/commerce-practice/dataset.json"
+        "bundle/curriculum.json"
       ],
       "present": [
         "engine/duckdb-eh.wasm",
@@ -159,6 +155,8 @@
         "extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
         "extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
         "extensions/v1.5.4/wasm_eh/parquet.duckdb_extension.wasm",
+        "bundle/challenges/basics.01/challenge.json",
+        "bundle/datasets/commerce-practice/dataset.json",
         "bundle/schema.sql",
         "bundle/datasets/commerce-practice/config-20240907.sql",
         "bundle/generator.sql",
@@ -168,11 +166,11 @@
         "bundle/invariants.sql"
       ],
       "skipped": [],
-      "bytes": 48892
+      "bytes": 45117
     },
     "shell": {
       "stored": 26,
-      "bytes": 1504461
+      "bytes": 1504542
     },
     "failed": [],
     "version": "curriculum-v1-064db1f6925786b0"
@@ -215,11 +213,11 @@
     "document": true,
     "assets": [
       {
-        "path": "/assets/index-DZNC2ytt.js",
+        "path": "/assets/index-Dyvx0wYp.js",
         "cached": true
       },
       {
-        "path": "/assets/index-B-qOlMwW.css",
+        "path": "/assets/index-DEo5m1Ly.css",
         "cached": true
       }
     ]
@@ -258,13 +256,13 @@
     "sql-grind-assets-curriculum-v1-064db1f6925786b0": 15,
     "sql-grind-assets-foreign-version": 1
   },
-  "onlineReloadReadyMs": 2788,
+  "onlineReloadReadyMs": 2673,
   "cachesAfterPurge": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 28,
     "sql-grind-assets-curriculum-v1-064db1f6925786b0": 15
   },
-  "offlineReloadReadyMs": 2763,
+  "offlineReloadReadyMs": 2613,
   "offlineQueryRows": 11,
   "secondVisit": {
     "requestFailures": [],
@@ -297,12 +295,12 @@
       },
       "shell": {
         "stored": 26,
-        "bytes": 1504461
+        "bytes": 1504542
       },
       "failed": [],
       "version": "curriculum-v1-064db1f6925786b0"
     },
-    "offlineReadyMs": 2785,
+    "offlineReadyMs": 2618,
     "offlineQueryRows": 11
   },
   "status": "passed",

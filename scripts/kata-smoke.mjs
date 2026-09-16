@@ -272,7 +272,12 @@ try {
     );
     assert.equal(value.outcome, "complete", value.message);
     assert.equal(value.correctness, "incorrect");
-    assert.match(value.message, /rows/);
+    // Answering with every customer returns rows the anti-join excludes, and
+    // the message must name one of them rather than only reporting two counts.
+    assert.match(
+      value.message,
+      /Row \d+ is not in the expected result\. No expected row has "customer_id" \(you returned "\d+"\)/,
+    );
     return value;
   });
 
@@ -587,6 +592,57 @@ try {
       assert.equal(afterInsert, "SELECT* FROM orders");
       await dialog.getByRole("button", { name: "Back to patterns" }).click();
       return { afterTyping, afterInsert };
+    },
+  );
+
+  await check(
+    "Escape dismisses the drill's completion popup before closing the drill",
+    async () => {
+      // The drill surface holds a real editor inside a modal dialog. The dialog
+      // closed on any Escape, so dismissing a completion popup threw away the
+      // drill and the SQL typed into it — easy to hit now that a bare column
+      // prefix completes. The editor gets the key first, and only an Escape it
+      // did not use closes the dialog.
+      const dialog = page.locator("dialog");
+      const open = () => page.locator("dialog[open]").count();
+      await dialog
+        .locator("article", { hasText: "Anti-join" })
+        .getByRole("button", { name: "Start drill" })
+        .click();
+      const editor = dialog.locator(".kata-editor .cm-content");
+      await editor.click();
+      await page.keyboard.insertText("SELECT * FROM customers WHERE customer");
+      await page.keyboard.type("_");
+      await page.waitForFunction(
+        () => !!document.querySelector(".cm-tooltip-autocomplete"),
+        null,
+        { timeout: 30_000 },
+      );
+      await page.keyboard.press("Escape");
+      await page.waitForFunction(
+        () => !document.querySelector(".cm-tooltip-autocomplete"),
+        null,
+        { timeout: 30_000 },
+      );
+      const keptOpen = await open();
+      const keptSql = (await editor.innerText()).trim();
+      assert.equal(keptOpen, 1, "the drill must survive dismissing a popup");
+      assert.equal(keptSql, "SELECT * FROM customers WHERE customer_");
+      // With nothing left for the editor to consume, Escape closes the drill.
+      await page.keyboard.press("Escape");
+      await page.waitForFunction(
+        () => !document.querySelector("dialog[open]"),
+        null,
+        { timeout: 30_000 },
+      );
+      const closed = await open();
+      // Leave the surface as this check found it, listing the patterns.
+      await page.locator(".status-drills").click();
+      await dialog
+        .getByText(/repetition drills/i)
+        .first()
+        .waitFor();
+      return { keptSql, closed };
     },
   );
 

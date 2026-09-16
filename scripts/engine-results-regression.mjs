@@ -135,18 +135,19 @@ try {
     // Nothing in the message may disclose a scalar that exists only in the
     // expected result: the column name, the learner's own value and the
     // multiplicity are theirs already, while the expected value is the answer.
+    // Values are emitted through JSON.stringify, so the quoted form is what is
+    // searched for. A bare substring test would need a length floor to avoid
+    // matching "10" inside "Row 10", and that floor would permanently exempt
+    // the one-character labels — exactly the column most likely to leak.
     const returned = new Set(
       candidate.rows.flat().filter((value) => typeof value === "string"),
     );
     const withheld = expected.rows
       .flat()
-      .filter(
-        (value) =>
-          typeof value === "string" && value.length > 2 && !returned.has(value),
-      );
+      .filter((value) => typeof value === "string" && !returned.has(value));
     for (const value of withheld)
       assert.equal(
-        verdict.reason.includes(value),
+        verdict.reason.includes(JSON.stringify(value)),
         false,
         `${name} disclosed the expected value ${value}: ${verdict.reason}`,
       );
@@ -167,7 +168,7 @@ try {
         "",
       ]);
     },
-    /Expected 8 rows, received 9\..*Row 5 is not in the expected result\. No expected row has "amount".*"id".*9007199254740994/s,
+    /^Row 5 is not in the expected result\. No expected row has "amount".*"id".*9007199254740994/s,
   );
   // A wrong value in an otherwise correct row must name the column.
   reasoned(
@@ -185,6 +186,23 @@ try {
     },
     /column 3 "label" \(you returned NULL\)/,
   );
+  // Equal ordering keys are allowed, and the ranking challenges are built on
+  // ties. Rows 3 and 4 share both keys, and row 4 is the closer peer, so taking
+  // the first key match would blame the flag column as well as the label — a
+  // difference the learner never made.
+  const tied = reasoned(
+    "a tied ordering key blames only the columns that actually differ",
+    (x) => {
+      x.rows[3][2] = "X";
+    },
+    /Row 4 differs from the expected row with the same ordering keys in column 3 "label" \(you returned "X"\)\. Values/,
+  );
+  assert.equal(
+    /flag/.test(tied.reason),
+    false,
+    `a tied peer's unrelated column must not be blamed: ${tied.reason}`,
+  );
+
   // Duplicate multiplicity was the third possibility folded into one message.
   // The copy keeps the declared descending order, so the multiplicity fault is
   // what the comparator reaches rather than an ordering fault.
@@ -202,7 +220,7 @@ try {
     (x) => {
       x.rows.splice(4, 1);
     },
-    /Expected 8 rows, received 7\..*one expected row is missing.*filter, the join or the grouping drops it/s,
+    /^Every row you returned is expected, but one expected row is missing\..*filter, the join or the grouping drops it/s,
   );
   // The non-disclosure guard above is only meaningful where the expected result
   // actually holds a value the learner never returned. Replacing an ordering

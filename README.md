@@ -79,7 +79,7 @@ Challenge 07 retains its original monthly paid gross-revenue ranking task and un
 The schema explorer follows the selected dataset. Source data remains immutable.
 The index lab uses a separate disposable sandbox for its CREATE/probe/DROP sequence.
 Reference SQL, expected answers, and synthetic truth are inspectable client assets, not secret examination material.
-Practice Records contains local practice records, not public rankings or synchronized accounts. It summarizes the attempts it shows: graded submissions, correct share, hint-free passes, first-attempt passes, median engine time, and days practiced. Execute runs are not submissions and are excluded.
+Practice Records contains local practice records, not public rankings or synchronized accounts. It summarizes every recorded attempt, deliberately not the filtered list, because filtering by correctness would make accuracy and first-attempt rate tautological: graded submissions, correct share, hint-free passes, first-attempt passes, median engine time, and days practiced. Execute runs are not submissions and are excluded.
 
 Settings offers a theme: System, Light, or Dark. System follows the operating system and reacts while the application is open.
 

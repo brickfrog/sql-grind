@@ -598,6 +598,11 @@ function rowsOrdered(
  * which is what the learner sorted by; without one it is the expected row that
  * differs in the fewest columns. A row sharing nothing with any expected row
  * has no correspondence and is simply not expected.
+ *
+ * Equal ordering keys are explicitly allowed — the ranking challenges are built
+ * on ties — so the keyed branch considers every peer sharing the key and takes
+ * the closest of them. Naming a column from an arbitrary tied peer would report
+ * a difference the learner did not make.
  */
 function nearestExpected(
   row: (string | null)[],
@@ -610,17 +615,19 @@ function nearestExpected(
         value === row[index] ? found : [...found, index],
       [],
     );
-  if (keys.length) {
-    const keyed = expectedRows.find((candidate) =>
-      keys.every((key) => candidate[key.index] === row[key.index]),
-    );
-    return keyed ? { differing: differences(keyed) } : null;
-  }
+  const candidates = keys.length
+    ? expectedRows.filter((candidate) =>
+        keys.every((key) => candidate[key.index] === row[key.index]),
+      )
+    : expectedRows;
+  if (keys.length && !candidates.length) return null;
   let best: number[] | null = null;
-  for (const candidate of expectedRows) {
+  for (const candidate of candidates) {
     const differing = differences(candidate);
+    // Without an ordering key, a row sharing nothing with a candidate is not a
+    // correspondence at all; with one, the shared key is already the evidence.
     if (
-      differing.length < row.length &&
+      (keys.length || differing.length < row.length) &&
       (!best || differing.length < best.length)
     )
       best = differing;
@@ -738,13 +745,11 @@ export function compare(
   }
   // A row-count mismatch used to return here, which reported the two counts and
   // nothing else: the learner was told "expected 9, received 11" against a
-  // dataset they cannot inspect, with no way to tell which two rows were the
-  // extra ones. The row analysis below runs first even when the counts differ,
-  // so the message can name a returned row and the column that makes it wrong.
-  const countMismatch =
-    count === actualCount
-      ? ""
-      : `Expected ${count} rows, received ${actualCount}.`;
+  // variant they cannot query, with no way to tell which two rows were the
+  // extra ones. The row analysis below runs even when the counts differ, so the
+  // message names a returned row and the column that makes it wrong. The counts
+  // themselves are not repeated here: the scorecard line that carries this
+  // reason already prints "expected N rows; returned M" structurally.
   const expectedRows: (string | null)[][] = [];
   const expectedCounts = new Map<string, number>();
   const keys = orderingKeys(contract);
@@ -769,8 +774,6 @@ export function compare(
     expectedCounts.set(key, (expectedCounts.get(key) ?? 0) + 1);
   }
   const bag = new Map(expectedCounts);
-  const joined = (detail: string) =>
-    countMismatch ? `${countMismatch} ${detail}` : detail;
   // Returned rows are streamed rather than collected: a wrong query can return
   // far more rows than the fixture, and only the first unmatched row is ever
   // described. Its multiplicity is counted by re-reading on that failure path.
@@ -804,16 +807,14 @@ export function compare(
     if (!remaining)
       return {
         pass: false,
-        reason: joined(
-          unmatchedRowReason(
-            i + 1,
-            row,
-            expectedRows,
-            expectedCounts,
-            multiplicity,
-            keys,
-            fields,
-          ),
+        reason: unmatchedRowReason(
+          i + 1,
+          row,
+          expectedRows,
+          expectedCounts,
+          multiplicity,
+          keys,
+          fields,
         ),
       };
     if (remaining === 1) bag.delete(key);
@@ -833,18 +834,12 @@ export function compare(
   if (missing)
     return {
       pass: false,
-      reason: joined(
-        `Every row you returned is expected, but ${missing === 1 ? "one expected row is" : `${missing} expected rows are`} missing. A missing row usually means the filter, the join or the grouping drops it.`,
-      ),
+      reason: `Every row you returned is expected, but ${missing === 1 ? "one expected row is" : `${missing} expected rows are`} missing. A missing row usually means the filter, the join or the grouping drops it.`,
     };
-  // Reachable only where duplicate multiplicities cancel out across the two
-  // results, so the multiplicity rule is the whole explanation.
-  return countMismatch
-    ? {
-        pass: false,
-        reason: `${countMismatch} Duplicate rows count separately.`,
-      }
-    : { pass: true };
+  // A count mismatch cannot survive to here: the bag holds exactly `count`
+  // entries and each surviving returned row consumes one, so a longer result
+  // fails a lookup above and a shorter one leaves the leftovers just reported.
+  return { pass: true };
 }
 
 export function validateExpected(

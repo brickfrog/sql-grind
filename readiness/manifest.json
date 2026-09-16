@@ -70,7 +70,7 @@
     {
       "path": "../../readiness/challenges/agg.01/challenge.json",
       "bytes": 2600,
-      "gzipBytes": 998,
+      "gzipBytes": 1064,
       "sha256": "519e8aa54e11b19631e9b920b963f0f0bd34d0c62d8240ed5cbe156d403aa89e"
     },
     {
@@ -322,7 +322,7 @@
     {
       "path": "../../readiness/challenges/basics.02/challenge.json",
       "bytes": 2768,
-      "gzipBytes": 1051,
+      "gzipBytes": 1100,
       "sha256": "f17378795a0be49ead8264bf3f9f2948d0711af03d757463e7c9ae766bdc87d5"
     },
     {
@@ -712,7 +712,7 @@
     {
       "path": "../../readiness/challenges/cte.02/challenge.json",
       "bytes": 2522,
-      "gzipBytes": 975,
+      "gzipBytes": 1042,
       "sha256": "756f99a5ae35eeb0e0c3cc5aa772ef46721ebd5db61630614d7b208e1a62d435"
     },
     {
@@ -922,7 +922,7 @@
     {
       "path": "../../readiness/challenges/dates.02/challenge.json",
       "bytes": 2527,
-      "gzipBytes": 961,
+      "gzipBytes": 1027,
       "sha256": "caebf382e895b822d8192bfe487a172f7a2829643eb703ae63f115b9e32e511e"
     },
     {
@@ -964,7 +964,7 @@
     {
       "path": "../../readiness/challenges/dates.03/challenge.json",
       "bytes": 2565,
-      "gzipBytes": 974,
+      "gzipBytes": 1042,
       "sha256": "8037cb030fffe7de3c32296c8ca222cc811df37cf8dc9a3e53c6058bcae04489"
     },
     {
@@ -1174,7 +1174,7 @@
     {
       "path": "../../readiness/challenges/joins.03/challenge.json",
       "bytes": 2618,
-      "gzipBytes": 979,
+      "gzipBytes": 1042,
       "sha256": "80ab179962e671a4de4b05e4e640281c24b776843a28d8e7e4140bda7182bf14"
     },
     {

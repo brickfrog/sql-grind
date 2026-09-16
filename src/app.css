@@ -405,22 +405,22 @@ small,
   right: -5px;
   min-width: 14px;
   padding: 0 2px;
-  border: 1px solid var(--bevel-dark);
-  background: var(--danger);
-  /* --danger-ink is a dark red meant for pale danger backgrounds, so it is
-     unreadable on the --danger fill itself. --accent-ink is #fff in both. */
-  color: var(--accent-ink);
+  /* The danger family is designed as a pale fill with dark-red ink and a red
+     edge: 8.1:1 in light and 8.3:1 in dark. White on the --danger fill itself
+     measures 3.5:1 in the dark palette, which fails AA at this 9px size. */
+  border: 1px solid var(--danger-edge);
+  background: var(--danger-bg);
+  color: var(--danger-ink);
   font-size: 9px;
   line-height: 13px;
+  font-weight: bold;
   text-align: center;
 }
 .status-drills {
-  border: 1px solid;
-  border-color: var(--bevel-mid) var(--bevel-light) var(--bevel-light)
-    var(--bevel-mid);
+  /* Bevel and metrics come from the shared status-cell rule. */
   background: none;
-  font: inherit;
-  padding: 1px 6px;
+  font-family: inherit;
+  color: inherit;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -1356,7 +1356,10 @@ small,
   padding: 2px 1px;
   white-space: nowrap;
 }
-.statusbar > span {
+/* The last cell is a button — it opens the drill surface — so it shares the
+   sunken cell treatment rather than rendering unbevelled beside the others. */
+.statusbar > span,
+.statusbar > .status-drills {
   border: 1px solid;
   border-color: var(--bevel-mid) var(--bevel-light) var(--bevel-light)
     var(--bevel-mid);
@@ -2239,7 +2242,8 @@ small,
   .reading .toolbar select {
     width: 145px;
   }
-  .reading .statusbar > span:not(.status-message) {
+  .reading .statusbar > span:not(.status-message),
+  .reading .statusbar > .status-drills {
     font-size: 9px;
   }
   .reading .menubar button {

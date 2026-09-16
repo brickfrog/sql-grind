@@ -485,6 +485,23 @@
         ) ?? null)
       : null,
   );
+  // The drill surface has its own dataset. Offering the workbench document's
+  // columns there would confidently name columns the drill's dataset does not
+  // have, so the drill completes only from a schema known to be its own: the
+  // workbench's when the datasets agree, otherwise the one Show tables loaded,
+  // and nothing at all until then.
+  const kataCompletionSchema = $derived(
+    !activeKataPattern
+      ? {}
+      : activeKataPattern.datasetId === activeDoc?.datasetId
+        ? completionSchema
+        : Object.fromEntries(
+            kataSchema.map((table) => [
+              table.name,
+              table.columns.map((column) => column.name),
+            ]),
+          ),
+  );
   const currentDiagnostics = $derived(
     diagnostics.filter((d) => d.revision === activeDoc?.revision),
   );
@@ -2107,9 +2124,7 @@
     if (!graded) outputTab = "Messages";
     await tick();
     document
-      .querySelector<HTMLElement>(
-        graded ? ".fixture-results" : ".message-list p",
-      )
+      .querySelector<HTMLElement>(graded ? ".fixture-results" : ".message-list")
       ?.focus();
   }
   function showDiagram(name = "") {
@@ -2161,6 +2176,12 @@
   }
   function dialogKey(event: KeyboardEvent) {
     if (event.key === "Escape") {
+      // The drill surface holds a real editor, and Escape there dismisses an
+      // open completion popup: CodeMirror's keymap calls preventDefault only
+      // when it actually handled the key. Closing the dialog on that keystroke
+      // discarded the drill and the SQL typed into it, which became easy to hit
+      // once bare column prefixes started completing.
+      if (event.defaultPrevented) return;
       event.preventDefault();
       event.stopPropagation();
       closeModal();
@@ -2316,6 +2337,8 @@
     }
     kataRunning = true;
     kataFeedback = "";
+    // An earlier Execute's grid must not sit beside a fresh graded verdict.
+    kataResult = null;
     announce(`Checking ${pattern.title} drill…`, "working");
     // The engine is configured by the document-prepare path, for the active
     // document's dataset. When a drill names that same dataset — the common
@@ -2329,7 +2352,9 @@
     try {
       if (!configured) {
         await settleEngine();
-        await engine.configure(catalog, pattern.datasetId);
+        // Keep the drill's own schema, so completion and Show tables describe
+        // the dataset the drill is actually graded against.
+        kataSchema = await engine.configure(catalog, pattern.datasetId);
       }
       const run = await engine.run({
         id: crypto.randomUUID(),
@@ -2400,7 +2425,7 @@
     try {
       if (!configured) {
         await settleEngine();
-        await engine.configure(catalog, pattern.datasetId);
+        kataSchema = await engine.configure(catalog, pattern.datasetId);
       }
       const run = await engine.run({
         id: crypto.randomUUID(),
@@ -4857,6 +4882,8 @@
                 </div>
               {:else if outputTab === "Messages"}<div
                   class="message-list inset"
+                  aria-label="Query messages"
+                  tabindex="-1"
                 >
                   {#each messages as message}<p>{message}</p>{:else}<p>
                       No query messages yet. Execute runs SQL; Submit checks
@@ -6015,7 +6042,7 @@
             fontSize={settings.fontSize}
             indentation={settings.indentation}
             wordWrap={settings.wordWrap}
-            {completionSchema}
+            completionSchema={kataCompletionSchema}
             onchange={(value, selection, top) => {
               kataSql = value;
               kataSelection = selection;
