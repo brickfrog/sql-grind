@@ -71,6 +71,10 @@ Challenge 07 retains its original monthly paid gross-revenue ranking task and un
 - Previously opened skills remain accessible for review after prerequisite completion changes.
 - Historical content shows **needs-review** and requires a current submission. A later failure does not erase an earlier current pass.
 - Scratch queries use their selected dataset but cannot earn challenge credit.
+- A failed grading variant names the offending row and the column that makes it wrong, never an expected value.
+- Editor completion offers the columns of the tables named in the statement being written, ranked above the keywords sharing the prefix.
+- The number of repetition drills due appears on the desktop icon and in the status bar, which opens the drill surface.
+- Drills offer Execute as well as Check drill, and list their own dataset's tables in place.
 
 The schema explorer follows the selected dataset. Source data remains immutable.
 The index lab uses a separate disposable sandbox for its CREATE/probe/DROP sequence.

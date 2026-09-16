@@ -586,6 +586,68 @@ try {
     "the rejected token must be underlined, not just its first character",
   );
   mark("A syntax error marks its own line in the gutter and under the token");
+  // Column names are what a learner forgets and what the grader is strict
+  // about, yet a bare prefix completed nothing: lang-sql offers columns only
+  // for a qualified prefix or a single default table. The tables named in the
+  // statement being written must contribute their columns, ranked above the
+  // dialect keywords that share those prefixes.
+  async function completionsAt(head, tail) {
+    await page.locator(".cm-content").press("ControlOrMeta+a");
+    await page.keyboard.press("Delete");
+    await page.keyboard.insertText(head + tail);
+    for (let index = 0; index < tail.length; index++)
+      await page.keyboard.press("ArrowLeft");
+    // One real keystroke opens the completion at the caret.
+    await page.keyboard.press("Backspace");
+    await page.keyboard.type(head.slice(-1));
+    await page.waitForTimeout(600);
+    const options = await page.evaluate(() =>
+      [...document.querySelectorAll(".cm-tooltip-autocomplete li")].map(
+        (node) => ({
+          label: node.querySelector(".cm-completionLabel")?.textContent ?? "",
+          detail: node.querySelector(".cm-completionDetail")?.textContent ?? "",
+        }),
+      ),
+    );
+    await page.keyboard.press("Escape");
+    return options;
+  }
+  const whereColumns = await completionsAt(
+    "SELECT * FROM customers WHERE customer_",
+    "",
+  );
+  assert.deepEqual(
+    whereColumns.map((option) => option.label),
+    ["customer_id", "customer_name"],
+    "a bare column prefix must complete the columns of the table in scope",
+  );
+  assert.equal(whereColumns[0].detail, "customers");
+  // A column of a joined table is offered once, naming every table that has
+  // it, so an ambiguous reference is visible before the engine rejects it.
+  const joined = await completionsAt(
+    "SELECT customer_",
+    " FROM orders JOIN customers ON orders.customer_id = customers.customer_id",
+  );
+  assert.equal(joined[0].label, "customer_id");
+  assert.equal(joined[0].detail, "orders, customers");
+  // Columns rank above the keywords sharing the prefix, and scope is the
+  // statement: a table named in a different statement contributes nothing.
+  const sameStatement = await completionsAt("SELECT order", " FROM orders");
+  assert.deepEqual(
+    sameStatement.slice(0, 2).map((option) => option.label),
+    ["order_id", "ordered_at"],
+  );
+  const otherStatement = await completionsAt(
+    "SELECT 1 FROM orders; SELECT order",
+    " FROM customers",
+  );
+  assert.equal(
+    otherStatement.some((option) => option.detail === "orders"),
+    false,
+    "a table named in another statement must not contribute its columns",
+  );
+  mark("Columns of the tables in scope complete from a bare prefix");
+
   await page.locator(".cm-content").press("ControlOrMeta+a");
   await page.keyboard.insertText("SELECT 42 AS answer;");
   await page.locator(".toolbar .execute").click();

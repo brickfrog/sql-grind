@@ -36,6 +36,11 @@
     closeCompletion,
     completionKeymap,
   } from "@codemirror/autocomplete";
+  import type {
+    Completion,
+    CompletionContext,
+    CompletionResult,
+  } from "@codemirror/autocomplete";
   import { PostgreSQL, sql } from "@codemirror/lang-sql";
   import {
     bracketMatching,
@@ -110,6 +115,87 @@
     { tag: tags.comment, color: "var(--ok-edge)" },
     { tag: tags.operator, color: "var(--ink-mid)" },
   ]);
+
+  /**
+   * Completes the columns of the tables named in the statement being written.
+   *
+   * lang-sql offers columns only for a qualified prefix ("orders.") or for a
+   * single configured defaultTable, so with a whole schema in scope a bare
+   * "customer_" matched nothing at all and "cust" returned the customers table
+   * next to CLUSTER and CUME_DIST. Column names are what a learner forgets and
+   * what the grader is strict about, so the tables already named after FROM,
+   * JOIN, UPDATE and INTO contribute their columns, ranked above keywords.
+   */
+  function inScopeColumns(context: CompletionContext): CompletionResult | null {
+    const word = context.matchBefore(/[\w$]+/);
+    if (!word && !context.explicit) return null;
+    const from = word ? word.from : context.pos;
+    // A qualified reference is lang-sql's own job, and duplicating it here
+    // would offer every in-scope column after an unrelated table prefix.
+    if (context.state.sliceDoc(Math.max(0, from - 1), from) === ".")
+      return null;
+    const text = context.state.doc.toString();
+    // Statement scope: drills and scratch documents hold more than one.
+    let start = 0;
+    for (let index = text.indexOf(";"); index !== -1 && index < from; ) {
+      start = index + 1;
+      index = text.indexOf(";", start);
+    }
+    const statement = text.slice(
+      start,
+      text.indexOf(";", from) + 1 || undefined,
+    );
+    const named = new Set<string>();
+    for (const match of statement.matchAll(
+      /\b(?:from|join|update|into|table)\s+"?([A-Za-z_][\w$]*)"?/gi,
+    )) {
+      const table = Object.keys(completionSchema).find(
+        (name) => name.toLowerCase() === match[1].toLowerCase(),
+      );
+      if (table) named.add(table);
+    }
+    if (!named.size) return null;
+    const options: Completion[] = [];
+    const seen = new Set<string>();
+    for (const table of named)
+      for (const column of completionSchema[table]) {
+        // A column shared by two joined tables is offered once, and its detail
+        // names every table it belongs to so an ambiguous reference is visible
+        // before the engine rejects it.
+        const at = seen.has(column)
+          ? options.find((option) => option.label === column)
+          : undefined;
+        if (at) {
+          at.detail = `${at.detail}, ${table}`;
+          continue;
+        }
+        seen.add(column);
+        options.push({
+          label: column,
+          type: "property",
+          detail: table,
+          // Ranked above the dialect keywords, which share these prefixes.
+          boost: 2,
+        });
+      }
+    return { from, options, validFor: /^[\w$]*$/ };
+  }
+
+  /**
+   * lang-sql plus the in-scope column source, registered as language data so
+   * both run for one completion request and their options rank together.
+   */
+  function sqlSupport(schema: Record<string, string[]> = completionSchema) {
+    const support = sql({
+      dialect: PostgreSQL,
+      schema,
+      upperCaseKeywords: true,
+    });
+    return [
+      support,
+      support.language.data.of({ autocomplete: inScopeColumns }),
+    ];
+  }
 
   function appearanceExtensions() {
     return [
@@ -189,13 +275,7 @@
           ? { class: "cm-has-selection" }
           : null,
       ),
-      language.of(
-        sql({
-          dialect: PostgreSQL,
-          schema: completionSchema,
-          upperCaseKeywords: true,
-        }),
-      ),
+      language.of(sqlSupport()),
       syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
       syntaxHighlighting(sqlColors),
       indentOnInput(),
@@ -333,15 +413,11 @@
   });
 
   $effect(() => {
+    // Reads completionSchema so a schema change reconfigures both lang-sql and
+    // the in-scope column source that closes over it.
     const schema = completionSchema;
     view?.dispatch({
-      effects: language.reconfigure(
-        sql({
-          dialect: PostgreSQL,
-          schema,
-          upperCaseKeywords: true,
-        }),
-      ),
+      effects: language.reconfigure(sqlSupport(schema)),
     });
   });
 

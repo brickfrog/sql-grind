@@ -8,7 +8,7 @@
   "title": "Paid reporting year",
   "brief": "Paid work inside one reporting year, with the year's edges defined exactly rather than approximately.",
   "instructions": [
-    "Return the IDs of paid orders from 2024-01-01 00:00:00 UTC onward and strictly before 2025-01-01 00:00:00 UTC.",
+    "Return the IDs of orders whose own status column is 'paid', from 2024-01-01 00:00:00 UTC onward and strictly before 2025-01-01 00:00:00 UTC. The payments table has a status of its own; this challenge does not ask about it.",
     "Include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC. The interval is half open.",
     "Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed."
   ],

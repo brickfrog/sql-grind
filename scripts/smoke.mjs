@@ -120,33 +120,43 @@ try {
     .click();
   await celebration.waitFor({ state: "hidden" });
   mark("first-pass celebration offers one dismiss and one forward action");
-  // A completed challenge reviews its hints without consuming a level: the
-  // reveal action is withheld, so the remaining counter cannot walk backwards.
-  await page.getByRole("button", { name: "Review hints", exact: true }).click();
+  // A completed challenge can still read its hints. The old behaviour withheld
+  // the reveal action, so finishing without a hint left a "Review hints" button
+  // that opened a dialog saying nothing had been revealed — a labelled dead
+  // end. Credit is already recorded and hints never affect it, so the authored
+  // guidance stays readable; what must not change is the completion itself.
+  await page.getByRole("button", { name: "Read hints", exact: true }).click();
   await page.locator("dialog").waitFor({ state: "visible" });
-  assert.equal(
-    await page
-      .locator("dialog")
-      .getByRole("button", { name: /^Reveal hint/ })
-      .count(),
-    0,
-  );
-  // Withholding the reveal action must not leave an empty dialog behind.
   assert.match(
     await page.locator("dialog").textContent(),
-    /No hints were revealed for this challenge/,
+    /You have not revealed any hint for this challenge\. You finished without one\./,
   );
+  await page
+    .locator("dialog")
+    .getByRole("button", { name: "Reveal hint 1 (3 left)", exact: true })
+    .click();
+  await page.locator("dialog .hint").waitFor();
+  assert.equal(await page.locator("dialog .hint h3").count(), 1);
   await page
     .locator("dialog")
     .getByRole("button", { name: "Close", exact: true })
     .click();
+  // Revealing after the fact neither revokes completion nor renames the button
+  // back to an offer of a first hint.
+  assert.equal(
+    await page
+      .locator(".status-card dt")
+      .filter({ hasText: /^Completion$/ })
+      .evaluate((element) => element.nextElementSibling.textContent.trim()),
+    "Completed",
+  );
   assert.equal(
     await page
       .getByRole("button", { name: "Review hints", exact: true })
       .count(),
     1,
   );
-  mark("a completed challenge reviews hints without consuming a level");
+  mark("a completed challenge can still read its hints, and stays completed");
   await page
     .locator(".toolbar")
     .getByRole("button", { name: "Save", exact: true })

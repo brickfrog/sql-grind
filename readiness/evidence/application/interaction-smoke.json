@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-15T03:49:31.962Z",
+  "date": "2026-09-16T23:25:20.933Z",
   "checks": [
     "Repeated judge drags preserve pointer offset without jumping or selecting text",
     "Judge grip resizes by pointer and keyboard; scaled drags clamp to the viewport edges",
@@ -12,6 +12,7 @@
     "Middle click closes active and inactive SQL/map/schema tabs; special tabs reopen normally",
     "Notes help opens a separate example; Parse produces real J001/J002 notes and source navigation",
     "A syntax error marks its own line in the gutter and under the token",
+    "Columns of the tables in scope complete from a bare prefix",
     "Real result cells use the darker monospace typography with readable selection"
   ],
   "editorStyle": {

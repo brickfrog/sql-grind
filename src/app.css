@@ -394,6 +394,36 @@ small,
   align-items: center;
   justify-content: center;
 }
+/* The spaced-repetition schedule was invisible behind the icon: nothing on the
+   desktop, the taskbar or the status bar said that drills were waiting. */
+.desktop-glyph {
+  position: relative;
+}
+.due-badge {
+  position: absolute;
+  top: -3px;
+  right: -5px;
+  min-width: 14px;
+  padding: 0 2px;
+  border: 1px solid var(--bevel-dark);
+  background: var(--danger);
+  /* --danger-ink is a dark red meant for pale danger backgrounds, so it is
+     unreadable on the --danger fill itself. --accent-ink is #fff in both. */
+  color: var(--accent-ink);
+  font-size: 9px;
+  line-height: 13px;
+  text-align: center;
+}
+.status-drills {
+  border: 1px solid;
+  border-color: var(--bevel-mid) var(--bevel-light) var(--bevel-light)
+    var(--bevel-mid);
+  background: none;
+  font: inherit;
+  padding: 1px 6px;
+  white-space: nowrap;
+  cursor: pointer;
+}
 .desktop-icon span:last-child {
   max-width: 80px;
 }
@@ -1424,7 +1454,11 @@ small,
 .judge {
   position: fixed;
   right: 312px;
-  bottom: 44px;
+  /* 44px cleared the 32px taskbar but not the application window's own status
+     bar, so the floating window's action row — Show style notes, Hush — sat on
+     top of the engine readout at every window size. The status bar is 23px and
+     the window frame below it is 5px. */
+  bottom: calc(44px + 28px);
   width: calc(360px * var(--judge-zoom, 1));
   z-index: 5;
   box-shadow: 3px 3px 0 var(--veil-strong);
@@ -1934,6 +1968,29 @@ small,
 }
 .kata-editor > div {
   height: 100%;
+}
+/* A drill could only be graded, never run, so a wrong answer could not be
+   inspected. Execute shows its own rows here, bounded so the prompt, the
+   editor and the buttons stay on screen. */
+.kata-result {
+  height: 180px;
+  margin: 6px 0;
+  border: 1px solid var(--bevel-mid);
+  display: flex;
+}
+.kata-result > * {
+  flex: 1;
+  min-width: 0;
+}
+.kata-schema {
+  max-height: 150px;
+  overflow: auto;
+  padding: 4px;
+  margin: 6px 0;
+}
+.kata-schema summary {
+  cursor: pointer;
+  font-weight: bold;
 }
 .kata-feedback {
   margin: 6px 0 0;

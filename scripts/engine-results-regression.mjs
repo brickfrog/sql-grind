@@ -121,6 +121,104 @@ try {
       name,
     );
   }
+  // The verdict alone was covered; the wording was not, and the wording is what
+  // the learner acts on. A row-set mismatch used to say only "expected 9 rows;
+  // returned 11" and "row 4 has a different exact value, NULL, or duplicate
+  // multiplicity" — a location without a cause, against a grading variant the
+  // learner cannot query. These pin the cause and the location.
+  function reasoned(name, change, pattern, output = contract) {
+    const candidate = structuredClone(expected);
+    change(candidate);
+    const verdict = compare(expected, candidate, output);
+    assert.equal(verdict.pass, false, name);
+    assert.match(verdict.reason, pattern, `${name}: ${verdict.reason}`);
+    // Nothing in the message may disclose a scalar that exists only in the
+    // expected result: the column name, the learner's own value and the
+    // multiplicity are theirs already, while the expected value is the answer.
+    const returned = new Set(
+      candidate.rows.flat().filter((value) => typeof value === "string"),
+    );
+    const withheld = expected.rows
+      .flat()
+      .filter(
+        (value) =>
+          typeof value === "string" && value.length > 2 && !returned.has(value),
+      );
+    for (const value of withheld)
+      assert.equal(
+        verdict.reason.includes(value),
+        false,
+        `${name} disclosed the expected value ${value}: ${verdict.reason}`,
+      );
+    return { reason: verdict.reason, withheld };
+  }
+
+  // An extra row is the boundary case: a half-open interval read as closed
+  // returns one row too many, and the learner needs to know which one.
+  reasoned(
+    "an extra row is named with its own ordering key",
+    (x) => {
+      x.rows.splice(4, 0, [
+        "12345678901234567890.12",
+        "9007199254740994",
+        "Z",
+        "2024-03-05",
+        "true",
+        "",
+      ]);
+    },
+    /Expected 8 rows, received 9\..*Row 5 is not in the expected result\. No expected row has "amount".*"id".*9007199254740994/s,
+  );
+  // A wrong value in an otherwise correct row must name the column.
+  reasoned(
+    "a wrong value names the column and the learner's own value",
+    (x) => {
+      x.rows[4][2] = "WRONG";
+    },
+    /Row 5 differs from the expected row with the same ordering keys in column 3 "label" \(you returned "WRONG"\)/,
+  );
+  // NULL against a value is the other half of the reported ambiguity.
+  reasoned(
+    "a NULL in place of a value is named as NULL",
+    (x) => {
+      x.rows[4][2] = null;
+    },
+    /column 3 "label" \(you returned NULL\)/,
+  );
+  // Duplicate multiplicity was the third possibility folded into one message.
+  // The copy keeps the declared descending order, so the multiplicity fault is
+  // what the comparator reaches rather than an ordering fault.
+  reasoned(
+    "a duplicated row reports both multiplicities",
+    (x) => {
+      x.rows[5] = [...x.rows[6]];
+    },
+    /Row 8 repeats 3 times; the expected result contains that exact row 2 times/,
+  );
+  // A missing row cannot be described without disclosing it, so the count is
+  // reported and the cause is named.
+  reasoned(
+    "a missing row reports the count and the usual cause",
+    (x) => {
+      x.rows.splice(4, 1);
+    },
+    /Expected 8 rows, received 7\..*one expected row is missing.*filter, the join or the grouping drops it/s,
+  );
+  // The non-disclosure guard above is only meaningful where the expected result
+  // actually holds a value the learner never returned. Replacing an ordering
+  // key does exactly that: the expected amount for that row disappears from the
+  // candidate, and the message must locate the row without ever printing it.
+  const guarded = reasoned(
+    "a wrong ordering key is located without disclosing the expected value",
+    (x) => {
+      x.rows[4][0] = "-1.00";
+    },
+    /Row 5 is not in the expected result\. No expected row has "amount" \(you returned "-1.00"\), "id" \(you returned "10"\)/,
+  );
+  assert.ok(
+    guarded.withheld.includes("12345678901234567890.11"),
+    "the expected-only amount must be in the withheld set for the guard to mean anything",
+  );
 
   compared("typed exact results", () => {}, true);
   compared(

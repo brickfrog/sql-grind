@@ -471,6 +471,126 @@ try {
   );
 
   await check(
+    "the due count is visible before the drill surface is opened",
+    async () => {
+      // The schedule is the highest-retention thing here and it was invisible:
+      // the count existed only inside the dialog, so nothing on the desktop or
+      // in the workbench said that drills were waiting.
+      await page
+        .locator("dialog")
+        .getByRole("button", { name: "Close", exact: true })
+        .click();
+      const totalVariations = patterns.reduce(
+        (total, pattern) => total + pattern.variations.length,
+        0,
+      );
+      const badge = await page
+        .locator(".desktop-icon", { hasText: "Katas" })
+        .locator(".due-badge")
+        .innerText();
+      const label = await page
+        .locator(".desktop-icon", { hasText: "Katas" })
+        .getAttribute("aria-label");
+      const statusText = await page.locator(".status-drills").innerText();
+      assert.equal(badge, String(totalVariations));
+      assert.equal(label, `Katas — ${totalVariations} drills due`);
+      assert.equal(statusText, `${totalVariations} drills due`);
+      // The status-bar count is also the entry point, and it opens the surface.
+      await page.locator(".status-drills").click();
+      await page
+        .locator("dialog")
+        .getByText(/repetition drills/i)
+        .first()
+        .waitFor();
+      return { badge, label, statusText };
+    },
+  );
+
+  await check(
+    "a drill can be executed and its dataset inspected without grading",
+    async () => {
+      // Check drill was the only action: a wrong answer could not be looked at,
+      // and the modal covers the Object Explorer, so the schema the drill asks
+      // about was unreachable. Execute reports rows and grades nothing.
+      const dialog = page.locator("dialog");
+      const start = dialog.getByRole("button", {
+        name: /longest-overdue drill/,
+      });
+      assert.match(await start.innerText(), /\(\d+ due\)/);
+      await start.click();
+      await dialog.locator(".kata-editor .cm-content").waitFor();
+      await dialog.locator(".kata-editor .cm-content").click();
+      await page.keyboard.insertText("SELECT count(*) AS n FROM customers");
+      await dialog
+        .getByRole("button", { name: "Execute", exact: true })
+        .click();
+      await dialog
+        .locator(".kata-result .grid-row")
+        .first()
+        .waitFor({ timeout: 120_000 });
+      const feedback = await dialog.locator(".kata-feedback").innerText();
+      assert.match(
+        feedback,
+        /1 row returned in [\d.]+ ms\. Nothing was graded/,
+      );
+      // An ungraded run must not leave a pass or miss verdict behind.
+      assert.equal(
+        await dialog
+          .locator(".kata-feedback.kata-pass, .kata-feedback.kata-miss")
+          .count(),
+        0,
+      );
+      await dialog.getByRole("button", { name: "Show tables" }).click();
+      const tables = await dialog.locator(".kata-schema details").count();
+      assert.ok(tables > 0, "the drill dataset's tables must be listed");
+      const first = await dialog
+        .locator(".kata-schema summary")
+        .first()
+        .innerText();
+      assert.match(first, /· \d+ columns?$/);
+      await dialog.getByRole("button", { name: "Back to patterns" }).click();
+      return { feedback, tables, first };
+    },
+  );
+
+  await check(
+    "typing in a drill leaves the characters in the order they were typed",
+    async () => {
+      // Every other drill check inserts its SQL in one operation, which never
+      // exercises the caret between keystrokes. The drill editor was handed a
+      // constant {anchor: 0, head: 0}, so it reset the caret to the start after
+      // each change and typed text came out reversed. Type one character at a
+      // time, with a gap, and require the document to read forwards.
+      const dialog = page.locator("dialog");
+      await dialog
+        .locator("article", { hasText: "Anti-join" })
+        .getByRole("button", { name: "Start drill" })
+        .click();
+      const editor = dialog.locator(".kata-editor .cm-content");
+      await editor.click();
+      const typed = "SELECT 1";
+      for (const character of typed) {
+        await page.keyboard.type(character);
+        await page.waitForTimeout(60);
+      }
+      const afterTyping = (await editor.innerText()).trim();
+      assert.equal(afterTyping, typed);
+      // The caret must also stay where the learner left it, so an edit in the
+      // middle of a statement lands in the middle.
+      await page.keyboard.press("ControlOrMeta+a");
+      await page.keyboard.press("Delete");
+      await page.keyboard.type("SELECT FROM orders");
+      for (let index = 0; index < 12; index++)
+        await page.keyboard.press("ArrowLeft");
+      await page.keyboard.type("*");
+      const afterInsert = (await editor.innerText()).trim();
+      assert.equal(afterInsert, "SELECT* FROM orders");
+      await dialog.getByRole("button", { name: "Back to patterns" }).click();
+      return { afterTyping, afterInsert };
+    },
+  );
+
+  await check(
     "a passing drill advances the schedule and survives a reload",
     async () => {
       const dialog = page.locator("dialog");

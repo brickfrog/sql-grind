@@ -28,6 +28,7 @@
     type Diagnostic,
     type SchemaTable,
     type Attempt,
+    type ResultHandle,
     type HistoryEntry,
   } from "./lib/types";
   import {
@@ -408,6 +409,18 @@
   let kataPatternId = $state("");
   let kataVariationId = $state("");
   let kataSql = $state("");
+  // The editor is a controlled component: it applies whatever selection it is
+  // handed. Passing a literal {anchor: 0, head: 0} forced the caret back to the
+  // start after every keystroke, so each new character landed before the last
+  // and typing came out reversed. The drill has to own its caret, exactly as
+  // the workbench and the labs do.
+  let kataSelection = $state({ anchor: 0, head: 0 });
+  let kataScrollTop = $state(0);
+  // Result of a drill Execute. Held separately from the workbench result so an
+  // ungraded drill run never masquerades as the active document's evidence.
+  let kataSchema = $state.raw<SchemaTable[]>([]);
+  let kataSchemaOpen = $state(false);
+  let kataResult = $state.raw<ResultHandle | null>(null);
   /** Whether the open drill was due when it started. Early passes advance nothing. */
   let kataScheduled = $state(true);
   let kataFeedback = $state("");
@@ -996,11 +1009,19 @@
             (column) => column.name === "confidence",
           ))),
   );
-  const outputTabs = $derived(
-    assessmentAvailable
-      ? [...BASE_OUTPUT_TABS, "Assessment"]
-      : BASE_OUTPUT_TABS,
+  // Comparison had no home of its own, so its report was filed under Execution
+  // plan: starting one switched to a tab that read "No plan collected" for the
+  // fifteen seconds the nine pairs took, then replaced it with timings that are
+  // not a plan. The tab exists while a comparison is running or its report is
+  // on screen, and never lingers as an empty tab on a fresh document.
+  const comparisonAvailable = $derived(
+    comparisonRunning || !!result?.comparison,
   );
+  const outputTabs = $derived([
+    ...BASE_OUTPUT_TABS,
+    ...(comparisonAvailable ? ["Comparison"] : []),
+    ...(assessmentAvailable ? ["Assessment"] : []),
+  ]);
   $effect(() => {
     if (!outputTabs.includes(outputTab)) outputTab = "Results";
   });
@@ -1894,9 +1915,11 @@
       kind === "lab" ||
       (kind === "submit" && challenge?.assessment.kind !== "exact")
         ? "Assessment"
-        : kind === "plan" || kind === "compare"
-          ? "Execution plan"
-          : "Results";
+        : kind === "compare"
+          ? "Comparison"
+          : kind === "plan"
+            ? "Execution plan"
+            : "Results";
     announce(
       `${kind === "submit" ? "Submitting" : kind === "plan" ? "Planning" : kind === "compare" ? "Comparing" : "Executing"} revision ${doc.revision}…`,
       "working",
@@ -2070,6 +2093,25 @@
     await prepareDocument();
     announce(`Using immutable dataset ${datasetId}. SQL is unchanged.`);
   }
+  /**
+   * Takes the learner to the reason their submission failed. The dock's button
+   * used to open Patchouli's notes unconditionally, which after a failed
+   * submission showed "Syntax OK, no warnings or style notes" — a style lint
+   * wearing a diagnostics label. A graded failure lives in the per-variant
+   * scorecard; an engine error lives in the message log.
+   */
+  async function showFailureDetail() {
+    view = "sql";
+    ideVisible = true;
+    const graded = !!result?.fixtureResults?.length;
+    if (!graded) outputTab = "Messages";
+    await tick();
+    document
+      .querySelector<HTMLElement>(
+        graded ? ".fixture-results" : ".message-list p",
+      )
+      ?.focus();
+  }
   function showDiagram(name = "") {
     view = "erd";
     erdTabOpen = true;
@@ -2173,6 +2215,27 @@
     kataVariationId = "";
     showModal("katas", "Katas — repetition drills");
   }
+  /**
+   * The pattern holding the drill that came due earliest. Opening the surface
+   * used to mean choosing a pattern from a list before practising anything,
+   * which is the wrong question to ask someone with ten minutes: the schedule
+   * already knows what is most overdue.
+   */
+  function mostOverduePattern() {
+    return (
+      kataStatuses
+        .filter((entry) => entry.status.due)
+        .map((entry) => ({
+          pattern: entry.pattern,
+          dueAt: Math.min(
+            ...entry.variations
+              .filter((item) => item.due)
+              .map((item) => item.dueAt ?? 0),
+          ),
+        }))
+        .sort((a, b) => a.dueAt - b.dueAt)[0]?.pattern ?? null
+    );
+  }
   /** The variation whose next repetition falls soonest, due or not. */
   function earliestScheduled(pattern: KataPattern) {
     return [...pattern.variations].sort(
@@ -2196,6 +2259,11 @@
     kataVariationId = variation.variationId;
     kataScheduled = !!due;
     kataSql = "";
+    kataSelection = { anchor: 0, head: 0 };
+    kataScrollTop = 0;
+    // A previous drill's rows must not read as this drill's evidence.
+    kataResult = null;
+    kataSchemaOpen = false;
     kataFeedback = due
       ? ""
       : "Nothing is due for this pattern. Practice as much as you like: an early pass is recorded but does not advance the streak or the schedule, because spacing is what a streak claims.";
@@ -2207,6 +2275,8 @@
     kataVariationId = "";
     kataFeedback = "";
     kataOutcome = "";
+    kataResult = null;
+    kataSchemaOpen = false;
     kataNow = Date.now();
   }
   /**
@@ -2305,6 +2375,93 @@
       // Only a reconfigure discarded the workbench's dataset selection, so
       // only then is there anything to hand back.
       if (!configured && documentDataset) await prepareDocument();
+    }
+  }
+  /**
+   * Runs the drill's SQL without grading it, so a drill can be iterated on the
+   * way a challenge can. Check drill was the only button: a wrong answer told
+   * you it was wrong, with no way to look at what your own query returned.
+   */
+  async function runKataSql() {
+    const pattern = activeKataPattern;
+    if (!pattern || !catalog || busy || kataRunning || !storageReady) return;
+    if (!kataSql.trim()) {
+      kataFeedback = "Write a query first.";
+      kataOutcome = "";
+      return;
+    }
+    kataRunning = true;
+    kataFeedback = "";
+    kataResult = null;
+    announce(`Running ${pattern.title} drill SQL…`, "working");
+    const documentDataset = activeDoc?.datasetId ?? "";
+    const configured =
+      !!preparedDocumentId && documentDataset === pattern.datasetId;
+    try {
+      if (!configured) {
+        await settleEngine();
+        await engine.configure(catalog, pattern.datasetId);
+      }
+      const run = await engine.run({
+        id: crypto.randomUUID(),
+        documentId: `kata:${pattern.patternId}/run`,
+        revision: 0,
+        sql: kataSql,
+        kind: "execute",
+        domain: "challenge",
+        hintLevel: 0,
+        challenge: null,
+        datasetId: pattern.datasetId,
+      });
+      kataResult = run.result ?? null;
+      // Execute never grades, so the previous verdict would be misread as this
+      // run's verdict.
+      kataOutcome = "";
+      // The engine's own execute message names Submit, which does not exist on
+      // this surface, so the drill states its own terms instead of appending.
+      kataFeedback =
+        run.outcome === "complete"
+          ? `${formatCount(run.result?.count ?? 0, "row")} returned in ${run.elapsedMs.toFixed(1)} ms. Nothing was graded: Check drill compares against the authored reference.`
+          : run.message;
+      announce(run.message, run.outcome === "complete" ? "success" : "error");
+    } catch (error) {
+      kataFeedback = String((error as Error).message ?? error);
+      announce(kataFeedback, "error");
+    } finally {
+      kataRunning = false;
+      if (!configured && documentDataset) await prepareDocument();
+    }
+  }
+  /**
+   * Lists the drill dataset's own tables inside the drill surface. The modal
+   * covers the Object Explorer, and a drill can name a dataset the workbench
+   * is not holding, so the explorer would be the wrong schema even if it were
+   * reachable. Loaded on request: configuring the engine costs a reconfigure.
+   */
+  async function toggleKataSchema() {
+    if (kataSchemaOpen) {
+      kataSchemaOpen = false;
+      return;
+    }
+    const pattern = activeKataPattern;
+    if (!pattern || !catalog || busy || kataRunning) return;
+    const documentDataset = activeDoc?.datasetId ?? "";
+    if (!!preparedDocumentId && documentDataset === pattern.datasetId) {
+      kataSchema = schema;
+      kataSchemaOpen = true;
+      return;
+    }
+    kataRunning = true;
+    try {
+      await settleEngine();
+      kataSchema = await engine.configure(catalog, pattern.datasetId);
+      kataSchemaOpen = true;
+    } catch (error) {
+      kataFeedback = String((error as Error).message ?? error);
+      announce(kataFeedback, "error");
+    } finally {
+      kataRunning = false;
+      if (documentDataset) await prepareDocument();
     }
   }
   function confirmAction(title: string, text: string): Promise<boolean> {
@@ -3922,14 +4079,23 @@
 <a class="skip-link" href="#output-region">Skip to output</a>
 <div class:reading={readingLayout} class="desktop">
   <nav class="desktop-icons" aria-label="Desktop shortcuts">
-    {#each desktopIcons as item}<button
+    {#each desktopIcons as item}{@const due =
+        item.name === "Katas" ? kataDueTotal : 0}<button
         class="desktop-icon"
         onclick={() => command(item.name)}
         aria-label={item.name === "DuckDB Docs"
           ? "DuckDB Docs — opens in a new tab"
+          : due
+            ? `${item.name} — ${formatCount(due, "drill")} due`
+            : item.name}
+        title={due
+          ? `${item.name} — ${formatCount(due, "drill")} due`
           : item.name}
-        title={item.name}
-        ><span class="desktop-glyph"><img src={icons[item.icon]} alt="" /></span
+        ><span class="desktop-glyph"
+          ><img src={icons[item.icon]} alt="" />{#if due}<b
+              class="due-badge"
+              aria-hidden="true">{due}</b
+            >{/if}</span
         ><span>{item.name}</span></button
       >{/each}
   </nav>
@@ -4697,9 +4863,7 @@
                       correctness.
                     </p>{/each}
                 </div>
-              {:else if outputTab === "Execution plan"}<div
-                  class="plan-view inset"
-                >
+              {:else if outputTab === "Comparison"}<div class="plan-view inset">
                   {#if result?.comparison}<h3>
                       Compare with Reference — {result.datasetId}
                     </h3>
@@ -4750,8 +4914,17 @@
                         </ul>{:else}<p class="quiet">
                           No scan operators reported.
                         </p>{/if}
-                    {/each}{:else if result?.plan}<pre>{result.plan}</pre>{:else}<p
-                    >
+                    {/each}{:else}<h3>Compare with Reference</h3>
+                    <p>
+                      Running nine alternating pairs, each with its own warmup.
+                      The report appears here when all nine have finished; the
+                      first pair is discarded as a bootstrap.
+                    </p>{/if}
+                </div>
+              {:else if outputTab === "Execution plan"}<div
+                  class="plan-view inset"
+                >
+                  {#if result?.plan}<pre>{result.plan}</pre>{:else}<p>
                       No plan collected. Show Plan uses non-executing EXPLAIN.
                     </p>
                     <button
@@ -4890,6 +5063,13 @@
           >{activeDoc
             ? `Ln ${activeDoc.sql.slice(0, activeDoc.selection.head).split("\n").length} Col ${activeDoc.selection.head - (activeDoc.sql.lastIndexOf("\n", activeDoc.selection.head - 1) + 1) + 1} INS`
             : "No editor"}</span
+        ><button
+          class="status-drills"
+          title="Open the repetition drills"
+          onclick={() => command("Katas")}
+          >{kataDueTotal
+            ? `${formatCount(kataDueTotal, "drill")} due`
+            : "No drills due"}</button
         >
       </footer>
     </main>{/if}
@@ -5107,16 +5287,15 @@
       >
     </div>
     <div class="judge-actions">
-      <button onclick={() => command("Patchouli’s Notes")}
-        >Show diagnostics</button
-      ><button
-        disabled={disabled("Compare with Reference")}
-        title={!comparisonEligible
-          ? "Submit a correct answer for the current SQL first."
-          : "Compare nine pairs against the reference"}
-        onclick={() => command("Compare with Reference")}
-        >{#if comparisonRunning}<span class="spinner" aria-hidden="true"
-          ></span>Comparing…{:else}Compare with Reference{/if}</button
+      <button
+        title={currentFailure
+          ? "Go to the reason the submission failed"
+          : "Open the style and syntax notes for this revision"}
+        onclick={() =>
+          currentFailure
+            ? void showFailureDetail()
+            : command("Patchouli’s Notes")}
+        >{currentFailure ? "Show what failed" : "Show style notes"}</button
       ><button
         onclick={async () => {
           settings.hush = !settings.hush;
@@ -5341,9 +5520,17 @@
                     progression.challenges[challenge.challengeId]?.state,
                   )}
             </dd>
-            <dt>Hints revealed</dt>
-            <dd>{hints} of 3</dd>
           </dl>
+          <!-- "Hints revealed: 2 of 3" sat in a definition list identical to the
+               scorecard below it, which read as a score being deducted while
+               three separate strings insisted hints cost nothing. The fact is
+               worth keeping; the scoreboard styling is not. -->
+          <p class="quiet">
+            {hints === 0
+              ? "No hints revealed."
+              : `${hints} of 3 hints revealed.`} Assistance is recorded and never
+            reduces completion credit.
+          </p>
           <h3>
             {activeSlot
               ? activeSlot.kind === "submit"
@@ -5389,6 +5576,8 @@
           </dl>
           {#if result?.fixtureResults && resultBelongsHere}<ul
               class="fixture-results"
+              aria-label="Grading variant outcomes"
+              tabindex="-1"
             >
               {#each result.fixtureResults as fixture}<li
                   class:correct={fixture.pass}
@@ -5497,9 +5686,11 @@
               ? showModal("hints", `${activeSummary?.displayNumber} — hints`)
               : revealHint()}
         >
-          {completed || hints === 3
-            ? "Review hints"
-            : `Hint (${3 - hints} left)`}
+          {completed && !hints
+            ? "Read hints"
+            : completed || hints === 3
+              ? "Review hints"
+              : `Hint (${3 - hints} left)`}
         </button>
         <button disabled={disabled("Submit")} onclick={() => command("Submit")}
           >{#if running && runningKind === "submit"}<span
@@ -5796,11 +5987,12 @@
         >
           <h3>Hint {hint.level} · {hint.kind}</h3>
           <p>{hint.text}</p>
-        </section>{/each}{#if hints < 3 && !completed}<button
-          onclick={() => revealHint()}
+        </section>{/each}{#if hints < 3}<button onclick={() => revealHint()}
           >Reveal hint {hints + 1} ({3 - hints} left)</button
         >{/if}{#if !hints}<p>
-          No hints were revealed for this challenge. Nothing here was withheld.
+          You have not revealed any hint for this challenge. {completed
+            ? "You finished without one. The authored guidance is still here to read: completion is already recorded and hints never affect it."
+            : "Nothing here was withheld."}
         </p>{/if}
     {:else if modal === "katas"}{#if activeKataPattern && activeKataVariation}<p
           class="kata-prompt"
@@ -5817,14 +6009,18 @@
             documentName={`${activeKataPattern.patternId}/${activeKataVariation.variationId}`}
             value={kataSql}
             revision={0}
-            selection={{ anchor: 0, head: 0 }}
-            scrollTop={0}
+            selection={kataSelection}
+            scrollTop={kataScrollTop}
             diagnostics={[]}
             fontSize={settings.fontSize}
             indentation={settings.indentation}
             wordWrap={settings.wordWrap}
             {completionSchema}
-            onchange={(value) => (kataSql = value)}
+            onchange={(value, selection, top) => {
+              kataSql = value;
+              kataSelection = selection;
+              kataScrollTop = top;
+            }}
             onrun={() => void checkKata()}
             onsave={() => {}}
           />
@@ -5833,12 +6029,45 @@
           <button
             onclick={() => void checkKata()}
             disabled={kataRunning || busy || !storageReady}
-            >{kataRunning ? "Checking…" : "Check drill"}</button
+            >{kataRunning ? "Working…" : "Check drill"}</button
+          ><button
+            onclick={() => void runKataSql()}
+            disabled={kataRunning || busy || !storageReady}
+            title="Run the SQL against the drill's dataset without grading it"
+            >Execute</button
+          ><button
+            onclick={() => void toggleKataSchema()}
+            disabled={kataRunning || busy}
+            title="List the tables and columns of the drill's own dataset"
+            >{kataSchemaOpen ? "Hide tables" : "Show tables"}</button
           ><button onclick={() => closeKata()}>Back to patterns</button
           >{#if kataOutcome === "pass"}<button
               onclick={() => startKata(activeKataPattern!)}>Next drill</button
             >{/if}
         </div>
+        {#if kataSchemaOpen}<div class="kata-schema inset">
+            {#each kataSchema as table}<details>
+                <summary
+                  >{table.name} · {formatCount(
+                    table.columns.length,
+                    "column",
+                  )}</summary
+                >
+                <p class="kata-meta">
+                  {table.columns
+                    .map(
+                      (column) =>
+                        `${column.name} ${column.type}${column.key ? " " + column.key : ""}`,
+                    )
+                    .join(" · ")}
+                </p>
+              </details>{:else}<p class="kata-meta">
+                The drill's dataset has no tables to list.
+              </p>{/each}
+          </div>{/if}
+        {#if kataResult}<div class="kata-result">
+            <ResultGrid result={kataResult} stale={false} busy={kataRunning} />
+          </div>{/if}
         {#if kataFeedback}<p
             class="kata-feedback"
             class:kata-pass={kataOutcome === "pass"}
@@ -5873,6 +6102,22 @@
             {formatCount(kataContentErrors.length, "drill pattern")} could not be
             loaded and are unavailable: {kataContentErrors.join(" ")}
           </p>{/if}
+        <div class="library-tools">
+          <button
+            class="default-button"
+            disabled={!storageReady || !kataDueTotal}
+            title={kataDueTotal
+              ? "Open the drill that has been due the longest"
+              : "Nothing is due"}
+            onclick={() => {
+              const next = mostOverduePattern();
+              if (next) startKata(next);
+            }}
+            >{kataDueTotal
+              ? `Start the longest-overdue drill (${kataDueTotal} due)`
+              : "Nothing due to start"}</button
+          >
+        </div>
         <div class="library-tools">
           <label
             >Show<select bind:value={kataFilter}

@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-15T03:52:21.510Z",
+  "date": "2026-09-16T23:28:10.954Z",
   "origin": "http://127.0.0.1:5176",
   "browser": "153.0.8010.12",
   "checks": [
@@ -18,7 +18,7 @@
       "name": "first-pass celebration offers one dismiss and one forward action"
     },
     {
-      "name": "a completed challenge reviews hints without consuming a level"
+      "name": "a completed challenge can still read its hints, and stays completed"
     },
     {
       "name": "saved SQL, hints, completion and name restored after reload"

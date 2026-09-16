@@ -460,22 +460,18 @@ try {
     false,
   );
   await edit(reference);
-  await page
-    .locator(".judge")
-    .getByRole("button", { name: "Compare with Reference", exact: true })
-    .click();
+  await page.locator(".goal-compare").click();
   await page.locator("dialog").waitFor();
   await page
     .locator("dialog")
     .getByRole("button", { name: "Cancel", exact: true })
     .click();
-  await page
-    .locator(".judge")
-    .getByRole("button", { name: "Compare with Reference", exact: true })
-    .click();
+  await page.locator(".goal-compare").click();
   await confirm();
-  // The comparison panel reports both sides as summarized scan lists now, so
-  // wait for the two rendered sides instead of two raw JSON blocks.
+  // The report has its own tab now. It used to be filed under Execution plan,
+  // which meant starting a comparison switched to a tab reading "No plan
+  // collected" for the fifteen seconds the nine pairs took, then replaced it
+  // with timings that are not a plan.
   await page.waitForFunction(
     () =>
       document.querySelectorAll(".plan-view h3").length === 3 &&
@@ -486,6 +482,20 @@ try {
     null,
     { timeout: 120000 },
   );
+  assert.equal(
+    await page
+      .getByRole("tab", { name: "Comparison", exact: true })
+      .getAttribute("aria-selected"),
+    "true",
+    "a comparison must report under its own tab",
+  );
+  // Execution plan keeps its own meaning: no plan was collected by comparing.
+  await page.getByRole("tab", { name: "Execution plan", exact: true }).click();
+  assert.match(
+    await page.locator(".plan-view").innerText(),
+    /No plan collected/,
+  );
+  await page.getByRole("tab", { name: "Comparison", exact: true }).click();
   await page
     .getByRole("button", { name: "Hide Patchouli", exact: true })
     .click();

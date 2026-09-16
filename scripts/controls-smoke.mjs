@@ -80,6 +80,52 @@ try {
   );
   await page.goto(origin);
   await ready();
+  // A challenge grades against its own dataset, so the Database control is
+  // genuinely disabled here rather than merely styled to look that way: a
+  // control that silently accepted a change would leave the title bar, the
+  // explorer and the grading dataset disagreeing. workflows-smoke covers the
+  // scratch-document case, where the same control does switch the dataset.
+  const challengeDatabase = page.getByRole("combobox", {
+    name: "Database",
+    exact: true,
+  });
+  assert.equal(await challengeDatabase.isDisabled(), true);
+  assert.match(
+    await challengeDatabase.getAttribute("title"),
+    /grades against its own dataset/,
+  );
+  assert.equal(await challengeDatabase.inputValue(), firstChallenge.datasetId);
+  mark("the Database control is disabled while a challenge document is open");
+
+  // The floating judge sat with its bottom edge on the application window's
+  // bottom, which put its whole action row on top of the status bar's engine
+  // readout at every window size. Its default position must clear the bar.
+  const judgeClearance = await page.evaluate(() => {
+    const judge = document.querySelector(".judge:not(.docked)");
+    const status = document.querySelector(".statusbar");
+    if (!judge || !status) return null;
+    const overlapping = [
+      ...judge.querySelectorAll(".judge-actions button, .judge-summary button"),
+    ].filter((button) => {
+      const box = button.getBoundingClientRect();
+      const bar = status.getBoundingClientRect();
+      return (
+        box.width > 0 && box.bottom > bar.top + 1 && box.top < bar.bottom - 1
+      );
+    });
+    return {
+      judgeBottom: Math.round(judge.getBoundingClientRect().bottom),
+      statusTop: Math.round(status.getBoundingClientRect().top),
+      overlapping: overlapping.map((button) => button.textContent.trim()),
+    };
+  });
+  assert.deepEqual(judgeClearance.overlapping, []);
+  assert.ok(
+    judgeClearance.judgeBottom <= judgeClearance.statusTop,
+    `the floating judge must stop above the status bar: ${JSON.stringify(judgeClearance)}`,
+  );
+  mark("the floating judge clears the status bar");
+
   await page
     .getByRole("button", { name: "Hide Patchouli", exact: true })
     .click();
@@ -737,8 +783,17 @@ try {
     .getByRole("button", { name: "Float Patchouli", exact: true })
     .click();
   await visible("#judge-window");
+  // With no failed submission the dock's action opens the style notes and says
+  // so. qc-smoke covers the other half, where a failed submission is current
+  // and the same button reads Show what failed and leads to the scorecard.
+  assert.equal(
+    await page
+      .getByRole("button", { name: "Show what failed", exact: true })
+      .count(),
+    0,
+  );
   await page
-    .getByRole("button", { name: "Show diagnostics", exact: true })
+    .getByRole("button", { name: "Show style notes", exact: true })
     .click();
   assert.equal(
     await page

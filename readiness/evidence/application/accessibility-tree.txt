@@ -7,7 +7,7 @@
   - button "DuckDB Docs — opens in a new tab": DuckDB Docs
   - button "Schema Reference"
   - button "Skill Map"
-  - button "Katas"
+  - button "Katas — 21 drills due": Katas
   - button "Practice Records"
   - button "Recycle Bin"
 - main "SQL Grind workbench":
@@ -123,8 +123,7 @@
     - heading "Challenge status" [level=3]
     - term: Completion
     - definition: Available
-    - term: Hints revealed
-    - definition: 0 of 3
+    - paragraph: No hints revealed. Assistance is recorded and never reduces completion credit.
     - heading "This run · nothing run yet" [level=3]
     - term: Correctness
     - definition: Not submitted
@@ -143,6 +142,7 @@
     - button "Submit" [disabled]
   - status: Reading actual local catalog metadata…
   - text: DuckDB v1.5.4 · 1 thread Not run 0 rows Ln 1 Col 1 INS
+  - button "21 drills due"
 - contentinfo:
   - button "Start"
   - button "Show desktop"
@@ -151,4 +151,4 @@
   - button "Patchouli — reading"
   - 'button "SQL engine: initializing"'
   - 'button "Patchouli: hidden"'
-  - time: 11:52 PM
+  - time: 07:28 PM

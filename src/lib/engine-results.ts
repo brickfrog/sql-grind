@@ -591,6 +591,95 @@ function rowsOrdered(
   return true;
 }
 
+/**
+ * Names the expected row that a returned row most plausibly corresponds to, so
+ * a mismatch can say *which column* is wrong instead of listing every reason a
+ * row can fail. With declared ordering the correspondence is the ordering key,
+ * which is what the learner sorted by; without one it is the expected row that
+ * differs in the fewest columns. A row sharing nothing with any expected row
+ * has no correspondence and is simply not expected.
+ */
+function nearestExpected(
+  row: (string | null)[],
+  expectedRows: (string | null)[][],
+  keys: OrderingKey[],
+): { differing: number[] } | null {
+  const differences = (candidate: (string | null)[]) =>
+    candidate.reduce<number[]>(
+      (found, value, index) =>
+        value === row[index] ? found : [...found, index],
+      [],
+    );
+  if (keys.length) {
+    const keyed = expectedRows.find((candidate) =>
+      keys.every((key) => candidate[key.index] === row[key.index]),
+    );
+    return keyed ? { differing: differences(keyed) } : null;
+  }
+  let best: number[] | null = null;
+  for (const candidate of expectedRows) {
+    const differing = differences(candidate);
+    if (
+      differing.length < row.length &&
+      (!best || differing.length < best.length)
+    )
+      best = differing;
+  }
+  return best ? { differing: best } : null;
+}
+
+/**
+ * Explains an unmatched returned row without disclosing an expected value.
+ * The column name, the learner's own value and the multiplicity are all
+ * information they already hold; the expected scalar is the answer, and the
+ * curriculum reserves boundary guidance for the third hint.
+ */
+function unmatchedRowReason(
+  position: number,
+  row: (string | null)[],
+  expectedRows: (string | null)[][],
+  expectedCounts: Map<string, number>,
+  multiplicity: (key: string) => number,
+  keys: OrderingKey[],
+  fields: TypedField[],
+): string {
+  const key = JSON.stringify(row);
+  const expectedCount = expectedCounts.get(key) ?? 0;
+  if (expectedCount) {
+    const returned = multiplicity(key);
+    return `Row ${position} repeats ${formatTimes(returned)}; the expected result contains that exact row ${formatTimes(expectedCount)}.`;
+  }
+  const near = nearestExpected(row, expectedRows, keys);
+  const describeSelf = (index: number) =>
+    `${JSON.stringify(diagnosticText(fields[index].name))} (you returned ${row[index] === null ? "NULL" : JSON.stringify(diagnosticText(row[index]))})`;
+  if (!near) {
+    const identity = keys.length
+      ? ` No expected row has ${keys
+          .map((key) => describeSelf(key.index))
+          .join(", ")}.`
+      : "";
+    return `Row ${position} is not in the expected result.${identity} An extra row usually means the filter admits too much.`;
+  }
+  if (!near.differing.length)
+    return `Row ${position} is not in the expected result.`;
+  const columns = near.differing
+    .slice(0, 3)
+    .map((index) => `column ${index + 1} ${describeSelf(index)}`)
+    .join(", ");
+  const more =
+    near.differing.length > 3
+      ? ` and ${near.differing.length - 3} further column${near.differing.length - 3 === 1 ? "" : "s"}`
+      : "";
+  const anchor = keys.length
+    ? `the expected row with the same ${keys.length === 1 ? "ordering key" : "ordering keys"}`
+    : "its closest expected row";
+  return `Row ${position} differs from ${anchor} in ${columns}${more}. Values are compared exactly, and NULL never equals a value.`;
+}
+
+function formatTimes(count: number): string {
+  return count === 1 ? "once" : `${count} times`;
+}
+
 export function compare(
   expected: TypedAnswer | ArrowResult,
   actual: TypedAnswer | ArrowResult,
@@ -647,12 +736,17 @@ export function compare(
         reason: `Column ${i + 1} (${JSON.stringify(diagnosticText(field.name))}): expected ${diagnosticText(sqlTypeName(field.type))}, received ${diagnosticText(sqlTypeName(found.type))}.${contract.columns[i].type === "DECIMAL" ? " Decimal precision can differ. The scale must match exactly." : ""}`,
       };
   }
-  if (count !== actualCount)
-    return {
-      pass: false,
-      reason: `Expected ${count} rows, received ${actualCount}. Duplicate rows count separately.`,
-    };
-  const bag = new Map<string, number>();
+  // A row-count mismatch used to return here, which reported the two counts and
+  // nothing else: the learner was told "expected 9, received 11" against a
+  // dataset they cannot inspect, with no way to tell which two rows were the
+  // extra ones. The row analysis below runs first even when the counts differ,
+  // so the message can name a returned row and the column that makes it wrong.
+  const countMismatch =
+    count === actualCount
+      ? ""
+      : `Expected ${count} rows, received ${actualCount}.`;
+  const expectedRows: (string | null)[][] = [];
+  const expectedCounts = new Map<string, number>();
   const keys = orderingKeys(contract);
   let previousExpected: (string | null)[] | undefined;
   for (let i = 0; i < count; i++) {
@@ -671,8 +765,26 @@ export function compare(
       );
     previousExpected = row;
     const key = JSON.stringify(row);
-    bag.set(key, (bag.get(key) ?? 0) + 1);
+    expectedRows.push(row);
+    expectedCounts.set(key, (expectedCounts.get(key) ?? 0) + 1);
   }
+  const bag = new Map(expectedCounts);
+  const joined = (detail: string) =>
+    countMismatch ? `${countMismatch} ${detail}` : detail;
+  // Returned rows are streamed rather than collected: a wrong query can return
+  // far more rows than the fixture, and only the first unmatched row is ever
+  // described. Its multiplicity is counted by re-reading on that failure path.
+  const multiplicity = (wanted: string) => {
+    let seen = 0;
+    for (let i = 0; i < actualCount; i++)
+      if (
+        JSON.stringify(
+          actual instanceof ArrowResult ? actual.getRow(i) : actual.rows[i],
+        ) === wanted
+      )
+        seen++;
+    return seen;
+  };
   let previous: (string | null)[] | undefined;
   for (let i = 0; i < actualCount; i++) {
     const row =
@@ -692,10 +804,22 @@ export function compare(
     if (!remaining)
       return {
         pass: false,
-        reason: `Row ${i + 1} has a different exact value, NULL, or duplicate multiplicity.`,
+        reason: joined(
+          unmatchedRowReason(
+            i + 1,
+            row,
+            expectedRows,
+            expectedCounts,
+            multiplicity,
+            keys,
+            fields,
+          ),
+        ),
       };
     if (remaining === 1) bag.delete(key);
     else bag.set(key, remaining - 1);
+    // Ordering is only checked once the row itself belongs, so a wrong row is
+    // never reported as an ordering fault.
     if (previous && !rowsOrdered(previous, row, keys))
       return {
         pass: false,
@@ -703,10 +827,24 @@ export function compare(
       };
     previous = row;
   }
-  return {
-    pass: bag.size === 0,
-    ...(bag.size ? { reason: "Expected rows are missing." } : {}),
-  };
+  // Every returned row belongs, so anything left over is a row the learner did
+  // not produce. The count is theirs to know; the missing values are the answer.
+  const missing = [...bag.values()].reduce((total, each) => total + each, 0);
+  if (missing)
+    return {
+      pass: false,
+      reason: joined(
+        `Every row you returned is expected, but ${missing === 1 ? "one expected row is" : `${missing} expected rows are`} missing. A missing row usually means the filter, the join or the grouping drops it.`,
+      ),
+    };
+  // Reachable only where duplicate multiplicities cancel out across the two
+  // results, so the multiplicity rule is the whole explanation.
+  return countMismatch
+    ? {
+        pass: false,
+        reason: `${countMismatch} Duplicate rows count separately.`,
+      }
+    : { pass: true };
 }
 
 export function validateExpected(

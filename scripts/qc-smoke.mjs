@@ -253,28 +253,58 @@ try {
       .evaluate((element) => element.nextElementSibling.textContent.trim()),
     String(expected.length),
   );
+  // One button, in the Goal section that explains the comparison. The dock's
+  // duplicate was removed: three entry points for one command, one of which
+  // filed its report under a tab named Execution plan, is not discoverability.
+  // The Query menu still lists it, as it lists every command, and eligibility
+  // is a property of the command, so both must refuse before a correct submit.
+  // The dock is reopened for this check: asserting the absence of a control in
+  // a hidden window would pass however many Compare buttons it carried.
   await page.getByRole("button", { name: "Patchouli", exact: true }).click();
-  // Two entry points exist by design: Patchouli's dock and the Goal section
-  // that explains the comparison. Eligibility is a property of the command,
-  // so every one of them must be disabled before a correct submission.
+  await page.locator(".judge").waitFor();
+  assert.equal(
+    await page.locator(".judge button", { hasText: "Compare" }).count(),
+    0,
+    "the dock must not carry a second Compare entry point",
+  );
+  // A failed submission is current here, so the dock's first action must lead
+  // to the failure. It used to open Patchouli's notes unconditionally, which
+  // after a failure reported "Syntax OK, no warnings or style notes" — a style
+  // lint wearing a diagnostics label.
+  assert.deepEqual(
+    (await page.locator(".judge-actions button").allInnerTexts())
+      .map((text) => text.trim())
+      .filter(Boolean),
+    ["Show what failed", "Hush"],
+    "the dock keeps commentary controls only, and names the failure it leads to",
+  );
+  await page
+    .locator(".judge-actions button", { hasText: "Show what failed" })
+    .click();
+  assert.equal(
+    await page.evaluate(() =>
+      document.activeElement?.classList.contains("fixture-results"),
+    ),
+    true,
+    "Show what failed must land on the per-variant scorecard",
+  );
   const compareButtons = page.getByRole("button", {
     name: "Compare with Reference",
     exact: true,
   });
-  const compareCount = await compareButtons.count();
-  assert.ok(
-    compareCount >= 2,
-    `expected both Compare controls, saw ${compareCount}`,
-  );
-  for (let index = 0; index < compareCount; index++)
-    assert.equal(
-      await compareButtons.nth(index).isDisabled(),
-      true,
-      `Compare control ${index} must be disabled before a correct submission`,
-    );
+  assert.equal(await compareButtons.count(), 1);
+  assert.equal(await compareButtons.first().isDisabled(), true);
   await page
     .getByRole("button", { name: "Hide Patchouli", exact: true })
     .click();
+  await page.getByRole("menuitem", { name: "Query", exact: true }).click();
+  assert.equal(
+    await page
+      .getByRole("menuitem", { name: "Compare with Reference", exact: true })
+      .isDisabled(),
+    true,
+  );
+  await page.keyboard.press("Escape");
   await edit(reference);
   await submit();
   assert.equal(
@@ -322,11 +352,7 @@ try {
     "Grading shows specific missing columns, per-dataset expected/actual counts, and familiar SQL types",
   );
   const attemptsBeforeComparison = await recordCount();
-  await page.getByRole("button", { name: "Patchouli", exact: true }).click();
-  await page
-    .locator(".judge")
-    .getByRole("button", { name: "Compare with Reference", exact: true })
-    .click();
+  await page.locator(".goal-compare").click();
   await page.locator("dialog[open]").waitFor();
   await page
     .locator("dialog")

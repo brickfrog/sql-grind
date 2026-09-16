@@ -9,7 +9,7 @@
   "brief": "Calculate exact transaction revenue at the order grain.",
   "instructions": [
     "Return each paid order in UTC 2024. Sum transaction quantity times transaction price. Empty paid orders have zero revenue.",
-    "For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
+    "A paid order is an order whose own status is 'paid'; the payments table carries a separate status that these challenges never ask about. For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
     "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
   ],
   "datasetId": "commerce-practice",

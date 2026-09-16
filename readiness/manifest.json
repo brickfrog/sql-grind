@@ -69,9 +69,9 @@
     },
     {
       "path": "../../readiness/challenges/agg.01/challenge.json",
-      "bytes": 2463,
+      "bytes": 2600,
       "gzipBytes": 998,
-      "sha256": "3058faf44d629a4bbf0546904e6c70baa3ae0b0ed3c3a1fd3ee4276a535196b7"
+      "sha256": "519e8aa54e11b19631e9b920b963f0f0bd34d0c62d8240ed5cbe156d403aa89e"
     },
     {
       "path": "../../readiness/challenges/agg.01/checks.json",
@@ -321,9 +321,9 @@
     },
     {
       "path": "../../readiness/challenges/basics.02/challenge.json",
-      "bytes": 2656,
+      "bytes": 2768,
       "gzipBytes": 1051,
-      "sha256": "03dbbcc19a3cf7da75b469c141eb000cb1365bccec6f5c430b1fa296febc00d4"
+      "sha256": "f17378795a0be49ead8264bf3f9f2948d0711af03d757463e7c9ae766bdc87d5"
     },
     {
       "path": "../../readiness/challenges/basics.02/checks.json",
@@ -711,9 +711,9 @@
     },
     {
       "path": "../../readiness/challenges/cte.02/challenge.json",
-      "bytes": 2385,
+      "bytes": 2522,
       "gzipBytes": 975,
-      "sha256": "7eb1e5d054de9e996800a079c0db60b736295adbab7a64e27a2e124b11272f2e"
+      "sha256": "756f99a5ae35eeb0e0c3cc5aa772ef46721ebd5db61630614d7b208e1a62d435"
     },
     {
       "path": "../../readiness/challenges/cte.02/checks.json",
@@ -921,9 +921,9 @@
     },
     {
       "path": "../../readiness/challenges/dates.02/challenge.json",
-      "bytes": 2390,
+      "bytes": 2527,
       "gzipBytes": 961,
-      "sha256": "ee3af4137374f07c5c239847a3401543c4fb0261401f107f6be899013cb301a3"
+      "sha256": "caebf382e895b822d8192bfe487a172f7a2829643eb703ae63f115b9e32e511e"
     },
     {
       "path": "../../readiness/challenges/dates.02/checks.json",
@@ -963,9 +963,9 @@
     },
     {
       "path": "../../readiness/challenges/dates.03/challenge.json",
-      "bytes": 2428,
+      "bytes": 2565,
       "gzipBytes": 974,
-      "sha256": "69618416662771ee3f1ce2549d776fe50b657e0e7118e14e4adfc067c2b2e253"
+      "sha256": "8037cb030fffe7de3c32296c8ca222cc811df37cf8dc9a3e53c6058bcae04489"
     },
     {
       "path": "../../readiness/challenges/dates.03/checks.json",
@@ -1173,9 +1173,9 @@
     },
     {
       "path": "../../readiness/challenges/joins.03/challenge.json",
-      "bytes": 2481,
+      "bytes": 2618,
       "gzipBytes": 979,
-      "sha256": "c7dc4679c137352e023510a8b6dbef92ecd468c5d2bace14e75f8c3cbd780808"
+      "sha256": "80ab179962e671a4de4b05e4e640281c24b776843a28d8e7e4140bda7182bf14"
     },
     {
       "path": "../../readiness/challenges/joins.03/checks.json",
