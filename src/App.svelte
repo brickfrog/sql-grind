@@ -4336,10 +4336,14 @@
               ? "Content unavailable"
               : "SQL engine unavailable"}</strong
           ><span>{contentError} Your drafts are retained.</span>
+          <!-- "Retry engine" belongs to the operation error bar below, which
+          can be open at the same time as this one. Two controls sharing one
+          accessible name with different handlers is ambiguous to a locator and
+          worse to a screen reader, so this reload states what it reloads. -->
           <button
             disabled={contentLoading || running}
             onclick={() => loadContent()}
-            >{authored ? "Retry content" : "Retry engine"}</button
+            >{authored ? "Retry content" : "Reload SQL engine"}</button
           >
           <button disabled={!activeDoc} onclick={() => command("Export SQL")}
             >Export SQL</button

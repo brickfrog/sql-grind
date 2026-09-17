@@ -1,8 +1,8 @@
 {
-  "date": "2026-09-17T00:48:32.244Z",
+  "date": "2026-09-17T00:54:50.112Z",
   "checks": [
     "INJECTED corrupt asset is rejected; visible Retry content restores verified runtime",
-    "INJECTED unreachable engine asset names the SQL engine, and Retry engine restores it",
+    "INJECTED unreachable engine asset names the SQL engine uniquely, and Reload SQL engine restores it",
     "INJECTED quota failure exposes dirty state and SQL export; Retry save commits exact SQL across reload",
     "Real two-tab conflict survives Refresh library; recovery includes subsequent edits and preserves winner across reload",
     "Close flushes panel layout, selected skill and preferences; reload restores committed state"

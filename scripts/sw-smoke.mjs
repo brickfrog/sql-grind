@@ -64,9 +64,11 @@ const run = (command, args) =>
   });
 
 await run("npm", ["run", "build"]);
-const manifest = JSON.parse(
-  await readFile("dist/bundle/manifest.json", "utf8"),
-);
+// The raw text is kept so the upgrade check can restore this file byte for
+// byte; setup derives it, and a reformat would be a silent drift.
+const MANIFEST_FILE = "dist/bundle/manifest.json";
+const manifestText = await readFile(MANIFEST_FILE, "utf8");
+const manifest = JSON.parse(manifestText);
 const engineFiles = manifest.files
   .filter((file) => file.path.startsWith("public/"))
   .map((file) => ({
@@ -518,6 +520,61 @@ try {
     await second.close().catch(() => {});
   }
   mark("Second visit ever works offline without any priming", secondVisit);
+
+  // The offline phase above left this context with no network; an upgrade is a
+  // deploy the worker has to fetch, so the network goes back on first.
+  offlinePhase = false;
+  await context.setOffline(false);
+
+  // The planted-cache purge above proves the mechanism; this proves the case
+  // that actually happens in production. A deploy changes bundleVersion, which
+  // renames every cache the installed worker owns, so an already-controlled
+  // profile has to re-derive the version, fill the new caches and drop the old
+  // ones. sw.js refreshes that pointer at most once per REVALIDATE_INTERVAL_MS
+  // from a worker start-up, so the swap is expected only past that window and
+  // the superseded engine must keep serving until then.
+  const upgrade = { before: Object.keys(await cacheState()) };
+  const redeployed = { ...manifest, bundleVersion: "curriculum-upgrade-test" };
+  await writeFile(MANIFEST_FILE, `${JSON.stringify(redeployed, null, 2)}\n`);
+  const upgradedVersion = `curriculum-upgrade-test-${configurationHash}`;
+  await page.reload();
+  await requireReady(page, "reload inside the revalidate window");
+  upgrade.insideWindow = Object.keys(await cacheState());
+  assert.ok(
+    upgrade.insideWindow.some((name) =>
+      name.endsWith(evidence.deployedVersion),
+    ),
+    "the superseded engine cache still served inside the revalidate window",
+  );
+  await new Promise((resolve) => setTimeout(resolve, 66_000));
+  await page.reload();
+  await requireReady(page, "reload past the revalidate window");
+  await page.waitForFunction(
+    (version) =>
+      caches
+        .keys()
+        .then((names) => names.some((name) => name.endsWith(version))),
+    upgradedVersion,
+    { timeout: 120_000 },
+  );
+  upgrade.afterWindow = Object.keys(await cacheState());
+  assert.deepEqual(
+    upgrade.afterWindow.filter((name) =>
+      name.endsWith(evidence.deployedVersion),
+    ),
+    [],
+    "the superseded caches survived the upgrade",
+  );
+  assert.ok(
+    upgrade.afterWindow.some((name) => name.endsWith(upgradedVersion)),
+    "the upgraded version's caches were not created",
+  );
+  assert.ok((await runQuery(page)) > 1, "the upgraded profile runs a query");
+  evidence.upgrade = upgrade;
+  mark(
+    "A new deployed version swaps both caches on an already-controlled profile and purges the old ones",
+    upgrade,
+  );
   evidence.status = "passed";
 } catch (error) {
   evidence.status = "failed";
@@ -525,6 +582,9 @@ try {
   throw error;
 } finally {
   await writeFile(CREDITS, creditsOriginal);
+  // A failed run must not leave dist advertising the upgrade test's version,
+  // since deployment-smoke reads the same build.
+  await writeFile(MANIFEST_FILE, manifestText).catch(() => {});
   await context.close().catch(() => {});
   await browser.close().catch(() => {});
   server.kill("SIGTERM");

@@ -101,7 +101,7 @@ try {
   brokenEngine = true;
   await page.reload();
   await page
-    .getByRole("button", { name: "Retry engine", exact: true })
+    .getByRole("button", { name: "Reload SQL engine", exact: true })
     .waitFor({ timeout: 90000 });
   const engineBanner = await page.locator(".error-banner").textContent();
   assert.match(engineBanner, /SQL engine unavailable/);
@@ -113,11 +113,32 @@ try {
     0,
     "an engine fault offered a content retry",
   );
+  // The operation error bar carries its own "Retry engine" and can be open at
+  // the same time. Two recovery controls sharing an accessible name while
+  // running different handlers is ambiguous to a locator and to a screen
+  // reader, so every recovery control on screen must be uniquely named. Two
+  // launchers for the same destination are not in scope: they act alike.
+  const names = await page
+    .locator("button:visible")
+    .evaluateAll((nodes) =>
+      nodes
+        .map(
+          (node) => node.getAttribute("aria-label") ?? node.textContent.trim(),
+        )
+        .filter((name) => /retry|reload/i.test(name)),
+    );
+  assert.deepEqual(
+    names.filter((name, index) => names.indexOf(name) !== index),
+    [],
+    `recovery controls share a name: ${names}`,
+  );
   brokenEngine = false;
-  await page.getByRole("button", { name: "Retry engine", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Reload SQL engine", exact: true })
+    .click();
   await ready(page);
   mark(
-    "INJECTED unreachable engine asset names the SQL engine, and Retry engine restores it",
+    "INJECTED unreachable engine asset names the SQL engine uniquely, and Reload SQL engine restores it",
   );
   await edit(page, "SELECT 42::BIGINT AS saved;");
   await menu(page, "File", "Save");
