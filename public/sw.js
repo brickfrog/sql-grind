@@ -167,11 +167,7 @@ async function readStoredState() {
     if (!stored) return null;
     const record = await stored.json();
     if (typeof record?.version !== "string") return null;
-    // A pointer written before the bundle cache was split carries no content
-    // digest. Treating that as unknown sends the next start-up to the manifest,
-    // which is what moves an already-poisoned profile onto a correctly named
-    // bundle cache without asking the user to clear storage.
-    return typeof record.content === "string" ? record : null;
+    return record;
   } catch {
     return null;
   }
@@ -216,14 +212,28 @@ async function refreshState() {
 /**
  * The stored pointer is consulted first so an offline start-up can name its
  * caches without the network.
+ *
+ * A pointer written before the bundle cache was split carries no content
+ * digest, so the network is consulted to learn one — that is what moves an
+ * already-poisoned profile onto a correctly named bundle cache without asking
+ * anyone to clear storage. If that fetch fails the version half is still
+ * usable, and discarding it would strand a profile with 47 MB of engine in a
+ * cache it had just decided not to name. LEGACY records exactly that state:
+ * engine by version, bundle read from whichever cache already holds it.
  */
+const LEGACY = "legacy";
 function state() {
   if (!statePromise)
     statePromise = (async () => {
       const stored = await readStoredState();
-      return stored
-        ? { version: stored.version, content: stored.content }
-        : await refreshState();
+      if (stored && typeof stored.content === "string")
+        return { version: stored.version, content: stored.content };
+      try {
+        return await refreshState();
+      } catch (error) {
+        if (stored) return { version: stored.version, content: LEGACY };
+        throw error;
+      }
     })().catch((error) => {
       statePromise = null; // never memoise a failure
       throw error;
@@ -244,6 +254,9 @@ async function purgeForeignCaches() {
   // Without a version we cannot name the replacement, so we keep what we have
   // rather than wiping an engine we may not be able to download again.
   if (!current) return [];
+  // Under LEGACY the bundle's cache name is unknown, so every bundle cache is
+  // kept: deleting the one that happens to hold this profile's content would
+  // turn a working offline profile into a broken one.
   const keep = new Set([
     META,
     assetCacheName(current.version),
@@ -251,10 +264,15 @@ async function purgeForeignCaches() {
     bundleCacheName(current.content),
   ]);
   const stale = (await caches.keys()).filter(
-    (name) => name.startsWith(PREFIX) && !keep.has(name),
+    (name) =>
+      name.startsWith(PREFIX) &&
+      !keep.has(name) &&
+      !(current.content === LEGACY && name.startsWith(`${PREFIX}bundle-`)),
   );
   await Promise.all(stale.map((name) => caches.delete(name)));
-  await pruneLegacyBundleEntries(current.version);
+  // Never while LEGACY: those entries are the only copy this profile can read.
+  if (current.content !== LEGACY)
+    await pruneLegacyBundleEntries(current.version);
   return stale;
 }
 
@@ -325,19 +343,40 @@ async function store(cache, href, response) {
 // them so a page download and a warm download never race for the same 36 MB.
 const inflight = new Set();
 
-/** The durable cache a cache-first request belongs in. */
+/**
+ * The durable cache a cache-first request belongs in, or null when the state
+ * cannot name one.
+ *
+ * Under LEGACY a bundle URL has no nameable cache: the content may sit in the
+ * pre-split engine cache or in a digest-named one this worker cannot compute
+ * offline. Those reads fall back to a global match, which searches every cache,
+ * and are deliberately not written back — storing under a guessed name is how
+ * a superseded copy becomes permanent.
+ */
 async function cacheFor(url) {
   const current = await stateOrNull();
   if (!current) return null;
-  return isBundleContent(url.pathname.slice(BASE.length))
-    ? await caches.open(bundleCacheName(current.content))
-    : await caches.open(assetCacheName(current.version));
+  if (!isBundleContent(url.pathname.slice(BASE.length)))
+    return await caches.open(assetCacheName(current.version));
+  if (current.content === LEGACY) return null;
+  return await caches.open(bundleCacheName(current.content));
+}
+
+async function legacyBundleHit(url) {
+  const current = await stateOrNull();
+  if (current?.content !== LEGACY) return null;
+  if (!isBundleContent(url.pathname.slice(BASE.length))) return null;
+  try {
+    return (await caches.match(url.href)) ?? null;
+  } catch {
+    return null;
+  }
 }
 
 async function cacheFirst(event, url) {
   const href = url.href;
   const cache = await cacheFor(url);
-  const hit = cache && (await cache.match(href));
+  const hit = cache ? await cache.match(href) : await legacyBundleHit(url);
   if (hit) return hit;
   const response = await fetch(event.request);
   if (cache && response.status === 200) {
@@ -518,7 +557,9 @@ async function runWarm(resources) {
   const current = await stateOrNull();
   const manifest =
     lastManifest ?? (await fetchManifest().catch(() => null)) ?? null;
-  if (current) {
+  // LEGACY means the bundle cache cannot be named, which only happens with no
+  // network; warming would create a junk cache and fetch nothing.
+  if (current && current.content !== LEGACY) {
     const assets = await caches.open(assetCacheName(current.version));
     const bundle = await caches.open(bundleCacheName(current.content));
     const shell = await caches.open(shellCacheName(current.version));

@@ -341,17 +341,26 @@ try {
   await expandBasics();
   await openFromTree("basics.02");
   await ready(page);
-  // Tree rows put their text in child spans. A row whose accessible name is
-  // empty is unreachable by voice and unreadable by a screen reader, and these
-  // are the primary navigation into the curriculum.
+  // Tree rows put their text in child spans, and a QC pass reported their
+  // accessible names arriving empty. They do not: a CDP full AX tree finds
+  // zero nameless buttons on this surface. The names are pinned anyway,
+  // because the tree is the primary navigation into the curriculum.
+  //
+  // The count is asserted first on purpose: a filter over an empty list is
+  // empty, so without it this would pass hardest when the tree is missing.
+  const rowNames = await page
+    .locator(".challenge-row")
+    .evaluateAll((nodes) =>
+      nodes.map((node) =>
+        (node.getAttribute("aria-label") ?? node.textContent ?? "").trim(),
+      ),
+    );
+  assert.ok(
+    rowNames.length >= 5,
+    `the challenge tree exposed ${rowNames.length} rows, so naming was not tested`,
+  );
   assert.deepEqual(
-    (
-      await page
-        .locator(".challenge-row")
-        .evaluateAll((nodes) =>
-          nodes.map((node) => (node.textContent ?? "").trim()),
-        )
-    ).filter((name) => !name),
+    rowNames.filter((name) => !name),
     [],
     "a challenge row exposes no accessible name",
   );
@@ -376,6 +385,30 @@ try {
     bannerText,
     /Content error:/,
     "the prefix that routes this banner is not learner-facing copy",
+  );
+  // announce() writes the same sentence to the status bar and to the Messages
+  // log. The status bar cannot be sampled reliably — Svelte batches updates, so
+  // a value replaced in the same task never paints — but the log keeps every
+  // announcement verbatim, and it is the same string a screen reader would
+  // read from role=status. The routing token must appear in neither.
+  await page.getByRole("tab", { name: "Messages", exact: true }).click();
+  const logged = await page.locator(".message-list").innerText();
+  assert.match(
+    logged,
+    /Challenge basics\.02 · Paid reporting year could not be loaded/,
+    "the failure was never announced",
+  );
+  // Announcements are timestamped; the loader's own words are kept on a plain
+  // `id · detail` line for whoever is debugging the bundle, and that line is
+  // allowed to carry the prefix. What must never carry it is the sentence a
+  // learner is shown and a screen reader reads.
+  assert.deepEqual(
+    logged
+      .split("\n")
+      .filter((line) => /^\d?\d:\d\d:\d\d/.test(line.trim()))
+      .filter((line) => /Content error:/.test(line)),
+    [],
+    "the routing token reached an announcement",
   );
   // The engine and its dataset never depended on that file, so every readiness
   // indicator must resolve instead of waiting for a load that is not coming.

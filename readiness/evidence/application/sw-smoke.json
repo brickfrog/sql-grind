@@ -1,11 +1,11 @@
 {
-  "date": "2026-09-17T04:16:19.889Z",
+  "date": "2026-09-17T04:38:54.222Z",
   "origin": "http://127.0.0.1:4173",
   "checks": [
     {
       "name": "Cold visit boots the engine and runs a query",
       "detail": {
-        "readyMs": 3049,
+        "readyMs": 3030,
         "rows": 11
       }
     },
@@ -30,7 +30,7 @@
         ],
         "alreadyPresent": 13,
         "shellEntriesStored": 26,
-        "shellBytesStored": 1506826
+        "shellBytesStored": 1506831
       }
     },
     {
@@ -41,7 +41,7 @@
         "document": true,
         "assets": [
           {
-            "path": "/assets/index-CZY0jqt6.js",
+            "path": "/assets/index-CxM3XCnc.js",
             "cached": true
           },
           {
@@ -83,7 +83,7 @@
     {
       "name": "Offline reload reaches engine-ready and runs a query",
       "detail": {
-        "readyMs": 2660,
+        "readyMs": 2658,
         "rows": 11,
         "requestFailures": 0
       }
@@ -124,13 +124,13 @@
           },
           "shell": {
             "stored": 26,
-            "bytes": 1506826
+            "bytes": 1506831
           },
           "failed": [],
           "version": "curriculum-v1-064db1f6925786b0",
           "content": "0291f8eb6ef83fbc"
         },
-        "offlineReadyMs": 2635,
+        "offlineReadyMs": 2616,
         "offlineQueryRows": 11
       }
     },
@@ -156,6 +156,24 @@
           "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
           "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
         ]
+      }
+    },
+    {
+      "name": "A legacy pointer with no network still names the engine cache and keeps the bundle",
+      "detail": {
+        "failuresBefore": 0,
+        "pointer": {
+          "version": "curriculum-upgrade-test-064db1f6925786b0",
+          "checkedAt": 0
+        },
+        "rows": 11,
+        "caches": [
+          "sql-grind-meta",
+          "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
+          "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0",
+          "sql-grind-bundle-9f41f4a8da34fd16"
+        ],
+        "newFailures": []
       }
     },
     {
@@ -193,7 +211,7 @@
   "offlineRequestFailures": [],
   "deployedVersion": "curriculum-v1-064db1f6925786b0",
   "engineAndExtensionBytes": 47115868,
-  "coldReadyMs": 3049,
+  "coldReadyMs": 3030,
   "coldQueryRows": 11,
   "worker": {
     "scope": "http://127.0.0.1:4173/",
@@ -228,7 +246,7 @@
     },
     "shell": {
       "stored": 26,
-      "bytes": 1506826
+      "bytes": 1506831
     },
     "failed": [],
     "version": "curriculum-v1-064db1f6925786b0",
@@ -273,7 +291,7 @@
     "document": true,
     "assets": [
       {
-        "path": "/assets/index-CZY0jqt6.js",
+        "path": "/assets/index-CxM3XCnc.js",
         "cached": true
       },
       {
@@ -318,14 +336,14 @@
     "sql-grind-bundle-0291f8eb6ef83fbc": 10,
     "sql-grind-assets-foreign-version": 1
   },
-  "onlineReloadReadyMs": 2640,
+  "onlineReloadReadyMs": 2628,
   "cachesAfterPurge": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 28,
     "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5,
     "sql-grind-bundle-0291f8eb6ef83fbc": 10
   },
-  "offlineReloadReadyMs": 2660,
+  "offlineReloadReadyMs": 2658,
   "offlineQueryRows": 11,
   "secondVisit": {
     "requestFailures": [],
@@ -358,13 +376,13 @@
       },
       "shell": {
         "stored": 26,
-        "bytes": 1506826
+        "bytes": 1506831
       },
       "failed": [],
       "version": "curriculum-v1-064db1f6925786b0",
       "content": "0291f8eb6ef83fbc"
     },
-    "offlineReadyMs": 2635,
+    "offlineReadyMs": 2616,
     "offlineQueryRows": 11
   },
   "upgrade": {
@@ -387,6 +405,21 @@
       "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
       "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
     ]
+  },
+  "legacyOffline": {
+    "failuresBefore": 0,
+    "pointer": {
+      "version": "curriculum-upgrade-test-064db1f6925786b0",
+      "checkedAt": 0
+    },
+    "rows": 11,
+    "caches": [
+      "sql-grind-meta",
+      "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
+      "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0",
+      "sql-grind-bundle-9f41f4a8da34fd16"
+    ],
+    "newFailures": []
   },
   "legacyRecovery": {
     "planted": "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0",

@@ -1150,10 +1150,15 @@
   function challengeUnavailable(id: string, cause: unknown) {
     const detail = cause instanceof Error ? cause.message : String(cause);
     const summary = summaries[id];
-    const message = `Content error: Challenge ${summary ? `${summary.displayNumber} · ${summary.title}` : id} could not be loaded, so it cannot be opened. Every other challenge is unaffected.`;
+    // Built once as a sentence, returned with the routing token attached. The
+    // token tells the banner this is content rather than the engine; it is not
+    // language. Announcing the prefixed string put "Content error:" into the
+    // status bar, which is role=status aria-live=polite, so a screen reader
+    // read the discriminator aloud even after the banner stopped printing it.
+    const message = `Challenge ${summary ? `${summary.displayNumber} · ${summary.title}` : id} could not be loaded, so it cannot be opened. Every other challenge is unaffected.`;
     announce(message, "error");
     messages = [...messages.slice(-99), `${id} · ${detail}`];
-    return message;
+    return `Content error: ${message}`;
   }
   function isDirty(doc: QueryDocument) {
     return committedRevisions[doc.id] !== doc.revision;

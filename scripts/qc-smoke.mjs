@@ -322,17 +322,11 @@ try {
   }
   // Menu titles are drawn as <u>F</u>ile, so their accessible name is assembled
   // from two text nodes. A QC pass reported the names arriving as "ile"/"dit";
-  // three snapshot methods disagreed, with and without the explicit label, but
-  // the name is load-bearing for every keyboard and screen-reader user and
-  // costs one assertion to pin.
-  assert.deepEqual(
-    await page
-      .locator(".menubar [role=menuitem]")
-      .evaluateAll((nodes) =>
-        nodes.map((node) => node.getAttribute("aria-label")),
-      ),
-    ["File", "Edit", "View", "Query", "Skills", "Tools", "Window", "Help"],
-  );
+  // that did not reproduce — the role locator, a CDP full AX tree and an aria
+  // snapshot all read "File", with and without the explicit aria-label. What
+  // is pinned here is therefore the computed name, not the attribute: the name
+  // is the contract a keyboard or screen-reader user depends on, and asserting
+  // the attribute would fail on a harmless cleanup while guaranteeing nothing.
   for (const title of [
     "File",
     "Edit",

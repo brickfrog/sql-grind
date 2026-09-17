@@ -827,6 +827,75 @@ try {
     0,
     "stranded bundle copies were left in the engine cache as dead weight",
   );
+  // A pointer written by the pre-split worker carries no content digest. The
+  // worker asks the network for one; if that fails it must still name the
+  // engine cache, or an upgraded-but-offline profile loses 47 MB it already
+  // holds. Planted as a legacy pointer, then taken offline across a worker
+  // restart, which is the only way the fallback is reached.
+  const legacyOffline = {
+    failuresBefore: evidence.offlineRequestFailures.length,
+  };
+  // Offline FIRST: a restarted worker refreshes the pointer the moment it
+  // handles a fetch, so planting while still online let it rewrite the digest
+  // back in before the reload and the phase tested nothing.
+  offlinePhase = true;
+  await context.setOffline(true);
+  await page.evaluate(async () => {
+    const cache = await caches.open("sql-grind-meta");
+    const url = new URL("__sw_version__", document.baseURI).href;
+    const stored = await (await cache.match(url)).json();
+    await cache.put(
+      url,
+      new Response(JSON.stringify({ version: stored.version, checkedAt: 0 })),
+    );
+  });
+  // Stopped rather than unregistered: unregistering would leave the offline
+  // navigation with nothing to serve it, while stopping clears the in-memory
+  // memo so the restarted worker has to read the planted pointer.
+  const session = await context.newCDPSession(page);
+  await session.send("ServiceWorker.enable");
+  await session.send("ServiceWorker.stopAllWorkers");
+  await page.reload();
+  await requireReady(page, "offline reload on a legacy pointer");
+  legacyOffline.pointer = await page.evaluate(async () => {
+    const cache = await caches.open("sql-grind-meta");
+    const url = new URL("__sw_version__", document.baseURI).href;
+    const hit = await cache.match(url);
+    return hit ? await hit.json() : null;
+  });
+  assert.equal(
+    legacyOffline.pointer?.content,
+    undefined,
+    "the pointer regained a digest, so the legacy path was never exercised",
+  );
+  legacyOffline.rows = await runQuery(page);
+  assert.ok(
+    legacyOffline.rows > 1,
+    "an upgraded-but-offline profile lost the engine it already had",
+  );
+  legacyOffline.caches = Object.keys(await cacheState());
+  assert.ok(
+    legacyOffline.caches.some((name) => name.startsWith("sql-grind-bundle-")),
+    "the bundle cache was deleted while the pointer carried no digest",
+  );
+  // The engine must come out of Cache Storage, not out of luck: with no state
+  // the worker names no cache, every asset goes to the network, and the network
+  // is gone. A failed request in this phase means the fallback did not hold.
+  legacyOffline.newFailures = evidence.offlineRequestFailures.slice(
+    legacyOffline.failuresBefore,
+  );
+  assert.deepEqual(
+    legacyOffline.newFailures,
+    [],
+    "an offline legacy profile fell through to the network",
+  );
+  offlinePhase = false;
+  await context.setOffline(false);
+  evidence.legacyOffline = legacyOffline;
+  mark(
+    "A legacy pointer with no network still names the engine cache and keeps the bundle",
+    legacyOffline,
+  );
   evidence.legacyRecovery = legacy;
   mark(
     "A profile stranded by the old single-cache layout recovers without a manual purge",
