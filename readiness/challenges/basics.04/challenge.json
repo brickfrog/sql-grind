@@ -6,7 +6,7 @@
   "bundleVersion": "basics.04-bundle-v1",
   "assessmentVersion": "exact-v1",
   "title": "Repeatable top five",
-  "brief": "A shortlist that names the same five rows every time you ask for it, ties included.",
+  "brief": "A shortlist that names the same five rows every time you ask for it, with equal prices settled the same way.",
   "instructions": [
     "Return the five greatest catalog prices. Equal prices are broken by ascending product identity. Return fewer rows only when the data holds fewer than five products.",
     "Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed."

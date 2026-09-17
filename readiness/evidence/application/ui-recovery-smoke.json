@@ -1,11 +1,12 @@
 {
-  "date": "2026-09-17T01:09:27.992Z",
+  "date": "2026-09-17T04:07:49.314Z",
   "checks": [
     "INJECTED corrupt asset is rejected; visible Retry content restores verified runtime",
     "INJECTED unreachable engine asset names the SQL engine uniquely, and Reload SQL engine restores it",
     "INJECTED quota failure exposes dirty state and SQL export; Retry save commits exact SQL across reload",
     "Real two-tab conflict survives Refresh library; recovery includes subsequent edits and preserves winner across reload",
-    "Close flushes panel layout, selected skill and preferences; reload restores committed state"
+    "Close flushes panel layout, selected skill and preferences; reload restores committed state",
+    "INJECTED unreadable challenge names the challenge, keeps the workbench loaded, offers a challenge that works, and recovers on retry"
   ],
   "errors": [],
   "pass": true

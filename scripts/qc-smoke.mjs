@@ -320,6 +320,60 @@ try {
       ),
     );
   }
+  // Menu titles are drawn as <u>F</u>ile, so their accessible name is assembled
+  // from two text nodes. A QC pass reported the names arriving as "ile"/"dit";
+  // three snapshot methods disagreed, with and without the explicit label, but
+  // the name is load-bearing for every keyboard and screen-reader user and
+  // costs one assertion to pin.
+  assert.deepEqual(
+    await page
+      .locator(".menubar [role=menuitem]")
+      .evaluateAll((nodes) =>
+        nodes.map((node) => node.getAttribute("aria-label")),
+      ),
+    ["File", "Edit", "View", "Query", "Skills", "Tools", "Window", "Help"],
+  );
+  for (const title of [
+    "File",
+    "Edit",
+    "View",
+    "Query",
+    "Skills",
+    "Tools",
+    "Window",
+    "Help",
+  ])
+    assert.equal(
+      await page.getByRole("menuitem", { name: title, exact: true }).count(),
+      1,
+      `the ${title} menu does not expose its full accessible name`,
+    );
+  // A pass belongs to the SQL that was graded. Editing after it must not leave
+  // three green PASS bullets underneath a "Stale result" heading, which reads
+  // at a glance as "the query on screen passed".
+  await edit(reference + "\n-- edited after the pass");
+  await page.waitForFunction(() =>
+    /Stale result/.test(
+      document.querySelector(".scorecard")?.textContent ?? "",
+    ),
+  );
+  assert.equal(
+    await page.locator(".fixture-results li.correct").count(),
+    0,
+    "a stale outcome must not keep the pass colour",
+  );
+  assert.equal(
+    (await page.locator(".fixture-results li").allTextContents()).filter(
+      (text) => text.trim().startsWith("Earlier PASS"),
+    ).length,
+    expected.length,
+    "each stale outcome must say which submission it describes",
+  );
+  assert.match(
+    await page.locator(".goal-content").innerText(),
+    /belong to the earlier graded submission/,
+  );
+  await edit(reference);
   assert.deepEqual(
     await page.locator(".grid-header small").allTextContents(),
     definition.output.columns.map((column) => column.type),

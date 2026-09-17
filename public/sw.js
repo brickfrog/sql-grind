@@ -29,6 +29,7 @@ const ROOT = `${SCOPE.origin}${BASE}`;
 const scoped = (relative) => new URL(relative, ROOT).href;
 
 const MANIFEST = scoped("bundle/manifest.json");
+const ASSETS = scoped("bundle/assets.json");
 const SHELL = scoped(".");
 const PREFIX = "sql-grind-";
 const META = `${PREFIX}meta`;
@@ -36,6 +37,20 @@ const META = `${PREFIX}meta`;
 const VERSION_KEY = scoped("__sw_version__");
 const assetCacheName = (version) => `${PREFIX}assets-${version}`;
 const shellCacheName = (version) => `${PREFIX}shell-${version}`;
+/**
+ * Keyed by a digest of the bundle's own file hashes rather than by the deploy
+ * version, because the two can disagree. bundleVersion is hand-set and
+ * configurationHash covers the engine configuration only, so a content-only
+ * deploy — rewording a challenge, correcting a declared type — changes neither.
+ * A cache named after them would keep serving the superseded challenge.json
+ * while bundle/manifest.json, which is network-first, came back fresh: a
+ * permanent integrity failure whose only offered affordance, "Retry content",
+ * refetches the same stale bytes and can never succeed.
+ *
+ * The engine keeps the version-named cache above, so correcting a sentence
+ * costs kilobytes instead of re-downloading 47 MB.
+ */
+const bundleCacheName = (digest) => `${PREFIX}bundle-${digest}`;
 const WARM_REQUEST = "sql-grind:warm";
 const WARM_REPORT = "sql-grind:warmed";
 // A deploy is picked up within this window of a service worker start-up. The
@@ -45,16 +60,23 @@ const REVALIDATE_INTERVAL_MS = 60_000;
 const PUBLIC = "public/";
 
 /**
- * Immutable, hash-verified content. Everything under /engine/ and /extensions/
- * is pinned by version in the URL or by the engine's own version assertion, and
- * everything under /bundle/ is content addressed — except manifest.json and
- * assets.json, which are the roots of that hash chain. Those two must follow
- * the network so a deploy is observed instead of being masked by its own
- * superseded index.
+ * Cache-first content. Everything under /engine/ and /extensions/ is pinned by
+ * version in the URL or by the engine's own version assertion.
+ *
+ * /bundle/ is hash-verified by the app but NOT content addressed: the paths
+ * carry no hash, so a given URL's bytes change from deploy to deploy. That is
+ * why it lives in its own digest-named cache. manifest.json and assets.json are
+ * the roots of the hash chain and must follow the network, so a deploy is
+ * observed instead of being masked by its own superseded index.
  */
 function isImmutable(pathname) {
   const rel = pathname.slice(BASE.length);
   if (rel.startsWith("engine/") || rel.startsWith("extensions/")) return true;
+  return isBundleContent(rel);
+}
+
+/** Bundle payload, excluding the two index files that must stay network-first. */
+function isBundleContent(rel) {
   return (
     rel.startsWith("bundle/") &&
     rel !== "bundle/manifest.json" &&
@@ -63,22 +85,27 @@ function isImmutable(pathname) {
 }
 
 let lastManifest = null;
-let versionPromise = null;
+let statePromise = null;
 
-async function fetchManifest() {
+async function fetchIndex(url, label) {
   // no-cache rather than no-store: a host that sends validators (GitHub Pages
   // sends ETags) answers 304, so the periodic check costs a round trip instead
-  // of the manifest body.
-  const response = await fetch(MANIFEST, {
+  // of the body.
+  const response = await fetch(url, {
     cache: "no-cache",
     credentials: "same-origin",
   });
-  if (!response.ok) throw new Error(`manifest ${response.status}`);
-  const manifest = await response.json();
+  if (!response.ok) throw new Error(`${label} ${response.status}`);
+  return response.json();
+}
+
+async function fetchManifest() {
+  const manifest = await fetchIndex(MANIFEST, "manifest");
   lastManifest = manifest;
   return manifest;
 }
 
+/** Names the engine caches: the deploy identity, not the content. */
 function versionOf(manifest) {
   const bundle =
     typeof manifest.bundleVersion === "string"
@@ -94,24 +121,69 @@ function versionOf(manifest) {
   );
 }
 
-async function readStoredVersion() {
+/**
+ * Names the bundle cache: a digest over the shipped bundle's own paths and
+ * hashes, so any content change renames the cache and the superseded copy is
+ * dropped instead of being served against a fresh index.
+ *
+ * Read from bundle/assets.json, not bundle/manifest.json: the manifest lists
+ * the engine payload and the authored sources it was built from, and carries no
+ * entry for any shipped /bundle/ URL. Digesting it would have produced one
+ * constant name for every deploy — the same defect in new clothes. assets.json
+ * is the index the app itself verifies against, and it is already network-first
+ * for exactly this reason.
+ *
+ * Engine and extension entries are excluded, so an engine upgrade does not
+ * evict the bundle and a content fix does not re-download 47 MB.
+ */
+async function contentDigestOf(index) {
+  const files = Array.isArray(index?.files) ? index.files : [];
+  const material = files
+    .filter(
+      (file) =>
+        typeof file?.path === "string" &&
+        isBundleContent(file.path.replace(/^\//, "")),
+    )
+    .map((file) => `${file.path}:${file.sha256 ?? file.bytes ?? ""}`)
+    .sort()
+    .join("\n");
+  // An index naming no bundle content is a broken deploy. It degrades to a
+  // constant name rather than throwing, because the engine's durability must
+  // not depend on the content index — but sw-smoke asserts a real digest, so
+  // this cannot ship unnoticed again.
+  if (!material) return "none";
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(material),
+  );
+  return Array.from(new Uint8Array(digest).slice(0, 8))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function readStoredState() {
   try {
     const stored = await (await caches.open(META)).match(VERSION_KEY);
     if (!stored) return null;
     const record = await stored.json();
-    return typeof record?.version === "string" ? record : null;
+    if (typeof record?.version !== "string") return null;
+    // A pointer written before the bundle cache was split carries no content
+    // digest. Treating that as unknown sends the next start-up to the manifest,
+    // which is what moves an already-poisoned profile onto a correctly named
+    // bundle cache without asking the user to clear storage.
+    return typeof record.content === "string" ? record : null;
   } catch {
     return null;
   }
 }
 
-async function storeVersion(version) {
+async function storeState(state) {
   try {
     await (
       await caches.open(META)
     ).put(
       VERSION_KEY,
-      new Response(JSON.stringify({ version, checkedAt: Date.now() }), {
+      new Response(JSON.stringify({ ...state, checkedAt: Date.now() }), {
         headers: { "content-type": "application/json" },
       }),
     );
@@ -120,53 +192,97 @@ async function storeVersion(version) {
   }
 }
 
-/** Network truth. Rewrites the stored pointer and the memoised version. */
-async function refreshVersion() {
-  const version = versionOf(await fetchManifest());
-  await storeVersion(version);
-  versionPromise = Promise.resolve(version);
-  return version;
+/**
+ * Network truth. Rewrites the stored pointer and the memoised state.
+ *
+ * Both indexes are read together and in parallel: they are the two roots of the
+ * hash chain, they are small, and this runs at most once per
+ * REVALIDATE_INTERVAL_MS off a navigation's waitUntil.
+ */
+async function refreshState() {
+  const [manifest, index] = await Promise.all([
+    fetchManifest(),
+    fetchIndex(ASSETS, "assets"),
+  ]);
+  const state = {
+    version: versionOf(manifest),
+    content: await contentDigestOf(index),
+  };
+  await storeState(state);
+  statePromise = Promise.resolve(state);
+  return state;
 }
 
 /**
  * The stored pointer is consulted first so an offline start-up can name its
  * caches without the network.
  */
-function version() {
-  if (!versionPromise)
-    versionPromise = (async () => {
-      const stored = await readStoredVersion();
-      return stored ? stored.version : await refreshVersion();
+function state() {
+  if (!statePromise)
+    statePromise = (async () => {
+      const stored = await readStoredState();
+      return stored
+        ? { version: stored.version, content: stored.content }
+        : await refreshState();
     })().catch((error) => {
-      versionPromise = null; // never memoise a failure
+      statePromise = null; // never memoise a failure
       throw error;
     });
-  return versionPromise;
+  return statePromise;
 }
 
-async function versionOrNull() {
+async function stateOrNull() {
   try {
-    return await version();
+    return await state();
   } catch {
     return null;
   }
 }
 
 async function purgeForeignCaches() {
-  const current = await versionOrNull();
+  const current = await stateOrNull();
   // Without a version we cannot name the replacement, so we keep what we have
   // rather than wiping an engine we may not be able to download again.
   if (!current) return [];
   const keep = new Set([
     META,
-    assetCacheName(current),
-    shellCacheName(current),
+    assetCacheName(current.version),
+    shellCacheName(current.version),
+    bundleCacheName(current.content),
   ]);
   const stale = (await caches.keys()).filter(
     (name) => name.startsWith(PREFIX) && !keep.has(name),
   );
   await Promise.all(stale.map((name) => caches.delete(name)));
+  await pruneLegacyBundleEntries(current.version);
   return stale;
+}
+
+let legacyPruned = false;
+/**
+ * One-time migration. Before the bundle cache was split out, /bundle/ content
+ * was stored in the engine cache, which a content-only deploy never renames —
+ * that is what left profiles serving a superseded challenge against a fresh
+ * index. Those entries are unreachable now that bundle requests read their own
+ * digest-named cache, so they are dead weight; a profile that was stuck
+ * recovers by fetching fresh bytes and drops the copy that stranded it.
+ *
+ * Guarded by a flag rather than run per navigation: it is a keys() walk over
+ * several hundred entries, and after the first pass there is nothing to find.
+ */
+async function pruneLegacyBundleEntries(version) {
+  if (legacyPruned) return 0;
+  legacyPruned = true;
+  try {
+    const cache = await caches.open(assetCacheName(version));
+    const stale = (await cache.keys()).filter((request) =>
+      isBundleContent(new URL(request.url).pathname.slice(BASE.length)),
+    );
+    await Promise.all(stale.map((request) => cache.delete(request)));
+    return stale.length;
+  } catch {
+    return 0; // Reclaiming space is never worth failing a navigation over.
+  }
 }
 
 let checking = null;
@@ -181,12 +297,12 @@ let checking = null;
 async function revalidate() {
   if (!checking)
     checking = (async () => {
-      const stored = await readStoredVersion();
+      const stored = await readStoredState();
       if (
         !stored ||
         Date.now() - (stored.checkedAt ?? 0) > REVALIDATE_INTERVAL_MS
       )
-        await refreshVersion().catch(() => {
+        await refreshState().catch(() => {
           // Offline: keep serving the version we already know.
         });
     })().finally(() => {
@@ -209,10 +325,18 @@ async function store(cache, href, response) {
 // them so a page download and a warm download never race for the same 36 MB.
 const inflight = new Set();
 
+/** The durable cache a cache-first request belongs in. */
+async function cacheFor(url) {
+  const current = await stateOrNull();
+  if (!current) return null;
+  return isBundleContent(url.pathname.slice(BASE.length))
+    ? await caches.open(bundleCacheName(current.content))
+    : await caches.open(assetCacheName(current.version));
+}
+
 async function cacheFirst(event, url) {
   const href = url.href;
-  const current = await versionOrNull();
-  const cache = current ? await caches.open(assetCacheName(current)) : null;
+  const cache = await cacheFor(url);
   const hit = cache && (await cache.match(href));
   if (hit) return hit;
   const response = await fetch(event.request);
@@ -231,8 +355,10 @@ async function cacheFirst(event, url) {
  * shell pinned to a superseded build. The cache is the offline fallback only.
  */
 async function networkFirst(event, url) {
-  const current = await versionOrNull();
-  const cache = current ? await caches.open(shellCacheName(current)) : null;
+  const current = await stateOrNull();
+  const cache = current
+    ? await caches.open(shellCacheName(current.version))
+    : null;
   try {
     const response = await fetch(event.request);
     if (cache && response.status === 200 && response.type === "basic")
@@ -262,7 +388,9 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       try {
-        const cache = await caches.open(shellCacheName(await version()));
+        const cache = await caches.open(
+          shellCacheName((await state()).version),
+        );
         const response = await fetch(SHELL, { credentials: "same-origin" });
         if (response.status !== 200) return;
         const html = await response.clone().text();
@@ -299,7 +427,7 @@ self.addEventListener("activate", (event) => {
       // Claim first, so the visit that installed this worker already has its
       // engine downloads routed through the cache instead of only the next one.
       await self.clients.claim();
-      await refreshVersion().catch(() => {});
+      await refreshState().catch(() => {});
       await purgeForeignCaches();
     })(),
   );
@@ -387,18 +515,25 @@ async function runWarm(resources) {
     shell: { stored: 0, bytes: 0 },
     failed: [],
   };
-  const current = await versionOrNull();
+  const current = await stateOrNull();
   const manifest =
     lastManifest ?? (await fetchManifest().catch(() => null)) ?? null;
   if (current) {
-    const assets = await caches.open(assetCacheName(current));
-    const shell = await caches.open(shellCacheName(current));
+    const assets = await caches.open(assetCacheName(current.version));
+    const bundle = await caches.open(bundleCacheName(current.content));
+    const shell = await caches.open(shellCacheName(current.version));
     for (const [href, target] of warmTargets(manifest, resources)) {
-      const immutable = isImmutable(new URL(href).pathname);
-      const cache = immutable ? assets : shell;
+      const pathname = new URL(href).pathname;
+      const immutable = isImmutable(pathname);
+      const durable = isBundleContent(pathname.slice(BASE.length))
+        ? bundle
+        : assets;
+      const cache = immutable ? durable : shell;
       if (immutable) {
-        // Content addressed: whatever is already stored is already correct.
-        if (await assets.match(href)) {
+        // Whatever is stored under this name is already the right bytes: the
+        // engine cache is named after the deploy and the bundle cache after a
+        // digest of its own contents, so changed bytes arrive under a new name.
+        if (await durable.match(href)) {
           report.assets.present.push(target.rel);
           continue;
         }
@@ -434,7 +569,8 @@ async function runWarm(resources) {
       }
     }
   }
-  report.version = current;
+  report.version = current?.version ?? null;
+  report.content = current?.content ?? null;
   for (const client of await self.clients.matchAll({
     includeUncontrolled: true,
     type: "window",

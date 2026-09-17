@@ -88,7 +88,9 @@
   let toldRetention = false;
   let navigationSequence = 0;
   let contentLoadSequence = 0;
-  let contentRetryChallengeId: string | null = null;
+  // Reactive: the banner names the challenge that would not load and offers a
+  // challenge that will, so the failure is not a dead end.
+  let contentRetryChallengeId = $state<string | null>(null);
   let configureChain: Promise<void> = Promise.resolve();
   let labEvidence = $state.raw<Record<string, LabEvidence>>({});
   let labEditorStates = $state<
@@ -548,6 +550,23 @@
       ? result.message
       : "",
   );
+  // One unreadable challenge is not a reason to strand a learner on a red
+  // banner. The next challenge they can actually open is offered by name; it
+  // is never opened for them, because a silent skip hides the failure.
+  const contentSkipTarget = $derived.by(() => {
+    const failed = contentRetryChallengeId;
+    if (!failed) return null;
+    const reachable = skills.flatMap((entry) =>
+      progression.skills[entry.id]?.accessible
+        ? entry.objectives.map((objective) => objective.id)
+        : [],
+    );
+    const index = reachable.indexOf(failed);
+    const id = [...reachable.slice(index + 1), ...reachable].find(
+      (candidate) => candidate !== failed,
+    );
+    return id ? (summaries[id] ?? null) : null;
+  });
   const skill = $derived(
     skills.find((s) => s.id === selectedSkill) ?? skills[0],
   );
@@ -1123,6 +1142,19 @@
     error = message;
     announce(error, "error");
   }
+  // The loader reports the bundle path it could not verify, which tells a
+  // learner nothing. The catalog summary names the challenge without touching
+  // the file that failed, so the banner says which challenge is unavailable
+  // and the loader's own words stay in the Messages log for whoever is
+  // debugging the bundle.
+  function challengeUnavailable(id: string, cause: unknown) {
+    const detail = cause instanceof Error ? cause.message : String(cause);
+    const summary = summaries[id];
+    const message = `Content error: Challenge ${summary ? `${summary.displayNumber} · ${summary.title}` : id} could not be loaded, so it cannot be opened. Every other challenge is unaffected.`;
+    announce(message, "error");
+    messages = [...messages.slice(-99), `${id} · ${detail}`];
+    return message;
+  }
   function isDirty(doc: QueryDocument) {
     return committedRevisions[doc.id] !== doc.revision;
   }
@@ -1617,11 +1649,26 @@
     const prepare = async () => {
       if (!isCurrent()) return;
       try {
-        const content =
+        // The dataset and the engine do not depend on authored challenge JSON.
+        // Abandoning the prepare when one challenge will not load left the
+        // schema tree, the table count and the status line waiting for a load
+        // that was never coming, so the failure is recorded and the engine is
+        // configured anyway.
+        let content: LoadedChallenge | undefined;
+        let unavailable = "";
+        if (
           doc.challenge &&
           sameIdentity(doc.challenge, identities[doc.challenge.challengeId])
-            ? await snapshot.load(doc.challenge.challengeId)
-            : undefined;
+        ) {
+          const id = doc.challenge.challengeId;
+          try {
+            content = await snapshot.load(id);
+          } catch (cause) {
+            if (!isCurrent()) return;
+            unavailable = challengeUnavailable(id, cause);
+            contentRetryChallengeId = id;
+          }
+        }
         if (!isCurrent()) return;
         if (content) {
           if (content.dataset.id !== doc.datasetId)
@@ -1656,7 +1703,7 @@
           }
           outputTab = "Assessment";
         }
-        contentError = "";
+        contentError = unavailable;
         if (content) {
           const skillId = content.definition.skillId;
           if (
@@ -1711,7 +1758,7 @@
     } catch (cause) {
       if (isCurrent()) {
         contentRetryChallengeId = id;
-        contentError = cause instanceof Error ? cause.message : String(cause);
+        contentError = challengeUnavailable(id, cause);
       }
       return;
     }
@@ -4179,6 +4226,7 @@
               role="menuitem"
               aria-haspopup="menu"
               aria-expanded={menu === label}
+              aria-label={label}
               tabindex={focusedMenu === label ? 0 : -1}
               onfocus={() => (focusedMenu = label)}
               class:menu-active={menu === label}
@@ -4330,12 +4378,19 @@
           <!-- Authored content carries the "Content error:" prefix the loaders
           attach; anything else reached here from the engine or asset layer, and
           calling that "Content unavailable" sends the reader to look at the
-          curriculum for a fault in the SQL runtime. -->
+          curriculum for a fault in the SQL runtime. The prefix is how this
+          banner routes, not something to read: with the heading already saying
+          "Content unavailable", printing it produced "Content unavailable
+          Content error: …". -->
           <strong
             >{authored
               ? "Content unavailable"
               : "SQL engine unavailable"}</strong
-          ><span>{contentError} Your drafts are retained.</span>
+          ><span
+            >{authored
+              ? contentError.slice("Content error:".length).trim()
+              : contentError} Your drafts are retained.</span
+          >
           <!-- "Retry engine" belongs to the operation error bar below, which
           can be open at the same time as this one. Two controls sharing one
           accessible name with different handlers is ambiguous to a locator and
@@ -4345,6 +4400,15 @@
             onclick={() => loadContent()}
             >{authored ? "Retry content" : "Reload SQL engine"}</button
           >
+          <!-- A named challenge failed, so the learner is offered one that
+               loads rather than being left with a retry that may keep
+               failing. Opening it is their choice: skipping silently would
+               hide the challenge they asked for. -->
+          {#if contentSkipTarget}{@const target = contentSkipTarget}<button
+              disabled={contentLoading || running}
+              onclick={() => openChallenge(target.challengeId)}
+              >Continue with {target.displayNumber} · {target.title}</button
+            >{/if}
           <button disabled={!activeDoc} onclick={() => command("Export SQL")}
             >Export SQL</button
           >
@@ -4563,7 +4627,9 @@
                       class="tree-empty"
                       >{engineState === "error"
                         ? "Schema unavailable"
-                        : "Loading schema…"}</span
+                        : contentError && !preparedDocumentId
+                          ? "No dataset loaded"
+                          : "Loading schema…"}</span
                     >{/if}{/if}
                 {#each ["views", "macros", "indexes"] as branch}<button
                     class="tree-row level2"
@@ -5618,15 +5684,30 @@
               {formatCount(currentDiagnostics.length, "note")} for this revision
             </dd>
           </dl>
-          {#if result?.fixtureResults && resultBelongsHere}<ul
+          <!-- The per-variant outcomes describe the submission that was
+               graded. Once the editor moves on they describe something that is
+               no longer on screen, so they lose the pass colour and say whose
+               result they are, the same way the reconciliation coverage above
+               calls itself the earlier result. -->
+          {#if result?.fixtureResults && resultBelongsHere}{#if stale}<p
+                class="quiet"
+              >
+                These per-dataset outcomes belong to the earlier graded
+                submission, not the SQL on screen. Submit again to grade this
+                revision.
+              </p>{/if}
+            <ul
               class="fixture-results"
-              aria-label="Grading variant outcomes"
+              aria-label={stale
+                ? "Earlier submission variant outcomes"
+                : "Grading variant outcomes"}
               tabindex="-1"
             >
               {#each result.fixtureResults as fixture}<li
-                  class:correct={fixture.pass}
+                  class:correct={fixture.pass && !stale}
+                  class:quiet={stale}
                 >
-                  {fixture.pass ? "PASS" : "FAIL"} · {fixture.name}
+                  {stale ? "Earlier " : ""}{fixture.pass ? "PASS" : "FAIL"} · {fixture.name}
                   {#if fixture.expectedRows !== undefined}
                     · expected {fixture.expectedRows} rows; returned {fixture.actualRows ??
                       "unavailable"}
@@ -5694,6 +5775,32 @@
             All five current challenges complete a skill. Hints do not reduce
             credit.
           </p>
+        {:else if contentError && contentRetryChallengeId && !historicalNotice}
+          {@const failed = summaries[contentRetryChallengeId]}
+          <!-- A challenge whose text could not be read is not a scratch query,
+               and on a first load it may not even have a document yet.
+               Calling either one "Scratch query" is a second untruth on top
+               of the banner. -->
+          <h2>
+            {failed
+              ? `${failed.displayNumber} · ${failed.title}`
+              : "Challenge unavailable"}
+          </h2>
+          <p>
+            This challenge's text could not be loaded, so its brief, hints and
+            grading contract are unavailable and it cannot be submitted.{activeDoc
+              ? " Your draft SQL is kept exactly as you left it."
+              : ""}
+          </p>
+          {#if contentSkipTarget}{@const target = contentSkipTarget}<button
+              onclick={() => openChallenge(target.challengeId)}
+              >Continue with {target.displayNumber} · {target.title}</button
+            >{/if}
+          <button
+            onclick={() => {
+              view = "map";
+            }}>Choose a challenge</button
+          >
         {:else}
           <h2>
             {historicalNotice ? "Historical draft" : "Scratch query"}

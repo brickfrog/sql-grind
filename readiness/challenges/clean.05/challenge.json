@@ -8,7 +8,7 @@
   "title": "Declared mixed date formats",
   "brief": "Parse declared date formats and expose rejected input.",
   "instructions": [
-    "Accept trimmed YYYY-MM-DD, US MM/DD/YYYY, and DD Mon YYYY in that order. Missing input is missing; failed parsing is invalid with original rejected text; successful parsing is valid. Reject DD/MM/YYYY and impossible dates.",
+    "Accept trimmed YYYY-MM-DD, US MM/DD/YYYY, and DD Mon YYYY in that order. Missing input is 'missing'; failed parsing is 'invalid' with original rejected text; successful parsing is 'valid'. Reject DD/MM/YYYY and impossible dates.",
     "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
   ],
   "datasetId": "workshop",

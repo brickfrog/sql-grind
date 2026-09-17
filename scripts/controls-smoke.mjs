@@ -99,32 +99,133 @@ try {
 
   // The floating judge sat with its bottom edge on the application window's
   // bottom, which put its whole action row on top of the status bar's engine
-  // readout at every window size. Its default position must clear the bar.
+  // readout at every window size. Its default position must clear the bar: not
+  // just the buttons, the whole window rectangle, and none of the status cells
+  // may be covered either — a window edge over the engine readout hides text
+  // that no other assertion reads.
   const judgeClearance = await page.evaluate(() => {
     const judge = document.querySelector(".judge:not(.docked)");
     const status = document.querySelector(".statusbar");
     if (!judge || !status) return null;
-    const overlapping = [
-      ...judge.querySelectorAll(".judge-actions button, .judge-summary button"),
-    ].filter((button) => {
-      const box = button.getBoundingClientRect();
-      const bar = status.getBoundingClientRect();
-      return (
-        box.width > 0 && box.bottom > bar.top + 1 && box.top < bar.bottom - 1
-      );
-    });
+    const box = judge.getBoundingClientRect();
+    const bar = status.getBoundingClientRect();
+    const intersects = (a, b) =>
+      Math.min(a.right, b.right) - Math.max(a.left, b.left) > 0 &&
+      Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 0;
     return {
-      judgeBottom: Math.round(judge.getBoundingClientRect().bottom),
-      statusTop: Math.round(status.getBoundingClientRect().top),
-      overlapping: overlapping.map((button) => button.textContent.trim()),
+      judgeBottom: Math.round(box.bottom),
+      statusTop: Math.round(bar.top),
+      verticalOverlap: Math.round(
+        Math.min(box.bottom, bar.bottom) - Math.max(box.top, bar.top),
+      ),
+      // Her own controls must not reach into the bar, and nothing the bar
+      // reports may end up underneath her window.
+      covered: [
+        ...[
+          ...judge.querySelectorAll(
+            ".judge-actions button, .judge-summary button",
+          ),
+        ].filter((node) => intersects(node.getBoundingClientRect(), bar)),
+        ...[...document.querySelectorAll(".statusbar > *")].filter((node) =>
+          intersects(node.getBoundingClientRect(), box),
+        ),
+      ].map((node) => node.textContent.trim()),
     };
   });
-  assert.deepEqual(judgeClearance.overlapping, []);
+  assert.deepEqual(judgeClearance.covered, []);
+  assert.ok(
+    judgeClearance.verticalOverlap <= 0,
+    `the floating judge must not intersect the status bar: ${JSON.stringify(judgeClearance)}`,
+  );
   assert.ok(
     judgeClearance.judgeBottom <= judgeClearance.statusTop,
     `the floating judge must stop above the status bar: ${JSON.stringify(judgeClearance)}`,
   );
   mark("the floating judge clears the status bar");
+
+  // Three 10px labels were unreadable: Patchouli's STYLE counter measured
+  // 1.01:1 in light (a signal-amber, chosen as a fill colour, used as ink on
+  // the light window face), her WARN counter 4.23:1 in light and 3.22:1 in
+  // dark, and the selected table's row-count badge 1.70:1 in dark (a panel
+  // tint painted on the selection fill). Compose the painted colours rather
+  // than comparing token strings: a token is only wrong because of the surface
+  // it lands on, and that surface may itself be translucent or inherited.
+  const contrast = (selector) =>
+    page.evaluate((selector) => {
+      const node = document.querySelector(selector);
+      if (!node) throw Error(`no node to measure: ${selector}`);
+      const parse = (value) => {
+        const [r, g, b, a = 1] = value.match(/[\d.]+/g).map(Number);
+        return { r, g, b, a };
+      };
+      const over = (top, under) => ({
+        r: top.r * top.a + under.r * (1 - top.a),
+        g: top.g * top.a + under.g * (1 - top.a),
+        b: top.b * top.a + under.b * (1 - top.a),
+        a: 1,
+      });
+      const layers = [];
+      for (let element = node; element; element = element.parentElement) {
+        const fill = parse(getComputedStyle(element).backgroundColor);
+        if (fill.a > 0) layers.push(fill);
+        if (fill.a === 1) break;
+      }
+      let paper = { r: 255, g: 255, b: 255, a: 1 };
+      for (const layer of layers.reverse()) paper = over(layer, paper);
+      const luminance = (colour) => {
+        const channel = (value) => {
+          const v = value / 255;
+          return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+        };
+        return (
+          0.2126 * channel(colour.r) +
+          0.7152 * channel(colour.g) +
+          0.0722 * channel(colour.b)
+        );
+      };
+      const ink = luminance(over(parse(getComputedStyle(node).color), paper));
+      const ground = luminance(paper);
+      const [light, dark] = [Math.max(ink, ground), Math.min(ink, ground)];
+      return Math.round(((light + 0.05) / (dark + 0.05)) * 100) / 100;
+    }, selector);
+  const themeChoice = page.getByRole("combobox", { name: /^Theme/ });
+  await menu("Tools", "Settings");
+  await visible("dialog");
+  const chosenTheme = await themeChoice.inputValue();
+  await close();
+  const contrasts = {};
+  for (const theme of ["light", "dark"]) {
+    await menu("Tools", "Settings");
+    await visible("dialog");
+    await themeChoice.selectOption(theme);
+    // The palette is keyed on this attribute, so the repaint and the attribute
+    // land in the same style recalculation.
+    await page.waitForFunction(
+      (theme) => document.documentElement.dataset.theme === theme,
+      theme,
+    );
+    await close();
+    contrasts[theme] = {};
+    for (const [label, selector] of [
+      ["Patchouli’s STYLE counter", "#judge-window .style-count"],
+      ["Patchouli’s WARN counter", "#judge-window .warning"],
+      ["the selected table's row count", ".tree-row.selected .count"],
+    ]) {
+      const ratio = await contrast(selector);
+      contrasts[theme][selector] = ratio;
+      assert.ok(
+        ratio >= 4.5,
+        `${label} must reach 4.5:1 in the ${theme} theme, measured ${ratio}:1 (${selector})`,
+      );
+    }
+  }
+  await menu("Tools", "Settings");
+  await visible("dialog");
+  await themeChoice.selectOption(chosenTheme);
+  await close();
+  mark(
+    `status inks reach WCAG AA in both themes: ${JSON.stringify(contrasts)}`,
+  );
 
   await page
     .getByRole("button", { name: "Hide Patchouli", exact: true })

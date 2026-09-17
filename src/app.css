@@ -1,8 +1,10 @@
-/* Palette. Light values are the ones this application shipped with, so the
-   light theme is unchanged by tokenization; the dark theme is a second set of
-   values for the same roles. Roles, not shades: a bevel highlight and a field
-   background are both #fff in light and must diverge in dark, so they are
-   separate tokens. */
+/* Palette. Light values are the ones this application shipped with, except the
+   two status inks measured below AA against their own surfaces; the dark theme
+   is a second set of values for the same roles. Roles, not shades: a bevel
+   highlight and a field background are both #fff in light and must diverge in
+   dark, so they are separate tokens. Every token here is consumed: a role with
+   no call site is a shade nobody asked for, so it is deleted rather than kept
+   "for symmetry". */
 :root {
   color-scheme: light;
   --face: #d4d0c8;
@@ -31,9 +33,9 @@
   --accent: #0a246a;
   --accent-ink: #fff;
   --accent-text: #0a246a;
-  --accent-soft: #e9efff;
-  /* Legible on --accent in both themes: --accent-soft is a dark tint in the
-     dark palette and vanishes against the accent fill. */
+  /* The only soft accent role is ink that has to stay legible on an --accent
+     fill — a selected tree row's count, a selected diagram node's key line.
+     Measured 10.0:1 in light and 5.3:1 in dark. */
   --accent-ink-soft: #cfd8f0;
   --accent-tint: #a6caf0;
   --accent-wash: #e8edf7;
@@ -49,11 +51,15 @@
   --scroll-track: #dfdfdf;
   --veil: #0005;
   --veil-strong: #0008;
-  --danger: #a33;
+  /* --danger and --caution are text roles in light (diagnostic severities and
+     Patchouli's WARN/STYLE counters, 10px bold). #a33 measured 4.23:1 and
+     #f7cb26 measured 1.01:1 on the --face they sit on, so both take the
+     palette's dark ink: 7.1:1 and 5.4:1. */
+  --danger: #800000;
   --danger-bg: #fbe1df;
   --danger-edge: #bf6b64;
   --danger-ink: #801c17;
-  --caution: #f7cb26;
+  --caution: #704500;
   --caution-bg: #fff5c2;
   --caution-edge: #b0a047;
   --caution-ink: #704500;
@@ -122,7 +128,6 @@
   --accent: #2f4f9e;
   --accent-ink: #fff;
   --accent-text: #9db8ff;
-  --accent-soft: #24304d;
   --accent-ink-soft: #c9d6f5;
   --accent-tint: #3d5a86;
   --accent-wash: #262f3d;
@@ -138,7 +143,9 @@
   --scroll-track: #2a2a28;
   --veil: #0008;
   --veil-strong: #000b;
-  --danger: #d06a6a;
+  /* #d06a6a measured 3.22:1 on the dark --face, so the WARN counter failed AA
+     in this theme too, just above the 3:1 the audit looked for. 5.2:1 now. */
+  --danger: #e89b95;
   --danger-bg: #3a2220;
   --danger-edge: #8c4a45;
   --danger-ink: #f2b3ae;
@@ -851,8 +858,11 @@ small,
   background: var(--accent);
   color: var(--accent-ink);
 }
+/* The row's fill is --accent here, not the panel, so the count needs the ink
+   role rather than the panel-tinted one: --accent-soft is a dark navy tint in
+   the dark palette and measured 1.7:1 against the selection bar. */
 .tree-row.selected .count {
-  color: var(--accent-soft);
+  color: var(--accent-ink-soft);
 }
 .tree-row img {
   flex-shrink: 0;
@@ -1459,8 +1469,13 @@ small,
   right: 312px;
   /* 44px cleared the 32px taskbar but not the application window's own status
      bar, so the floating window's action row — Show style notes, Hush — sat on
-     top of the engine readout at every window size. The status bar is 23px and
-     the window frame below it is 5px. */
+     top of the engine readout at every window size. The stack below the status
+     bar's top edge is the desktop's 46px bottom padding, the workbench's 2px
+     padding, the 23px bar itself and its 1px frame, so the bar's top sits
+     exactly 72px above the viewport bottom and this offset lands the window
+     flush on it. Measured 640px–2560px wide: bottom == the bar's top, never
+     below. Anything that changes .desktop's bottom padding or the bar's height
+     has to move this number too; controls-smoke asserts the invariant. */
   bottom: calc(44px + 28px);
   width: calc(360px * var(--judge-zoom, 1));
   z-index: 5;

@@ -1,0 +1,1881 @@
+{
+  "suite": "shape-smoke",
+  "appURL": "http://127.0.0.1:5176/",
+  "startedAt": "2026-09-17T04:10:38.610Z",
+  "finishedAt": "2026-09-17T04:11:14.718Z",
+  "status": "failed",
+  "checks": [
+    {
+      "name": "every curriculum challenge resolves to a published definition",
+      "outcome": "pass",
+      "wallMs": 0.33080999999992855,
+      "details": {
+        "challenges": [
+          "basics.01",
+          "basics.02",
+          "basics.03",
+          "basics.04",
+          "basics.05",
+          "agg.01",
+          "agg.02",
+          "agg.03",
+          "agg.04",
+          "agg.05",
+          "joins.01",
+          "joins.02",
+          "joins.03",
+          "joins.04",
+          "joins.05",
+          "sub.01",
+          "sub.02",
+          "sub.03",
+          "sub.04",
+          "sub.05",
+          "sets.01",
+          "sets.02",
+          "sets.03",
+          "sets.04",
+          "sets.05",
+          "cte.01",
+          "cte.02",
+          "cte.03",
+          "cte.04",
+          "cte.05",
+          "window.01",
+          "window.02",
+          "window.03",
+          "window.04",
+          "window.05",
+          "dates.01",
+          "dates.02",
+          "dates.03",
+          "dates.04",
+          "dates.05",
+          "rec.01",
+          "rec.02",
+          "rec.03",
+          "rec.04",
+          "rec.05",
+          "pivot.01",
+          "pivot.02",
+          "pivot.03",
+          "pivot.04",
+          "pivot.05",
+          "plan.01",
+          "plan.02",
+          "plan.03",
+          "plan.04",
+          "plan.05",
+          "clean.01",
+          "clean.02",
+          "clean.03",
+          "clean.04",
+          "clean.05",
+          "reconcile.01",
+          "reconcile.02",
+          "reconcile.03",
+          "reconcile.04",
+          "reconcile.05"
+        ],
+        "datasets": [
+          "commerce-practice",
+          "workshop",
+          "commerce-ranking",
+          "graphs",
+          "index-lab",
+          "reconciliation"
+        ],
+        "offConvention": [
+          {
+            "challengeId": "window.03",
+            "path": "/bundle/challenge-07.json"
+          }
+        ]
+      }
+    },
+    {
+      "name": "basics.01 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 2933.7076079999997,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 502,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "customer_name",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "basics.02 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 510.6293260000002,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 1186,
+        "columns": [
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "basics.03 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 545.715999,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 502,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "email_state",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "basics.04 declares the shape its reference returns in commerce-practice",
+      "outcome": "fail",
+      "wallMs": 525.4005390000002,
+      "error": "AssertionError [ERR_ASSERTION]: basics.04 declares a shape the engine does not return\n+ actual - expected\n\n  [\n    {\n      name: 'product_id',\n      type: 'BIGINT'\n    },\n    {\n      name: 'unit_price',\n+     precision: 38,\n-     precision: 18,\n      scale: 2,\n+     type: 'DECIMAL(38,2)'\n-     type: 'DECIMAL(18,2)'\n    }\n  ]\n"
+    },
+    {
+      "name": "basics.05 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 507.7728269999998,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 8505,
+        "columns": [
+          {
+            "name": "order_item_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "quantity_band",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "agg.01 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 520.9969719999999,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 1186,
+        "columns": [
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "gross_revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "agg.02 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 482.26572899999974,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 1,
+        "columns": [
+          {
+            "name": "customer_count",
+            "type": "BIGINT"
+          },
+          {
+            "name": "populated_email_count",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "agg.03 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 497.0159730000005,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 468,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "category_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "agg.04 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 564.2501419999999,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 2003,
+        "columns": [
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "gross_revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          },
+          {
+            "name": "paid_amount",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "agg.05 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 588.8647519999995,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 458,
+        "columns": [
+          {
+            "name": "email",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "is_total",
+            "type": "BIGINT"
+          },
+          {
+            "name": "customer_count",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "joins.01 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 490.42617599999903,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 5037,
+        "columns": [
+          {
+            "name": "order_item_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "category_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "category_name",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "line_revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "joins.02 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 487.8196480000006,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 502,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "order_count",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "joins.03 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 570.774089999999,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 502,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "paid_order_count",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "joins.04 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 542.9275030000008,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 502,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "cohort",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "joins.05 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 514.9401960000014,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 2003,
+        "columns": [
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "ordered_qty",
+            "type": "BIGINT"
+          },
+          {
+            "name": "refunded_qty",
+            "type": "BIGINT"
+          },
+          {
+            "name": "paid_amount",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          },
+          {
+            "name": "refund_amount",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "sub.01 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 512.0574279999983,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 121,
+        "columns": [
+          {
+            "name": "product_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "unit_price",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "sub.02 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 508.06921899999907,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 350,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "sub.04 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 569.6936129999995,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 121,
+        "columns": [
+          {
+            "name": "product_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "category_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "unit_price",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "sub.05 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 515.1437860000005,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 2003,
+        "columns": [
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "latest_payment_status",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "cte.01 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 541.365686000001,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 1,
+        "columns": [
+          {
+            "name": "order_count",
+            "type": "BIGINT"
+          },
+          {
+            "name": "customer_count",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "cte.02 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 487.9403089999996,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 12,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "cte.03 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 546.6176329999998,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 468,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "category_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          },
+          {
+            "name": "rnk",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "cte.04 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 492.55088799999976,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 12,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "cte.05 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 552.9379509999981,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 502,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "paid_order_count",
+            "type": "BIGINT"
+          },
+          {
+            "name": "gross_revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          },
+          {
+            "name": "refund_amount",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          },
+          {
+            "name": "cohort",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "window.01 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 563.1567670000004,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 39,
+        "columns": [
+          {
+            "name": "category_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          },
+          {
+            "name": "rnk",
+            "type": "BIGINT"
+          },
+          {
+            "name": "dense_rnk",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "window.02 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 475.3813059999993,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 501,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "window.04 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 481.8635240000003,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 12,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          },
+          {
+            "name": "previous_revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          },
+          {
+            "name": "change",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "dates.01 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 610.6358760000003,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 2003,
+        "columns": [
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "in_reporting_year",
+            "type": "BOOLEAN"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "dates.02 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 475.7061960000028,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 12,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "paid_order_count",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "dates.03 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 475.8812480000015,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 12,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "paid_order_count",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "dates.04 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 479.3364350000011,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 2003,
+        "columns": [
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "fiscal_year",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "dates.05 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 603.9588700000022,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 2002,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "start_date",
+            "type": "DATE"
+          },
+          {
+            "name": "end_date",
+            "type": "DATE"
+          },
+          {
+            "name": "active_days",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "rec.01 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 475.5683480000007,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 48,
+        "columns": [
+          {
+            "name": "root_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "category_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "depth",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "rec.02 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 530.8864419999991,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 40,
+        "columns": [
+          {
+            "name": "leaf_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "path",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "pivot.01 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 494.1485700000012,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 5,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "damaged",
+            "type": "BIGINT"
+          },
+          {
+            "name": "wrong_item",
+            "type": "BIGINT"
+          },
+          {
+            "name": "unwanted",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "pivot.02 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 549.8604840000007,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 5,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "damaged",
+            "type": "BIGINT"
+          },
+          {
+            "name": "wrong_item",
+            "type": "BIGINT"
+          },
+          {
+            "name": "unwanted",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "pivot.03 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 492.4258809999992,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 12,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "damaged",
+            "type": "BIGINT"
+          },
+          {
+            "name": "wrong_item",
+            "type": "BIGINT"
+          },
+          {
+            "name": "unwanted",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "plan.01 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 497.8939390000014,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 502,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "order_count",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "plan.02 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 552.4591440000004,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 1186,
+        "columns": [
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "plan.03 declares the shape its reference returns in commerce-practice",
+      "outcome": "pass",
+      "wallMs": 550.2261049999979,
+      "details": {
+        "datasetId": "commerce-practice",
+        "rows": 2003,
+        "columns": [
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "gross_revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          },
+          {
+            "name": "paid_amount",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "sub.03 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 560.6660010000014,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 3,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "sets.01 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 428.1944799999983,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 5,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "sets.02 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 426.96080999999685,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 11,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "sets.03 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 370.8027860000002,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 2,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "sets.04 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 378.4630029999971,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 2,
+        "columns": [
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "sets.05 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 424.7287619999988,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 5,
+        "columns": [
+          {
+            "name": "side",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "customer_id",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "window.05 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 422.50391300000047,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 3,
+        "columns": [
+          {
+            "name": "event_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "rows_total",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          },
+          {
+            "name": "range_total",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "pivot.04 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 374.1045349999986,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 9,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "reason",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "qty",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "pivot.05 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 378.44181299999764,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 3,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "reason",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "qty",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "clean.01 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 367.1420279999984,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 6,
+        "columns": [
+          {
+            "name": "contact_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "normalized_name",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "clean.02 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 425.081302999999,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 6,
+        "columns": [
+          {
+            "name": "contact_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "email_state",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "email_value",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "clean.03 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 368.5147369999977,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 6,
+        "columns": [
+          {
+            "name": "contact_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "postal_code",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "rejected_value",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "clean.04 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 418.6468359999999,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 5,
+        "columns": [
+          {
+            "name": "contact_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "tag",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "clean.05 declares the shape its reference returns in workshop",
+      "outcome": "pass",
+      "wallMs": 375.249574999998,
+      "details": {
+        "datasetId": "workshop",
+        "rows": 6,
+        "columns": [
+          {
+            "name": "contact_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "parsed_date",
+            "type": "DATE"
+          },
+          {
+            "name": "parse_state",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "rejected_value",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "variant"
+        ]
+      }
+    },
+    {
+      "name": "window.03 declares the shape its reference returns in commerce-ranking",
+      "outcome": "pass",
+      "wallMs": 881.1088320000017,
+      "details": {
+        "datasetId": "commerce-ranking",
+        "rows": 36,
+        "columns": [
+          {
+            "name": "mon",
+            "type": "DATE"
+          },
+          {
+            "name": "category_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "c_name",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "revenue",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          },
+          {
+            "name": "rnk",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary-v1",
+          "small-v1"
+        ]
+      }
+    },
+    {
+      "name": "rec.03 declares the shape its reference returns in graphs",
+      "outcome": "pass",
+      "wallMs": 677.0743230000007,
+      "details": {
+        "datasetId": "graphs",
+        "rows": 4,
+        "columns": [
+          {
+            "name": "node_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "path",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "weighted"
+        ]
+      }
+    },
+    {
+      "name": "rec.04 declares the shape its reference returns in graphs",
+      "outcome": "pass",
+      "wallMs": 383.1036920000006,
+      "details": {
+        "datasetId": "graphs",
+        "rows": 8,
+        "columns": [
+          {
+            "name": "destination_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "path",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "hops",
+            "type": "BIGINT"
+          },
+          {
+            "name": "total_minutes",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "weighted"
+        ]
+      }
+    },
+    {
+      "name": "rec.05 declares the shape its reference returns in graphs",
+      "outcome": "pass",
+      "wallMs": 437.9179679999979,
+      "details": {
+        "datasetId": "graphs",
+        "rows": 2,
+        "columns": [
+          {
+            "name": "path",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "total_minutes",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary",
+          "weighted"
+        ]
+      }
+    },
+    {
+      "name": "plan.04 declares the shape its reference returns in index-lab",
+      "outcome": "pass",
+      "wallMs": 703.3422320000027,
+      "details": {
+        "datasetId": "index-lab",
+        "rows": 100,
+        "columns": [
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "amount",
+            "type": "DECIMAL(38,2)",
+            "precision": 38,
+            "scale": 2
+          }
+        ],
+        "expectations": [
+          "boundary"
+        ]
+      }
+    },
+    {
+      "name": "plan.05 declares the shape its reference returns in index-lab",
+      "outcome": "pass",
+      "wallMs": 400.90029499999946,
+      "details": {
+        "datasetId": "index-lab",
+        "rows": 100,
+        "columns": [
+          {
+            "name": "order_id",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary"
+        ]
+      }
+    },
+    {
+      "name": "reconcile.01 declares the shape its reference returns in reconciliation",
+      "outcome": "pass",
+      "wallMs": 640.7788589999982,
+      "details": {
+        "datasetId": "reconciliation",
+        "rows": 32,
+        "columns": [
+          {
+            "name": "ref_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "partner_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "normalized_category",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "parsed_date",
+            "type": "DATE"
+          },
+          {
+            "name": "normalized_description",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary-v1",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "reconcile.02 declares the shape its reference returns in reconciliation",
+      "outcome": "pass",
+      "wallMs": 440.09444800000347,
+      "details": {
+        "datasetId": "reconciliation",
+        "rows": 32,
+        "columns": [
+          {
+            "name": "ref_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "partner_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "text_points",
+            "type": "BIGINT"
+          },
+          {
+            "name": "date_points",
+            "type": "BIGINT"
+          },
+          {
+            "name": "quantity_points",
+            "type": "BIGINT"
+          },
+          {
+            "name": "category_points",
+            "type": "BIGINT"
+          },
+          {
+            "name": "word_points",
+            "type": "BIGINT"
+          },
+          {
+            "name": "score",
+            "type": "BIGINT"
+          },
+          {
+            "name": "rnk",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary-v1",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "reconcile.03 declares the shape its reference returns in reconciliation",
+      "outcome": "pass",
+      "wallMs": 384.8182719999968,
+      "details": {
+        "datasetId": "reconciliation",
+        "rows": 38,
+        "columns": [
+          {
+            "name": "group_key",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "ref_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "partner_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "score",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary-v1",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "reconcile.04 declares the shape its reference returns in reconciliation",
+      "outcome": "pass",
+      "wallMs": 412.8883099999948,
+      "details": {
+        "datasetId": "reconciliation",
+        "rows": 16,
+        "columns": [
+          {
+            "name": "ref_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "group_key",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "confidence",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "score",
+            "type": "BIGINT"
+          },
+          {
+            "name": "margin",
+            "type": "BIGINT"
+          }
+        ],
+        "expectations": [
+          "boundary-v1",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "reconcile.05 declares the shape its reference returns in reconciliation",
+      "outcome": "pass",
+      "wallMs": 464.36215799999627,
+      "details": {
+        "datasetId": "reconciliation",
+        "rows": 16,
+        "columns": [
+          {
+            "name": "ref_id",
+            "type": "BIGINT"
+          },
+          {
+            "name": "partner_ids",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "confidence",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "score",
+            "type": "DECIMAL(5,4)",
+            "precision": 5,
+            "scale": 4
+          },
+          {
+            "name": "explanation",
+            "type": "VARCHAR"
+          }
+        ],
+        "expectations": [
+          "boundary-v1",
+          "seed-20240907",
+          "seed-20240908"
+        ]
+      }
+    },
+    {
+      "name": "every published output contract matches engine truth",
+      "outcome": "fail",
+      "wallMs": 0.15805999999429332,
+      "error": "AssertionError [ERR_ASSERTION]: 1 challenge(s) declare a shape the engine does not return: basics.04"
+    }
+  ],
+  "errors": [
+    {
+      "message": "AssertionError [ERR_ASSERTION]: 1 challenge(s) declare a shape the engine does not return: basics.04",
+      "stack": "AssertionError [ERR_ASSERTION]: 1 challenge(s) declare a shape the engine does not return: basics.04\n    at file:///mnt/data/Code/sql-grind/scripts/shape-smoke.mjs:316:12\n    at check (file:///mnt/data/Code/sql-grind/scripts/shape-smoke.mjs:53:27)\n    at file:///mnt/data/Code/sql-grind/scripts/shape-smoke.mjs:315:9"
+    }
+  ],
+  "browserErrors": [],
+  "blockedRequests": []
+}

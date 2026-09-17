@@ -8,7 +8,7 @@
   "title": "Literal email states",
   "brief": "Absent, blank and present are three different states. A record lies once you flatten them into two.",
   "instructions": [
-    "Report literal NULL as missing, a literal empty string as empty, and every other input as value. Do not trim anything.",
+    "Report literal NULL as 'missing', a literal empty string as 'empty', and every other input as 'value'. Emit those three lowercase literals exactly as quoted. Do not trim anything.",
     "Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed."
   ],
   "datasetId": "commerce-practice",

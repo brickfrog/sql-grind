@@ -12,6 +12,7 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { connect } from "node:net";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 
 const PORT = 4173;
@@ -19,6 +20,12 @@ const origin = `http://127.0.0.1:${PORT}`;
 const ENGINE_READY = 180_000;
 const CREDITS = resolve("dist/icon-credits.txt");
 const FOREIGN_CACHE = "sql-grind-assets-foreign-version";
+const ASSETS_FILE = "dist/bundle/assets.json";
+// Byte-exact originals for the content-only deploy check, restored in finally:
+// a failed run must never leave dist's hash chain describing bytes it does not
+// ship, since deployment-smoke and the served site read the same build.
+const CHALLENGE_FILE = "dist/bundle/challenges/basics.02/challenge.json";
+const CHALLENGE_PATH = "/bundle/challenges/basics.02/challenge.json";
 const checks = [];
 const evidence = {
   date: new Date().toISOString(),
@@ -84,6 +91,8 @@ const configurationHash = String(manifest.configurationHash).slice(0, 16);
 evidence.deployedVersion = `${manifest.bundleVersion}-${configurationHash}`;
 evidence.engineAndExtensionBytes = manifest.engineAndExtensionBytes;
 const creditsOriginal = await readFile(CREDITS, "utf8");
+const challengeOriginal = await readFile(CHALLENGE_FILE, "utf8");
+const assetsOriginal = await readFile(ASSETS_FILE, "utf8");
 
 const server = spawn("node", ["scripts/serve.mjs"], {
   stdio: ["ignore", "pipe", "pipe"],
@@ -180,6 +189,21 @@ try {
       }
       return out;
     }, paths);
+  // Total bytes held by one named cache: what a deploy actually costs the user
+  // to refill, as opposed to which cache names exist.
+  const cacheBytes = (name) =>
+    page.evaluate(async (target) => {
+      if (!(await caches.keys()).includes(target)) return -1;
+      const cache = await caches.open(target);
+      let bytes = 0;
+      for (const request of await cache.keys()) {
+        const hit = await cache.match(request);
+        if (!hit) continue;
+        bytes +=
+          Number(hit.headers.get("content-length")) || (await hit.blob()).size;
+      }
+      return bytes;
+    }, name);
 
   const coldStarted = Date.now();
   await page.goto(origin);
@@ -604,6 +628,215 @@ try {
     "A new deployed version swaps both caches on an already-controlled profile and purges the old ones",
     upgrade,
   );
+
+  // The case that actually shipped. A content-only deploy — a reworded
+  // challenge, a corrected declared type — leaves bundleVersion and
+  // configurationHash untouched, so caches named after them keep their names
+  // across it. bundle/assets.json is network-first and comes back fresh, so the
+  // app verified a new index against a superseded challenge.json and failed its
+  // own integrity check permanently: "Retry content" refetched the same stale
+  // bytes. The check above cannot catch this, because it bumps bundleVersion.
+  //
+  // Built on top of the upgrade-test manifest on purpose: the deploy version
+  // the profile already holds stays fixed, and only content moves.
+  const fetchChallenge = () =>
+    page.evaluate(
+      (path) =>
+        fetch(new URL(path.slice(1), document.baseURI).href, {
+          credentials: "same-origin",
+        }).then((response) => response.text()),
+      CHALLENGE_PATH,
+    );
+  // Primed first, because that is the production sequence: the profile that
+  // broke had already cached this challenge, and a cache with no copy of the
+  // file cannot serve a superseded one. Without this the check would pass
+  // against the very bug it exists to catch.
+  const primed = await fetchChallenge();
+  assert.doesNotMatch(
+    primed,
+    /Reworded by sw-smoke\./,
+    "the challenge already carried the marker before the deploy",
+  );
+  const cachedBefore = await page.evaluate(
+    (path) =>
+      caches
+        .match(new URL(path.slice(1), document.baseURI).href)
+        .then((hit) => !!hit),
+    CHALLENGE_PATH,
+  );
+  assert.ok(
+    cachedBefore,
+    "priming did not durably cache the challenge, so staleness cannot be observed",
+  );
+  const content = { before: Object.keys(await cacheState()), cachedBefore };
+  const reworded = challengeOriginal.replace(
+    /"starterExplanation": "([^"]*)"/,
+    (_, text) => `"starterExplanation": "${text} Reworded by sw-smoke."`,
+  );
+  assert.notEqual(
+    reworded,
+    challengeOriginal,
+    "the content-only deploy rewrote nothing, so it proves nothing",
+  );
+  await writeFile(CHALLENGE_FILE, reworded);
+  // A real deploy reindexes. assets.json is the index the app verifies a
+  // fetched bundle file against, and the only index that names shipped /bundle/
+  // URLs at all — manifest.json lists the engine payload plus the authored
+  // sources under ../../readiness/, which is why the worker's content digest
+  // reads assets.json and why this check rewrites both by their own key.
+  const rewordedBytes = Buffer.byteLength(reworded);
+  const rewordedHash = createHash("sha256").update(reworded).digest("hex");
+  const assetsIndex = JSON.parse(assetsOriginal);
+  const assetEntry = assetsIndex.files.find(
+    (file) => file.path === CHALLENGE_PATH,
+  );
+  assert.ok(assetEntry, `assets.json does not list ${CHALLENGE_PATH}`);
+  assetEntry.sha256 = rewordedHash;
+  assetEntry.bytes = rewordedBytes;
+  await writeFile(ASSETS_FILE, `${JSON.stringify(assetsIndex, null, 2)}\n`);
+  const SOURCE_PATH = "../../readiness/challenges/basics.02/challenge.json";
+  const sourceEntry = redeployed.files.find(
+    (file) => file.path === SOURCE_PATH,
+  );
+  assert.ok(sourceEntry, `manifest.json does not list ${SOURCE_PATH}`);
+  await writeFile(
+    MANIFEST_FILE,
+    `${JSON.stringify(
+      {
+        ...redeployed,
+        files: redeployed.files.map((file) =>
+          file.path === SOURCE_PATH
+            ? { ...file, bytes: rewordedBytes, sha256: rewordedHash }
+            : file,
+        ),
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  await setCheckedAt(0);
+  await page.reload();
+  await requireReady(page, "reload after a content-only deploy");
+  const served = await fetchChallenge();
+  assert.match(
+    served,
+    /Reworded by sw-smoke\./,
+    "a content-only deploy served the superseded challenge against a fresh index",
+  );
+  content.after = await cacheState();
+  const bundleCaches = Object.keys(content.after).filter((name) =>
+    name.startsWith("sql-grind-bundle-"),
+  );
+  assert.equal(
+    bundleCaches.length,
+    1,
+    `exactly one bundle cache must survive a content deploy: ${bundleCaches}`,
+  );
+  // A digest of "none" would mean the worker found no bundle content to key
+  // on and every deploy shares one cache name: the original defect.
+  assert.match(
+    bundleCaches[0],
+    /^sql-grind-bundle-[0-9a-f]{16}$/,
+    "the bundle cache is not keyed by a real content digest",
+  );
+  assert.equal(
+    content.before.filter((name) => name.startsWith("sql-grind-bundle-"))
+      .length,
+    1,
+    "the profile did not hold a bundle cache before the content deploy",
+  );
+  assert.notDeepEqual(
+    bundleCaches,
+    content.before.filter((name) => name.startsWith("sql-grind-bundle-")),
+    "the bundle cache kept its name across a content change",
+  );
+  // The engine must NOT move: renaming one cache for both would make a
+  // one-word copy fix re-download 47 MB.
+  const engineCache = `sql-grind-assets-${upgradedVersion}`;
+  assert.ok(
+    content.after[engineCache] > 0,
+    `the engine cache ${engineCache} was dropped by a content-only deploy`,
+  );
+  content.engineBytes = await cacheBytes(engineCache);
+  assert.ok(
+    content.engineBytes > 40_000_000,
+    `the engine payload did not survive the content deploy: ${content.engineBytes} bytes`,
+  );
+  content.bundleBytes = await cacheBytes(bundleCaches[0]);
+  assert.ok(
+    content.bundleBytes < 5_000_000,
+    `a content-only deploy refilled ${content.bundleBytes} bytes; it must cost kilobytes, not the engine`,
+  );
+  assert.ok(
+    (await runQuery(page)) > 1,
+    "the profile runs a query after a content-only deploy",
+  );
+  // A profile poisoned by the shipped bug holds its stale /bundle/ copy in the
+  // engine cache, which no deploy renames. Planted here the same way the
+  // foreign-purge check plants a cache entry, because the sequence that
+  // produced it cannot be replayed once the worker is fixed.
+  const legacy = { planted: `sql-grind-assets-${upgradedVersion}` };
+  legacy.entries = await page.evaluate(
+    async ([name, path]) => {
+      const cache = await caches.open(name);
+      const href = new URL(path.slice(1), document.baseURI).href;
+      await cache.put(href, new Response('{"stale":"POISONED-LEGACY-COPY"}'));
+      return (await cache.keys()).filter((request) =>
+        request.url.includes("/bundle/"),
+      ).length;
+    },
+    [legacy.planted, CHALLENGE_PATH],
+  );
+  assert.ok(legacy.entries > 0, "the legacy bundle entry was not planted");
+  // The stranded profile meets a NEW worker: sw.js changed bytes, so it
+  // installs and activates, and the migration runs once per worker start-up
+  // rather than on every navigation. Unregistering reproduces that without
+  // pretending a running worker re-scans its caches forever. Cache Storage is
+  // origin-scoped, so the poisoned entry survives the unregister exactly as it
+  // survives a deploy.
+  await page.evaluate(async () => {
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (registration) await registration.unregister();
+  });
+  await page.reload();
+  await requireReady(page, "reload with a poisoned legacy cache");
+  await page.waitForFunction(() => !!navigator.serviceWorker.controller, null, {
+    timeout: 60_000,
+  });
+  legacy.reclaimed = true;
+  legacy.served = await fetchChallenge();
+  assert.doesNotMatch(
+    legacy.served,
+    /POISONED-LEGACY-COPY/,
+    "a poisoned profile kept serving the stranded copy after the fix",
+  );
+  assert.match(
+    legacy.served,
+    /Reworded by sw-smoke\./,
+    "the recovered profile did not serve the deployed content",
+  );
+  legacy.remaining = await page.evaluate(async (name) => {
+    if (!(await caches.keys()).includes(name)) return -1;
+    const cache = await caches.open(name);
+    return (await cache.keys()).filter((request) =>
+      request.url.includes("/bundle/"),
+    ).length;
+  }, legacy.planted);
+  assert.equal(
+    legacy.remaining,
+    0,
+    "stranded bundle copies were left in the engine cache as dead weight",
+  );
+  evidence.legacyRecovery = legacy;
+  mark(
+    "A profile stranded by the old single-cache layout recovers without a manual purge",
+    legacy,
+  );
+  evidence.contentDeploy = content;
+  mark(
+    "A content-only deploy renames the bundle cache, keeps the engine, and serves the new content",
+    content,
+  );
   evidence.status = "passed";
 } catch (error) {
   evidence.status = "failed";
@@ -614,6 +847,8 @@ try {
   // A failed run must not leave dist advertising the upgrade test's version,
   // since deployment-smoke reads the same build.
   await writeFile(MANIFEST_FILE, manifestText).catch(() => {});
+  await writeFile(CHALLENGE_FILE, challengeOriginal).catch(() => {});
+  await writeFile(ASSETS_FILE, assetsOriginal).catch(() => {});
   await context.close().catch(() => {});
   await browser.close().catch(() => {});
   server.kill("SIGTERM");

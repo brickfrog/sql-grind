@@ -166,6 +166,7 @@ APP_URL=http://127.0.0.1:5173 node scripts/zoom-smoke.mjs
 APP_URL=http://127.0.0.1:5173 node scripts/ui-recovery-smoke.mjs
 APP_URL=http://127.0.0.1:5173 node scripts/catalog-loading-smoke.mjs
 APP_URL=http://127.0.0.1:5173 node scripts/kata-smoke.mjs
+APP_URL=http://127.0.0.1:5173 node scripts/shape-smoke.mjs
 ```
 
 With the built application served on port 4173, also run:
@@ -217,6 +218,7 @@ Post-cutover evidence:
 - [Served asset integrity](readiness/evidence/application/production-assets.json)
 - [Storage and backup cases](readiness/evidence/application/storage-smoke.json)
 - [Kata drill references, schedule, and isolation](readiness/evidence/application/kata-smoke.json)
+- [Declared output shape against engine truth](readiness/evidence/application/shape-smoke.json)
 - [Desktop workflow checks](readiness/evidence/application/workflows-smoke.json)
 - [Recovery and cross-tab conflicts](readiness/evidence/application/ui-recovery-smoke.json)
 - [Deployment headers, ranges, and offline runtime](readiness/evidence/application/deployment-smoke.json)

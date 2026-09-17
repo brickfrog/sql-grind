@@ -1,9 +1,10 @@
 {
-  "date": "2026-09-17T01:03:49.417Z",
+  "date": "2026-09-17T04:11:43.253Z",
   "browser": "153.0.8010.12",
   "checks": [
     "the Database control is disabled while a challenge document is open",
     "the floating judge clears the status bar",
+    "status inks reach WCAG AA in both themes: {\"light\":{\"#judge-window .style-count\":5.38,\"#judge-window .warning\":7.12,\".tree-row.selected .count\":10},\"dark\":{\"#judge-window .style-count\":5.94,\"#judge-window .warning\":5.17,\".tree-row.selected .count\":5.28}}",
     "File New/Save/Save As preserve distinct documents",
     "Editor names follow Save As; Save shortcut remains scoped to the IDE",
     "Edit clipboard, undo/redo, find/replace text, and Go to Line",

@@ -65,7 +65,7 @@
           "challengeId": "basics.04",
           "path": "/bundle/challenges/basics.04/challenge.json",
           "title": "Repeatable top five",
-          "brief": "A shortlist that names the same five rows every time you ask for it, ties included.",
+          "brief": "A shortlist that names the same five rows every time you ask for it, with equal prices settled the same way.",
           "displayNumber": "basics.04",
           "identity": {
             "challengeId": "basics.04",

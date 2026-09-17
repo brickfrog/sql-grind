@@ -8,7 +8,7 @@
   "title": "Quantity boundaries",
   "brief": "Bands that cover every quantity once: no gaps to fall through, no overlaps to argue about.",
   "instructions": [
-    "Classify 1 to 9 as small, 10 to 99 as medium, and 100 to 1000 as large. Return every item.",
+    "Classify 1 to 9 as 'small', 10 to 99 as 'medium', and 100 to 1000 as 'large'. Emit those lowercase literals exactly as quoted. Return every item.",
     "Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed."
   ],
   "datasetId": "commerce-practice",

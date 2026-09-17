@@ -13,6 +13,9 @@ let brokenAsset = true;
 // faults: the first is content, the second is the SQL runtime. The banner has
 // to name the right one, so each is injectable on its own.
 let brokenEngine = false;
+// A single unreadable challenge is a third, narrower fault: the curriculum and
+// the engine are both fine, so only that challenge may be lost.
+let brokenChallenge = "";
 await context.route("**/*", async (route) => {
   const url = new URL(route.request().url());
   if (url.origin !== origin) return route.abort();
@@ -21,6 +24,15 @@ await context.route("**/*", async (route) => {
       status: 200,
       contentType: "text/plain",
       body: "-- INJECTED corrupt local asset",
+    });
+  if (
+    brokenChallenge &&
+    url.pathname === `/bundle/challenges/${brokenChallenge}/challenge.json`
+  )
+    return route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: '{"INJECTED":"corrupt challenge"}',
     });
   if (brokenEngine && /duckdb-browser.*worker.*\.js$/.test(url.pathname))
     return route.abort("failed");
@@ -311,6 +323,120 @@ try {
     .click();
   mark(
     "Close flushes panel layout, selected skill and preferences; reload restores committed state",
+  );
+  // A single unreadable challenge is the one fault that leaves the curriculum,
+  // the engine and every other challenge intact. It used to be a dead end: a
+  // banner quoting a bundle path, navigation that did nothing, and a workbench
+  // that spun on "Loading schema…" forever. Each of those is asserted here.
+  await menu(page, "View", "Object Explorer");
+  await menu(page, "View", "Goal / Skill Details");
+  // Expanding a skill in the tree is itself a deliberate move to the map, so
+  // the two clicks are kept apart: only the challenge click is under test.
+  const expandBasics = async () => {
+    if (!(await page.locator(".challenge-row").count()))
+      await page.locator(".tree-row.level2", { hasText: "SQL basics" }).click();
+  };
+  const openFromTree = (id) =>
+    page.locator(".challenge-row", { hasText: id }).click();
+  await expandBasics();
+  await openFromTree("basics.02");
+  await ready(page);
+  // Tree rows put their text in child spans. A row whose accessible name is
+  // empty is unreachable by voice and unreadable by a screen reader, and these
+  // are the primary navigation into the curriculum.
+  assert.deepEqual(
+    (
+      await page
+        .locator(".challenge-row")
+        .evaluateAll((nodes) =>
+          nodes.map((node) => (node.textContent ?? "").trim()),
+        )
+    ).filter((name) => !name),
+    [],
+    "a challenge row exposes no accessible name",
+  );
+  brokenChallenge = "basics.02";
+  await page.reload();
+  const banner = page.locator(".error-banner");
+  await banner.waitFor({ timeout: 60000 });
+  const bannerText = (await banner.innerText()).replace(/\s+/g, " ");
+  console.log("BROKEN CHALLENGE BANNER:", bannerText);
+  assert.match(bannerText, /Content unavailable/);
+  assert.match(
+    bannerText,
+    /Challenge basics\.02 · Paid reporting year could not be loaded/,
+    "the banner must name the challenge a learner recognises",
+  );
+  assert.doesNotMatch(
+    bannerText,
+    /\/bundle\//,
+    "a bundle path is not something a learner can act on",
+  );
+  assert.doesNotMatch(
+    bannerText,
+    /Content error:/,
+    "the prefix that routes this banner is not learner-facing copy",
+  );
+  // The engine and its dataset never depended on that file, so every readiness
+  // indicator must resolve instead of waiting for a load that is not coming.
+  await page.waitForFunction(
+    () =>
+      /Local data · [1-9]/.test(
+        document.querySelector(".explorer-footer")?.textContent ?? "",
+      ),
+    null,
+    { timeout: 60000 },
+  );
+  assert.equal(
+    await page.locator(".tree-empty", { hasText: "Loading schema" }).count(),
+    0,
+    "the schema tree must not spin when only one challenge failed",
+  );
+  assert.doesNotMatch(
+    await page.locator(".status-message").innerText(),
+    /Loading local practice data and DuckDB/,
+  );
+  await page.getByRole("tab", { name: "Messages", exact: true }).click();
+  const log = await page.locator(".message-list").innerText();
+  assert.match(
+    log,
+    /basics\.02 · .*Integrity check failed/,
+    "the technical detail stays available in the message log",
+  );
+  assert.match(
+    await page.locator(".goal-content").innerText(),
+    /could not be loaded/,
+    "the Goal panel must not call a broken challenge a scratch query",
+  );
+  const skip = page.getByRole("button", {
+    name: /^Continue with basics\.03 · Literal email states$/,
+  });
+  assert.ok(await skip.count(), "no live next step was offered");
+  await skip.first().click();
+  await ready(page);
+  assert.match(await page.locator(".window-title").innerText(), /basics\.03/);
+  // Opening the broken challenge from the tree explains itself and leaves the
+  // learner on the document they already had.
+  await expandBasics();
+  await page
+    .locator("#document-tabs [role=tab]", { hasText: "basics.03" })
+    .click();
+  await openFromTree("basics.02");
+  await banner.waitFor();
+  assert.match((await banner.innerText()).replace(/\s+/g, " "), /basics\.02/);
+  assert.match(
+    await page.locator(".window-title").innerText(),
+    /basics\.03/,
+    "a failed open must not move the learner somewhere else",
+  );
+  brokenChallenge = "";
+  await page
+    .getByRole("button", { name: "Retry content", exact: true })
+    .click();
+  await ready(page);
+  assert.match(await page.locator(".window-title").innerText(), /basics\.02/);
+  mark(
+    "INJECTED unreadable challenge names the challenge, keeps the workbench loaded, offers a challenge that works, and recovers on retry",
   );
   assert.deepEqual(errors, []);
   await mkdir("readiness/evidence/application", { recursive: true });

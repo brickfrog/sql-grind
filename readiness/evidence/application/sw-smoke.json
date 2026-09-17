@@ -1,11 +1,11 @@
 {
-  "date": "2026-09-17T01:10:48.635Z",
+  "date": "2026-09-17T04:16:19.889Z",
   "origin": "http://127.0.0.1:4173",
   "checks": [
     {
       "name": "Cold visit boots the engine and runs a query",
       "detail": {
-        "readyMs": 3007,
+        "readyMs": 3049,
         "rows": 11
       }
     },
@@ -23,13 +23,14 @@
       "detail": {
         "assets": 5,
         "cachedEngineBytes": 47115868,
-        "warmedEngineBytes": 45117,
+        "warmedEngineBytes": 47514,
         "warmedEngineAssets": [
-          "bundle/curriculum.json"
+          "bundle/curriculum.json",
+          "bundle/challenges/basics.01/challenge.json"
         ],
-        "alreadyPresent": 14,
+        "alreadyPresent": 13,
         "shellEntriesStored": 26,
-        "shellBytesStored": 1504799
+        "shellBytesStored": 1506826
       }
     },
     {
@@ -40,11 +41,11 @@
         "document": true,
         "assets": [
           {
-            "path": "/assets/index-BBRB7aHx.js",
+            "path": "/assets/index-CZY0jqt6.js",
             "cached": true
           },
           {
-            "path": "/assets/index-DEo5m1Ly.css",
+            "path": "/assets/index-EL_qVSUA.css",
             "cached": true
           }
         ]
@@ -68,19 +69,21 @@
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
           "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+          "sql-grind-bundle-0291f8eb6ef83fbc",
           "sql-grind-assets-foreign-version"
         ],
         "after": [
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-          "sql-grind-assets-curriculum-v1-064db1f6925786b0"
+          "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+          "sql-grind-bundle-0291f8eb6ef83fbc"
         ]
       }
     },
     {
       "name": "Offline reload reaches engine-ready and runs a query",
       "detail": {
-        "readyMs": 2763,
+        "readyMs": 2660,
         "rows": 11,
         "requestFailures": 0
       }
@@ -117,16 +120,17 @@
               "bundle/invariants.sql"
             ],
             "skipped": [],
-            "bytes": 48892
+            "bytes": 48917
           },
           "shell": {
             "stored": 26,
-            "bytes": 1504799
+            "bytes": 1506826
           },
           "failed": [],
-          "version": "curriculum-v1-064db1f6925786b0"
+          "version": "curriculum-v1-064db1f6925786b0",
+          "content": "0291f8eb6ef83fbc"
         },
-        "offlineReadyMs": 2735,
+        "offlineReadyMs": 2635,
         "offlineQueryRows": 11
       }
     },
@@ -136,19 +140,52 @@
         "before": [
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-          "sql-grind-assets-curriculum-v1-064db1f6925786b0"
+          "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+          "sql-grind-bundle-0291f8eb6ef83fbc"
         ],
         "storedVersion": "curriculum-v1-064db1f6925786b0",
         "insideWindow": [
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-          "sql-grind-assets-curriculum-v1-064db1f6925786b0"
+          "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+          "sql-grind-bundle-0291f8eb6ef83fbc"
         ],
         "afterWindow": [
           "sql-grind-meta",
+          "sql-grind-bundle-0291f8eb6ef83fbc",
           "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
           "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
         ]
+      }
+    },
+    {
+      "name": "A profile stranded by the old single-cache layout recovers without a manual purge",
+      "detail": {
+        "planted": "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0",
+        "entries": 1,
+        "reclaimed": true,
+        "served": "{\n  \"challengeId\": \"basics.02\",\n  \"skillId\": \"basics\",\n  \"displayNumber\": \"basics.02\",\n  \"version\": \"basics.02-v1\",\n  \"bundleVersion\": \"basics.02-bundle-v1\",\n  \"assessmentVersion\": \"exact-v1\",\n  \"title\": \"Paid reporting year\",\n  \"brief\": \"Paid work inside one reporting year, with the year's edges defined exactly rather than approximately.\",\n  \"instructions\": [\n    \"Return the IDs of orders whose own status column is 'paid', from 2024-01-01 00:00:00 UTC onward and strictly before 2025-01-01 00:00:00 UTC. The payments table has a status of its own; this challenge does not ask about it.\",\n    \"Include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC. The interval is half open.\",\n    \"Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed.\"\n  ],\n  \"datasetId\": \"commerce-practice\",\n  \"starterSql\": \"SELECT order_id,status,ordered_at FROM orders LIMIT 10;\",\n  \"starterExplanation\": \"The starter reads order_id, status and ordered_at out of orders. It runs. It does not answer the question. Reworded by sw-smoke.\",\n  \"hints\": [\n    {\n      \"level\": 1,\n      \"kind\": \"concept\",\n      \"text\": \"Two conditions apply: the status, and a half-open interval in time.\"\n    },\n    {\n      \"level\": 2,\n      \"kind\": \"structure\",\n      \"text\": \"The lower bound is inclusive and the upper bound is not, so a closed range will not do.\"\n    },\n    {\n      \"level\": 3,\n      \"kind\": \"boundary\",\n      \"text\": \"Order 1 sits on the included edge; order 10 sits on the excluded one.\"\n    }\n  ],\n  \"dataClaims\": [\n    {\n      \"variant\": \"boundary\",\n      \"sql\": \"SELECT (count(*) FILTER (WHERE order_id = 1 AND ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'))::VARCHAR || '/' || (count(*) FILTER (WHERE order_id = 10 AND ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'))::VARCHAR FROM orders\",\n      \"equals\": \"1/0\",\n      \"claim\": \"hints[2]: order 1 is inside UTC 2024 and order 10 is outside it\"\n    }\n  ],\n  \"output\": {\n    \"columns\": [\n      {\n        \"name\": \"order_id\",\n        \"type\": \"BIGINT\",\n        \"nullable\": false\n      }\n    ],\n    \"ordering\": [\n      {\n        \"column\": \"order_id\",\n        \"direction\": \"ASC\",\n        \"nulls\": \"LAST\"\n      }\n    ]\n  },\n  \"reference\": \"/bundle/challenges/basics.02/reference.sql\",\n  \"expected\": {\n    \"boundary\": \"/bundle/challenges/basics.02/expected-boundary.json\",\n    \"seed-20240907\": \"/bundle/challenges/basics.02/expected-seed-20240907.json\",\n    \"seed-20240908\": \"/bundle/challenges/basics.02/expected-seed-20240908.json\"\n  },\n  \"assessment\": {\n    \"kind\": \"exact\"\n  }\n}\n",
+        "remaining": 0
+      }
+    },
+    {
+      "name": "A content-only deploy renames the bundle cache, keeps the engine, and serves the new content",
+      "detail": {
+        "before": [
+          "sql-grind-meta",
+          "sql-grind-bundle-0291f8eb6ef83fbc",
+          "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
+          "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
+        ],
+        "cachedBefore": true,
+        "after": {
+          "sql-grind-meta": 1,
+          "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0": 27,
+          "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0": 5,
+          "sql-grind-bundle-9f41f4a8da34fd16": 11
+        },
+        "engineBytes": 47115868,
+        "bundleBytes": 65387
       }
     }
   ],
@@ -156,7 +193,7 @@
   "offlineRequestFailures": [],
   "deployedVersion": "curriculum-v1-064db1f6925786b0",
   "engineAndExtensionBytes": 47115868,
-  "coldReadyMs": 3007,
+  "coldReadyMs": 3049,
   "coldQueryRows": 11,
   "worker": {
     "scope": "http://127.0.0.1:4173/",
@@ -168,7 +205,8 @@
     "type": "sql-grind:warmed",
     "assets": {
       "warmed": [
-        "bundle/curriculum.json"
+        "bundle/curriculum.json",
+        "bundle/challenges/basics.01/challenge.json"
       ],
       "present": [
         "engine/duckdb-eh.wasm",
@@ -176,7 +214,6 @@
         "extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
         "extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
         "extensions/v1.5.4/wasm_eh/parquet.duckdb_extension.wasm",
-        "bundle/challenges/basics.01/challenge.json",
         "bundle/datasets/commerce-practice/dataset.json",
         "bundle/schema.sql",
         "bundle/datasets/commerce-practice/config-20240907.sql",
@@ -187,14 +224,15 @@
         "bundle/invariants.sql"
       ],
       "skipped": [],
-      "bytes": 45117
+      "bytes": 47514
     },
     "shell": {
       "stored": 26,
-      "bytes": 1504799
+      "bytes": 1506826
     },
     "failed": [],
-    "version": "curriculum-v1-064db1f6925786b0"
+    "version": "curriculum-v1-064db1f6925786b0",
+    "content": "0291f8eb6ef83fbc"
   },
   "cachedEngineAssets": [
     {
@@ -227,18 +265,19 @@
   "caches": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 27,
-    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 15
+    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5,
+    "sql-grind-bundle-0291f8eb6ef83fbc": 10
   },
   "shellPrecache": {
     "entries": 27,
     "document": true,
     "assets": [
       {
-        "path": "/assets/index-BBRB7aHx.js",
+        "path": "/assets/index-CZY0jqt6.js",
         "cached": true
       },
       {
-        "path": "/assets/index-DEo5m1Ly.css",
+        "path": "/assets/index-EL_qVSUA.css",
         "cached": true
       }
     ]
@@ -263,7 +302,8 @@
       "bytes": 0
     },
     "failed": [],
-    "version": "curriculum-v1-064db1f6925786b0"
+    "version": "curriculum-v1-064db1f6925786b0",
+    "content": "0291f8eb6ef83fbc"
   },
   "shellFreshness": {
     "asset": "/icon-credits.txt",
@@ -274,16 +314,18 @@
   "cachesWithForeign": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 28,
-    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 15,
+    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5,
+    "sql-grind-bundle-0291f8eb6ef83fbc": 10,
     "sql-grind-assets-foreign-version": 1
   },
   "onlineReloadReadyMs": 2640,
   "cachesAfterPurge": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 28,
-    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 15
+    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5,
+    "sql-grind-bundle-0291f8eb6ef83fbc": 10
   },
-  "offlineReloadReadyMs": 2763,
+  "offlineReloadReadyMs": 2660,
   "offlineQueryRows": 11,
   "secondVisit": {
     "requestFailures": [],
@@ -312,35 +354,63 @@
           "bundle/invariants.sql"
         ],
         "skipped": [],
-        "bytes": 48892
+        "bytes": 48917
       },
       "shell": {
         "stored": 26,
-        "bytes": 1504799
+        "bytes": 1506826
       },
       "failed": [],
-      "version": "curriculum-v1-064db1f6925786b0"
+      "version": "curriculum-v1-064db1f6925786b0",
+      "content": "0291f8eb6ef83fbc"
     },
-    "offlineReadyMs": 2735,
+    "offlineReadyMs": 2635,
     "offlineQueryRows": 11
   },
   "upgrade": {
     "before": [
       "sql-grind-meta",
       "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-      "sql-grind-assets-curriculum-v1-064db1f6925786b0"
+      "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+      "sql-grind-bundle-0291f8eb6ef83fbc"
     ],
     "storedVersion": "curriculum-v1-064db1f6925786b0",
     "insideWindow": [
       "sql-grind-meta",
       "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-      "sql-grind-assets-curriculum-v1-064db1f6925786b0"
+      "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+      "sql-grind-bundle-0291f8eb6ef83fbc"
     ],
     "afterWindow": [
       "sql-grind-meta",
+      "sql-grind-bundle-0291f8eb6ef83fbc",
       "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
       "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
     ]
+  },
+  "legacyRecovery": {
+    "planted": "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0",
+    "entries": 1,
+    "reclaimed": true,
+    "served": "{\n  \"challengeId\": \"basics.02\",\n  \"skillId\": \"basics\",\n  \"displayNumber\": \"basics.02\",\n  \"version\": \"basics.02-v1\",\n  \"bundleVersion\": \"basics.02-bundle-v1\",\n  \"assessmentVersion\": \"exact-v1\",\n  \"title\": \"Paid reporting year\",\n  \"brief\": \"Paid work inside one reporting year, with the year's edges defined exactly rather than approximately.\",\n  \"instructions\": [\n    \"Return the IDs of orders whose own status column is 'paid', from 2024-01-01 00:00:00 UTC onward and strictly before 2025-01-01 00:00:00 UTC. The payments table has a status of its own; this challenge does not ask about it.\",\n    \"Include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC. The interval is half open.\",\n    \"Return only the declared columns, in their declared order and exact SQL types, and follow the stated ordering contract. NULL placement is declared, not assumed.\"\n  ],\n  \"datasetId\": \"commerce-practice\",\n  \"starterSql\": \"SELECT order_id,status,ordered_at FROM orders LIMIT 10;\",\n  \"starterExplanation\": \"The starter reads order_id, status and ordered_at out of orders. It runs. It does not answer the question. Reworded by sw-smoke.\",\n  \"hints\": [\n    {\n      \"level\": 1,\n      \"kind\": \"concept\",\n      \"text\": \"Two conditions apply: the status, and a half-open interval in time.\"\n    },\n    {\n      \"level\": 2,\n      \"kind\": \"structure\",\n      \"text\": \"The lower bound is inclusive and the upper bound is not, so a closed range will not do.\"\n    },\n    {\n      \"level\": 3,\n      \"kind\": \"boundary\",\n      \"text\": \"Order 1 sits on the included edge; order 10 sits on the excluded one.\"\n    }\n  ],\n  \"dataClaims\": [\n    {\n      \"variant\": \"boundary\",\n      \"sql\": \"SELECT (count(*) FILTER (WHERE order_id = 1 AND ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'))::VARCHAR || '/' || (count(*) FILTER (WHERE order_id = 10 AND ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'))::VARCHAR FROM orders\",\n      \"equals\": \"1/0\",\n      \"claim\": \"hints[2]: order 1 is inside UTC 2024 and order 10 is outside it\"\n    }\n  ],\n  \"output\": {\n    \"columns\": [\n      {\n        \"name\": \"order_id\",\n        \"type\": \"BIGINT\",\n        \"nullable\": false\n      }\n    ],\n    \"ordering\": [\n      {\n        \"column\": \"order_id\",\n        \"direction\": \"ASC\",\n        \"nulls\": \"LAST\"\n      }\n    ]\n  },\n  \"reference\": \"/bundle/challenges/basics.02/reference.sql\",\n  \"expected\": {\n    \"boundary\": \"/bundle/challenges/basics.02/expected-boundary.json\",\n    \"seed-20240907\": \"/bundle/challenges/basics.02/expected-seed-20240907.json\",\n    \"seed-20240908\": \"/bundle/challenges/basics.02/expected-seed-20240908.json\"\n  },\n  \"assessment\": {\n    \"kind\": \"exact\"\n  }\n}\n",
+    "remaining": 0
+  },
+  "contentDeploy": {
+    "before": [
+      "sql-grind-meta",
+      "sql-grind-bundle-0291f8eb6ef83fbc",
+      "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
+      "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
+    ],
+    "cachedBefore": true,
+    "after": {
+      "sql-grind-meta": 1,
+      "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0": 27,
+      "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0": 5,
+      "sql-grind-bundle-9f41f4a8da34fd16": 11
+    },
+    "engineBytes": 47115868,
+    "bundleBytes": 65387
   },
   "status": "passed",
   "browser": "153.0.8010.12"
