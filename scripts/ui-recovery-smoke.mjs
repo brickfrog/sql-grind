@@ -341,35 +341,32 @@ try {
   await expandBasics();
   await openFromTree("basics.02");
   await ready(page);
-  // Tree rows put their text in child spans, and a QC pass reported their
-  // accessible names arriving empty. They do not: a CDP full AX tree finds
-  // zero nameless buttons on this surface. The names are pinned anyway,
-  // because the tree is the primary navigation into the curriculum.
+  // A QC pass reported the challenge rows' accessible names arriving empty,
+  // because the text sits in a child span. They do not: a per-node partial AX
+  // tree gives "basics.01 Customer identities Available" for the first row.
+  // Asked through getByRole rather than read back from the DOM on purpose —
+  // the DOM proves the markup, not the name the platform derives from it, and
+  // that derivation is the whole claim.
   //
-  // The count is asserted first on purpose: a filter over an empty list is
-  // empty, so without it this would pass hardest when the tree is missing.
-  const rowNames = await page
-    .locator(".challenge-row")
-    .evaluateAll((nodes) =>
-      nodes.map((node) =>
-        (node.getAttribute("aria-label") ?? node.textContent ?? "").trim(),
-      ),
-    );
+  // The role is treeitem, not button. Querying button returned zero and looked
+  // exactly like the reported defect, which is worth stating: the empty result
+  // was the wrong role, not a missing name.
+  const rowCount = await page.locator(".challenge-row").count();
   assert.ok(
-    rowNames.length >= 5,
-    `the challenge tree exposed ${rowNames.length} rows, so naming was not tested`,
+    rowCount >= 5,
+    `the challenge tree exposed ${rowCount} rows, so naming was not tested`,
   );
-  assert.deepEqual(
-    rowNames.filter((name) => !name),
-    [],
-    "a challenge row exposes no accessible name",
-  );
+  for (const id of ["basics.01", "basics.02", "basics.03"])
+    assert.equal(
+      await page.getByRole("treeitem", { name: new RegExp(id) }).count(),
+      1,
+      `no tree item exposes an accessible name containing ${id}`,
+    );
   brokenChallenge = "basics.02";
   await page.reload();
   const banner = page.locator(".error-banner");
   await banner.waitFor({ timeout: 60000 });
   const bannerText = (await banner.innerText()).replace(/\s+/g, " ");
-  console.log("BROKEN CHALLENGE BANNER:", bannerText);
   assert.match(bannerText, /Content unavailable/);
   assert.match(
     bannerText,
