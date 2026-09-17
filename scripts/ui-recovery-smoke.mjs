@@ -356,11 +356,17 @@ try {
     rowCount >= 5,
     `the challenge tree exposed ${rowCount} rows, so naming was not tested`,
   );
+  // Scoped to .challenge-row: the Skill Details panel renders rows carrying
+  // the same names, so a page-wide count could be satisfied entirely by that
+  // panel while every tree row was nameless.
   for (const id of ["basics.01", "basics.02", "basics.03"])
     assert.equal(
-      await page.getByRole("treeitem", { name: new RegExp(id) }).count(),
+      await page
+        .getByRole("treeitem", { name: new RegExp(id) })
+        .and(page.locator(".challenge-row"))
+        .count(),
       1,
-      `no tree item exposes an accessible name containing ${id}`,
+      `no challenge tree row exposes an accessible name containing ${id}`,
     );
   brokenChallenge = "basics.02";
   await page.reload();
