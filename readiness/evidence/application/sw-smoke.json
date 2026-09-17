@@ -1,11 +1,11 @@
 {
-  "date": "2026-09-17T04:38:54.222Z",
+  "date": "2026-09-17T21:13:28.107Z",
   "origin": "http://127.0.0.1:4173",
   "checks": [
     {
       "name": "Cold visit boots the engine and runs a query",
       "detail": {
-        "readyMs": 3030,
+        "readyMs": 3232,
         "rows": 11
       }
     },
@@ -23,14 +23,11 @@
       "detail": {
         "assets": 5,
         "cachedEngineBytes": 47115868,
-        "warmedEngineBytes": 47514,
-        "warmedEngineAssets": [
-          "bundle/curriculum.json",
-          "bundle/challenges/basics.01/challenge.json"
-        ],
-        "alreadyPresent": 13,
+        "warmedEngineBytes": 0,
+        "warmedEngineAssets": [],
+        "alreadyPresent": 15,
         "shellEntriesStored": 26,
-        "shellBytesStored": 1506831
+        "shellBytesStored": 1506886
       }
     },
     {
@@ -41,11 +38,11 @@
         "document": true,
         "assets": [
           {
-            "path": "/assets/index-CxM3XCnc.js",
+            "path": "/assets/index-CFIE6_zU.js",
             "cached": true
           },
           {
-            "path": "/assets/index-EL_qVSUA.css",
+            "path": "/assets/index-DEDvRkx2.css",
             "cached": true
           }
         ]
@@ -68,22 +65,22 @@
         "before": [
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
+          "sql-grind-bundle-1aeeed82ba054c4d",
           "sql-grind-assets-curriculum-v1-064db1f6925786b0",
-          "sql-grind-bundle-0291f8eb6ef83fbc",
           "sql-grind-assets-foreign-version"
         ],
         "after": [
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-          "sql-grind-assets-curriculum-v1-064db1f6925786b0",
-          "sql-grind-bundle-0291f8eb6ef83fbc"
+          "sql-grind-bundle-1aeeed82ba054c4d",
+          "sql-grind-assets-curriculum-v1-064db1f6925786b0"
         ]
       }
     },
     {
       "name": "Offline reload reaches engine-ready and runs a query",
       "detail": {
-        "readyMs": 2658,
+        "readyMs": 2791,
         "rows": 11,
         "requestFailures": 0
       }
@@ -124,13 +121,13 @@
           },
           "shell": {
             "stored": 26,
-            "bytes": 1506831
+            "bytes": 1506886
           },
           "failed": [],
           "version": "curriculum-v1-064db1f6925786b0",
-          "content": "0291f8eb6ef83fbc"
+          "content": "1aeeed82ba054c4d"
         },
-        "offlineReadyMs": 2616,
+        "offlineReadyMs": 2833,
         "offlineQueryRows": 11
       }
     },
@@ -140,19 +137,19 @@
         "before": [
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-          "sql-grind-assets-curriculum-v1-064db1f6925786b0",
-          "sql-grind-bundle-0291f8eb6ef83fbc"
+          "sql-grind-bundle-1aeeed82ba054c4d",
+          "sql-grind-assets-curriculum-v1-064db1f6925786b0"
         ],
         "storedVersion": "curriculum-v1-064db1f6925786b0",
         "insideWindow": [
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-          "sql-grind-assets-curriculum-v1-064db1f6925786b0",
-          "sql-grind-bundle-0291f8eb6ef83fbc"
+          "sql-grind-bundle-1aeeed82ba054c4d",
+          "sql-grind-assets-curriculum-v1-064db1f6925786b0"
         ],
         "afterWindow": [
           "sql-grind-meta",
-          "sql-grind-bundle-0291f8eb6ef83fbc",
+          "sql-grind-bundle-1aeeed82ba054c4d",
           "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
           "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
         ]
@@ -171,7 +168,7 @@
           "sql-grind-meta",
           "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
           "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0",
-          "sql-grind-bundle-9f41f4a8da34fd16"
+          "sql-grind-bundle-d2bce09fc6a29a2b"
         ],
         "newFailures": []
       }
@@ -191,7 +188,7 @@
       "detail": {
         "before": [
           "sql-grind-meta",
-          "sql-grind-bundle-0291f8eb6ef83fbc",
+          "sql-grind-bundle-1aeeed82ba054c4d",
           "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
           "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
         ],
@@ -200,7 +197,7 @@
           "sql-grind-meta": 1,
           "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0": 27,
           "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0": 5,
-          "sql-grind-bundle-9f41f4a8da34fd16": 11
+          "sql-grind-bundle-d2bce09fc6a29a2b": 11
         },
         "engineBytes": 47115868,
         "bundleBytes": 65387
@@ -211,7 +208,7 @@
   "offlineRequestFailures": [],
   "deployedVersion": "curriculum-v1-064db1f6925786b0",
   "engineAndExtensionBytes": 47115868,
-  "coldReadyMs": 3030,
+  "coldReadyMs": 3232,
   "coldQueryRows": 11,
   "worker": {
     "scope": "http://127.0.0.1:4173/",
@@ -222,16 +219,15 @@
   "warmReport": {
     "type": "sql-grind:warmed",
     "assets": {
-      "warmed": [
-        "bundle/curriculum.json",
-        "bundle/challenges/basics.01/challenge.json"
-      ],
+      "warmed": [],
       "present": [
         "engine/duckdb-eh.wasm",
         "engine/duckdb-browser-eh.worker.js",
         "extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
         "extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
         "extensions/v1.5.4/wasm_eh/parquet.duckdb_extension.wasm",
+        "bundle/curriculum.json",
+        "bundle/challenges/basics.01/challenge.json",
         "bundle/datasets/commerce-practice/dataset.json",
         "bundle/schema.sql",
         "bundle/datasets/commerce-practice/config-20240907.sql",
@@ -242,15 +238,15 @@
         "bundle/invariants.sql"
       ],
       "skipped": [],
-      "bytes": 47514
+      "bytes": 0
     },
     "shell": {
       "stored": 26,
-      "bytes": 1506831
+      "bytes": 1506886
     },
     "failed": [],
     "version": "curriculum-v1-064db1f6925786b0",
-    "content": "0291f8eb6ef83fbc"
+    "content": "1aeeed82ba054c4d"
   },
   "cachedEngineAssets": [
     {
@@ -283,19 +279,19 @@
   "caches": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 27,
-    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5,
-    "sql-grind-bundle-0291f8eb6ef83fbc": 10
+    "sql-grind-bundle-1aeeed82ba054c4d": 10,
+    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5
   },
   "shellPrecache": {
     "entries": 27,
     "document": true,
     "assets": [
       {
-        "path": "/assets/index-CxM3XCnc.js",
+        "path": "/assets/index-CFIE6_zU.js",
         "cached": true
       },
       {
-        "path": "/assets/index-EL_qVSUA.css",
+        "path": "/assets/index-DEDvRkx2.css",
         "cached": true
       }
     ]
@@ -321,7 +317,7 @@
     },
     "failed": [],
     "version": "curriculum-v1-064db1f6925786b0",
-    "content": "0291f8eb6ef83fbc"
+    "content": "1aeeed82ba054c4d"
   },
   "shellFreshness": {
     "asset": "/icon-credits.txt",
@@ -332,18 +328,18 @@
   "cachesWithForeign": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 28,
+    "sql-grind-bundle-1aeeed82ba054c4d": 10,
     "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5,
-    "sql-grind-bundle-0291f8eb6ef83fbc": 10,
     "sql-grind-assets-foreign-version": 1
   },
-  "onlineReloadReadyMs": 2628,
+  "onlineReloadReadyMs": 2726,
   "cachesAfterPurge": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 28,
-    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5,
-    "sql-grind-bundle-0291f8eb6ef83fbc": 10
+    "sql-grind-bundle-1aeeed82ba054c4d": 10,
+    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5
   },
-  "offlineReloadReadyMs": 2658,
+  "offlineReloadReadyMs": 2791,
   "offlineQueryRows": 11,
   "secondVisit": {
     "requestFailures": [],
@@ -376,32 +372,32 @@
       },
       "shell": {
         "stored": 26,
-        "bytes": 1506831
+        "bytes": 1506886
       },
       "failed": [],
       "version": "curriculum-v1-064db1f6925786b0",
-      "content": "0291f8eb6ef83fbc"
+      "content": "1aeeed82ba054c4d"
     },
-    "offlineReadyMs": 2616,
+    "offlineReadyMs": 2833,
     "offlineQueryRows": 11
   },
   "upgrade": {
     "before": [
       "sql-grind-meta",
       "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-      "sql-grind-assets-curriculum-v1-064db1f6925786b0",
-      "sql-grind-bundle-0291f8eb6ef83fbc"
+      "sql-grind-bundle-1aeeed82ba054c4d",
+      "sql-grind-assets-curriculum-v1-064db1f6925786b0"
     ],
     "storedVersion": "curriculum-v1-064db1f6925786b0",
     "insideWindow": [
       "sql-grind-meta",
       "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-      "sql-grind-assets-curriculum-v1-064db1f6925786b0",
-      "sql-grind-bundle-0291f8eb6ef83fbc"
+      "sql-grind-bundle-1aeeed82ba054c4d",
+      "sql-grind-assets-curriculum-v1-064db1f6925786b0"
     ],
     "afterWindow": [
       "sql-grind-meta",
-      "sql-grind-bundle-0291f8eb6ef83fbc",
+      "sql-grind-bundle-1aeeed82ba054c4d",
       "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
       "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
     ]
@@ -417,7 +413,7 @@
       "sql-grind-meta",
       "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
       "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0",
-      "sql-grind-bundle-9f41f4a8da34fd16"
+      "sql-grind-bundle-d2bce09fc6a29a2b"
     ],
     "newFailures": []
   },
@@ -431,7 +427,7 @@
   "contentDeploy": {
     "before": [
       "sql-grind-meta",
-      "sql-grind-bundle-0291f8eb6ef83fbc",
+      "sql-grind-bundle-1aeeed82ba054c4d",
       "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
       "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
     ],
@@ -440,7 +436,7 @@
       "sql-grind-meta": 1,
       "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0": 27,
       "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0": 5,
-      "sql-grind-bundle-9f41f4a8da34fd16": 11
+      "sql-grind-bundle-d2bce09fc6a29a2b": 11
     },
     "engineBytes": 47115868,
     "bundleBytes": 65387

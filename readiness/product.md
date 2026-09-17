@@ -334,18 +334,7 @@ Each definition supplies instructions, starter SQL, three hints, a typed output 
 Learner briefs describe useful work without relying on column names. Schema and output requirements name fields precisely.
 A required output literal is written in the instruction as a quoted literal, with its exact casing, because the grader compares the emitted string and expected values are never displayed. Instructions render as plain text: an uppercase word like NULL reads as emphasis, not as code, so a learner reading `report every other input as value` could not tell that `'value'` was the string to produce and had no route to the casing except guessing. Seven challenges stated required literals that way and now quote them.
 The declared output shape is verified against the engine rather than trusted: every challenge's reference SQL is executed on its own dataset and the resulting fields are compared to the declared columns by name, order, SQL type, and — for decimals — precision and scale. A declaration that drifts from what the engine returns is a content error, not a grading surprise.
-That check binds the declaration to the reference, so a reference that casts a
-column to a width the data does not have makes the panel true and still
-misleading. `basics.04`, `sub.01`, and `sub.04` projected `unit_price` through
-`::DECIMAL(38,2)` although the column is `DECIMAL(18,2)` and no arithmetic
-widens it, so the panel advertised a 38-digit contract for a plain column and
-the grader's mismatch diagnostic quoted the same wrong width. The casts are
-gone: the references now read the column, the panels declare `DECIMAL(18,2)`,
-and the answer a learner writes is the answer the reference writes. Decimals
-are cast only where the arithmetic genuinely widens them, as in `agg.01`'s
-`SUM(qty * unit_price)`. Grading is unchanged either way — decimal precision
-may differ while scale must match exactly — which is why this survived: the
-declaration never contradicted the reference, only the data.
+That check binds the declaration to the reference, so a reference that casts a column to a width the data does not have makes the panel true and still misleading. `basics.04`, `sub.01`, and `sub.04` projected `unit_price` through `::DECIMAL(38,2)` although the column is `DECIMAL(18,2)` and no arithmetic widens it, so the panel advertised a 38-digit contract for a plain column and the grader's mismatch diagnostic quoted the same wrong width. The casts are gone: the references now read the column, the panels declare `DECIMAL(18,2)`, and the answer a learner writes is the answer the reference writes. Decimals are cast only where the arithmetic genuinely widens them, as in `agg.01`'s `SUM(qty * unit_price)`. Grading is unchanged either way — decimal precision may differ while scale must match exactly — which is why this survived: the declaration never contradicted the reference, only the data.
 References and hints teach the intended construct. Equivalent SQL earns completion when its outcomes satisfy the assessment.
 No concept requirement, SQL keyword, style opinion, diagnostic, or runtime threshold acts as an additional completion gate.
 **Completed** records an accepted outcome. It does not claim that the grader proved technique mastery.
@@ -560,15 +549,7 @@ Imported records carry an Imported label. No invented competitors, percentile, o
 
 A summary describes every recorded attempt, deliberately not the filtered list: graded submissions and the number of challenges they cover, correct count and share, how many correct answers used no hint, how many challenges were correct on their first graded attempt, the median engine time of correct attempts, and the number of calendar days practiced with the current consecutive run. Filtering by correctness would make accuracy and first-attempt rate tautological — select “Correct” and every earliest shown attempt is correct by construction — so the summary names its own scope and ignores the filters. Every figure is derived from stored attempt fields, and a per-skill breakdown gives correct-over-graded for each skill. Execute runs are not submissions and are excluded from every figure. Engine time is labelled as the time the graded SQL ran, never as time spent solving: the application does not measure that, so it does not report it.
 
-The attempt list in this dialog flows at its natural height rather than
-scrolling inside its own box. The other lists built from the same component —
-the query library, the recycle bin, the kata list, the query history — keep a
-height cap, because filter controls sit directly above them and are worth
-holding in view while the list moves. Practice Records puts the summary and the
-per-skill breakdown above the list instead, so a capped list scrolled inside an
-already scrolling dialog: two nested wheels over one surface, where the inner
-one swallows the gesture and the outer content is unreachable until the pointer
-leaves the list.
+The attempt list in this dialog flows at its natural height rather than scrolling inside its own box. The other lists built from the same component — the query library, the recycle bin, the kata list, the query history — keep a height cap, because filter controls sit directly above them and are worth holding in view while the list moves. Practice Records puts the summary and the per-skill breakdown above the list instead, so a capped list scrolled inside an already scrolling dialog: two nested wheels over one surface, where the inner one swallows the gesture and the outer content is unreachable until the pointer leaves the list.
 
 Local performance ordering applies only within one recorded comparison session with identical dataset and engine configuration.
 Cross-device imports and different configurations never compete through one “best runtime” column.
