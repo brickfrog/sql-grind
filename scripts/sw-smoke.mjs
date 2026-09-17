@@ -530,13 +530,36 @@ try {
   // that actually happens in production. A deploy changes bundleVersion, which
   // renames every cache the installed worker owns, so an already-controlled
   // profile has to re-derive the version, fill the new caches and drop the old
-  // ones. sw.js refreshes that pointer at most once per REVALIDATE_INTERVAL_MS
-  // from a worker start-up, so the swap is expected only past that window and
-  // the superseded engine must keep serving until then.
+  // ones.
+  //
+  // sw.js gates that re-read on `Date.now() - stored.checkedAt >
+  // REVALIDATE_INTERVAL_MS`, a real 60s in production. Sleeping that long here
+  // would also make the first half timing-dependent, since the offline phase
+  // and the second-visit warm above consume an uncontrolled amount of the
+  // window. Writing the stored timestamp sets the clock explicitly instead,
+  // the same direct cache write the foreign-purge check already uses.
+  const setCheckedAt = (checkedAt) =>
+    page.evaluate(
+      async ([key, when]) => {
+        const cache = await caches.open("sql-grind-meta");
+        const url = new URL("__sw_version__", document.baseURI).href;
+        const stored = await (await cache.match(url)).json();
+        await cache.put(
+          url,
+          new Response(JSON.stringify({ ...stored, checkedAt: when }), {
+            headers: { "content-type": "application/json" },
+          }),
+        );
+        return stored.version;
+      },
+      ["__sw_version__", checkedAt],
+    );
   const upgrade = { before: Object.keys(await cacheState()) };
   const redeployed = { ...manifest, bundleVersion: "curriculum-upgrade-test" };
   await writeFile(MANIFEST_FILE, `${JSON.stringify(redeployed, null, 2)}\n`);
   const upgradedVersion = `curriculum-upgrade-test-${configurationHash}`;
+  // Fresh timestamp: inside the window, the superseded engine keeps serving.
+  upgrade.storedVersion = await setCheckedAt(Date.now());
   await page.reload();
   await requireReady(page, "reload inside the revalidate window");
   upgrade.insideWindow = Object.keys(await cacheState());
@@ -544,9 +567,15 @@ try {
     upgrade.insideWindow.some((name) =>
       name.endsWith(evidence.deployedVersion),
     ),
-    "the superseded engine cache still served inside the revalidate window",
+    "the superseded engine cache stopped serving inside the revalidate window",
   );
-  await new Promise((resolve) => setTimeout(resolve, 66_000));
+  assert.deepEqual(
+    upgrade.insideWindow.filter((name) => name.endsWith(upgradedVersion)),
+    [],
+    "the new version's caches appeared before the window elapsed",
+  );
+  // Expired timestamp: the next worker start-up re-reads the manifest.
+  await setCheckedAt(0);
   await page.reload();
   await requireReady(page, "reload past the revalidate window");
   await page.waitForFunction(

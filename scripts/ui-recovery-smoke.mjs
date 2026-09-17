@@ -113,13 +113,14 @@ try {
     0,
     "an engine fault offered a content retry",
   );
-  // The operation error bar carries its own "Retry engine" and can be open at
-  // the same time. Two recovery controls sharing an accessible name while
-  // running different handlers is ambiguous to a locator and to a screen
-  // reader, so every recovery control on screen must be uniquely named. Two
-  // launchers for the same destination are not in scope: they act alike.
+  // The operation error bar carries its own "Retry engine" and is a separate
+  // block, so both banners can be open together and a shared accessible name
+  // would be ambiguous to a locator and to a screen reader. Only one banner is
+  // open here, so this pins the label this banner contributes rather than the
+  // collision itself; scoped to the banners because unrelated duplicates, like
+  // two launchers for one destination, act alike and are not a hazard.
   const names = await page
-    .locator("button:visible")
+    .locator(".error-banner button:visible")
     .evaluateAll((nodes) =>
       nodes
         .map(
@@ -127,11 +128,7 @@ try {
         )
         .filter((name) => /retry|reload/i.test(name)),
     );
-  assert.deepEqual(
-    names.filter((name, index) => names.indexOf(name) !== index),
-    [],
-    `recovery controls share a name: ${names}`,
-  );
+  assert.deepEqual(names, ["Reload SQL engine"]);
   brokenEngine = false;
   await page
     .getByRole("button", { name: "Reload SQL engine", exact: true })

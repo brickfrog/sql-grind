@@ -1,11 +1,11 @@
 {
-  "date": "2026-09-17T01:00:00.566Z",
+  "date": "2026-09-17T01:10:48.635Z",
   "origin": "http://127.0.0.1:4173",
   "checks": [
     {
       "name": "Cold visit boots the engine and runs a query",
       "detail": {
-        "readyMs": 2982,
+        "readyMs": 3007,
         "rows": 11
       }
     },
@@ -80,7 +80,7 @@
     {
       "name": "Offline reload reaches engine-ready and runs a query",
       "detail": {
-        "readyMs": 2645,
+        "readyMs": 2763,
         "rows": 11,
         "requestFailures": 0
       }
@@ -126,7 +126,7 @@
           "failed": [],
           "version": "curriculum-v1-064db1f6925786b0"
         },
-        "offlineReadyMs": 2685,
+        "offlineReadyMs": 2735,
         "offlineQueryRows": 11
       }
     },
@@ -138,6 +138,7 @@
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
           "sql-grind-assets-curriculum-v1-064db1f6925786b0"
         ],
+        "storedVersion": "curriculum-v1-064db1f6925786b0",
         "insideWindow": [
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
@@ -155,7 +156,7 @@
   "offlineRequestFailures": [],
   "deployedVersion": "curriculum-v1-064db1f6925786b0",
   "engineAndExtensionBytes": 47115868,
-  "coldReadyMs": 2982,
+  "coldReadyMs": 3007,
   "coldQueryRows": 11,
   "worker": {
     "scope": "http://127.0.0.1:4173/",
@@ -276,13 +277,13 @@
     "sql-grind-assets-curriculum-v1-064db1f6925786b0": 15,
     "sql-grind-assets-foreign-version": 1
   },
-  "onlineReloadReadyMs": 2723,
+  "onlineReloadReadyMs": 2640,
   "cachesAfterPurge": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 28,
     "sql-grind-assets-curriculum-v1-064db1f6925786b0": 15
   },
-  "offlineReloadReadyMs": 2645,
+  "offlineReloadReadyMs": 2763,
   "offlineQueryRows": 11,
   "secondVisit": {
     "requestFailures": [],
@@ -320,7 +321,7 @@
       "failed": [],
       "version": "curriculum-v1-064db1f6925786b0"
     },
-    "offlineReadyMs": 2685,
+    "offlineReadyMs": 2735,
     "offlineQueryRows": 11
   },
   "upgrade": {
@@ -329,6 +330,7 @@
       "sql-grind-shell-curriculum-v1-064db1f6925786b0",
       "sql-grind-assets-curriculum-v1-064db1f6925786b0"
     ],
+    "storedVersion": "curriculum-v1-064db1f6925786b0",
     "insideWindow": [
       "sql-grind-meta",
       "sql-grind-shell-curriculum-v1-064db1f6925786b0",
