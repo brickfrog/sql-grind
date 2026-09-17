@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-17T04:48:37.649Z",
+  "date": "2026-09-17T21:10:56.859Z",
   "checks": [
     "INJECTED corrupt asset is rejected; visible Retry content restores verified runtime",
     "INJECTED unreachable engine asset names the SQL engine uniquely, and Reload SQL engine restores it",

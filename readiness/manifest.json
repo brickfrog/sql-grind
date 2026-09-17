@@ -407,7 +407,7 @@
       "path": "../../readiness/challenges/basics.04/challenge.json",
       "bytes": 2563,
       "gzipBytes": 1020,
-      "sha256": "0bd835cb8349e40f9e335ddb3e686049d8b7fd943e215abe9e88de6f18cb4e5b"
+      "sha256": "2fc2332b027dcc013e1f23d97e78466ee333aabd197b16a64d4509289677bc7d"
     },
     {
       "path": "../../readiness/challenges/basics.04/checks.json",
@@ -419,31 +419,31 @@
       "path": "../../readiness/challenges/basics.04/expected-boundary.json",
       "bytes": 845,
       "gzipBytes": 373,
-      "sha256": "19cf0e9866f19df1fc10be7761e18706416a8663ac03408dca83c89a95ca4d1c"
+      "sha256": "3efd7b5a0e721c7d7342778aa0041b2b6843ad63dc3c83ca52b9df44d814a0be"
     },
     {
       "path": "../../readiness/challenges/basics.04/expected-seed-20240907.json",
       "bytes": 856,
-      "gzipBytes": 379,
-      "sha256": "53996580895f8cd202e75231c838001e39344ed615e02c6936286e7cab62d00c"
+      "gzipBytes": 380,
+      "sha256": "2ad58c7231819cf2a9b111f61f650f15d9961e0000fd350d3e648ee5150db954"
     },
     {
       "path": "../../readiness/challenges/basics.04/expected-seed-20240908.json",
       "bytes": 856,
       "gzipBytes": 379,
-      "sha256": "30dbb5d35751f95d4fe4558507a7265f1cea84f6b069804a435100b61d88aa45"
+      "sha256": "c40ce7af0ae3507dce4921c394b1e2dc8054b8f227a2c5ff5f3d52dc499cbe1d"
     },
     {
       "path": "../../readiness/challenges/basics.04/reference.sql",
-      "bytes": 121,
-      "gzipBytes": 108,
-      "sha256": "b2aaf20f0fec4838c519846a39414296c34a1f7ead420d7d80f34d8a3e5f1cbc"
+      "bytes": 92,
+      "gzipBytes": 89,
+      "sha256": "95b8665d5d6c593500162cbecf655b718573c259c62b499269afff0aad62b9f4"
     },
     {
       "path": "../../readiness/challenges/basics.04/wrong.sql",
-      "bytes": 122,
-      "gzipBytes": 107,
-      "sha256": "767fbf3e3f60f875e1dd52a97b50ba482328efe6bbfd1e7ac2d1535d0215fdec"
+      "bytes": 93,
+      "gzipBytes": 86,
+      "sha256": "e0e3ac589d886e1e380552c32a2714d35a2321f14fde432c84ae7fc060fffa97"
     },
     {
       "path": "../../readiness/challenges/basics.05/challenge.json",
@@ -2363,7 +2363,7 @@
       "path": "../../readiness/challenges/sub.01/challenge.json",
       "bytes": 2100,
       "gzipBytes": 827,
-      "sha256": "ecaa377e427e88e86bc42dc616d63951258aa44cd11f112da7fcfdb9b4c908d5"
+      "sha256": "e966efaf8e6a969a9143760639ac29a1bbb3f40823943d8d135ee5698801f002"
     },
     {
       "path": "../../readiness/challenges/sub.01/checks.json",
@@ -2375,31 +2375,31 @@
       "path": "../../readiness/challenges/sub.01/expected-boundary.json",
       "bytes": 797,
       "gzipBytes": 360,
-      "sha256": "a470fb49822e5fbf0c4b563f53e19467922768daa7955cc4f31e16bf7d6f7230"
+      "sha256": "76c9244a011f3226ea1fb40ea73867e0b18a54559254e43d3375eda4bd9305b6"
     },
     {
       "path": "../../readiness/challenges/sub.01/expected-seed-20240907.json",
       "bytes": 5556,
       "gzipBytes": 1196,
-      "sha256": "7459b462480b4a44d4a04bccd543d0fde2a859e0dc82cd4b260e9a273537d0b4"
+      "sha256": "d1294951e9451b09af0ad3d719be1ff519471fbfffc5c86ad1bb1d8f29f070e5"
     },
     {
       "path": "../../readiness/challenges/sub.01/expected-seed-20240908.json",
       "bytes": 5556,
-      "gzipBytes": 1198,
-      "sha256": "62035a3b517a74ca1afd3627d6a99a671ed6d92d8d640a7eda26ec814c44ba90"
+      "gzipBytes": 1199,
+      "sha256": "9f99e019ed1b713a7ed15e23cce9a39dcb10f82584d7def07840c5772666f3d6"
     },
     {
       "path": "../../readiness/challenges/sub.01/reference.sql",
-      "bytes": 191,
-      "gzipBytes": 133,
-      "sha256": "48a1c2caac3abd2ef4e354ad67a5b3a93a2436dde9b56c4aebc49877370ad28f"
+      "bytes": 162,
+      "gzipBytes": 112,
+      "sha256": "b67cbb1ff8029a409e0ddb287b0ef76a670813a0b893a13a448619957af73985"
     },
     {
       "path": "../../readiness/challenges/sub.01/wrong.sql",
-      "bytes": 197,
-      "gzipBytes": 144,
-      "sha256": "19a66691805beb62f09fd90ff16a0893b1e919c050c60a1bab8a88d1fbd71b39"
+      "bytes": 168,
+      "gzipBytes": 123,
+      "sha256": "19eca7ccc80657ed79b1b17f3cc623a90d3012cac3e81d434e3678e99b7f8d40"
     },
     {
       "path": "../../readiness/challenges/sub.02/challenge.json",
@@ -2483,7 +2483,7 @@
       "path": "../../readiness/challenges/sub.04/challenge.json",
       "bytes": 2781,
       "gzipBytes": 961,
-      "sha256": "545b3f3fc79394118bbb21908d3498e7717daf0673bcabc780b53530707fad56"
+      "sha256": "a3b6ba49369ae2ac2f0675a2b646715aefb0db7569c3707873185df4ce8ee2ba"
     },
     {
       "path": "../../readiness/challenges/sub.04/checks.json",
@@ -2494,32 +2494,32 @@
     {
       "path": "../../readiness/challenges/sub.04/expected-boundary.json",
       "bytes": 777,
-      "gzipBytes": 342,
-      "sha256": "924c837b0f787920f205fdb7c0f940a6398e96b9408f53cdaceb6dbf7a3df8a5"
+      "gzipBytes": 341,
+      "sha256": "0da65c268a4ea6f1dec66bab0f778a80fda7692d2ecb403d880c29c030ccaf5d"
     },
     {
       "path": "../../readiness/challenges/sub.04/expected-seed-20240907.json",
       "bytes": 7083,
-      "gzipBytes": 1479,
-      "sha256": "aaed3de0a3d12bd44ba59d7d00a709add93d365773f29e2cc373a3ebc70ad459"
+      "gzipBytes": 1478,
+      "sha256": "73bd59fc7f8be365e33e47a11aa4fe57aea5cac78c8242371eb7e5c196d089f3"
     },
     {
       "path": "../../readiness/challenges/sub.04/expected-seed-20240908.json",
       "bytes": 7083,
       "gzipBytes": 1477,
-      "sha256": "cdf7ae8dbb69be81c6cae1415eac9ed5cbc7a614f92ce7819c5a29cacd35dc42"
+      "sha256": "a3e3a805f05146d05238d18e427aec3f5eef2d06c59f00215248923395438450"
     },
     {
       "path": "../../readiness/challenges/sub.04/reference.sql",
-      "bytes": 293,
-      "gzipBytes": 155,
-      "sha256": "2be443cf5045918e663e2aeaac4f2325433f756e62f763814923ac7d06e53497"
+      "bytes": 264,
+      "gzipBytes": 134,
+      "sha256": "55623a0fe2e3b5917e5e839ba8beb79b7437df47cfb1c5d3b5f4e8a474939d5c"
     },
     {
       "path": "../../readiness/challenges/sub.04/wrong.sql",
-      "bytes": 294,
-      "gzipBytes": 156,
-      "sha256": "168425650a6cd68e7a4071722026b071242675d1eabb5cdcc76fc0d846e223d9"
+      "bytes": 265,
+      "gzipBytes": 135,
+      "sha256": "33aaa103864be29036d2fcf7816627f3a2016f1a82ac6d3af0aacf4b582dfde1"
     },
     {
       "path": "../../readiness/challenges/sub.05/challenge.json",

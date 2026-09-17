@@ -6404,7 +6404,13 @@
               )}%
             </dd>{/each}
         </dl>{/if}
-      <div class="library-list">
+      <!-- This dialog puts the summary and the by-skill breakdown above the
+           list, so a capped list would scroll inside a dialog that is already
+           scrolling: two wheels over one surface, and the inner one swallows
+           the gesture. The list flows and the dialog is the only scroller.
+           Other .library-list uses keep the cap, where filter controls sit
+           directly above the list and are worth holding in view. -->
+      <div class="library-list flow">
         {#each filteredAttempts as attempt}<article>
             <h3>
               {attempt.challenge.challengeId} · {attempt.correctness}

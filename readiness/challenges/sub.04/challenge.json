@@ -55,7 +55,7 @@
         "name": "unit_price",
         "type": "DECIMAL",
         "nullable": false,
-        "precision": 38,
+        "precision": 18,
         "scale": 2
       }
     ],

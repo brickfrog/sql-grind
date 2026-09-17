@@ -1925,6 +1925,10 @@ small,
   max-height: calc(var(--view-height) * 0.5);
   overflow: auto;
 }
+.library-list.flow {
+  max-height: none;
+  overflow: visible;
+}
 .library-list article {
   padding: 9px 6px;
   background: var(--field);
