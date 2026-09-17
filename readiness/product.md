@@ -512,6 +512,8 @@ Each authored pattern names a curriculum skill, one dataset, a reason the shape 
 
 Correctness is decided at run time: the authored reference is executed beside the learner's SQL in the named variant, and both are compared with the same comparator that grades challenges. Katas therefore ship no published expectation, hold no content identity, and add no manifest entry, so adding a drill never changes `bundleVersion` and never invalidates a learner's completions.
 
+A missed drill reports the same row-level reason a graded variant does, prefixed with the two row counts: a challenge shows those counts in its per-variant scorecard line, and a drill has no scorecard to carry them. Its editor completes from the drill dataset's own schema — the workbench's when the datasets agree, the one Show tables loaded otherwise, and nothing until then, because guessing from the workbench would offer columns the drill's dataset does not have.
+
 Because nothing in the content pipeline verifies a drill, the reference is checked against its own contract before the learner's answer is compared. A disagreement is reported as a content error naming the kata, never as an incorrect attempt: a mis-authored contract must not tell a learner that a correct answer is wrong.
 
 Drills carry the only time-based schedule in the application. A scheduled pass advances a per-variation streak and schedules the next repetition after 1, 3, 7, then 21 days; the last interval repeats, because a drill returning in a year has been silently dropped. A miss resets the streak and schedules it immediately, whenever it happens: failing is evidence of not knowing regardless of when it was asked. Four consecutive scheduled passes mark a variation retained.

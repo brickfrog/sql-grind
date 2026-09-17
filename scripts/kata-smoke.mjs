@@ -274,9 +274,11 @@ try {
     assert.equal(value.correctness, "incorrect");
     // Answering with every customer returns rows the anti-join excludes, and
     // the message must name one of them rather than only reporting two counts.
+    // The counts belong here too: a drill has no per-variant scorecard line to
+    // carry them, so the comparator's row-level reason is prefixed with them.
     assert.match(
       value.message,
-      /Row \d+ is not in the expected result\. No expected row has "customer_id" \(you returned "\d+"\)/,
+      /^Expected \d+ rows, received \d+\. Row \d+ is not in the expected result\. No expected row has "customer_id" \(you returned "\d+"\)/,
     );
     return value;
   });
@@ -994,6 +996,76 @@ try {
       after: result.after.records.length,
     };
   });
+
+  await check(
+    "a drill completes from its own dataset, never the workbench's",
+    async () => {
+      // The drill editor was handed the workbench document's completion schema,
+      // which belongs to the workbench's dataset. Every authored pattern names
+      // commerce-practice today, but a scratch document can select another
+      // dataset, and the drill would then have offered columns its own dataset
+      // does not have — the schema confusion this surface exists to remove.
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await page.waitForSelector("#document-tabs", { timeout: 90_000 });
+      await page.waitForFunction(
+        () =>
+          document.querySelector(".toolbar .execute") &&
+          !document.querySelector(".toolbar .execute").disabled,
+        null,
+        { timeout: 120_000 },
+      );
+      await page.getByRole("menuitem", { name: "File", exact: true }).click();
+      await page
+        .getByRole("menuitem", { name: "New Query", exact: true })
+        .click();
+      await page
+        .getByRole("combobox", { name: "Database", exact: true })
+        .selectOption("graphs");
+      await page.waitForFunction(
+        () => !document.querySelector(".toolbar .execute")?.disabled,
+        null,
+        { timeout: 120_000 },
+      );
+      const dialog = page.locator("dialog");
+      await page.locator(".status-drills").click();
+      await dialog
+        .locator("article", { hasText: "Anti-join" })
+        .getByRole("button", { name: /^(Start drill|Drill early)$/ })
+        .click();
+      const editor = dialog.locator(".kata-editor .cm-content");
+      await editor.waitFor();
+      const completions = async (prefix) => {
+        await editor.click();
+        await page.keyboard.press("ControlOrMeta+a");
+        await page.keyboard.press("Delete");
+        await page.keyboard.insertText(prefix.slice(0, -1));
+        await page.keyboard.type(prefix.slice(-1));
+        await page.waitForTimeout(900);
+        return page.evaluate(() =>
+          [...document.querySelectorAll(".cm-tooltip-autocomplete li")].map(
+            (item) => item.querySelector(".cm-completionLabel")?.textContent,
+          ),
+        );
+      };
+      // nodes belongs to graphs, which the workbench holds and the drill does
+      // not: offering its columns here would be confidently wrong.
+      const foreign = await completions("SELECT * FROM nodes WHERE node_");
+      assert.deepEqual(foreign, []);
+      // The drill's own columns are unknown until its dataset is read, and
+      // guessing them from the workbench would be the same mistake.
+      const beforeLoad = await completions(
+        "SELECT * FROM customers WHERE customer_",
+      );
+      assert.deepEqual(beforeLoad, []);
+      await dialog.getByRole("button", { name: "Show tables" }).click();
+      await dialog.locator(".kata-schema").waitFor();
+      const afterLoad = await completions(
+        "SELECT * FROM customers WHERE customer_",
+      );
+      assert.deepEqual(afterLoad, ["customer_id", "customer_name"]);
+      return { foreign, beforeLoad, afterLoad };
+    },
+  );
 
   assert.deepEqual(pageErrors, [], "the drill surface logged a page error");
 } finally {

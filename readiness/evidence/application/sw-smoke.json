@@ -1,11 +1,11 @@
 {
-  "date": "2026-09-16T23:52:14.240Z",
+  "date": "2026-09-17T00:04:16.276Z",
   "origin": "http://127.0.0.1:4173",
   "checks": [
     {
       "name": "Cold visit boots the engine and runs a query",
       "detail": {
-        "readyMs": 2996,
+        "readyMs": 3046,
         "rows": 11
       }
     },
@@ -23,13 +23,11 @@
       "detail": {
         "assets": 5,
         "cachedEngineBytes": 47115868,
-        "warmedEngineBytes": 45117,
-        "warmedEngineAssets": [
-          "bundle/curriculum.json"
-        ],
-        "alreadyPresent": 14,
+        "warmedEngineBytes": 0,
+        "warmedEngineAssets": [],
+        "alreadyPresent": 15,
         "shellEntriesStored": 26,
-        "shellBytesStored": 1504542
+        "shellBytesStored": 1504626
       }
     },
     {
@@ -40,7 +38,7 @@
         "document": true,
         "assets": [
           {
-            "path": "/assets/index-Dyvx0wYp.js",
+            "path": "/assets/index-C4muN2G8.js",
             "cached": true
           },
           {
@@ -80,7 +78,7 @@
     {
       "name": "Offline reload reaches engine-ready and runs a query",
       "detail": {
-        "readyMs": 2613,
+        "readyMs": 2728,
         "rows": 11,
         "requestFailures": 0
       }
@@ -121,12 +119,12 @@
           },
           "shell": {
             "stored": 26,
-            "bytes": 1504542
+            "bytes": 1504626
           },
           "failed": [],
           "version": "curriculum-v1-064db1f6925786b0"
         },
-        "offlineReadyMs": 2618,
+        "offlineReadyMs": 2635,
         "offlineQueryRows": 11
       }
     }
@@ -135,7 +133,7 @@
   "offlineRequestFailures": [],
   "deployedVersion": "curriculum-v1-064db1f6925786b0",
   "engineAndExtensionBytes": 47115868,
-  "coldReadyMs": 2996,
+  "coldReadyMs": 3046,
   "coldQueryRows": 11,
   "worker": {
     "scope": "http://127.0.0.1:4173/",
@@ -146,15 +144,14 @@
   "warmReport": {
     "type": "sql-grind:warmed",
     "assets": {
-      "warmed": [
-        "bundle/curriculum.json"
-      ],
+      "warmed": [],
       "present": [
         "engine/duckdb-eh.wasm",
         "engine/duckdb-browser-eh.worker.js",
         "extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
         "extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
         "extensions/v1.5.4/wasm_eh/parquet.duckdb_extension.wasm",
+        "bundle/curriculum.json",
         "bundle/challenges/basics.01/challenge.json",
         "bundle/datasets/commerce-practice/dataset.json",
         "bundle/schema.sql",
@@ -166,11 +163,11 @@
         "bundle/invariants.sql"
       ],
       "skipped": [],
-      "bytes": 45117
+      "bytes": 0
     },
     "shell": {
       "stored": 26,
-      "bytes": 1504542
+      "bytes": 1504626
     },
     "failed": [],
     "version": "curriculum-v1-064db1f6925786b0"
@@ -213,7 +210,7 @@
     "document": true,
     "assets": [
       {
-        "path": "/assets/index-Dyvx0wYp.js",
+        "path": "/assets/index-C4muN2G8.js",
         "cached": true
       },
       {
@@ -256,13 +253,13 @@
     "sql-grind-assets-curriculum-v1-064db1f6925786b0": 15,
     "sql-grind-assets-foreign-version": 1
   },
-  "onlineReloadReadyMs": 2673,
+  "onlineReloadReadyMs": 2638,
   "cachesAfterPurge": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 28,
     "sql-grind-assets-curriculum-v1-064db1f6925786b0": 15
   },
-  "offlineReloadReadyMs": 2613,
+  "offlineReloadReadyMs": 2728,
   "offlineQueryRows": 11,
   "secondVisit": {
     "requestFailures": [],
@@ -295,12 +292,12 @@
       },
       "shell": {
         "stored": 26,
-        "bytes": 1504542
+        "bytes": 1504626
       },
       "failed": [],
       "version": "curriculum-v1-064db1f6925786b0"
     },
-    "offlineReadyMs": 2618,
+    "offlineReadyMs": 2635,
     "offlineQueryRows": 11
   },
   "status": "passed",

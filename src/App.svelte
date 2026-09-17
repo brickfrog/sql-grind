@@ -2285,6 +2285,7 @@
     // A previous drill's rows must not read as this drill's evidence.
     kataResult = null;
     kataSchemaOpen = false;
+    kataSchema = [];
     kataFeedback = due
       ? ""
       : "Nothing is due for this pattern. Practice as much as you like: an early pass is recorded but does not advance the streak or the schedule, because spacing is what a streak claims.";
@@ -2298,6 +2299,7 @@
     kataOutcome = "";
     kataResult = null;
     kataSchemaOpen = false;
+    kataSchema = [];
     kataNow = Date.now();
   }
   /**
@@ -2465,6 +2467,8 @@
    */
   async function toggleKataSchema() {
     if (kataSchemaOpen) {
+      // Collapsing the list keeps the loaded schema: it still describes this
+      // drill's dataset, and reloading it would cost another reconfigure.
       kataSchemaOpen = false;
       return;
     }

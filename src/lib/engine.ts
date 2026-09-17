@@ -990,8 +990,14 @@ export class EngineCoordinator {
             correctness: checked.pass ? "correct" : "incorrect",
             message: checked.pass
               ? "The drill matches the authored reference on types, values, NULLs, duplicates and required ordering."
-              : (checked.reason ??
-                "The drill output differs from the authored reference."),
+              : // The comparator's reason names the offending row and column but
+                // not the counts, because a graded challenge shows those in its
+                // per-variant scorecard line. A drill has no scorecard, so the
+                // counts are stated here rather than lost.
+                `Expected ${reference.result.count} rows, received ${actual.result.count}. ${
+                  checked.reason ??
+                  "The drill output differs from the authored reference."
+                }`,
           };
         }
       } finally {
