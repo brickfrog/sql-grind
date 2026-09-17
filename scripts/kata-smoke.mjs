@@ -278,7 +278,7 @@ try {
     // carry them, so the comparator's row-level reason is prefixed with them.
     assert.match(
       value.message,
-      /^Expected \d+ rows, received \d+\. Row \d+ is not in the expected result\. No expected row has "customer_id" \(you returned "\d+"\)/,
+      /^Expected \d+ rows?, received \d+ rows?\. Row \d+ is not in the expected result\. No expected row has "customer_id" \(you returned "\d+"\)/,
     );
     return value;
   });

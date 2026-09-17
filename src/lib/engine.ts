@@ -994,7 +994,10 @@ export class EngineCoordinator {
                 // not the counts, because a graded challenge shows those in its
                 // per-variant scorecard line. A drill has no scorecard, so the
                 // counts are stated here rather than lost.
-                `Expected ${reference.result.count} rows, received ${actual.result.count}. ${
+                `Expected ${formatCount(reference.result.count, "row")}, received ${formatCount(
+                  actual.result.count,
+                  "row",
+                )}. ${
                   checked.reason ??
                   "The drill output differs from the authored reference."
                 }`,
