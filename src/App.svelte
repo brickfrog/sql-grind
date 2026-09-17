@@ -4324,13 +4324,22 @@
           <span role="status">{status}</span>
           <button onclick={() => engine.cancel()}>Cancel comparison</button>
         </section>{/if}
-      {#if contentError}<div class="error-banner" role="alert">
-          <strong>Content unavailable</strong><span
-            >{contentError} Your drafts are retained.</span
-          >
+      {#if contentError}{@const authored =
+          contentError.startsWith("Content error:")}
+        <div class="error-banner" role="alert">
+          <!-- Authored content carries the "Content error:" prefix the loaders
+          attach; anything else reached here from the engine or asset layer, and
+          calling that "Content unavailable" sends the reader to look at the
+          curriculum for a fault in the SQL runtime. -->
+          <strong
+            >{authored
+              ? "Content unavailable"
+              : "SQL engine unavailable"}</strong
+          ><span>{contentError} Your drafts are retained.</span>
           <button
             disabled={contentLoading || running}
-            onclick={() => loadContent()}>Retry content</button
+            onclick={() => loadContent()}
+            >{authored ? "Retry content" : "Retry engine"}</button
           >
           <button disabled={!activeDoc} onclick={() => command("Export SQL")}
             >Export SQL</button

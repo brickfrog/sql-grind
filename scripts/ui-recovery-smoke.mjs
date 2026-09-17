@@ -9,6 +9,10 @@ const context = await browser.newContext({
 const checks = [],
   errors = [];
 let brokenAsset = true;
+// A corrupt authored asset and an unreachable engine asset are different
+// faults: the first is content, the second is the SQL runtime. The banner has
+// to name the right one, so each is injectable on its own.
+let brokenEngine = false;
 await context.route("**/*", async (route) => {
   const url = new URL(route.request().url());
   if (url.origin !== origin) return route.abort();
@@ -18,6 +22,8 @@ await context.route("**/*", async (route) => {
       contentType: "text/plain",
       body: "-- INJECTED corrupt local asset",
     });
+  if (brokenEngine && /duckdb-browser.*worker.*\.js$/.test(url.pathname))
+    return route.abort("failed");
   return route.continue();
 });
 await context.addInitScript(() => {
@@ -74,10 +80,9 @@ try {
   await page
     .getByRole("button", { name: "Retry content", exact: true })
     .waitFor();
-  assert.match(
-    await page.locator(".error-banner").textContent(),
-    /hash|checksum|integrity/i,
-  );
+  const assetBanner = await page.locator(".error-banner").textContent();
+  assert.match(assetBanner, /hash|checksum|integrity/i);
+  assert.match(assetBanner, /Content unavailable/);
   assert.equal(await page.locator(".run-identity").count(), 0);
   brokenAsset = false;
   await page
@@ -89,6 +94,30 @@ try {
     .click();
   mark(
     "INJECTED corrupt asset is rejected; visible Retry content restores verified runtime",
+  );
+  // The same banner serves both faults, so the heading and the retry label are
+  // the only things telling a reader which subsystem to look at. An aborted
+  // engine asset must not be announced as missing curriculum.
+  brokenEngine = true;
+  await page.reload();
+  await page
+    .getByRole("button", { name: "Retry engine", exact: true })
+    .waitFor({ timeout: 90000 });
+  const engineBanner = await page.locator(".error-banner").textContent();
+  assert.match(engineBanner, /SQL engine unavailable/);
+  assert.doesNotMatch(engineBanner, /Content unavailable/);
+  assert.equal(
+    await page
+      .getByRole("button", { name: "Retry content", exact: true })
+      .count(),
+    0,
+    "an engine fault offered a content retry",
+  );
+  brokenEngine = false;
+  await page.getByRole("button", { name: "Retry engine", exact: true }).click();
+  await ready(page);
+  mark(
+    "INJECTED unreachable engine asset names the SQL engine, and Retry engine restores it",
   );
   await edit(page, "SELECT 42::BIGINT AS saved;");
   await menu(page, "File", "Save");

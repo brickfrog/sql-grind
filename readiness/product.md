@@ -429,6 +429,7 @@ Scratch documents carry a dataset ID and `challenge: null`. They can execute, bu
 Reopening a current attempt restores its SQL and recorded identity.
 Unavailable historical content opens as scratch with an explicit historical notice, never as a silently reassigned current challenge.
 Content errors remain visible with Retry. Drafts remain available, and a load failure never falls back to Challenge 07.
+The banner names the subsystem that failed: authored content carries the `Content error:` prefix its loaders attach and reads "Content unavailable" with Retry content, while anything reaching the same banner from the engine or asset layer reads "SQL engine unavailable" with Retry engine. Both retries reload the verified runtime; the distinction tells a reader whether to suspect the curriculum or the SQL engine.
 
 The former preview-only Challenge 07 milestone is historical. The current application uses one catalog for all 65 challenges.
 The map contains thirteen nodes. Its canvas derives its bounds from the authored coordinates and margins.
