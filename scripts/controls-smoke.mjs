@@ -964,11 +964,14 @@ try {
   );
   // Parse checks without running: a rejected statement produces no result.
   assert.equal(await page.locator(".grid-row").count(), 0);
-  const hintsBefore = await page.locator(".goal").innerText();
+  // Wait for the hint itself. Waiting for "the goal panel changed at all" is a
+  // race: parsing had just moved the note count from none to one, and that
+  // change alone satisfied the wait, so the assertion ran against a panel that
+  // still read "No hints revealed".
   await page.keyboard.press("ControlOrMeta+Shift+H");
   await page.waitForFunction(
-    (before) => document.querySelector(".goal")?.innerText !== before,
-    hintsBefore,
+    () => /1 of 3/.test(document.querySelector(".goal")?.innerText ?? ""),
+    null,
     { timeout: 45000 },
   );
   assert.match(await page.locator(".goal").innerText(), /1 of 3/);

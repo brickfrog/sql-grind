@@ -534,8 +534,8 @@
   }
   .skill-node strong {
     display: block;
-    font-size: 11px;
-    line-height: 13px;
+    font-size: 12px;
+    line-height: 14px;
   }
   .skill-node.progress {
     background: var(--state-progress);
@@ -570,8 +570,8 @@
     display: flex;
     align-items: center;
     gap: 3px;
-    font-size: 10px;
-    line-height: 13px;
+    font-size: 11px;
+    line-height: 14px;
     margin-top: 2px;
   }
   .node-lock {
@@ -583,8 +583,8 @@
     position: absolute;
     top: 3px;
     right: 4px;
-    font-size: 9px;
-    line-height: 11px;
+    font-size: 10px;
+    line-height: 12px;
     padding: 0 3px;
     background: var(--accent);
     color: var(--accent-ink);

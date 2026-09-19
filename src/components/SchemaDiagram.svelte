@@ -510,7 +510,7 @@
   }
   .edge-label {
     fill: var(--ink);
-    font-size: 10px;
+    font-size: 11px;
     paint-order: stroke;
     stroke: var(--field);
     stroke-width: 3px;
@@ -553,8 +553,8 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: 11px;
-    line-height: 14px;
+    font-size: 12px;
+    line-height: 15px;
   }
   .table-node.selected {
     background: var(--accent);
@@ -562,7 +562,7 @@
     border-color: var(--accent);
   }
   .self-badge {
-    font-size: 9px;
+    font-size: 10px;
     font-weight: normal;
     padding: 0 3px;
     border: 1px solid var(--bevel-dim);
@@ -572,8 +572,8 @@
   .node-rows,
   .node-key {
     display: block;
-    font-size: 10px;
-    line-height: 13px;
+    font-size: 11px;
+    line-height: 14px;
   }
   .node-key {
     color: var(--ink-muted);

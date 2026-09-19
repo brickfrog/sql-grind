@@ -818,7 +818,7 @@
   }
   small {
     display: block;
-    font-size: 10px;
+    font-size: 11px;
     color: var(--ink-muted);
     font-weight: normal;
     overflow: hidden;
@@ -866,7 +866,7 @@
   .grid-help {
     background: var(--face-alt);
     padding: 3px 6px;
-    font-size: 10px;
+    font-size: 11px;
     flex: none;
   }
   .copy-status {
@@ -881,7 +881,7 @@
   table {
     border-collapse: collapse;
     width: 100%;
-    font-size: 11px;
+    font-size: 12px;
   }
   caption {
     text-align: left;

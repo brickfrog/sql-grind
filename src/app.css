@@ -187,7 +187,7 @@ body,
   margin: 0;
   min-height: 100%;
   font-family: Tahoma, Verdana, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink);
 }
 body {
@@ -308,11 +308,11 @@ button img + span {
   vertical-align: middle;
 }
 h2 {
-  font-size: 13px;
+  font-size: 14px;
   margin: 0 0 8px;
 }
 h3 {
-  font-size: 11px;
+  font-size: 12px;
   margin: 14px 0 6px;
 }
 p {
@@ -324,14 +324,14 @@ code {
   font-family: "Lucida Console", "Courier New", monospace;
 }
 pre {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
   tab-size: 2;
 }
 small,
 .quiet {
   color: var(--ink-quiet);
-  font-size: 10px;
+  font-size: 11px;
 }
 .inset {
   border: 2px inset var(--face);
@@ -418,8 +418,8 @@ small,
   border: 1px solid var(--danger-edge);
   background: var(--danger-bg);
   color: var(--danger-ink);
-  font-size: 9px;
-  line-height: 13px;
+  font-size: 10px;
+  line-height: 14px;
   font-weight: bold;
   text-align: center;
 }
@@ -502,7 +502,7 @@ small,
   min-height: 24px;
   padding: 0;
   color: var(--ink);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: bold;
 }
 .ide-title {
@@ -715,7 +715,7 @@ small,
   width: 170px;
   height: 24px;
   min-height: 24px;
-  font-size: 11px;
+  font-size: 12px;
   padding: 0 3px;
 }
 .gripper {
@@ -826,7 +826,7 @@ small,
     var(--bevel-light);
 }
 .dataset-label {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ink-soft);
   margin-left: auto;
 }
@@ -848,7 +848,7 @@ small,
   background: transparent;
   width: 100%;
   text-align: left;
-  font-size: 11px;
+  font-size: 12px;
 }
 .tree-row:hover:not(:disabled) {
   background: var(--accent-wash);
@@ -890,7 +890,7 @@ small,
   flex-shrink: 0;
 }
 .tree-row .count {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ink-soft);
 }
 .tree-row {
@@ -905,7 +905,7 @@ small,
   min-width: 0;
 }
 .tree-row small {
-  font-size: 9px;
+  font-size: 10px;
   margin-left: auto;
   flex: 0 0 auto;
 }
@@ -913,7 +913,7 @@ small,
   display: block;
   color: var(--ink-soft);
   padding-left: 34px;
-  font-size: 10px;
+  font-size: 11px;
 }
 .challenge-row {
   font-weight: bold;
@@ -935,10 +935,10 @@ small,
   min-width: 0;
 }
 .filter span {
-  font-size: 10px;
+  font-size: 11px;
 }
 .explorer-footer {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ink-soft);
   padding: 6px 4px;
   line-height: 1.5;
@@ -965,7 +965,7 @@ small,
   border-bottom: 0;
   background: var(--face-sunken);
   white-space: nowrap;
-  font-size: 11px;
+  font-size: 12px;
   flex-shrink: 0;
   padding: 2px 8px;
 }
@@ -1059,8 +1059,8 @@ small,
   color: var(--brand-ink);
 }
 .run-identity {
-  font-size: 10px;
-  line-height: 20px;
+  font-size: 11px;
+  line-height: 22px;
   min-height: 20px;
   padding: 0 5px;
   background: var(--face-hover);
@@ -1077,7 +1077,7 @@ small,
   flex: 1;
   overflow: auto;
   min-height: 0;
-  font-size: 11px;
+  font-size: 12px;
 }
 .message-list p {
   font-family: "Lucida Console", "Courier New", monospace;
@@ -1133,7 +1133,7 @@ small,
   flex: 1;
   min-height: 0;
   gap: 0;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.55;
 }
 /* The panel is a scrolling flex column, so every block in it must keep its
@@ -1149,17 +1149,17 @@ small,
 .goal-content .status-card dd,
 .goal-content .scorecard dt,
 .goal-content .scorecard dd {
-  font-size: 12px;
+  font-size: 13px;
 }
 .eyebrow {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ink-faint);
   text-transform: uppercase;
   margin-bottom: 7px;
   letter-spacing: 0.15px;
 }
 .goal-content h2 {
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.3;
   margin: 0 0 8px;
 }
@@ -1172,7 +1172,7 @@ small,
 .chips span {
   border: 1px solid var(--bevel-mid);
   background: var(--panel);
-  font-size: 10px;
+  font-size: 11px;
   padding: 1px 4px;
   white-space: nowrap;
 }
@@ -1180,14 +1180,14 @@ small,
   border-bottom: 1px solid var(--face-sunken);
   padding-bottom: 3px;
   margin: 12px 0 6px;
-  font-size: 12px;
+  font-size: 13px;
 }
 .goal-content p {
   margin: 5px 0 9px;
 }
 .shape {
   font-family: "Lucida Console", "Courier New", monospace;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.7;
   background: var(--panel);
   border: 1px solid var(--face-sunken);
@@ -1212,11 +1212,11 @@ small,
   margin: 0;
 }
 .status-card dt {
-  font-size: 11px;
+  font-size: 12px;
 }
 .status-card dd {
   margin: 0;
-  font-size: 10px;
+  font-size: 11px;
   text-align: right;
   max-width: 145px;
 }
@@ -1235,11 +1235,11 @@ small,
   margin: 3px 0;
 }
 .scorecard dt {
-  font-size: 11px;
+  font-size: 12px;
 }
 .scorecard dd {
   margin: 0;
-  font-size: 10px;
+  font-size: 11px;
   text-align: right;
   max-width: 145px;
 }
@@ -1249,7 +1249,7 @@ small,
 }
 .fixture-results,
 .scan-list {
-  font-size: 10px;
+  font-size: 11px;
   padding-left: 14px;
   overflow-wrap: anywhere;
 }
@@ -1266,12 +1266,12 @@ small,
   border: 1px solid var(--rule);
   background: var(--panel);
   padding: 4px;
-  font-size: 9px;
+  font-size: 10px;
   text-align: center;
 }
 .reference-boxes b {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   margin-top: 4px;
   overflow-wrap: anywhere;
 }
@@ -1279,7 +1279,7 @@ small,
   padding: 7px;
   border: 1px solid var(--face-sunken);
   background: var(--panel);
-  font-size: 10px;
+  font-size: 11px;
   margin: 8px 0;
 }
 .goal-footer {
@@ -1327,7 +1327,7 @@ small,
   width: 100%;
   text-align: left;
   background: var(--panel);
-  font-size: 10px;
+  font-size: 11px;
   padding: 5px;
   line-height: 1.45;
 }
@@ -1355,7 +1355,7 @@ small,
 .schema-reference table {
   border-collapse: collapse;
   width: 100%;
-  font-size: 10px;
+  font-size: 11px;
 }
 .schema-reference th,
 .schema-reference td {
@@ -1367,7 +1367,7 @@ small,
   background: var(--face);
 }
 .schema-reference h3 {
-  font-size: 12px;
+  font-size: 13px;
 }
 .schema-reference h3 small {
   float: right;
@@ -1399,7 +1399,7 @@ small,
   display: flex;
   align-items: center;
   padding: 0 5px;
-  font-size: 10px;
+  font-size: 11px;
 }
 .statusbar .status-message {
   flex: 1;
@@ -1478,7 +1478,7 @@ small,
   }
 }
 .celebrate-lead {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: bold;
   margin-top: 0;
 }
@@ -1516,7 +1516,7 @@ small,
   user-select: none;
 }
 .judge-title h2 {
-  font-size: 11px;
+  font-size: 12px;
   margin: 0;
   font-weight: bold;
   background-color: var(--brand-veil);
@@ -1537,7 +1537,7 @@ small,
   padding: 6px;
   flex: 1;
   min-width: 0;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.4;
   min-height: 74px;
 }
@@ -1547,18 +1547,18 @@ small,
 }
 .judge-speech small {
   display: block;
-  font-size: 9px;
+  font-size: 10px;
 }
 .judge-summary {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 0 7px;
-  font-size: 10px;
+  font-size: 11px;
 }
 .judge-summary .link {
   margin-left: auto;
-  font-size: 10px;
+  font-size: 11px;
   white-space: nowrap;
 }
 .warning {
@@ -1580,7 +1580,7 @@ small,
   padding-right: 18px;
 }
 .judge-actions button {
-  font-size: 10px;
+  font-size: 11px;
   padding: 2px 5px;
 }
 .judge-resize {
@@ -1618,7 +1618,7 @@ small,
   user-select: none;
 }
 .goal-title h2 {
-  font-size: 11px;
+  font-size: 12px;
   margin: 0;
   font-weight: bold;
   color: var(--accent-ink);
@@ -1661,20 +1661,20 @@ small,
   gap: 5px;
 }
 .judge.docked .judge-speech {
-  font-size: 10px;
+  font-size: 11px;
   min-height: 40px;
   padding: 4px;
 }
 .judge.docked .judge-speech small {
-  font-size: 9px;
+  font-size: 10px;
 }
 .judge.docked .judge-summary {
   gap: 5px;
-  font-size: 9px;
+  font-size: 10px;
   padding: 0 4px;
 }
 .judge.docked .judge-summary .link {
-  font-size: 9px;
+  font-size: 10px;
 }
 .judge.docked .judge-actions {
   gap: 3px;
@@ -1709,7 +1709,7 @@ small,
   align-items: center;
   gap: 5px;
   padding: 2px 7px;
-  font-size: 12px;
+  font-size: 13px;
 }
 .start-logo {
   display: grid;
@@ -1804,7 +1804,7 @@ small,
   transform: rotate(180deg);
   background: linear-gradient(var(--accent), var(--bevel-mid));
   color: var(--accent-ink);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
   padding: 10px 4px;
 }
@@ -1852,7 +1852,7 @@ small,
 .notice {
   background: var(--caution-bg);
   border: 1px solid var(--caution-edge);
-  font-size: 10px;
+  font-size: 11px;
   flex-wrap: wrap;
 }
 .app-dialog {
@@ -1862,7 +1862,7 @@ small,
   max-height: calc(var(--view-height) - 32px);
   padding: 2px;
   overflow: hidden;
-  font-size: 12px;
+  font-size: 13px;
   z-index: 30;
 }
 /* Scoped to [open]: an author `display` on a dialog overrides the user-agent
@@ -1889,7 +1889,7 @@ small,
 }
 .app-dialog .titlebar h2 {
   margin: 0;
-  font-size: 12px;
+  font-size: 13px;
   background-color: var(--accent-veil-strong);
 }
 .app-dialog .titlebar > button {
@@ -1904,7 +1904,7 @@ small,
 }
 .dialog-content input:not([type="checkbox"]),
 .dialog-content select {
-  font-size: 12px;
+  font-size: 13px;
   max-width: 100%;
 }
 .dialog-content form label {
@@ -1925,7 +1925,7 @@ small,
   padding: 14px 0 0;
 }
 .dialog-content h3 {
-  font-size: 12px;
+  font-size: 13px;
 }
 .dialog-content > button {
   margin: 4px 3px 4px 0;
@@ -1966,7 +1966,7 @@ small,
   margin-left: 7px;
 }
 .library-list article p {
-  font-size: 11px;
+  font-size: 12px;
 }
 .library-list button {
   margin-right: 4px;
@@ -1982,7 +1982,7 @@ small,
 }
 .kata-meta {
   margin: 4px 0;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-mid);
   max-width: 72ch;
 }
@@ -2000,7 +2000,7 @@ small,
   align-items: baseline;
   border-top: 1px solid var(--rule-soft);
   padding: 2px 0;
-  font-size: 11px;
+  font-size: 12px;
 }
 .kata-variations small {
   color: var(--ink-soft);
@@ -2193,11 +2193,11 @@ small,
   justify-content: flex-start;
 }
 .reading .goal-content h2 {
-  font-size: 16px;
+  font-size: 18px;
 }
 .reading .titlebar .window-title {
   white-space: normal;
-  font-size: 10px;
+  font-size: 11px;
 }
 .reading .titlebar {
   height: auto;
@@ -2286,7 +2286,7 @@ small,
   }
   .reading .statusbar > span:not(.status-message),
   .reading .statusbar > .status-drills {
-    font-size: 9px;
+    font-size: 10px;
   }
   .reading .menubar button {
     padding: 2px 6px;
@@ -2295,7 +2295,7 @@ small,
     max-width: 350px;
   }
   .reading .judge-speech {
-    font-size: 11px;
+    font-size: 12px;
   }
   .reading .quick-launch {
     display: none;

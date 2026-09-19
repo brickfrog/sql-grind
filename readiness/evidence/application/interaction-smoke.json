@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-19T23:24:35.787Z",
+  "date": "2026-09-19T23:52:40.735Z",
   "checks": [
     "Repeated judge drags preserve pointer offset without jumping or selecting text",
     "Judge grip resizes by pointer and keyboard; scaled drags clamp to the viewport edges",

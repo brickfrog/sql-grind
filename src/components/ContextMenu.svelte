@@ -237,7 +237,7 @@
     box-shadow: 2px 2px var(--bevel-shadow);
     padding: 3px;
     font-family: Tahoma, Verdana, sans-serif;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .context-menu:focus-visible {
