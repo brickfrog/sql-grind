@@ -618,7 +618,7 @@
           "path": "/bundle/challenge-07.json",
           "title": "Top categories by monthly paid gross revenue",
           "brief": "Rank monthly category revenue while preserving qualifying ties.",
-          "displayNumber": "07",
+          "displayNumber": "window.03",
           "identity": {
             "challengeId": "window.03",
             "bundleVersion": "window.03-bundle-v2",
@@ -776,7 +776,7 @@
           "path": "/bundle/challenges/rec.01/challenge.json",
           "title": "Root identity and depth",
           "brief": "Enumerate a hierarchy with root identity and depth.",
-          "displayNumber": "08",
+          "displayNumber": "rec.01",
           "identity": {
             "challengeId": "rec.01",
             "bundleVersion": "rec.01-bundle-v1",
@@ -871,7 +871,7 @@
           "path": "/bundle/challenges/pivot.01/challenge.json",
           "title": "Fixed monthly return matrix",
           "brief": "Turn categorized events into a fixed monthly report.",
-          "displayNumber": "09",
+          "displayNumber": "pivot.01",
           "identity": {
             "challengeId": "pivot.01",
             "bundleVersion": "pivot.01-bundle-v1",

@@ -1,6 +1,6 @@
 {
-  "startedAt": "2026-09-17T21:04:06.620Z",
-  "finishedAt": "2026-09-17T21:04:59.687Z",
+  "startedAt": "2026-09-19T17:29:08.846Z",
+  "finishedAt": "2026-09-19T17:30:02.030Z",
   "origin": "http://127.0.0.1:5176",
   "browser": "153.0.8010.12",
   "pass": true,
@@ -9,7 +9,7 @@
       "name": "initialize restores all eight published table counts",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 2862.849525,
+      "wallMs": 2838.056575,
       "details": {
         "schema": [
           {
@@ -411,7 +411,7 @@
               "14"
             ]
           },
-          "elapsedMs": 19.69999998807907,
+          "elapsedMs": 16.80000001192093,
           "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
           "diagnostics": []
         }
@@ -421,13 +421,13 @@
       "name": "parser: reference CTE and window functions",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 196.30226600000015,
+      "wallMs": 190.04564600000003,
       "details": {
         "sql": "-- challenge-07-v1 / commerce-v1. Output order within (mon, rnk) peers is optional.\nWITH monthly AS (\n    SELECT\n        CAST(date_trunc('month', o.ordered_at AT TIME ZONE 'UTC') AS DATE) AS mon,\n        c.category_id,\n        c.c_name,\n        CAST(sum(CAST(oi.qty AS DECIMAL(18,0)) * oi.unit_price) AS DECIMAL(38,2)) AS revenue\n    FROM orders AS o\n    JOIN order_items AS oi ON oi.order_id = o.order_id\n    JOIN products AS p ON p.product_id = oi.product_id\n    JOIN categories AS c ON c.category_id = p.category_id\n    WHERE o.status = 'paid'\n      AND o.ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00'\n      AND o.ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'\n    GROUP BY mon, c.category_id, c.c_name\n), ranked AS (\n    SELECT mon, category_id, c_name, revenue,\n        rank() OVER (PARTITION BY mon ORDER BY revenue DESC) AS rnk\n    FROM monthly\n)\nSELECT mon, category_id, c_name, revenue, rnk\nFROM ranked\nWHERE rnk <= 3\nORDER BY mon ASC, rnk ASC, category_id ASC;\n",
         "revision": 2,
         "valid": true,
         "diagnostics": [],
-        "elapsedMs": 194.09999999403954,
+        "elapsedMs": 187.5,
         "coverage": "J001 coverage excludes unresolved CTE/derived/correlated, OR, USING, NATURAL, lateral, and unsupported predicate scopes. J002 is style only. J003 requires a measured profile."
       }
     },
@@ -435,7 +435,7 @@
       "name": "parser: J001 disconnected comma relations",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 2.579808999999841,
+      "wallMs": 2.837569999999687,
       "details": {
         "sql": "SELECT count(*) FROM orders o, order_items i",
         "revision": 3,
@@ -451,7 +451,7 @@
             "evidence": "Current JSON AST relation graph; no measured row count or correctness claim."
           }
         ],
-        "elapsedMs": 1,
+        "elapsedMs": 1.199999988079071,
         "coverage": "Current JSON AST: supported relationship scopes and projection wildcards. J003 requires a measured profile."
       }
     },
@@ -459,13 +459,13 @@
       "name": "parser: J001 connected WHERE aliases",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1.824449999999615,
+      "wallMs": 2.7217600000003586,
       "details": {
         "sql": "SELECT count(*) FROM orders o, order_items i WHERE o.order_id = i.order_id",
         "revision": 4,
         "valid": true,
         "diagnostics": [],
-        "elapsedMs": 0.9000000059604645,
+        "elapsedMs": 1.399999976158142,
         "coverage": "Current JSON AST: supported relationship scopes and projection wildcards. J003 requires a measured profile."
       }
     },
@@ -473,13 +473,13 @@
       "name": "parser: J001 connected ON aliases",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1.8102100000000974,
+      "wallMs": 2.535800999999992,
       "details": {
         "sql": "SELECT count(*) FROM orders o JOIN order_items i ON o.order_id = i.order_id",
         "revision": 5,
         "valid": true,
         "diagnostics": [],
-        "elapsedMs": 0.7999999821186066,
+        "elapsedMs": 1.199999988079071,
         "coverage": "Current JSON AST: supported relationship scopes and projection wildcards. J003 requires a measured profile."
       }
     },
@@ -487,7 +487,7 @@
       "name": "parser: J001 intentional known-table CROSS JOIN",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 2.2615789999999834,
+      "wallMs": 2.606500000000324,
       "details": {
         "sql": "SELECT count(*) FROM orders o CROSS JOIN order_items i",
         "revision": 6,
@@ -501,13 +501,13 @@
       "name": "parser: intentional generated CROSS JOIN",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 2.93195999999989,
+      "wallMs": 2.953580000000329,
       "details": {
         "sql": "SELECT count(*) FROM range(2) a CROSS JOIN range(3) b",
         "revision": 7,
         "valid": true,
         "diagnostics": [],
-        "elapsedMs": 1.4000000059604645,
+        "elapsedMs": 1.300000011920929,
         "coverage": "J001 coverage excludes unresolved CTE/derived/correlated, OR, USING, NATURAL, lateral, and unsupported predicate scopes. J002 is style only. J003 requires a measured profile."
       }
     },
@@ -515,7 +515,7 @@
       "name": "parser: J002 CTE expansion",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 2.660099000000173,
+      "wallMs": 2.518199999999979,
       "details": {
         "sql": "WITH x AS (SELECT * FROM order_items) SELECT sum(qty) FROM x",
         "revision": 8,
@@ -531,7 +531,7 @@
             "evidence": "SELECT-list expansion wildcard in the current JSON AST; no speed claim."
           }
         ],
-        "elapsedMs": 1.2999999821186066,
+        "elapsedMs": 1.2999999523162842,
         "coverage": "J001 coverage excludes unresolved CTE/derived/correlated, OR, USING, NATURAL, lateral, and unsupported predicate scopes. J002 is style only. J003 requires a measured profile."
       }
     },
@@ -539,7 +539,7 @@
       "name": "parser: J002 qualified expansion",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1.5836589999998978,
+      "wallMs": 2.4632799999999406,
       "details": {
         "sql": "SELECT i.* FROM order_items i",
         "revision": 9,
@@ -555,7 +555,7 @@
             "evidence": "SELECT-list expansion wildcard in the current JSON AST; no speed claim."
           }
         ],
-        "elapsedMs": 0.699999988079071,
+        "elapsedMs": 1.199999988079071,
         "coverage": "Current JSON AST: supported relationship scopes and projection wildcards. J003 requires a measured profile."
       }
     },
@@ -563,7 +563,7 @@
       "name": "parser: J002 outer CTE qualified star selects its own token",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 2.1616399999998066,
+      "wallMs": 2.7025800000001254,
       "details": {
         "sql": "WITH m AS (\nSELECT o.order_id, o.status\nFROM orders o\n)\nSELECT m.* FROM m LIMIT 5;",
         "revision": 10,
@@ -579,7 +579,7 @@
             "evidence": "SELECT-list expansion wildcard in the current JSON AST; no speed claim."
           }
         ],
-        "elapsedMs": 1.0999999940395355,
+        "elapsedMs": 1.4000000357627869,
         "coverage": "J001 coverage excludes unresolved CTE/derived/correlated, OR, USING, NATURAL, lateral, and unsupported predicate scopes. J002 is style only. J003 requires a measured profile."
       }
     },
@@ -587,7 +587,7 @@
       "name": "parser: J002 Unicode qualifier ignores comment wildcard",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1.640639999999621,
+      "wallMs": 2.0961200000001554,
       "details": {
         "sql": "SELECT \"é😀\" /* * */ . * FROM orders AS \"é😀\"",
         "revision": 11,
@@ -603,7 +603,7 @@
             "evidence": "SELECT-list expansion wildcard in the current JSON AST; no speed claim."
           }
         ],
-        "elapsedMs": 0.7000000178813934,
+        "elapsedMs": 1.199999988079071,
         "coverage": "Current JSON AST: supported relationship scopes and projection wildcards. J003 requires a measured profile."
       }
     },
@@ -611,7 +611,7 @@
       "name": "parser: J002 retains independent inner and outer CTE projections",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1.264799000000039,
+      "wallMs": 2.7227200000002085,
       "details": {
         "sql": "WITH m AS (SELECT * FROM orders) SELECT m.* FROM m",
         "revision": 12,
@@ -636,7 +636,7 @@
             "evidence": "SELECT-list expansion wildcard in the current JSON AST; no speed claim."
           }
         ],
-        "elapsedMs": 0.5,
+        "elapsedMs": 1.100000023841858,
         "coverage": "J001 coverage excludes unresolved CTE/derived/correlated, OR, USING, NATURAL, lateral, and unsupported predicate scopes. J002 is style only. J003 requires a measured profile."
       }
     },
@@ -644,13 +644,13 @@
       "name": "parser: J002 COUNT wildcard is not expansion",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 0.9614299999998366,
+      "wallMs": 2.2961600000003273,
       "details": {
         "sql": "SELECT count(*) FROM order_items",
         "revision": 13,
         "valid": true,
         "diagnostics": [],
-        "elapsedMs": 0.4000000059604645,
+        "elapsedMs": 1.5,
         "coverage": "Current JSON AST: supported relationship scopes and projection wildcards. J003 requires a measured profile."
       }
     },
@@ -658,13 +658,13 @@
       "name": "parser: J002 multiplication is not expansion",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1.7524399999997513,
+      "wallMs": 1.3763709999998355,
       "details": {
         "sql": "SELECT qty * unit_price FROM order_items",
         "revision": 14,
         "valid": true,
         "diagnostics": [],
-        "elapsedMs": 0.5999999940395355,
+        "elapsedMs": 0.7999999523162842,
         "coverage": "Current JSON AST: supported relationship scopes and projection wildcards. J003 requires a measured profile."
       }
     },
@@ -672,7 +672,7 @@
       "name": "parser: Unicode source ranges ignore commented wildcard",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 2.0993490000000747,
+      "wallMs": 1.5615499999998974,
       "details": {
         "sql": "/* café 雪 😀 * */ SELECT * FROM orders",
         "revision": 15,
@@ -688,7 +688,7 @@
             "evidence": "SELECT-list expansion wildcard in the current JSON AST; no speed claim."
           }
         ],
-        "elapsedMs": 0.9000000059604645,
+        "elapsedMs": 0.800000011920929,
         "coverage": "Current JSON AST: supported relationship scopes and projection wildcards. J003 requires a measured profile."
       }
     },
@@ -696,7 +696,7 @@
       "name": "parser: Unicode relationship source range",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 3.6860390000001644,
+      "wallMs": 2.016030000000228,
       "details": {
         "sql": "/* café 雪 😀 */ SELECT count(*) FROM orders o, order_items i",
         "revision": 16,
@@ -712,7 +712,7 @@
             "evidence": "Current JSON AST relation graph; no measured row count or correctness claim."
           }
         ],
-        "elapsedMs": 1.699999988079071,
+        "elapsedMs": 1.199999988079071,
         "coverage": "Current JSON AST: supported relationship scopes and projection wildcards. J003 requires a measured profile."
       }
     },
@@ -720,12 +720,12 @@
       "name": "parser: malformed SELECT",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 6.340968999999859,
+      "wallMs": 5.305640000000039,
       "details": {
         "sql": "SELECT FROM WHERE",
         "revision": 17,
         "valid": false,
-        "elapsedMs": 4.4000000059604645,
+        "elapsedMs": 4.199999988079071,
         "diagnostics": [
           {
             "ruleId": "SQL",
@@ -742,12 +742,12 @@
       "name": "parser: malformed Unicode query",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 3.453928999999789,
+      "wallMs": 1.8212899999998626,
       "details": {
         "sql": "SELECT '雪😀' AS label, )",
         "revision": 18,
         "valid": false,
-        "elapsedMs": 1.7000000178813934,
+        "elapsedMs": 0.8999999761581421,
         "diagnostics": [
           {
             "ruleId": "SQL",
@@ -764,13 +764,13 @@
       "name": "parser: OR relationship remains unsupported, not speculative",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 2.5700889999998253,
+      "wallMs": 1.497841000000335,
       "details": {
         "sql": "SELECT count(*) FROM orders o, order_items i WHERE o.order_id = i.order_id OR o.order_id = 1",
         "revision": 19,
         "valid": true,
         "diagnostics": [],
-        "elapsedMs": 1.300000011920929,
+        "elapsedMs": 0.8999999761581421,
         "coverage": "J001 coverage excludes unresolved CTE/derived/correlated, OR, USING, NATURAL, lateral, and unsupported predicate scopes. J002 is style only. J003 requires a measured profile."
       }
     },
@@ -778,7 +778,7 @@
       "name": "exact Arrow grid preserves BIGINT, negative DECIMAL and NULL",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1221.1172190000002,
+      "wallMs": 1285.8033600000003,
       "details": {
         "id": "engine-smoke-20",
         "documentId": "engine-smoke-document",
@@ -825,7 +825,7 @@
             null
           ]
         },
-        "elapsedMs": 2.5999999940395355,
+        "elapsedMs": 2.699999988079071,
         "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
         "diagnostics": []
       }
@@ -834,7 +834,7 @@
       "name": "temporal values keep their engine precision and per-row interval components",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 508.19881799999985,
+      "wallMs": 478.55171100000007,
       "details": {
         "id": "engine-smoke-21",
         "documentId": "engine-smoke-document",
@@ -939,7 +939,7 @@
             "2024-03-01 12:34:56.123456"
           ]
         },
-        "elapsedMs": 4.5999999940395355,
+        "elapsedMs": 4.300000011920929,
         "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
         "diagnostics": []
       }
@@ -948,7 +948,7 @@
       "name": "timestamp infinities and out-of-Date-range instants decode without raw integers",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 527.0491630000006,
+      "wallMs": 473.3083409999999,
       "details": {
         "id": "engine-smoke-22",
         "documentId": "engine-smoke-document",
@@ -1008,7 +1008,7 @@
       "name": "admission: a mistyped statement reports its parser error",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 195.39057599999978,
+      "wallMs": 195.22911699999986,
       "details": {
         "id": "engine-smoke-23",
         "documentId": "engine-smoke-document",
@@ -1043,7 +1043,7 @@
       "name": "admission: a read query with an invalid trailing clause reports its parser error",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 483.9819430000007,
+      "wallMs": 495.5498719999996,
       "details": {
         "id": "engine-smoke-24",
         "documentId": "engine-smoke-document",
@@ -1078,7 +1078,7 @@
       "name": "admission: DELETE retains the read-only rejection",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 176.40584099999978,
+      "wallMs": 194.80137700000068,
       "details": {
         "id": "engine-smoke-25",
         "documentId": "engine-smoke-document",
@@ -1104,7 +1104,7 @@
       "name": "admission: CREATE TABLE retains the read-only rejection",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 176.1381710000005,
+      "wallMs": 281.45206400000006,
       "details": {
         "id": "engine-smoke-26",
         "documentId": "engine-smoke-document",
@@ -1130,7 +1130,7 @@
       "name": "admission: two statements retain the distinct one-statement rejection",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1.9982890000001134,
+      "wallMs": 1.4644199999993361,
       "details": {
         "id": "engine-smoke-27",
         "documentId": "engine-smoke-document",
@@ -1156,7 +1156,7 @@
       "name": "admission: empty input remains distinct",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1.2568599999995058,
+      "wallMs": 1.0799010000000635,
       "details": {
         "id": "engine-smoke-28",
         "documentId": "engine-smoke-document",
@@ -1182,7 +1182,7 @@
       "name": "admission: an unfinished string reports a lexical error",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1.2381990000003498,
+      "wallMs": 1.0146199999999226,
       "details": {
         "id": "engine-smoke-29",
         "documentId": "engine-smoke-document",
@@ -1208,7 +1208,7 @@
       "name": "rejected input leaves every learning table unchanged",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 602.3859870000006,
+      "wallMs": 467.84565999999995,
       "details": {
         "id": "engine-smoke-30",
         "documentId": "engine-smoke-document",
@@ -1275,7 +1275,7 @@
             "14"
           ]
         },
-        "elapsedMs": 3.9000000059604645,
+        "elapsedMs": 3.700000047683716,
         "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
         "diagnostics": []
       }
@@ -1284,7 +1284,7 @@
       "name": "cancelling rejected input returns cancellation, not completion",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 465.81422699999985,
+      "wallMs": 463.60077,
       "details": {
         "outcome": {
           "id": "engine-smoke-31",
@@ -1348,7 +1348,7 @@
       "name": "INJECTED parser unavailability retains the read-only rejection",
       "outcome": "pass",
       "injected": true,
-      "wallMs": 702.7170340000011,
+      "wallMs": 658.8996460000008,
       "details": {
         "outcome": {
           "id": "engine-smoke-33",
@@ -1402,7 +1402,7 @@
               "42"
             ]
           },
-          "elapsedMs": 0.7999999821186066,
+          "elapsedMs": 0.8999999761581421,
           "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
           "diagnostics": []
         }
@@ -1412,7 +1412,7 @@
       "name": "zero rows retain exact schema",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 495.41350000000057,
+      "wallMs": 479.3327420000005,
       "details": {
         "id": "engine-smoke-35",
         "documentId": "engine-smoke-document",
@@ -1445,7 +1445,7 @@
           "rows": [],
           "lastRow": null
         },
-        "elapsedMs": 1.4000000059604645,
+        "elapsedMs": 1.300000011920929,
         "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
         "diagnostics": []
       }
@@ -1454,7 +1454,7 @@
       "name": "Valid PIVOT executes despite unsupported serialized AST",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 491.4756609999986,
+      "wallMs": 611.1306819999991,
       "details": {
         "id": "engine-smoke-36",
         "documentId": "engine-smoke-document",
@@ -1489,7 +1489,7 @@
             "42"
           ]
         },
-        "elapsedMs": 10.600000023841858,
+        "elapsedMs": 10.900000035762787,
         "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
         "diagnostics": []
       }
@@ -1498,7 +1498,7 @@
       "name": "reference submission passes both complete datasets",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1582.473018999999,
+      "wallMs": 1494.095698000001,
       "details": {
         "id": "engine-smoke-37",
         "documentId": "engine-smoke-document",
@@ -1634,7 +1634,7 @@
             "3"
           ]
         },
-        "elapsedMs": 16.099999994039536,
+        "elapsedMs": 15.599999904632568,
         "message": "Every complete grading variant passes exact types, values, NULLs, duplicates, and required ordering.",
         "diagnostics": [],
         "fixtureResults": [
@@ -1642,14 +1642,14 @@
             "name": "boundary-v1",
             "expectedRows": 9,
             "actualRows": 9,
-            "elapsedMs": 5.5,
+            "elapsedMs": 5.799999952316284,
             "pass": true
           },
           {
             "name": "small-v1",
             "expectedRows": 36,
             "actualRows": 36,
-            "elapsedMs": 10.599999994039536,
+            "elapsedMs": 9.799999952316284,
             "pass": true
           }
         ],
@@ -1660,14 +1660,14 @@
               "name": "boundary-v1",
               "expectedRows": 9,
               "actualRows": 9,
-              "elapsedMs": 5.5,
+              "elapsedMs": 5.799999952316284,
               "pass": true
             },
             {
               "name": "small-v1",
               "expectedRows": 36,
               "actualRows": 36,
-              "elapsedMs": 10.599999994039536,
+              "elapsedMs": 9.799999952316284,
               "pass": true
             }
           ]
@@ -1678,7 +1678,7 @@
       "name": "submission rejects wrong integer output type",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 2233.3996049999987,
+      "wallMs": 2334.293431,
       "details": {
         "sql": "-- challenge-07-v1 / commerce-v1. Output order within (mon, rnk) peers is optional.\nWITH monthly AS (\n    SELECT\n        CAST(date_trunc('month', o.ordered_at AT TIME ZONE 'UTC') AS DATE) AS mon,\n        c.category_id,\n        c.c_name,\n        CAST(sum(CAST(oi.qty AS DECIMAL(18,0)) * oi.unit_price) AS DECIMAL(38,2)) AS revenue\n    FROM orders AS o\n    JOIN order_items AS oi ON oi.order_id = o.order_id\n    JOIN products AS p ON p.product_id = oi.product_id\n    JOIN categories AS c ON c.category_id = p.category_id\n    WHERE o.status = 'paid'\n      AND o.ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00'\n      AND o.ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'\n    GROUP BY mon, c.category_id, c.c_name\n), ranked AS (\n    SELECT mon, category_id, c_name, revenue,\n        rank() OVER (PARTITION BY mon ORDER BY revenue DESC) AS rnk\n    FROM monthly\n)\nSELECT mon, category_id::INTEGER AS category_id, c_name, revenue, rnk\nFROM ranked\nWHERE rnk <= 3\nORDER BY mon ASC, rnk ASC, category_id ASC;\n",
         "id": "engine-smoke-38",
@@ -1815,7 +1815,7 @@
             "3"
           ]
         },
-        "elapsedMs": 20.799999982118607,
+        "elapsedMs": 14.600000023841858,
         "message": "The complete answer differs from the challenge contract. See each variant; no partial output can pass.",
         "diagnostics": [],
         "fixtureResults": [
@@ -1823,7 +1823,7 @@
             "name": "boundary-v1",
             "expectedRows": 9,
             "actualRows": 9,
-            "elapsedMs": 10.699999988079071,
+            "elapsedMs": 5,
             "pass": false,
             "reason": "Column 2 (\"category_id\"): expected BIGINT, received INTEGER."
           },
@@ -1831,7 +1831,7 @@
             "name": "small-v1",
             "expectedRows": 36,
             "actualRows": 36,
-            "elapsedMs": 10.099999994039536,
+            "elapsedMs": 9.600000023841858,
             "pass": false,
             "reason": "Column 2 (\"category_id\"): expected BIGINT, received INTEGER."
           }
@@ -1843,7 +1843,7 @@
               "name": "boundary-v1",
               "expectedRows": 9,
               "actualRows": 9,
-              "elapsedMs": 10.699999988079071,
+              "elapsedMs": 5,
               "pass": false,
               "reason": "Column 2 (\"category_id\"): expected BIGINT, received INTEGER."
             },
@@ -1851,7 +1851,7 @@
               "name": "small-v1",
               "expectedRows": 36,
               "actualRows": 36,
-              "elapsedMs": 10.099999994039536,
+              "elapsedMs": 9.600000023841858,
               "pass": false,
               "reason": "Column 2 (\"category_id\"): expected BIGINT, received INTEGER."
             }
@@ -1863,7 +1863,7 @@
       "name": "submission rejects dense rank changes tie multiplicities",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1475.148552999999,
+      "wallMs": 1450.3014839999996,
       "details": {
         "sql": "-- challenge-07-v1 / commerce-v1. Output order within (mon, rnk) peers is optional.\nWITH monthly AS (\n    SELECT\n        CAST(date_trunc('month', o.ordered_at AT TIME ZONE 'UTC') AS DATE) AS mon,\n        c.category_id,\n        c.c_name,\n        CAST(sum(CAST(oi.qty AS DECIMAL(18,0)) * oi.unit_price) AS DECIMAL(38,2)) AS revenue\n    FROM orders AS o\n    JOIN order_items AS oi ON oi.order_id = o.order_id\n    JOIN products AS p ON p.product_id = oi.product_id\n    JOIN categories AS c ON c.category_id = p.category_id\n    WHERE o.status = 'paid'\n      AND o.ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00'\n      AND o.ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'\n    GROUP BY mon, c.category_id, c.c_name\n), ranked AS (\n    SELECT mon, category_id, c_name, revenue,\n        dense_rank() OVER (PARTITION BY mon ORDER BY revenue DESC) AS rnk\n    FROM monthly\n)\nSELECT mon, category_id, c_name, revenue, rnk\nFROM ranked\nWHERE rnk <= 3\nORDER BY mon ASC, rnk ASC, category_id ASC;\n",
         "id": "engine-smoke-39",
@@ -2000,7 +2000,7 @@
             "3"
           ]
         },
-        "elapsedMs": 12.299999982118607,
+        "elapsedMs": 14.899999976158142,
         "message": "The complete answer differs from the challenge contract. See each variant; no partial output can pass.",
         "diagnostics": [],
         "fixtureResults": [
@@ -2008,7 +2008,7 @@
             "name": "boundary-v1",
             "expectedRows": 9,
             "actualRows": 11,
-            "elapsedMs": 4.5,
+            "elapsedMs": 5.199999988079071,
             "pass": false,
             "reason": "Row 3 is not in the expected result. No expected row has \"mon\" (you returned \"2024-01-01\"), \"rnk\" (you returned \"2\"). An extra row usually means the filter admits too much."
           },
@@ -2016,7 +2016,7 @@
             "name": "small-v1",
             "expectedRows": 36,
             "actualRows": 36,
-            "elapsedMs": 7.799999982118607,
+            "elapsedMs": 9.699999988079071,
             "pass": true
           }
         ],
@@ -2027,7 +2027,7 @@
               "name": "boundary-v1",
               "expectedRows": 9,
               "actualRows": 11,
-              "elapsedMs": 4.5,
+              "elapsedMs": 5.199999988079071,
               "pass": false,
               "reason": "Row 3 is not in the expected result. No expected row has \"mon\" (you returned \"2024-01-01\"), \"rnk\" (you returned \"2\"). An extra row usually means the filter admits too much."
             },
@@ -2035,7 +2035,7 @@
               "name": "small-v1",
               "expectedRows": 36,
               "actualRows": 36,
-              "elapsedMs": 7.799999982118607,
+              "elapsedMs": 9.699999988079071,
               "pass": true
             }
           ]
@@ -2046,7 +2046,7 @@
       "name": "submission rejects value-losing integer cast restored to declared decimal",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1493.9234290000004,
+      "wallMs": 1536.6934119999987,
       "details": {
         "sql": "-- challenge-07-v1 / commerce-v1. Output order within (mon, rnk) peers is optional.\nWITH monthly AS (\n    SELECT\n        CAST(date_trunc('month', o.ordered_at AT TIME ZONE 'UTC') AS DATE) AS mon,\n        c.category_id,\n        c.c_name,\n        CAST(sum(CAST(oi.qty AS DECIMAL(18,0)) * oi.unit_price) AS DECIMAL(38,2)) AS revenue\n    FROM orders AS o\n    JOIN order_items AS oi ON oi.order_id = o.order_id\n    JOIN products AS p ON p.product_id = oi.product_id\n    JOIN categories AS c ON c.category_id = p.category_id\n    WHERE o.status = 'paid'\n      AND o.ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00'\n      AND o.ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'\n    GROUP BY mon, c.category_id, c.c_name\n), ranked AS (\n    SELECT mon, category_id, c_name, revenue,\n        rank() OVER (PARTITION BY mon ORDER BY revenue DESC) AS rnk\n    FROM monthly\n)\nSELECT mon, category_id, c_name, CAST(CAST(revenue AS BIGINT) AS DECIMAL(38,2)) AS revenue, rnk\nFROM ranked\nWHERE rnk <= 3\nORDER BY mon ASC, rnk ASC, category_id ASC;\n",
         "id": "engine-smoke-40",
@@ -2183,7 +2183,7 @@
             "3"
           ]
         },
-        "elapsedMs": 18.400000005960464,
+        "elapsedMs": 62.799999952316284,
         "message": "The complete answer differs from the challenge contract. See each variant; no partial output can pass.",
         "diagnostics": [],
         "fixtureResults": [
@@ -2191,7 +2191,7 @@
             "name": "boundary-v1",
             "expectedRows": 9,
             "actualRows": 9,
-            "elapsedMs": 9,
+            "elapsedMs": 54.89999997615814,
             "pass": false,
             "reason": "Row 9 differs from the expected row with the same ordering keys in column 4 \"revenue\" (you returned \"25.00\"). Values are compared exactly, and NULL never equals a value."
           },
@@ -2199,7 +2199,7 @@
             "name": "small-v1",
             "expectedRows": 36,
             "actualRows": 36,
-            "elapsedMs": 9.400000005960464,
+            "elapsedMs": 7.899999976158142,
             "pass": false,
             "reason": "Row 1 differs from the expected row with the same ordering keys in column 4 \"revenue\" (you returned \"41484.00\"). Values are compared exactly, and NULL never equals a value."
           }
@@ -2211,7 +2211,7 @@
               "name": "boundary-v1",
               "expectedRows": 9,
               "actualRows": 9,
-              "elapsedMs": 9,
+              "elapsedMs": 54.89999997615814,
               "pass": false,
               "reason": "Row 9 differs from the expected row with the same ordering keys in column 4 \"revenue\" (you returned \"25.00\"). Values are compared exactly, and NULL never equals a value."
             },
@@ -2219,7 +2219,7 @@
               "name": "small-v1",
               "expectedRows": 36,
               "actualRows": 36,
-              "elapsedMs": 9.400000005960464,
+              "elapsedMs": 7.899999976158142,
               "pass": false,
               "reason": "Row 1 differs from the expected row with the same ordering keys in column 4 \"revenue\" (you returned \"41484.00\"). Values are compared exactly, and NULL never equals a value."
             }
@@ -2231,7 +2231,7 @@
       "name": "single active operation, independent parser, compute cancellation and recovery",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1180.4082190000008,
+      "wallMs": 1095.893243999999,
       "details": {
         "competing": {
           "id": "engine-smoke-42",
@@ -2257,10 +2257,10 @@
           "revision": 43,
           "valid": true,
           "diagnostics": [],
-          "elapsedMs": 0.7999999821186066,
+          "elapsedMs": 0.8999999761581421,
           "coverage": "Current JSON AST: supported relationship scopes and projection wildcards. J003 requires a measured profile."
         },
-        "parserWallMs": 1.51307000000088,
+        "parserWallMs": 1.6294400000006135,
         "cancelled": {
           "id": "engine-smoke-41",
           "documentId": "engine-smoke-document",
@@ -2277,11 +2277,11 @@
           "outcome": "cancelled",
           "correctness": "not-evaluated",
           "result": null,
-          "elapsedMs": 102.2999999821186,
+          "elapsedMs": 102.5,
           "message": "Run cancelled. No partial result was graded.",
           "diagnostics": []
         },
-        "cancellationWallMs": 86.34448100000009,
+        "cancellationWallMs": 84.83471699999791,
         "recovered": {
           "id": "engine-smoke-44",
           "documentId": "engine-smoke-document",
@@ -2314,7 +2314,7 @@
               "42"
             ]
           },
-          "elapsedMs": 0.9000000059604645,
+          "elapsedMs": 1.399999976158142,
           "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
           "diagnostics": []
         }
@@ -2324,7 +2324,7 @@
       "name": "cancellation after a real Arrow batch retains no partial result and recovers",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1640.5467869999993,
+      "wallMs": 1698.9062770000019,
       "details": {
         "receivedBeforeCancellation": 2048,
         "value": {
@@ -2343,7 +2343,7 @@
           "outcome": "cancelled",
           "correctness": "not-evaluated",
           "result": null,
-          "elapsedMs": 2.0999999940395355,
+          "elapsedMs": 2.399999976158142,
           "message": "Run cancelled. No partial result was graded.",
           "diagnostics": []
         },
@@ -2379,7 +2379,7 @@
               "42"
             ]
           },
-          "elapsedMs": 0.9000000059604645,
+          "elapsedMs": 1,
           "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
           "diagnostics": []
         }
@@ -2389,7 +2389,7 @@
       "name": "100000 rows complete; 100001 rows stop without truncation; recovery",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1562.6715939999995,
+      "wallMs": 1561.396260999998,
       "details": {
         "boundary": {
           "id": "engine-smoke-47",
@@ -2456,7 +2456,7 @@
               "99999"
             ]
           },
-          "elapsedMs": 6.299999982118607,
+          "elapsedMs": 7.199999988079071,
           "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
           "diagnostics": []
         },
@@ -2476,7 +2476,7 @@
           "outcome": "result-limit",
           "correctness": "not-evaluated",
           "result": null,
-          "elapsedMs": 7.399999976158142,
+          "elapsedMs": 5.600000023841858,
           "message": "Result exceeds 100,000 rows or 32 MiB retained Arrow output. Nothing was truncated into a pass.",
           "diagnostics": []
         },
@@ -2512,7 +2512,7 @@
               "42"
             ]
           },
-          "elapsedMs": 0.9000000059604645,
+          "elapsedMs": 1.4000000357627869,
           "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
           "diagnostics": []
         }
@@ -2522,7 +2522,7 @@
       "name": "32 MiB retained-byte cap rejects wide output below the row cap and recovers",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1040.572070000002,
+      "wallMs": 1036.7032629999994,
       "details": {
         "requestedRows": 40000,
         "value": {
@@ -2541,7 +2541,7 @@
           "outcome": "result-limit",
           "correctness": "not-evaluated",
           "result": null,
-          "elapsedMs": 95.39999997615814,
+          "elapsedMs": 91.5,
           "message": "Result exceeds 100,000 rows or 32 MiB retained Arrow output. Nothing was truncated into a pass.",
           "diagnostics": []
         },
@@ -2587,7 +2587,7 @@
       "name": "published 10-second SQL timeout and recovery",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 11738.977957000003,
+      "wallMs": 11689.224617999997,
       "details": {
         "sql": "SELECT sum(i * j) AS total FROM range(1000000) a(i), range(1000000) b(j)",
         "value": {
@@ -2606,7 +2606,7 @@
           "outcome": "timeout",
           "correctness": "not-evaluated",
           "result": null,
-          "elapsedMs": 10048.200000017881,
+          "elapsedMs": 10048.100000023842,
           "message": "SQL exceeded its 10-second deadline. No partial result was graded.",
           "diagnostics": []
         },
@@ -2642,7 +2642,7 @@
               "42"
             ]
           },
-          "elapsedMs": 1.800000011920929,
+          "elapsedMs": 1.600000023841858,
           "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
           "diagnostics": []
         }
@@ -2652,7 +2652,7 @@
       "name": "real allocation failure at published 512MB limit and recovery",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 1592.7422080000033,
+      "wallMs": 1726.3626749999967,
       "details": {
         "injected": false,
         "configuredLimit": {
@@ -2689,7 +2689,7 @@
           "outcome": "engine-error",
           "correctness": "not-evaluated",
           "result": null,
-          "elapsedMs": 97.40000000596046,
+          "elapsedMs": 102.5,
           "message": "Out of Memory Error: failed to allocate data of size 16.0 MiB (475.3 MiB/488.2 MiB used)\nDatabase is launched in in-memory mode and no temporary directory is specified.\nUnused blocks cannot be offloaded to disk.\n\nLaunch the database with a persistent storage back-end\nOr set SET temp_directory='/path/to/tmp.tmp'\n\nPossible solutions:\n* Reducing the number of threads (SET threads=X)\n* Disabling insertion-order preservation (SET preserve_insertion_order=false)\n* Increasing the memory limit (SET memory_limit='...GB')\n\nSee also https://duckdb.org/docs/stable/guides/performance/how_to_tune_workloads",
           "diagnostics": []
         },
@@ -2725,7 +2725,7 @@
               "42"
             ]
           },
-          "elapsedMs": 1.0999999940395355,
+          "elapsedMs": 1.300000011920929,
           "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
           "diagnostics": []
         }
@@ -2735,7 +2735,7 @@
       "name": "INJECTED fatal execution-worker event settles pending run and recovers",
       "outcome": "pass",
       "injected": true,
-      "wallMs": 1683.093289000004,
+      "wallMs": 1678.2179819999947,
       "details": {
         "injection": {
           "method": "ErrorEvent dispatched on actual active slot.worker",
@@ -2757,7 +2757,7 @@
           "outcome": "engine-error",
           "correctness": "not-evaluated",
           "result": null,
-          "elapsedMs": 13.899999976158142,
+          "elapsedMs": 8.399999976158142,
           "message": "SQL worker failed: Injected fatal execution worker failure",
           "diagnostics": []
         },
@@ -2793,7 +2793,7 @@
               "42"
             ]
           },
-          "elapsedMs": 0.800000011920929,
+          "elapsedMs": 0.8999999761581421,
           "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
           "diagnostics": []
         }
@@ -2803,7 +2803,7 @@
       "name": "INJECTED candidate bypass poisons actual data, fails grading, next snapshot restores",
       "outcome": "pass",
       "injected": true,
-      "wallMs": 3870.7080270000006,
+      "wallMs": 3835.1839489999984,
       "details": {
         "injections": [
           {
@@ -2861,7 +2861,7 @@
             "rows": [],
             "lastRow": null
           },
-          "elapsedMs": 6.199999988079071,
+          "elapsedMs": 6.800000011920929,
           "message": "The complete answer differs from the challenge contract. See each variant; no partial output can pass.",
           "diagnostics": [],
           "fixtureResults": [
@@ -2869,7 +2869,7 @@
               "name": "boundary-v1",
               "expectedRows": 9,
               "actualRows": 0,
-              "elapsedMs": 3.0999999940395355,
+              "elapsedMs": 3.599999964237213,
               "pass": false,
               "reason": "Every row you returned is expected, but 9 expected rows are missing. A missing row usually means the filter, the join or the grouping drops it."
             },
@@ -2877,7 +2877,7 @@
               "name": "small-v1",
               "expectedRows": 36,
               "actualRows": 0,
-              "elapsedMs": 3.0999999940395355,
+              "elapsedMs": 3.200000047683716,
               "pass": false,
               "reason": "Every row you returned is expected, but 36 expected rows are missing. A missing row usually means the filter, the join or the grouping drops it."
             }
@@ -2889,7 +2889,7 @@
                 "name": "boundary-v1",
                 "expectedRows": 9,
                 "actualRows": 0,
-                "elapsedMs": 3.0999999940395355,
+                "elapsedMs": 3.599999964237213,
                 "pass": false,
                 "reason": "Every row you returned is expected, but 9 expected rows are missing. A missing row usually means the filter, the join or the grouping drops it."
               },
@@ -2897,7 +2897,7 @@
                 "name": "small-v1",
                 "expectedRows": 36,
                 "actualRows": 0,
-                "elapsedMs": 3.0999999940395355,
+                "elapsedMs": 3.200000047683716,
                 "pass": false,
                 "reason": "Every row you returned is expected, but 36 expected rows are missing. A missing row usually means the filter, the join or the grouping drops it."
               }
@@ -3039,7 +3039,7 @@
               "3"
             ]
           },
-          "elapsedMs": 13.100000023841858,
+          "elapsedMs": 14.699999988079071,
           "message": "Every complete grading variant passes exact types, values, NULLs, duplicates, and required ordering.",
           "diagnostics": [],
           "fixtureResults": [
@@ -3047,14 +3047,14 @@
               "name": "boundary-v1",
               "expectedRows": 9,
               "actualRows": 9,
-              "elapsedMs": 5.200000017881393,
+              "elapsedMs": 5.5,
               "pass": true
             },
             {
               "name": "small-v1",
               "expectedRows": 36,
               "actualRows": 36,
-              "elapsedMs": 7.9000000059604645,
+              "elapsedMs": 9.199999988079071,
               "pass": true
             }
           ],
@@ -3065,14 +3065,14 @@
                 "name": "boundary-v1",
                 "expectedRows": 9,
                 "actualRows": 9,
-                "elapsedMs": 5.200000017881393,
+                "elapsedMs": 5.5,
                 "pass": true
               },
               {
                 "name": "small-v1",
                 "expectedRows": 36,
                 "actualRows": 36,
-                "elapsedMs": 7.9000000059604645,
+                "elapsedMs": 9.199999988079071,
                 "pass": true
               }
             ]
@@ -3084,7 +3084,7 @@
       "name": "actual vs-reference comparison measures nine alternating isolated pairs",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 7239.369085999999,
+      "wallMs": 7209.539751000004,
       "details": {
         "id": "engine-smoke-61",
         "documentId": "engine-smoke-document",
@@ -3220,7 +3220,7 @@
             "3"
           ]
         },
-        "elapsedMs": 322.79999992251396,
+        "elapsedMs": 316.0000002384186,
         "message": "Equivalent complete answers. Nine alternating fresh-snapshot pairs with one warmup each; median and MAD exclude bootstrap. Separate profiles are not timed samples. No speed threshold awards completion.",
         "diagnostics": [],
         "fixtureResults": [
@@ -3228,14 +3228,14 @@
             "name": "boundary-v1",
             "expectedRows": 9,
             "actualRows": 9,
-            "elapsedMs": 4.300000011920929,
+            "elapsedMs": 4.900000035762787,
             "pass": true
           },
           {
             "name": "small-v1",
             "expectedRows": 36,
             "actualRows": 36,
-            "elapsedMs": 8,
+            "elapsedMs": 8.200000047683716,
             "pass": true
           }
         ],
@@ -3246,26 +3246,26 @@
               "name": "boundary-v1",
               "expectedRows": 9,
               "actualRows": 9,
-              "elapsedMs": 4.300000011920929,
+              "elapsedMs": 4.900000035762787,
               "pass": true
             },
             {
               "name": "small-v1",
               "expectedRows": 36,
               "actualRows": 36,
-              "elapsedMs": 8,
+              "elapsedMs": 8.200000047683716,
               "pass": true
             }
           ]
         },
         "comparison": {
-          "referenceMs": 7.200000017881393,
-          "candidateMs": 7.5,
-          "referenceMad": 0.40000003576278687,
-          "candidateMad": 0.5,
+          "referenceMs": 7.300000011920929,
+          "candidateMs": 7.100000023841858,
+          "referenceMad": 0.5,
+          "candidateMad": 0.4999999403953552,
           "pairs": 9,
-          "ratio": 1.0147058815150731,
-          "ratioMad": 0.10067873063654864,
+          "ratio": 0.904109598212762,
+          "ratioMad": 0.11341192605068806,
           "referenceScans": [
             {
               "operator": "SEQ_SCAN",
@@ -3333,7 +3333,7 @@
       "name": "a reused SQL worker is indistinguishable from a cold one",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 4500.538611000004,
+      "wallMs": 4585.442940000001,
       "details": {
         "constructed": 0,
         "snapshots": 38
@@ -3343,7 +3343,7 @@
       "name": "document and dataset switch cannot change dispatched identity",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 802.0604929999972,
+      "wallMs": 816.6305090000023,
       "details": {
         "id": "engine-smoke-67",
         "documentId": "engine-smoke-document",
@@ -3376,7 +3376,7 @@
             "42"
           ]
         },
-        "elapsedMs": 0.9000000059604645,
+        "elapsedMs": 1.199999988079071,
         "message": "Execution complete. Correctness was not evaluated; Submit checks every grading variant.",
         "diagnostics": []
       }
@@ -3385,7 +3385,7 @@
       "name": "corrupted selected definition is a persistent content load failure",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 14.023246999997355,
+      "wallMs": 14.318073000002187,
       "details": {
         "message": "Error: Content error: Integrity check failed for /bundle/challenges/basics.01/challenge.json."
       }
@@ -3394,7 +3394,7 @@
       "name": "same-origin modules and assets ran without external runtime access",
       "outcome": "pass",
       "injected": false,
-      "wallMs": 0.051129999999830034,
+      "wallMs": 0.0544099999970058,
       "details": {
         "blockedRequests": [],
         "pageErrors": []
@@ -3488,7 +3488,7 @@
           "name": "boundary-v1",
           "expectedRows": 9,
           "actualRows": 9,
-          "elapsedMs": 10.699999988079071,
+          "elapsedMs": 5,
           "pass": false,
           "reason": "Column 2 (\"category_id\"): expected BIGINT, received INTEGER."
         },
@@ -3496,7 +3496,7 @@
           "name": "small-v1",
           "expectedRows": 36,
           "actualRows": 36,
-          "elapsedMs": 10.099999994039536,
+          "elapsedMs": 9.600000023841858,
           "pass": false,
           "reason": "Column 2 (\"category_id\"): expected BIGINT, received INTEGER."
         }
@@ -3510,7 +3510,7 @@
           "name": "boundary-v1",
           "expectedRows": 9,
           "actualRows": 11,
-          "elapsedMs": 4.5,
+          "elapsedMs": 5.199999988079071,
           "pass": false,
           "reason": "Row 3 is not in the expected result. No expected row has \"mon\" (you returned \"2024-01-01\"), \"rnk\" (you returned \"2\"). An extra row usually means the filter admits too much."
         },
@@ -3518,7 +3518,7 @@
           "name": "small-v1",
           "expectedRows": 36,
           "actualRows": 36,
-          "elapsedMs": 7.799999982118607,
+          "elapsedMs": 9.699999988079071,
           "pass": true
         }
       ]
@@ -3531,7 +3531,7 @@
           "name": "boundary-v1",
           "expectedRows": 9,
           "actualRows": 9,
-          "elapsedMs": 9,
+          "elapsedMs": 54.89999997615814,
           "pass": false,
           "reason": "Row 9 differs from the expected row with the same ordering keys in column 4 \"revenue\" (you returned \"25.00\"). Values are compared exactly, and NULL never equals a value."
         },
@@ -3539,7 +3539,7 @@
           "name": "small-v1",
           "expectedRows": 36,
           "actualRows": 36,
-          "elapsedMs": 9.400000005960464,
+          "elapsedMs": 7.899999976158142,
           "pass": false,
           "reason": "Row 1 differs from the expected row with the same ordering keys in column 4 \"revenue\" (you returned \"41484.00\"). Values are compared exactly, and NULL never equals a value."
         }
@@ -3555,43 +3555,43 @@
       "name": "cancel long computation",
       "outcome": "cancelled",
       "message": "Run cancelled. No partial result was graded.",
-      "sqlMs": 102.2999999821186
+      "sqlMs": 102.5
     },
     {
       "name": "cancel during result transfer",
       "outcome": "cancelled",
       "message": "Run cancelled. No partial result was graded.",
-      "sqlMs": 2.0999999940395355
+      "sqlMs": 2.399999976158142
     },
     {
       "name": "100001-row result cap",
       "outcome": "result-limit",
       "message": "Result exceeds 100,000 rows or 32 MiB retained Arrow output. Nothing was truncated into a pass.",
-      "sqlMs": 7.399999976158142
+      "sqlMs": 5.600000023841858
     },
     {
       "name": "wide result byte cap",
       "outcome": "result-limit",
       "message": "Result exceeds 100,000 rows or 32 MiB retained Arrow output. Nothing was truncated into a pass.",
-      "sqlMs": 95.39999997615814
+      "sqlMs": 91.5
     },
     {
       "name": "10-second SQL deadline",
       "outcome": "timeout",
       "message": "SQL exceeded its 10-second deadline. No partial result was graded.",
-      "sqlMs": 10048.200000017881
+      "sqlMs": 10048.100000023842
     },
     {
       "name": "actual 512MB allocation failure",
       "outcome": "engine-error",
       "message": "Out of Memory Error: failed to allocate data of size 16.0 MiB (475.3 MiB/488.2 MiB used)\nDatabase is launched in in-memory mode and no temporary directory is specified.\nUnused blocks cannot be offloaded to disk.\n\nLaunch the database with a persistent storage back-end\nOr set SET temp_directory='/path/to/tmp.tmp'\n\nPossible solutions:\n* Reducing the number of threads (SET threads=X)\n* Disabling insertion-order preservation (SET preserve_insertion_order=false)\n* Increasing the memory limit (SET memory_limit='...GB')\n\nSee also https://duckdb.org/docs/stable/guides/performance/how_to_tune_workloads",
-      "sqlMs": 97.40000000596046
+      "sqlMs": 102.5
     },
     {
       "name": "INJECTED worker fatal",
       "outcome": "engine-error",
       "message": "SQL worker failed: Injected fatal execution worker failure",
-      "sqlMs": 13.899999976158142
+      "sqlMs": 8.399999976158142
     },
     {
       "name": "INJECTED poisoned candidate",
@@ -3601,7 +3601,7 @@
           "name": "boundary-v1",
           "expectedRows": 9,
           "actualRows": 0,
-          "elapsedMs": 3.0999999940395355,
+          "elapsedMs": 3.599999964237213,
           "pass": false,
           "reason": "Every row you returned is expected, but 9 expected rows are missing. A missing row usually means the filter, the join or the grouping drops it."
         },
@@ -3609,7 +3609,7 @@
           "name": "small-v1",
           "expectedRows": 36,
           "actualRows": 0,
-          "elapsedMs": 3.0999999940395355,
+          "elapsedMs": 3.200000047683716,
           "pass": false,
           "reason": "Every row you returned is expected, but 36 expected rows are missing. A missing row usually means the filter, the join or the grouping drops it."
         }
@@ -3634,412 +3634,412 @@
     {
       "state": "loading",
       "message": "Verifying the selected dataset and loading DuckDB…",
-      "atMs": 74
+      "atMs": 80.5
     },
     {
       "state": "ready",
       "message": "Local SQL engine ready. UTC · one thread · 512 MB.",
-      "atMs": 1615
+      "atMs": 1604.4000000357628
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 2914.600000023842
+      "atMs": 2899.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 8 rows.",
-      "atMs": 2933.5
+      "atMs": 2915.2000000476837
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 2934.4000000059605
+      "atMs": 2915.900000035763
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 4392.700000017881
+      "atMs": 4433.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 4395.100000023842
+      "atMs": 4435.600000023842
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 4395.300000011921
+      "atMs": 4435.800000011921
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 4897.600000023842
+      "atMs": 4909.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 5 rows.",
-      "atMs": 4901.800000011921
+      "atMs": 4913.5
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 4902.300000011921
+      "atMs": 4913.900000035763
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 5429.200000017881
+      "atMs": 5386.800000011921
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 5430.200000017881
+      "atMs": 5387.900000035763
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 5430.4000000059605
+      "atMs": 5388
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 5626.5
+      "atMs": 5583.200000047684
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 6110.800000011921
+      "atMs": 6079
     },
     {
       "state": "recovering",
       "message": "This dataset is read-only. Run one read query. Index changes are available only in the index lab challenge. SQL and saved progress remain unchanged.",
-      "atMs": 6287.200000017881
+      "atMs": 6273.800000011921
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 6287.200000017881
+      "atMs": 6273.800000011921
     },
     {
       "state": "recovering",
       "message": "This dataset is read-only. Run one read query. Index changes are available only in the index lab challenge. SQL and saved progress remain unchanged.",
-      "atMs": 6463.100000023842
+      "atMs": 6555.700000047684
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 6463.100000023842
+      "atMs": 6555.700000047684
     },
     {
       "state": "recovering",
       "message": "Run one statement at a time. SQL and saved progress remain unchanged.",
-      "atMs": 6465.4000000059605
+      "atMs": 6557
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 6465.4000000059605
+      "atMs": 6557
     },
     {
       "state": "recovering",
       "message": "Enter one SQL statement. SQL and saved progress remain unchanged.",
-      "atMs": 6467
+      "atMs": 6558.5
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 6467
+      "atMs": 6558.5
     },
     {
       "state": "recovering",
       "message": "Unclosed quoted SQL value. SQL and saved progress remain unchanged.",
-      "atMs": 6468.200000017881
+      "atMs": 6559.600000023842
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 6468.200000017881
+      "atMs": 6559.600000023842
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 7065.800000011921
+      "atMs": 7023
     },
     {
       "state": "transferring",
       "message": "Receiving result: 8 rows.",
-      "atMs": 7069.700000017881
+      "atMs": 7026.5
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 7069.800000011921
+      "atMs": 7026.700000047684
     },
     {
       "state": "cancelling",
       "message": "Run cancelled. No partial result was graded.",
-      "atMs": 7072
+      "atMs": 7028.800000011921
     },
     {
       "state": "recovering",
       "message": "Run cancelled. No partial result was graded. SQL and saved progress remain unchanged.",
-      "atMs": 7072.100000023842
+      "atMs": 7028.800000011921
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 7072.100000023842
+      "atMs": 7028.800000011921
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 7535.300000011921
+      "atMs": 7489.800000011921
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 7536.100000023842
+      "atMs": 7490.700000047684
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 7536.300000011921
+      "atMs": 7490.800000011921
     },
     {
       "state": "recovering",
       "message": "This dataset is read-only. Run one read query. Index changes are available only in the index lab challenge. SQL and saved progress remain unchanged.",
-      "atMs": 7712.200000017881
+      "atMs": 7674
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 7712.200000017881
+      "atMs": 7674
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 8238.100000023842
+      "atMs": 8148.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 8238.90000000596
+      "atMs": 8149.5
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 8239
+      "atMs": 8149.600000023842
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 8733
+      "atMs": 8627.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 0 rows.",
-      "atMs": 8734.300000011921
+      "atMs": 8628.800000011921
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 8734.40000000596
+      "atMs": 8628.900000035763
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 9215
+      "atMs": 9229
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 9225.600000023842
+      "atMs": 9239.800000011921
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 9225.600000023842
+      "atMs": 9240
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 9743.200000017881
+      "atMs": 9740
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 10029.300000011921
+      "atMs": 9950.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 10051.90000000596
+      "atMs": 9968
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 10052.5
+      "atMs": 9968.700000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 10259.200000017881
+      "atMs": 10163.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 10264.600000023842
+      "atMs": 10169.400000035763
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 10269.200000017881
+      "atMs": 10174.300000011921
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 10522.800000011921
+      "atMs": 10435.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 10535.600000023842
+      "atMs": 10447.900000035763
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 10536.200000017881
+      "atMs": 10448.5
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 10796.200000017881
+      "atMs": 10722.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 10806.800000011921
+      "atMs": 10732.400000035763
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 10807.600000023842
+      "atMs": 10733.300000011921
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 11318.800000011921
+      "atMs": 11311.700000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 12253
+      "atMs": 12229.300000011921
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 12258.700000017881
+      "atMs": 12235.5
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 12259
+      "atMs": 12235.800000011921
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 12498.800000011921
+      "atMs": 12470.300000011921
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 12509.40000000596
+      "atMs": 12475.200000047684
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 12510
+      "atMs": 12475.700000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 12763.700000017881
+      "atMs": 12758.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 12775.700000017881
+      "atMs": 12769.200000047684
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 12776.5
+      "atMs": 12770.300000011921
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 13030.800000011921
+      "atMs": 13058.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 13040.800000011921
+      "atMs": 13067.5
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 13041
+      "atMs": 13067.700000047684
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 13522
+      "atMs": 13538
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 13714.200000017881
+      "atMs": 13723.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 13718.40000000596
+      "atMs": 13728.100000023842
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 13718.700000017881
+      "atMs": 13728.400000035763
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 13909.40000000596
+      "atMs": 13976.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 11 rows.",
-      "atMs": 13913.90000000596
+      "atMs": 13981.200000047684
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 13914.5
+      "atMs": 13982.100000023842
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 14179.90000000596
+      "atMs": 14239.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 14189.40000000596
+      "atMs": 14247.400000035763
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 14189.90000000596
+      "atMs": 14247.900000035763
     },
     {
       "state": "running",
@@ -4049,1372 +4049,1372 @@
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 14515.800000011921
+      "atMs": 14517.700000047684
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 14516.5
+      "atMs": 14518.400000035763
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 15017.700000017881
+      "atMs": 15005.400000035763
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 15237.40000000596
+      "atMs": 15218.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 15242.90000000596
+      "atMs": 15223.600000023842
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 15243.200000017881
+      "atMs": 15223.900000035763
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 15441.200000017881
+      "atMs": 15417.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 15450.100000023842
+      "atMs": 15472
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 15451.100000023842
+      "atMs": 15472.700000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 15720.5
+      "atMs": 15789.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 15729.700000017881
+      "atMs": 15797.200000047684
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 15730.200000017881
+      "atMs": 15797.600000023842
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 16000
+      "atMs": 16046.400000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 16009.300000011921
+      "atMs": 16054.300000011921
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 16009.700000017881
+      "atMs": 16054.800000011921
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 16538.100000023842
+      "atMs": 16521.400000035763
     },
     {
       "state": "cancelling",
       "message": "Run cancelled. No partial result was graded.",
-      "atMs": 16556.20000001788
+      "atMs": 16541.200000047684
     },
     {
       "state": "recovering",
       "message": "Run cancelled. No partial result was graded. SQL and saved progress remain unchanged.",
-      "atMs": 16640.5
+      "atMs": 16624
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 16640.600000023842
+      "atMs": 16624
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 17190.30000001192
+      "atMs": 17150.400000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 17191.100000023842
+      "atMs": 17151.600000023842
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 17191.30000001192
+      "atMs": 17151.80000001192
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 17644.20000001788
+      "atMs": 17614.900000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 2,048 rows.",
-      "atMs": 17646.100000023842
+      "atMs": 17617
     },
     {
       "state": "cancelling",
       "message": "Run cancelled. No partial result was graded.",
-      "atMs": 17646.20000001788
+      "atMs": 17617.200000047684
     },
     {
       "state": "recovering",
       "message": "Run cancelled. No partial result was graded. SQL and saved progress remain unchanged.",
-      "atMs": 17646.30000001192
+      "atMs": 17617.400000035763
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 17646.30000001192
+      "atMs": 17617.400000035763
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 18831.20000001788
+      "atMs": 18849.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 18832
+      "atMs": 18850.400000035763
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 18832.100000023842
+      "atMs": 18850.5
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 19378.70000001788
+      "atMs": 19391.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 2,048 rows.",
-      "atMs": 19379.90000000596
+      "atMs": 19392.900000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 4,096 rows.",
-      "atMs": 19379.90000000596
+      "atMs": 19393
     },
     {
       "state": "transferring",
       "message": "Receiving result: 6,144 rows.",
-      "atMs": 19380
+      "atMs": 19393.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 8,192 rows.",
-      "atMs": 19380.100000023842
+      "atMs": 19393.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 10,240 rows.",
-      "atMs": 19380.20000001788
+      "atMs": 19393.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 12,288 rows.",
-      "atMs": 19380.20000001788
+      "atMs": 19393.30000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 14,336 rows.",
-      "atMs": 19380.30000001192
+      "atMs": 19393.400000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 16,384 rows.",
-      "atMs": 19380.40000000596
+      "atMs": 19393.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 18,432 rows.",
-      "atMs": 19380.40000000596
+      "atMs": 19393.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 20,480 rows.",
-      "atMs": 19380.5
+      "atMs": 19393.900000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 22,528 rows.",
-      "atMs": 19380.600000023842
+      "atMs": 19394
     },
     {
       "state": "transferring",
       "message": "Receiving result: 24,576 rows.",
-      "atMs": 19380.70000001788
+      "atMs": 19394.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 26,624 rows.",
-      "atMs": 19380.80000001192
+      "atMs": 19394.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 28,672 rows.",
-      "atMs": 19380.80000001192
+      "atMs": 19394.30000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 30,720 rows.",
-      "atMs": 19380.90000000596
+      "atMs": 19394.400000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 32,768 rows.",
-      "atMs": 19381.100000023842
+      "atMs": 19394.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 34,816 rows.",
-      "atMs": 19381.100000023842
+      "atMs": 19394.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36,864 rows.",
-      "atMs": 19381.20000001788
+      "atMs": 19394.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 38,912 rows.",
-      "atMs": 19381.30000001192
+      "atMs": 19394.80000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 40,960 rows.",
-      "atMs": 19381.40000000596
+      "atMs": 19394.80000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 43,008 rows.",
-      "atMs": 19382.20000001788
+      "atMs": 19394.900000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 45,056 rows.",
-      "atMs": 19382.30000001192
+      "atMs": 19395
     },
     {
       "state": "transferring",
       "message": "Receiving result: 47,104 rows.",
-      "atMs": 19382.30000001192
+      "atMs": 19395.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 49,152 rows.",
-      "atMs": 19382.5
+      "atMs": 19395.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 51,200 rows.",
-      "atMs": 19382.5
+      "atMs": 19395.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 53,248 rows.",
-      "atMs": 19382.70000001788
+      "atMs": 19395.400000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 55,296 rows.",
-      "atMs": 19382.80000001192
+      "atMs": 19395.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 57,344 rows.",
-      "atMs": 19382.80000001192
+      "atMs": 19395.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 59,392 rows.",
-      "atMs": 19383
+      "atMs": 19395.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 61,440 rows.",
-      "atMs": 19383
+      "atMs": 19395.900000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 63,488 rows.",
-      "atMs": 19383.100000023842
+      "atMs": 19396.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 65,536 rows.",
-      "atMs": 19383.100000023842
+      "atMs": 19396.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 67,584 rows.",
-      "atMs": 19383.20000001788
+      "atMs": 19396.30000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 69,632 rows.",
-      "atMs": 19383.30000001192
+      "atMs": 19396.30000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 71,680 rows.",
-      "atMs": 19383.30000001192
+      "atMs": 19396.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 73,728 rows.",
-      "atMs": 19383.40000000596
+      "atMs": 19396.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 75,776 rows.",
-      "atMs": 19383.600000023842
+      "atMs": 19396.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 77,824 rows.",
-      "atMs": 19383.600000023842
+      "atMs": 19396.80000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 79,872 rows.",
-      "atMs": 19383.70000001788
+      "atMs": 19396.900000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 81,920 rows.",
-      "atMs": 19383.80000001192
+      "atMs": 19397.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 83,968 rows.",
-      "atMs": 19383.90000000596
+      "atMs": 19397.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 86,016 rows.",
-      "atMs": 19384.100000023842
+      "atMs": 19397.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 88,064 rows.",
-      "atMs": 19384.30000001192
+      "atMs": 19397.30000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 90,112 rows.",
-      "atMs": 19384.40000000596
+      "atMs": 19397.400000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 92,160 rows.",
-      "atMs": 19384.5
+      "atMs": 19397.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 94,208 rows.",
-      "atMs": 19384.600000023842
+      "atMs": 19397.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 96,256 rows.",
-      "atMs": 19384.70000001788
+      "atMs": 19397.80000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 98,304 rows.",
-      "atMs": 19384.80000001192
+      "atMs": 19398.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 100,000 rows.",
-      "atMs": 19384.90000000596
+      "atMs": 19398.80000001192
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 19385.100000023842
+      "atMs": 19399
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 19868.600000023842
+      "atMs": 19889
     },
     {
       "state": "transferring",
       "message": "Receiving result: 2,048 rows.",
-      "atMs": 19870.20000001788
+      "atMs": 19890.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 4,096 rows.",
-      "atMs": 19870.30000001192
+      "atMs": 19890.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 6,144 rows.",
-      "atMs": 19870.5
+      "atMs": 19890.80000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 8,192 rows.",
-      "atMs": 19870.600000023842
+      "atMs": 19890.900000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 10,240 rows.",
-      "atMs": 19870.70000001788
+      "atMs": 19890.900000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 12,288 rows.",
-      "atMs": 19870.80000001192
+      "atMs": 19891.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 14,336 rows.",
-      "atMs": 19871
+      "atMs": 19891.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 16,384 rows.",
-      "atMs": 19871
+      "atMs": 19891.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 18,432 rows.",
-      "atMs": 19871.20000001788
+      "atMs": 19891.30000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 20,480 rows.",
-      "atMs": 19871.30000001192
+      "atMs": 19891.400000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 22,528 rows.",
-      "atMs": 19871.5
+      "atMs": 19891.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 24,576 rows.",
-      "atMs": 19871.600000023842
+      "atMs": 19891.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 26,624 rows.",
-      "atMs": 19871.80000001192
+      "atMs": 19891.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 28,672 rows.",
-      "atMs": 19871.90000000596
+      "atMs": 19891.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 30,720 rows.",
-      "atMs": 19871.90000000596
+      "atMs": 19891.80000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 32,768 rows.",
-      "atMs": 19872.100000023842
+      "atMs": 19891.900000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 34,816 rows.",
-      "atMs": 19872.100000023842
+      "atMs": 19892
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36,864 rows.",
-      "atMs": 19872.20000001788
+      "atMs": 19892.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 38,912 rows.",
-      "atMs": 19872.30000001192
+      "atMs": 19892.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 40,960 rows.",
-      "atMs": 19872.40000000596
+      "atMs": 19892.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 43,008 rows.",
-      "atMs": 19872.5
+      "atMs": 19892.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 45,056 rows.",
-      "atMs": 19872.80000001192
+      "atMs": 19892.400000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 47,104 rows.",
-      "atMs": 19873
+      "atMs": 19892.400000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 49,152 rows.",
-      "atMs": 19873.100000023842
+      "atMs": 19892.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 51,200 rows.",
-      "atMs": 19873.20000001788
+      "atMs": 19892.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 53,248 rows.",
-      "atMs": 19873.30000001192
+      "atMs": 19892.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 55,296 rows.",
-      "atMs": 19873.40000000596
+      "atMs": 19892.80000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 57,344 rows.",
-      "atMs": 19873.5
+      "atMs": 19892.80000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 59,392 rows.",
-      "atMs": 19873.600000023842
+      "atMs": 19893
     },
     {
       "state": "transferring",
       "message": "Receiving result: 61,440 rows.",
-      "atMs": 19873.80000001192
+      "atMs": 19893
     },
     {
       "state": "transferring",
       "message": "Receiving result: 63,488 rows.",
-      "atMs": 19873.90000000596
+      "atMs": 19893.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 65,536 rows.",
-      "atMs": 19874.20000001788
+      "atMs": 19893.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 67,584 rows.",
-      "atMs": 19874.20000001788
+      "atMs": 19893.30000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 69,632 rows.",
-      "atMs": 19874.40000000596
+      "atMs": 19893.400000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 71,680 rows.",
-      "atMs": 19874.5
+      "atMs": 19893.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 73,728 rows.",
-      "atMs": 19874.5
+      "atMs": 19893.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 75,776 rows.",
-      "atMs": 19874.70000001788
+      "atMs": 19893.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 77,824 rows.",
-      "atMs": 19874.80000001192
+      "atMs": 19893.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 79,872 rows.",
-      "atMs": 19874.90000000596
+      "atMs": 19893.80000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 81,920 rows.",
-      "atMs": 19875
+      "atMs": 19893.900000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 83,968 rows.",
-      "atMs": 19875.100000023842
+      "atMs": 19894
     },
     {
       "state": "transferring",
       "message": "Receiving result: 86,016 rows.",
-      "atMs": 19875.20000001788
+      "atMs": 19894.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 88,064 rows.",
-      "atMs": 19875.30000001192
+      "atMs": 19894.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 90,112 rows.",
-      "atMs": 19875.40000000596
+      "atMs": 19894.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 92,160 rows.",
-      "atMs": 19875.5
+      "atMs": 19894.30000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 94,208 rows.",
-      "atMs": 19875.600000023842
+      "atMs": 19894.400000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 96,256 rows.",
-      "atMs": 19875.70000001788
+      "atMs": 19894.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 98,304 rows.",
-      "atMs": 19875.80000001192
+      "atMs": 19894.600000023842
     },
     {
       "state": "recovering",
       "message": "Result exceeds 100,000 rows or 32 MiB retained Arrow output. Nothing was truncated into a pass. SQL and saved progress remain unchanged.",
-      "atMs": 19876
+      "atMs": 19894.700000047684
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 19876
+      "atMs": 19894.700000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 20394.20000001788
+      "atMs": 20411
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 20395.100000023842
+      "atMs": 20412.30000001192
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 20395.100000023842
+      "atMs": 20412.5
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 20854.600000023842
+      "atMs": 20873.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 2,048 rows.",
-      "atMs": 20884.100000023842
+      "atMs": 20899.900000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 4,096 rows.",
-      "atMs": 20886.20000001788
+      "atMs": 20902.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 6,144 rows.",
-      "atMs": 20887.90000000596
+      "atMs": 20904.30000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 8,192 rows.",
-      "atMs": 20889.600000023842
+      "atMs": 20906.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 10,240 rows.",
-      "atMs": 20898.100000023842
+      "atMs": 20915
     },
     {
       "state": "transferring",
       "message": "Receiving result: 12,288 rows.",
-      "atMs": 20918.90000000596
+      "atMs": 20934
     },
     {
       "state": "transferring",
       "message": "Receiving result: 14,336 rows.",
-      "atMs": 20920.80000001192
+      "atMs": 20935.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 16,384 rows.",
-      "atMs": 20922.40000000596
+      "atMs": 20936.80000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 18,432 rows.",
-      "atMs": 20929.100000023842
+      "atMs": 20944.900000035763
     },
     {
       "state": "transferring",
       "message": "Receiving result: 20,480 rows.",
-      "atMs": 20931.70000001788
+      "atMs": 20946.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 22,528 rows.",
-      "atMs": 20939.40000000596
+      "atMs": 20949.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 24,576 rows.",
-      "atMs": 20939.70000001788
+      "atMs": 20956
     },
     {
       "state": "transferring",
       "message": "Receiving result: 26,624 rows.",
-      "atMs": 20945.600000023842
+      "atMs": 20956.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 28,672 rows.",
-      "atMs": 20947
+      "atMs": 20961.600000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 30,720 rows.",
-      "atMs": 20948.600000023842
+      "atMs": 20963.700000047684
     },
     {
       "state": "recovering",
       "message": "Result exceeds 100,000 rows or 32 MiB retained Arrow output. Nothing was truncated into a pass. SQL and saved progress remain unchanged.",
-      "atMs": 20950.100000023842
+      "atMs": 20965.200000047684
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 20950.100000023842
+      "atMs": 20965.200000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 21434.5
+      "atMs": 21448.100000023842
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 21435.5
+      "atMs": 21449.100000023842
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 21435.70000001788
+      "atMs": 21449.30000001192
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 21906.5
+      "atMs": 21892.600000023842
     },
     {
       "state": "cancelling",
       "message": "SQL exceeded its 10-second deadline. No partial result was graded.",
-      "atMs": 31906.80000001192
+      "atMs": 31892.900000035763
     },
     {
       "state": "recovering",
       "message": "SQL exceeded its 10-second deadline. No partial result was graded. SQL and saved progress remain unchanged.",
-      "atMs": 31954.80000001192
+      "atMs": 31940.900000035763
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 31954.80000001192
+      "atMs": 31940.900000035763
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 33171.80000001192
+      "atMs": 33136.60000002384
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 33173.30000001192
+      "atMs": 33138.10000002384
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 33173.70000001788
+      "atMs": 33138.30000001192
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 33718.30000001192
+      "atMs": 33666.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 33719.5
+      "atMs": 33667.80000001192
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 33719.60000002384
+      "atMs": 33667.80000001192
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 34200.70000001788
+      "atMs": 34183.90000003576
     },
     {
       "state": "recovering",
       "message": "Out of Memory Error: failed to allocate data of size 16.0 MiB (475.3 MiB/488.2 MiB used)\nDatabase is launched in in-memory mode and no temporary directory is specified.\nUnused blocks cannot be offloaded to disk.\n\nLaunch the database with a persistent storage back-end\nOr set SET temp_directory='/path/to/tmp.tmp'\n\nPossible solutions:\n* Reducing the number of threads (SET threads=X)\n* Disabling insertion-order preservation (SET preserve_insertion_order=false)\n* Increasing the memory limit (SET memory_limit='...GB')\n\nSee also https://duckdb.org/docs/stable/guides/performance/how_to_tune_workloads SQL and saved progress remain unchanged.",
-      "atMs": 34298.40000000596
+      "atMs": 34286.80000001192
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 34298.40000000596
+      "atMs": 34286.80000001192
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 34766.30000001192
+      "atMs": 34863.60000002384
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 34767.40000000596
+      "atMs": 34864.80000001192
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 34767.40000000596
+      "atMs": 34864.90000003576
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 35255.10000002384
+      "atMs": 35328.40000003576
     },
     {
       "state": "recovering",
       "message": "SQL worker failed: Injected fatal execution worker failure SQL and saved progress remain unchanged.",
-      "atMs": 35269.10000002384
+      "atMs": 35336.90000003576
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 35269.10000002384
+      "atMs": 35336.90000003576
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 36450
+      "atMs": 36542.200000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 36450.60000002384
+      "atMs": 36543
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 36450.80000001192
+      "atMs": 36543.10000002384
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 37011.90000000596
+      "atMs": 37069.200000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 37983.60000002384
+      "atMs": 38085.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 37989.60000002384
+      "atMs": 38091.90000003576
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 37989.90000000596
+      "atMs": 38092.40000003576
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 38184.20000001788
+      "atMs": 38311.40000003576
     },
     {
       "state": "transferring",
       "message": "Receiving result: 0 rows.",
-      "atMs": 38187.20000001788
+      "atMs": 38314.80000001192
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 38187.90000000596
+      "atMs": 38315.5
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 38452.10000002384
+      "atMs": 38578.80000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 38462
+      "atMs": 38590.40000003576
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 38462.70000001788
+      "atMs": 38591.10000002384
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 38711.60000002384
+      "atMs": 38854.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 0 rows.",
-      "atMs": 38714.70000001788
+      "atMs": 38857.5
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 38715
+      "atMs": 38857.90000003576
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 39164.30000001192
+      "atMs": 39311.80000001192
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 39370.40000000596
+      "atMs": 39508.60000002384
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 39375.20000001788
+      "atMs": 39514.10000002384
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 39375.40000000596
+      "atMs": 39514.200000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 39567.40000000596
+      "atMs": 39706.90000003576
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 39572.5
+      "atMs": 39712.30000001192
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 39573.5
+      "atMs": 39712.80000001192
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 39937.40000000596
+      "atMs": 40023.30000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 39948.20000001788
+      "atMs": 40031.60000002384
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 39948.60000002384
+      "atMs": 40031.90000003576
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 40312.40000000596
+      "atMs": 40367.90000003576
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 40320.20000001788
+      "atMs": 40377
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 40320.60000002384
+      "atMs": 40377.5
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 40778.80000001192
+      "atMs": 40839.30000001192
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 40970
+      "atMs": 41022.60000002384
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 40974.30000001192
+      "atMs": 41026.80000001192
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 40974.60000002384
+      "atMs": 41027
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 41162.80000001192
+      "atMs": 41219.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 41167
+      "atMs": 41224.200000047684
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 41167.5
+      "atMs": 41224.80000001192
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 41418.5
+      "atMs": 41481.90000003576
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 41426.60000002384
+      "atMs": 41489.30000001192
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 41427.10000002384
+      "atMs": 41489.700000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 41681.20000001788
+      "atMs": 41749
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 41689.20000001788
+      "atMs": 41757.10000002384
     },
     {
       "state": "running",
       "message": "Comparison 1/9 · timing your SQL and the reference on the same snapshot.",
-      "atMs": 41689.80000001192
+      "atMs": 41757.700000047684
     },
     {
       "state": "running",
       "message": "Comparison 2/9 · timing your SQL and the reference on the same snapshot.",
-      "atMs": 42374.20000001788
+      "atMs": 42379.10000002384
     },
     {
       "state": "running",
       "message": "Comparison 3/9 · timing your SQL and the reference on the same snapshot.",
-      "atMs": 43009.30000001192
+      "atMs": 42978.200000047684
     },
     {
       "state": "running",
       "message": "Comparison 4/9 · timing your SQL and the reference on the same snapshot.",
-      "atMs": 43575.30000001192
+      "atMs": 43552.40000003576
     },
     {
       "state": "running",
       "message": "Comparison 5/9 · timing your SQL and the reference on the same snapshot.",
-      "atMs": 44112.40000000596
+      "atMs": 44198.60000002384
     },
     {
       "state": "running",
       "message": "Comparison 6/9 · timing your SQL and the reference on the same snapshot.",
-      "atMs": 44638
+      "atMs": 44734.200000047684
     },
     {
       "state": "running",
       "message": "Comparison 7/9 · timing your SQL and the reference on the same snapshot.",
-      "atMs": 45358.80000001192
+      "atMs": 45364.200000047684
     },
     {
       "state": "running",
       "message": "Comparison 8/9 · timing your SQL and the reference on the same snapshot.",
-      "atMs": 45882.60000002384
+      "atMs": 45935.10000002384
     },
     {
       "state": "running",
       "message": "Comparison 9/9 · timing your SQL and the reference on the same snapshot.",
-      "atMs": 46410.30000001192
+      "atMs": 46521.700000047684
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 46943.80000001192
+      "atMs": 47053.10000002384
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 47291.20000001788
+      "atMs": 47308.10000002384
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 47306.40000000596
+      "atMs": 47321.80000001192
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 47307.30000001192
+      "atMs": 47322.40000003576
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 47550.10000002384
+      "atMs": 47576.700000047684
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 47558.80000001192
+      "atMs": 47586
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 47559.30000001192
+      "atMs": 47586.5
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 48067.40000000596
+      "atMs": 48182.30000001192
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 48270.10000002384
+      "atMs": 48378.40000003576
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 48275.60000002384
+      "atMs": 48384
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 48275.80000001192
+      "atMs": 48384.200000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 48487.30000001192
+      "atMs": 48578.60000002384
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 48491.70000001788
+      "atMs": 48583.200000047684
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 48492.20000001788
+      "atMs": 48584
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 48768
+      "atMs": 48837.30000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 48776.10000002384
+      "atMs": 48844.30000001192
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 48776.60000002384
+      "atMs": 48844.700000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 49040.80000001192
+      "atMs": 49097.10000002384
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 49048.70000001788
+      "atMs": 49103.90000003576
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 49049.20000001788
+      "atMs": 49104.40000003576
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 49576.10000002384
+      "atMs": 49709.700000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 49777.80000001192
+      "atMs": 49965.40000003576
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 49782.80000001192
+      "atMs": 49969.5
     },
     {
       "state": "initializing",
       "message": "Restoring isolated boundary-v1 snapshot…",
-      "atMs": 49783
+      "atMs": 49969.90000003576
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 49991.40000000596
+      "atMs": 50178.30000001192
     },
     {
       "state": "transferring",
       "message": "Receiving result: 9 rows.",
-      "atMs": 49996.40000000596
+      "atMs": 50182.30000001192
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 49996.80000001192
+      "atMs": 50182.90000003576
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 50320.60000002384
+      "atMs": 50445.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 50326.90000000596
+      "atMs": 50454.40000003576
     },
     {
       "state": "initializing",
       "message": "Restoring isolated small-v1 snapshot…",
-      "atMs": 50327.30000001192
+      "atMs": 50455
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 50587.70000001788
+      "atMs": 50717.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 36 rows.",
-      "atMs": 50595.70000001788
+      "atMs": 50725.90000003576
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 50596.20000001788
+      "atMs": 50726.30000001192
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 51151.30000001192
+      "atMs": 51204.5
     },
     {
       "state": "transferring",
       "message": "Receiving result: 8 rows.",
-      "atMs": 51153.10000002384
+      "atMs": 51206.60000002384
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 51153.10000002384
+      "atMs": 51206.700000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 51607.60000002384
+      "atMs": 51715.90000003576
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 51608.70000001788
+      "atMs": 51718.200000047684
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 51609
+      "atMs": 51718.30000001192
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 52060.10000002384
+      "atMs": 52171.90000003576
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 52061.40000000596
+      "atMs": 52173.40000003576
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 52061.40000000596
+      "atMs": 52173.5
     },
     {
       "state": "loading",
       "message": "Verifying the selected dataset and loading DuckDB…",
-      "atMs": 52073.90000000596
+      "atMs": 52184.90000003576
     },
     {
       "state": "ready",
       "message": "Local SQL engine ready. UTC · one thread · 512 MB.",
-      "atMs": 52392.60000002384
+      "atMs": 52410.200000047684
     },
     {
       "state": "running",
       "message": "Executing SQL; bootstrap time is excluded.",
-      "atMs": 52582.5
+      "atMs": 52640.40000003576
     },
     {
       "state": "transferring",
       "message": "Receiving result: 1 row.",
-      "atMs": 52583.30000001192
+      "atMs": 52641.40000003576
     },
     {
       "state": "ready",
       "message": "Ready. Each run restores an isolated dataset snapshot.",
-      "atMs": 52583.5
+      "atMs": 52641.60000002384
     },
     {
       "state": "loading",
       "message": "Verifying the selected dataset and loading DuckDB…",
-      "atMs": 52583.5
+      "atMs": 52641.60000002384
     },
     {
       "state": "ready",
       "message": "Local SQL engine ready. UTC · one thread · 512 MB.",
-      "atMs": 52863.60000002384
+      "atMs": 52990.10000002384
     }
   ]
 }

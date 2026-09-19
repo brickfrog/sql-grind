@@ -5612,17 +5612,22 @@
                   : ""}
                 {column.nullable ? "nullable" : "not null"}
               </div>{/each}
-            <p>
-              Ordering: {challenge.output.ordering.length
-                ? challenge.output.ordering
-                    .map(
-                      (key) =>
-                        `${key.column} ${key.direction} NULLS ${key.nulls}`,
-                    )
-                    .join(", ")
-                : "No ordering keys"}. Equal ordering keys may appear in either
-              order.
-            </p>
+            <!-- The tie note is only true when there is a key to tie on. On a
+                 challenge with no ordering it contradicted the sentence before
+                 it, which had just said there are no ordering keys. -->
+            {#if challenge.output.ordering.length}
+              <p>
+                Ordering: {challenge.output.ordering
+                  .map(
+                    (key) => `${key.column} ${key.direction} NULLS ${key.nulls}`,
+                  )
+                  .join(", ")}. Equal ordering keys may appear in either order.
+              </p>
+            {:else}
+              <p>
+                Ordering: no ordering keys. The rows may come back in any order.
+              </p>
+            {/if}
           </div>
           <p class="quiet">{challenge.starterExplanation}</p>
           <h3>Challenge status</h3>
@@ -5713,10 +5718,10 @@
                   class:quiet={stale}
                 >
                   {stale ? "Earlier " : ""}{fixture.pass ? "PASS" : "FAIL"} · {fixture.name}
-                  {#if fixture.expectedRows !== undefined}
-                    · expected {fixture.expectedRows} rows; returned {fixture.actualRows ??
-                      "unavailable"}
-                  {/if}
+                  <!-- One expression, because markup wrapped across lines puts a
+                       literal newline inside the sentence: the rendering
+                       collapses it, every reader of the text does not. -->
+                  {#if fixture.expectedRows !== undefined}{` · expected ${formatCount(fixture.expectedRows, "row")}; returned ${fixture.actualRows?.toLocaleString() ?? "unavailable"}`}{/if}
                   {#if fixture.elapsedMs !== undefined}
                     · {fixture.elapsedMs.toFixed(1)} ms{/if}
                   {fixture.reason ? " — " + fixture.reason : ""}

@@ -63,9 +63,9 @@
     },
     {
       "path": "../../readiness/challenge-07.json",
-      "bytes": 3365,
-      "gzipBytes": 1329,
-      "sha256": "c7711ae8fe73442e883dc9645865d3e178188b23afaab9bdf15e6f0e76dacd80"
+      "bytes": 3372,
+      "gzipBytes": 1326,
+      "sha256": "f4e911bb67b99941f63dfdb5dd336a5bd810ea41887aabb763fef42c95e5c0e7"
     },
     {
       "path": "../../readiness/challenges/agg.01/challenge.json",
@@ -1299,9 +1299,9 @@
     },
     {
       "path": "../../readiness/challenges/pivot.01/challenge.json",
-      "bytes": 2729,
-      "gzipBytes": 1033,
-      "sha256": "92169d9cc69e0a10c1e16ea6f7b5ab15c8d63c630b117ea61458ac7b0c3942a7"
+      "bytes": 2735,
+      "gzipBytes": 1028,
+      "sha256": "0c8bf2fbb57c2ee42f81786750456bdc099d928c3847820a740899659052e7cc"
     },
     {
       "path": "../../readiness/challenges/pivot.01/checks.json",
@@ -1755,9 +1755,9 @@
     },
     {
       "path": "../../readiness/challenges/rec.01/challenge.json",
-      "bytes": 2479,
-      "gzipBytes": 911,
-      "sha256": "aa9876a132707fbb96f63e965401b440771a0256bc16bf499cf1c1a8c4ee7e75"
+      "bytes": 2483,
+      "gzipBytes": 907,
+      "sha256": "050e17b7a5724747c01c57608cf95dba144ee5104bac3e332a6fe0544c5a0b0f"
     },
     {
       "path": "../../readiness/challenges/rec.01/checks.json",
@@ -2751,9 +2751,9 @@
     },
     {
       "path": "../../readiness/curriculum.json",
-      "bytes": 45142,
-      "gzipBytes": 5597,
-      "sha256": "6ebf6ef656781f8444b6345fd9b4ea481f67a264a40c9f14e32327e666eeacfd"
+      "bytes": 45159,
+      "gzipBytes": 5591,
+      "sha256": "9f0c8e2f4fa31d9c10358d1f3225ba944832bbde6e177934311962248353ea62"
     },
     {
       "path": "../../readiness/data/small-v1/categories.parquet",

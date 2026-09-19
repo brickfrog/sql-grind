@@ -168,7 +168,7 @@ try {
         "",
       ]);
     },
-    /^Row 5 is not in the expected result\. No expected row has "amount".*"id".*9007199254740994/s,
+    /^Row 5 is not in the expected result\. No expected row has "amount".*"id".*9007199254740994.*admits too much/s,
   );
   // A wrong value in an otherwise correct row must name the column.
   reasoned(
@@ -236,6 +236,20 @@ try {
   assert.ok(
     guarded.withheld.includes("12345678901234567890.11"),
     "the expected-only amount must be in the withheld set for the guard to mean anything",
+  );
+  // Replacing a key leaves the counts equal, so the returned row displaced an
+  // expected one rather than joining it. The filter theory belongs to the
+  // surplus case above and contradicts the counts printed beside this sentence;
+  // it used to be appended to every unmatched row regardless of direction.
+  assert.equal(
+    /admits too much/.test(guarded.reason),
+    false,
+    `an unmatched row without a surplus must not blame the filter: ${guarded.reason}`,
+  );
+  assert.match(
+    guarded.reason,
+    /stands in place of an expected one/,
+    "an unmatched row without a surplus names substitution as the cause",
   );
 
   compared("typed exact results", () => {}, true);

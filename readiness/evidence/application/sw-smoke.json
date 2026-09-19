@@ -1,11 +1,11 @@
 {
-  "date": "2026-09-17T21:13:28.107Z",
+  "date": "2026-09-19T17:31:13.724Z",
   "origin": "http://127.0.0.1:4173",
   "checks": [
     {
       "name": "Cold visit boots the engine and runs a query",
       "detail": {
-        "readyMs": 3232,
+        "readyMs": 3674,
         "rows": 11
       }
     },
@@ -23,11 +23,13 @@
       "detail": {
         "assets": 5,
         "cachedEngineBytes": 47115868,
-        "warmedEngineBytes": 0,
-        "warmedEngineAssets": [],
-        "alreadyPresent": 15,
+        "warmedEngineBytes": 45159,
+        "warmedEngineAssets": [
+          "bundle/curriculum.json"
+        ],
+        "alreadyPresent": 14,
         "shellEntriesStored": 26,
-        "shellBytesStored": 1506886
+        "shellBytesStored": 1541124
       }
     },
     {
@@ -38,7 +40,7 @@
         "document": true,
         "assets": [
           {
-            "path": "/assets/index-CFIE6_zU.js",
+            "path": "/assets/index-DCLkDnop.js",
             "cached": true
           },
           {
@@ -65,22 +67,22 @@
         "before": [
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-          "sql-grind-bundle-1aeeed82ba054c4d",
           "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+          "sql-grind-bundle-8d05bb659a45b3d5",
           "sql-grind-assets-foreign-version"
         ],
         "after": [
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-          "sql-grind-bundle-1aeeed82ba054c4d",
-          "sql-grind-assets-curriculum-v1-064db1f6925786b0"
+          "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+          "sql-grind-bundle-8d05bb659a45b3d5"
         ]
       }
     },
     {
       "name": "Offline reload reaches engine-ready and runs a query",
       "detail": {
-        "readyMs": 2791,
+        "readyMs": 2911,
         "rows": 11,
         "requestFailures": 0
       }
@@ -117,17 +119,17 @@
               "bundle/invariants.sql"
             ],
             "skipped": [],
-            "bytes": 48917
+            "bytes": 48934
           },
           "shell": {
             "stored": 26,
-            "bytes": 1506886
+            "bytes": 1541124
           },
           "failed": [],
           "version": "curriculum-v1-064db1f6925786b0",
-          "content": "1aeeed82ba054c4d"
+          "content": "8d05bb659a45b3d5"
         },
-        "offlineReadyMs": 2833,
+        "offlineReadyMs": 2668,
         "offlineQueryRows": 11
       }
     },
@@ -137,19 +139,19 @@
         "before": [
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-          "sql-grind-bundle-1aeeed82ba054c4d",
-          "sql-grind-assets-curriculum-v1-064db1f6925786b0"
+          "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+          "sql-grind-bundle-8d05bb659a45b3d5"
         ],
         "storedVersion": "curriculum-v1-064db1f6925786b0",
         "insideWindow": [
           "sql-grind-meta",
           "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-          "sql-grind-bundle-1aeeed82ba054c4d",
-          "sql-grind-assets-curriculum-v1-064db1f6925786b0"
+          "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+          "sql-grind-bundle-8d05bb659a45b3d5"
         ],
         "afterWindow": [
           "sql-grind-meta",
-          "sql-grind-bundle-1aeeed82ba054c4d",
+          "sql-grind-bundle-8d05bb659a45b3d5",
           "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
           "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
         ]
@@ -168,7 +170,7 @@
           "sql-grind-meta",
           "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
           "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0",
-          "sql-grind-bundle-d2bce09fc6a29a2b"
+          "sql-grind-bundle-27f9c8f99b4aec80"
         ],
         "newFailures": []
       }
@@ -188,7 +190,7 @@
       "detail": {
         "before": [
           "sql-grind-meta",
-          "sql-grind-bundle-1aeeed82ba054c4d",
+          "sql-grind-bundle-8d05bb659a45b3d5",
           "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
           "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
         ],
@@ -197,10 +199,10 @@
           "sql-grind-meta": 1,
           "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0": 27,
           "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0": 5,
-          "sql-grind-bundle-d2bce09fc6a29a2b": 11
+          "sql-grind-bundle-27f9c8f99b4aec80": 11
         },
         "engineBytes": 47115868,
-        "bundleBytes": 65387
+        "bundleBytes": 65404
       }
     }
   ],
@@ -208,7 +210,7 @@
   "offlineRequestFailures": [],
   "deployedVersion": "curriculum-v1-064db1f6925786b0",
   "engineAndExtensionBytes": 47115868,
-  "coldReadyMs": 3232,
+  "coldReadyMs": 3674,
   "coldQueryRows": 11,
   "worker": {
     "scope": "http://127.0.0.1:4173/",
@@ -219,14 +221,15 @@
   "warmReport": {
     "type": "sql-grind:warmed",
     "assets": {
-      "warmed": [],
+      "warmed": [
+        "bundle/curriculum.json"
+      ],
       "present": [
         "engine/duckdb-eh.wasm",
         "engine/duckdb-browser-eh.worker.js",
         "extensions/v1.5.4/wasm_eh/icu.duckdb_extension.wasm",
         "extensions/v1.5.4/wasm_eh/json.duckdb_extension.wasm",
         "extensions/v1.5.4/wasm_eh/parquet.duckdb_extension.wasm",
-        "bundle/curriculum.json",
         "bundle/challenges/basics.01/challenge.json",
         "bundle/datasets/commerce-practice/dataset.json",
         "bundle/schema.sql",
@@ -238,15 +241,15 @@
         "bundle/invariants.sql"
       ],
       "skipped": [],
-      "bytes": 0
+      "bytes": 45159
     },
     "shell": {
       "stored": 26,
-      "bytes": 1506886
+      "bytes": 1541124
     },
     "failed": [],
     "version": "curriculum-v1-064db1f6925786b0",
-    "content": "1aeeed82ba054c4d"
+    "content": "8d05bb659a45b3d5"
   },
   "cachedEngineAssets": [
     {
@@ -279,15 +282,15 @@
   "caches": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 27,
-    "sql-grind-bundle-1aeeed82ba054c4d": 10,
-    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5
+    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5,
+    "sql-grind-bundle-8d05bb659a45b3d5": 10
   },
   "shellPrecache": {
     "entries": 27,
     "document": true,
     "assets": [
       {
-        "path": "/assets/index-CFIE6_zU.js",
+        "path": "/assets/index-DCLkDnop.js",
         "cached": true
       },
       {
@@ -317,7 +320,7 @@
     },
     "failed": [],
     "version": "curriculum-v1-064db1f6925786b0",
-    "content": "1aeeed82ba054c4d"
+    "content": "8d05bb659a45b3d5"
   },
   "shellFreshness": {
     "asset": "/icon-credits.txt",
@@ -328,18 +331,18 @@
   "cachesWithForeign": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 28,
-    "sql-grind-bundle-1aeeed82ba054c4d": 10,
     "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5,
+    "sql-grind-bundle-8d05bb659a45b3d5": 10,
     "sql-grind-assets-foreign-version": 1
   },
-  "onlineReloadReadyMs": 2726,
+  "onlineReloadReadyMs": 2949,
   "cachesAfterPurge": {
     "sql-grind-meta": 1,
     "sql-grind-shell-curriculum-v1-064db1f6925786b0": 28,
-    "sql-grind-bundle-1aeeed82ba054c4d": 10,
-    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5
+    "sql-grind-assets-curriculum-v1-064db1f6925786b0": 5,
+    "sql-grind-bundle-8d05bb659a45b3d5": 10
   },
-  "offlineReloadReadyMs": 2791,
+  "offlineReloadReadyMs": 2911,
   "offlineQueryRows": 11,
   "secondVisit": {
     "requestFailures": [],
@@ -368,36 +371,36 @@
           "bundle/invariants.sql"
         ],
         "skipped": [],
-        "bytes": 48917
+        "bytes": 48934
       },
       "shell": {
         "stored": 26,
-        "bytes": 1506886
+        "bytes": 1541124
       },
       "failed": [],
       "version": "curriculum-v1-064db1f6925786b0",
-      "content": "1aeeed82ba054c4d"
+      "content": "8d05bb659a45b3d5"
     },
-    "offlineReadyMs": 2833,
+    "offlineReadyMs": 2668,
     "offlineQueryRows": 11
   },
   "upgrade": {
     "before": [
       "sql-grind-meta",
       "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-      "sql-grind-bundle-1aeeed82ba054c4d",
-      "sql-grind-assets-curriculum-v1-064db1f6925786b0"
+      "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+      "sql-grind-bundle-8d05bb659a45b3d5"
     ],
     "storedVersion": "curriculum-v1-064db1f6925786b0",
     "insideWindow": [
       "sql-grind-meta",
       "sql-grind-shell-curriculum-v1-064db1f6925786b0",
-      "sql-grind-bundle-1aeeed82ba054c4d",
-      "sql-grind-assets-curriculum-v1-064db1f6925786b0"
+      "sql-grind-assets-curriculum-v1-064db1f6925786b0",
+      "sql-grind-bundle-8d05bb659a45b3d5"
     ],
     "afterWindow": [
       "sql-grind-meta",
-      "sql-grind-bundle-1aeeed82ba054c4d",
+      "sql-grind-bundle-8d05bb659a45b3d5",
       "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
       "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
     ]
@@ -413,7 +416,7 @@
       "sql-grind-meta",
       "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
       "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0",
-      "sql-grind-bundle-d2bce09fc6a29a2b"
+      "sql-grind-bundle-27f9c8f99b4aec80"
     ],
     "newFailures": []
   },
@@ -427,7 +430,7 @@
   "contentDeploy": {
     "before": [
       "sql-grind-meta",
-      "sql-grind-bundle-1aeeed82ba054c4d",
+      "sql-grind-bundle-8d05bb659a45b3d5",
       "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0",
       "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0"
     ],
@@ -436,10 +439,10 @@
       "sql-grind-meta": 1,
       "sql-grind-shell-curriculum-upgrade-test-064db1f6925786b0": 27,
       "sql-grind-assets-curriculum-upgrade-test-064db1f6925786b0": 5,
-      "sql-grind-bundle-d2bce09fc6a29a2b": 11
+      "sql-grind-bundle-27f9c8f99b4aec80": 11
     },
     "engineBytes": 47115868,
-    "bundleBytes": 65387
+    "bundleBytes": 65404
   },
   "status": "passed",
   "browser": "153.0.8010.12"

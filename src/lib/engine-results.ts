@@ -649,6 +649,7 @@ function unmatchedRowReason(
   multiplicity: (key: string) => number,
   keys: OrderingKey[],
   fields: TypedField[],
+  surplus: boolean,
 ): string {
   const key = JSON.stringify(row);
   const expectedCount = expectedCounts.get(key) ?? 0;
@@ -665,7 +666,16 @@ function unmatchedRowReason(
           .map((key) => describeSelf(key.index))
           .join(", ")}.`
       : "";
-    return `Row ${position} is not in the expected result.${identity} An extra row usually means the filter admits too much.`;
+    // The filter theory is only available when there are in fact more rows than
+    // expected. Returning no more rows than the fixture and still holding one it
+    // does not want means a row was substituted rather than admitted, and the
+    // counts printed beside this sentence would contradict a filter that admits
+    // too much. Neither branch states a count: "expected N rows; returned M" is
+    // already structural, and a sentence that counts can disagree with it.
+    const theory = surplus
+      ? " An extra row usually means the filter admits too much."
+      : " This row stands in place of an expected one rather than adding to them, so a wrong label or grouping key is the usual cause, not the filter.";
+    return `Row ${position} is not in the expected result.${identity}${theory}`;
   }
   if (!near.differing.length)
     return `Row ${position} is not in the expected result.`;
@@ -815,6 +825,7 @@ export function compare(
           multiplicity,
           keys,
           fields,
+          actualCount > count,
         ),
       };
     if (remaining === 1) bag.delete(key);
