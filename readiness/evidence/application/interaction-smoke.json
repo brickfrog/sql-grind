@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-17T04:13:47.542Z",
+  "date": "2026-09-19T23:15:13.027Z",
   "checks": [
     "Repeated judge drags preserve pointer offset without jumping or selecting text",
     "Judge grip resizes by pointer and keyboard; scaled drags clamp to the viewport edges",
@@ -13,7 +13,9 @@
     "Notes help opens a separate example; Parse produces real J001/J002 notes and source navigation",
     "A syntax error marks its own line in the gutter and under the token",
     "Columns of the tables in scope complete from a bare prefix",
-    "Real result cells use the darker monospace typography with readable selection"
+    "Real result cells use the darker monospace typography with readable selection",
+    "Menus close when the view scrolls instead of detaching from the button",
+    "Goal panel prose is larger than chrome and no block is clipped"
   ],
   "editorStyle": {
     "color": "rgb(17, 17, 17)",

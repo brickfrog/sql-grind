@@ -4083,6 +4083,30 @@
       goalMenu = false;
     };
     window.addEventListener("sql-grind-context-menu-open", closeChromeMenus);
+    // A menu popup is placed once, from its button's viewport rect, and then
+    // pinned with position:fixed. Anything that scrolls afterwards moves the
+    // button but not the popup, so the menu detaches and hangs over unrelated
+    // content: at a 500px-tall window the desktop alone scrolls 140px. Scroll
+    // is a capture-phase listener because the scroller is usually an inner
+    // panel — the explorer tree, the goal panel, the results grid — and those
+    // events never reach the window during bubbling.
+    const POPUP_SURFACES =
+      ".menu-popup, .start-menu, .context-menu, .cm-tooltip-autocomplete";
+    const dismissOnScroll = (event: Event) => {
+      // A tall menu scrolls itself: End on a keyboard walk through the last
+      // item scrolls the popup into view, and dismissing there would make the
+      // menu unusable by keyboard. Only scrolling the view behind the popup
+      // detaches it, so a scroll that starts inside the popup is left alone.
+      const origin = event.target;
+      if (origin instanceof Element && origin.closest(POPUP_SURFACES)) return;
+      if (menu || startMenu || explorerMenu || goalMenu) closeChromeMenus();
+      if (contextMenu) contextMenu = null;
+      editor?.dismissCompletion();
+    };
+    window.addEventListener("scroll", dismissOnScroll, {
+      capture: true,
+      passive: true,
+    });
     const narrow = window.matchMedia(NARROW_QUERY);
     const narrowChanged = () => (narrowViewport = narrow.matches);
     narrowChanged();
@@ -4119,6 +4143,7 @@
         "sql-grind-context-menu-open",
         closeChromeMenus,
       );
+      window.removeEventListener("scroll", dismissOnScroll, { capture: true });
       narrow.removeEventListener("change", narrowChanged);
       clearTimeout(parseTimer);
       for (const timer of saveTimers.values()) clearTimeout(timer);

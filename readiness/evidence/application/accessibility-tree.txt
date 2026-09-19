@@ -7,7 +7,7 @@
   - button "DuckDB Docs — opens in a new tab": DuckDB Docs
   - button "Schema Reference"
   - button "Skill Map"
-  - button "Katas — 21 drills due": Katas
+  - button "Katas — 51 drills due": Katas
   - button "Practice Records"
   - button "Recycle Bin"
 - main "SQL Grind workbench":
@@ -142,7 +142,7 @@
     - button "Submit" [disabled]
   - status: Reading actual local catalog metadata…
   - text: DuckDB v1.5.4 · 1 thread Not run 0 rows Ln 1 Col 1 INS
-  - button "21 drills due"
+  - button "51 drills due"
 - contentinfo:
   - button "Start"
   - button "Show desktop"
@@ -151,4 +151,4 @@
   - button "Patchouli — reading"
   - 'button "SQL engine: initializing"'
   - 'button "Patchouli: hidden"'
-  - time: 12:14 AM
+  - time: 07:14 PM

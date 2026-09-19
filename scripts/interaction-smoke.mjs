@@ -668,6 +668,110 @@ try {
   mark(
     "Real result cells use the darker monospace typography with readable selection",
   );
+
+  // A menu popup is positioned once from its button's rect and then pinned
+  // with position:fixed, so anything that scrolls afterwards used to leave it
+  // floating over unrelated content: at a 500px-tall window the page scrolled
+  // 250px while the popup stayed at the same viewport y and its own button
+  // left the screen. Both scrollers are covered because an inner panel's
+  // scroll event never reaches the window by bubbling.
+  {
+    const viewport = page.viewportSize();
+    await page.setViewportSize({ width: 900, height: 620 });
+    await page.getByRole("menuitem", { name: "File", exact: true }).click();
+    await page.locator(".menu-popup").waitFor();
+    const anchored = await page.evaluate(() => {
+      const popup = document
+        .querySelector(".menu-popup")
+        .getBoundingClientRect();
+      const button = document
+        .getElementById("menu-File")
+        .getBoundingClientRect();
+      return Math.abs(popup.top - button.bottom) < 2;
+    });
+    assert.ok(anchored, "an opened menu starts flush under its button");
+    await page.evaluate(() => window.scrollTo(0, 220));
+    await page.waitForTimeout(150);
+    assert.equal(
+      await page.locator(".menu-popup").count(),
+      0,
+      "scrolling the page must not leave a menu pinned away from its button",
+    );
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.getByRole("menuitem", { name: "File", exact: true }).click();
+    await page.locator(".menu-popup").waitFor();
+    const scrolled = await page.evaluate(() => {
+      const panel = [...document.querySelectorAll("*")].find(
+        (node) =>
+          node.scrollHeight > node.clientHeight + 10 &&
+          ["auto", "scroll"].includes(getComputedStyle(node).overflowY) &&
+          node !== document.documentElement,
+      );
+      if (!panel) return false;
+      panel.scrollTop = panel.scrollTop === 0 ? 60 : 0;
+      return true;
+    });
+    assert.ok(scrolled, "the workbench has an inner scroller to exercise");
+    await page.waitForTimeout(150);
+    assert.equal(
+      await page.locator(".menu-popup").count(),
+      0,
+      "an inner panel scrolling must dismiss a menu too",
+    );
+    await page.setViewportSize(viewport);
+  }
+  mark(
+    "Menus close when the view scrolls instead of detaching from the button",
+  );
+
+  // The goal panel is a scrolling flex column. A child carrying its own
+  // overflow loses the automatic minimum size and gets squeezed flat when the
+  // panel cannot hold it: the expected-shape box stood at 14px around 121px of
+  // content, showing a sliver of one column name. The panel must be shorter
+  // than its content or there is nothing to squeeze, and the measure of that
+  // has to be the children's natural heights: comparing the panel's own
+  // scrollHeight to its box reports "fits" precisely when the defect is
+  // present, because crushing the children is what makes it fit.
+  {
+    // On its own page: by this point the suite's active document is a scratch
+    // query, and a goal panel with no challenge in it holds 103px of content,
+    // which can never overflow anything.
+    const fresh = await browser.newPage({
+      viewport: { width: 1280, height: 620 },
+    });
+    try {
+      await fresh.goto(process.env.APP_URL ?? "http://127.0.0.1:4173");
+      await fresh.locator(".goal-content .shape").waitFor({ timeout: 45000 });
+      const goal = await fresh.evaluate(() => {
+        const panel = document.querySelector(".goal-content");
+        const children = [...panel.children];
+        return {
+          base: parseFloat(getComputedStyle(panel).fontSize),
+          natural: children.reduce((sum, child) => sum + child.scrollHeight, 0),
+          box: panel.clientHeight,
+          clipped: children
+            .filter((child) => child.scrollHeight > child.clientHeight + 2)
+            .map((child) => child.className || child.tagName),
+        };
+      });
+      assert.ok(
+        goal.natural > goal.box,
+        `the panel must be shorter than its content: ${goal.natural}px in ${goal.box}px`,
+      );
+      assert.deepEqual(
+        goal.clipped,
+        [],
+        "no goal block is clipped below its content",
+      );
+      assert.ok(
+        goal.base >= 12,
+        `goal prose is read, not scanned: ${goal.base}px is chrome size`,
+      );
+    } finally {
+      await fresh.close();
+    }
+  }
+  mark("Goal panel prose is larger than chrome and no block is clipped");
   await page.screenshot({
     path: "readiness/evidence/application/interaction-updates.png",
     fullPage: true,
