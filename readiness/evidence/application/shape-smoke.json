@@ -1,14 +1,14 @@
 {
   "suite": "shape-smoke",
   "appURL": "http://127.0.0.1:5176/",
-  "startedAt": "2026-09-19T21:43:06.592Z",
-  "finishedAt": "2026-09-19T21:43:46.517Z",
+  "startedAt": "2026-09-19T21:52:47.421Z",
+  "finishedAt": "2026-09-19T21:53:26.476Z",
   "status": "passed",
   "checks": [
     {
       "name": "every curriculum challenge resolves to a published definition",
       "outcome": "pass",
-      "wallMs": 0.3811600000001363,
+      "wallMs": 0.3012099999998554,
       "details": {
         "challenges": [
           "basics.01",
@@ -96,7 +96,7 @@
     {
       "name": "basics.01 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 3341.280873,
+      "wallMs": 3107.7665990000005,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 502,
@@ -120,7 +120,7 @@
     {
       "name": "basics.02 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 592.4647939999995,
+      "wallMs": 601.3148360000005,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 1186,
@@ -140,7 +140,7 @@
     {
       "name": "basics.03 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 551.7606670000005,
+      "wallMs": 553.4800770000002,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 502,
@@ -164,7 +164,7 @@
     {
       "name": "basics.04 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 562.1610550000005,
+      "wallMs": 626.9911509999993,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 5,
@@ -190,7 +190,7 @@
     {
       "name": "basics.05 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 659.7047830000001,
+      "wallMs": 624.7651809999998,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 8505,
@@ -214,7 +214,7 @@
     {
       "name": "agg.01 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 579.7147690000002,
+      "wallMs": 529.2812020000001,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 1186,
@@ -240,7 +240,7 @@
     {
       "name": "agg.02 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 572.2022219999999,
+      "wallMs": 530.3855520000006,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 1,
@@ -264,7 +264,7 @@
     {
       "name": "agg.03 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 568.648462000001,
+      "wallMs": 539.8106210000005,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 468,
@@ -294,7 +294,7 @@
     {
       "name": "agg.04 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 669.2290909999992,
+      "wallMs": 581.1542010000012,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 2003,
@@ -326,7 +326,7 @@
     {
       "name": "agg.05 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 530.1251049999992,
+      "wallMs": 514.6541050000014,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 458,
@@ -354,7 +354,7 @@
     {
       "name": "joins.01 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 538.9959119999985,
+      "wallMs": 625.7740709999998,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 5037,
@@ -392,7 +392,7 @@
     {
       "name": "joins.02 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 535.7889430000014,
+      "wallMs": 556.7278769999994,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 502,
@@ -416,7 +416,7 @@
     {
       "name": "joins.03 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 670.4757609999997,
+      "wallMs": 591.7373189999998,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 502,
@@ -440,7 +440,7 @@
     {
       "name": "joins.04 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 522.1296479999983,
+      "wallMs": 539.471950000001,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 502,
@@ -464,7 +464,7 @@
     {
       "name": "joins.05 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 530.6065849999995,
+      "wallMs": 635.9856189999991,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 2003,
@@ -504,7 +504,7 @@
     {
       "name": "sub.01 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 537.5988629999993,
+      "wallMs": 582.200660999999,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 121,
@@ -530,7 +530,7 @@
     {
       "name": "sub.02 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 603.7957620000016,
+      "wallMs": 616.101904000001,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 350,
@@ -550,7 +550,7 @@
     {
       "name": "sub.04 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 532.0773550000013,
+      "wallMs": 526.113272999999,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 121,
@@ -580,7 +580,7 @@
     {
       "name": "sub.05 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 556.5359070000013,
+      "wallMs": 607.2311549999995,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 2003,
@@ -604,7 +604,7 @@
     {
       "name": "cte.01 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 622.2374470000013,
+      "wallMs": 526.824904000001,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 1,
@@ -628,7 +628,7 @@
     {
       "name": "cte.02 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 613.8094200000014,
+      "wallMs": 579.3937219999989,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 12,
@@ -654,7 +654,7 @@
     {
       "name": "cte.03 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 543.2321090000005,
+      "wallMs": 527.8532330000016,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 468,
@@ -688,7 +688,7 @@
     {
       "name": "cte.04 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 534.1673650000012,
+      "wallMs": 577.862502,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 12,
@@ -714,7 +714,7 @@
     {
       "name": "cte.05 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 613.1458700000003,
+      "wallMs": 593.3597280000031,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 502,
@@ -754,7 +754,7 @@
     {
       "name": "window.01 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 628.1025250000021,
+      "wallMs": 582.6049419999981,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 39,
@@ -788,7 +788,7 @@
     {
       "name": "window.02 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 524.932507999998,
+      "wallMs": 499.99644900000203,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 501,
@@ -812,7 +812,7 @@
     {
       "name": "window.04 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 585.4637790000015,
+      "wallMs": 556.5211969999982,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 12,
@@ -850,7 +850,7 @@
     {
       "name": "dates.01 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 600.6659240000008,
+      "wallMs": 589.9730290000007,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 2003,
@@ -874,7 +874,7 @@
     {
       "name": "dates.02 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 559.2055169999985,
+      "wallMs": 518.0959860000003,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 12,
@@ -898,7 +898,7 @@
     {
       "name": "dates.03 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 504.8427440000014,
+      "wallMs": 517.1151949999985,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 12,
@@ -922,7 +922,7 @@
     {
       "name": "dates.04 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 542.4409530000012,
+      "wallMs": 509.1029180000005,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 2003,
@@ -946,7 +946,7 @@
     {
       "name": "dates.05 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 684.2207490000001,
+      "wallMs": 668.5478220000005,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 2002,
@@ -978,7 +978,7 @@
     {
       "name": "rec.01 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 532.3128050000014,
+      "wallMs": 524.6893049999999,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 48,
@@ -1006,7 +1006,7 @@
     {
       "name": "rec.02 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 585.6740299999983,
+      "wallMs": 590.6602789999997,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 40,
@@ -1030,7 +1030,7 @@
     {
       "name": "pivot.01 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 538.0874140000014,
+      "wallMs": 528.8964429999978,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 5,
@@ -1062,7 +1062,7 @@
     {
       "name": "pivot.02 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 626.5734870000015,
+      "wallMs": 605.8650160000034,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 5,
@@ -1094,7 +1094,7 @@
     {
       "name": "pivot.03 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 635.3780140000017,
+      "wallMs": 572.9707239999989,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 12,
@@ -1126,7 +1126,7 @@
     {
       "name": "plan.01 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 572.2752240000009,
+      "wallMs": 520.2855750000017,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 502,
@@ -1150,7 +1150,7 @@
     {
       "name": "plan.02 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 563.7940769999987,
+      "wallMs": 566.2809049999996,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 1186,
@@ -1170,7 +1170,7 @@
     {
       "name": "plan.03 declares the shape its reference returns in commerce-practice",
       "outcome": "pass",
-      "wallMs": 616.2527399999999,
+      "wallMs": 600.4114279999994,
       "details": {
         "datasetId": "commerce-practice",
         "rows": 2003,
@@ -1202,7 +1202,7 @@
     {
       "name": "sub.03 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 632.474596,
+      "wallMs": 643.7325879999989,
       "details": {
         "datasetId": "workshop",
         "rows": 3,
@@ -1221,7 +1221,7 @@
     {
       "name": "sets.01 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 479.8218429999979,
+      "wallMs": 480.86691399999836,
       "details": {
         "datasetId": "workshop",
         "rows": 5,
@@ -1240,7 +1240,7 @@
     {
       "name": "sets.02 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 417.57767199999944,
+      "wallMs": 483.96394299999884,
       "details": {
         "datasetId": "workshop",
         "rows": 11,
@@ -1259,7 +1259,7 @@
     {
       "name": "sets.03 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 470.9316660000004,
+      "wallMs": 409.0249299999996,
       "details": {
         "datasetId": "workshop",
         "rows": 2,
@@ -1278,7 +1278,7 @@
     {
       "name": "sets.04 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 389.3664310000022,
+      "wallMs": 398.78071199999977,
       "details": {
         "datasetId": "workshop",
         "rows": 2,
@@ -1297,7 +1297,7 @@
     {
       "name": "sets.05 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 466.89710600000035,
+      "wallMs": 483.68399299999874,
       "details": {
         "datasetId": "workshop",
         "rows": 5,
@@ -1320,7 +1320,7 @@
     {
       "name": "window.05 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 394.10743999999977,
+      "wallMs": 475.33872599999813,
       "details": {
         "datasetId": "workshop",
         "rows": 3,
@@ -1351,7 +1351,7 @@
     {
       "name": "pivot.04 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 460.7784490000013,
+      "wallMs": 389.01530400000047,
       "details": {
         "datasetId": "workshop",
         "rows": 9,
@@ -1378,7 +1378,7 @@
     {
       "name": "pivot.05 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 408.60386500000095,
+      "wallMs": 386.58533499999976,
       "details": {
         "datasetId": "workshop",
         "rows": 3,
@@ -1405,7 +1405,7 @@
     {
       "name": "clean.01 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 461.51820900000166,
+      "wallMs": 452.4482399999979,
       "details": {
         "datasetId": "workshop",
         "rows": 6,
@@ -1428,7 +1428,7 @@
     {
       "name": "clean.02 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 465.0324670000009,
+      "wallMs": 468.3123369999994,
       "details": {
         "datasetId": "workshop",
         "rows": 6,
@@ -1455,7 +1455,7 @@
     {
       "name": "clean.03 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 396.9250389999979,
+      "wallMs": 387.62441500000205,
       "details": {
         "datasetId": "workshop",
         "rows": 6,
@@ -1482,7 +1482,7 @@
     {
       "name": "clean.04 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 424.34827999999834,
+      "wallMs": 416.7963579999996,
       "details": {
         "datasetId": "workshop",
         "rows": 5,
@@ -1505,7 +1505,7 @@
     {
       "name": "clean.05 declares the shape its reference returns in workshop",
       "outcome": "pass",
-      "wallMs": 442.00300499999867,
+      "wallMs": 424.44824700000026,
       "details": {
         "datasetId": "workshop",
         "rows": 6,
@@ -1536,7 +1536,7 @@
     {
       "name": "window.03 declares the shape its reference returns in commerce-ranking",
       "outcome": "pass",
-      "wallMs": 941.4618620000037,
+      "wallMs": 957.4648190000007,
       "details": {
         "datasetId": "commerce-ranking",
         "rows": 36,
@@ -1573,7 +1573,7 @@
     {
       "name": "rec.03 declares the shape its reference returns in graphs",
       "outcome": "pass",
-      "wallMs": 700.3038860000015,
+      "wallMs": 700.5097460000034,
       "details": {
         "datasetId": "graphs",
         "rows": 4,
@@ -1596,7 +1596,7 @@
     {
       "name": "rec.04 declares the shape its reference returns in graphs",
       "outcome": "pass",
-      "wallMs": 406.0793660000054,
+      "wallMs": 400.93531200000143,
       "details": {
         "datasetId": "graphs",
         "rows": 8,
@@ -1627,7 +1627,7 @@
     {
       "name": "rec.05 declares the shape its reference returns in graphs",
       "outcome": "pass",
-      "wallMs": 481.27535299999727,
+      "wallMs": 473.03285600000527,
       "details": {
         "datasetId": "graphs",
         "rows": 2,
@@ -1650,7 +1650,7 @@
     {
       "name": "plan.04 declares the shape its reference returns in index-lab",
       "outcome": "pass",
-      "wallMs": 699.1683570000023,
+      "wallMs": 684.7953190000044,
       "details": {
         "datasetId": "index-lab",
         "rows": 100,
@@ -1674,7 +1674,7 @@
     {
       "name": "plan.05 declares the shape its reference returns in index-lab",
       "outcome": "pass",
-      "wallMs": 484.850692,
+      "wallMs": 500.7768899999937,
       "details": {
         "datasetId": "index-lab",
         "rows": 100,
@@ -1692,7 +1692,7 @@
     {
       "name": "reconcile.01 declares the shape its reference returns in reconciliation",
       "outcome": "pass",
-      "wallMs": 710.585454,
+      "wallMs": 667.2598329999964,
       "details": {
         "datasetId": "reconciliation",
         "rows": 32,
@@ -1728,7 +1728,7 @@
     {
       "name": "reconcile.02 declares the shape its reference returns in reconciliation",
       "outcome": "pass",
-      "wallMs": 433.4921669999967,
+      "wallMs": 408.0060700000031,
       "details": {
         "datasetId": "reconciliation",
         "rows": 32,
@@ -1780,7 +1780,7 @@
     {
       "name": "reconcile.03 declares the shape its reference returns in reconciliation",
       "outcome": "pass",
-      "wallMs": 413.06436499999836,
+      "wallMs": 428.22862599999644,
       "details": {
         "datasetId": "reconciliation",
         "rows": 38,
@@ -1812,7 +1812,7 @@
     {
       "name": "reconcile.04 declares the shape its reference returns in reconciliation",
       "outcome": "pass",
-      "wallMs": 427.948639000002,
+      "wallMs": 410.6990899999946,
       "details": {
         "datasetId": "reconciliation",
         "rows": 16,
@@ -1848,7 +1848,7 @@
     {
       "name": "reconcile.05 declares the shape its reference returns in reconciliation",
       "outcome": "pass",
-      "wallMs": 484.0162730000011,
+      "wallMs": 475.50343599999906,
       "details": {
         "datasetId": "reconciliation",
         "rows": 16,
@@ -1886,7 +1886,7 @@
     {
       "name": "every published output contract matches engine truth",
       "outcome": "pass",
-      "wallMs": 0.10012000000278931,
+      "wallMs": 0.09672000000136904,
       "details": {
         "verified": 65,
         "decimalColumns": 26
@@ -1895,7 +1895,7 @@
     {
       "name": "no page error was logged while executing references",
       "outcome": "pass",
-      "wallMs": 0.08244000000559026,
+      "wallMs": 0.07640999999421183,
       "details": {
         "decimalColumns": [
           {

@@ -205,8 +205,14 @@ for (const skill of curriculum.skills)
     // The test is the substance, not one phrasing: some instruction must name
     // the payments table and say its own status is not what is being asked.
     // basics.02 and the other sixteen word it differently and both pass.
+    // plan.02 writes the filter unqualified (`FROM orders WHERE status =
+    // 'paid'`), so the qualifier has to be optional; the `orders` requirement
+    // keeps an unqualified payments filter out.
     const referenceSql = await text(definition.reference);
-    if (/\.status\s*=\s*'paid'/i.test(referenceSql))
+    if (
+      /(?:\w+\.)?status\s*=\s*'paid'/i.test(referenceSql) &&
+      /\borders\b/i.test(referenceSql)
+    )
       assert(
         definition.instructions.some(
           (line) =>

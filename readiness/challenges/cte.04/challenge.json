@@ -8,7 +8,7 @@
   "title": "Organization and optimization",
   "brief": "Separate query organization from assumptions about optimization.",
   "instructions": [
-    "Return the same paid UTC 2024 monthly revenue as the staged order/month report. Both inline and MATERIALIZED CTE forms are valid; no speedup or optimizer shape is required. As in that report, a paid order with no items still counts as a zero-revenue order, so a month holding only such orders is reported as zero rather than dropped.",
+    "Return the same paid UTC 2024 monthly revenue as the staged order/month report. Both inline and MATERIALIZED CTE forms are valid; no speedup or optimizer shape is required.",
     "A paid order is an order whose own status is 'paid'; the payments table carries a separate status that these challenges never ask about. For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
     "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
   ],

@@ -34,7 +34,7 @@
   "dataClaims": [
     {
       "variant": "boundary",
-      "sql": "SELECT string_agg(DISTINCT reason, ',') FROM returns WHERE status = 'refunded' AND refunded_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND refunded_at < TIMESTAMPTZ '2024-02-01 00:00:00+00'",
+      "sql": "SELECT string_agg(DISTINCT reason, ',' ORDER BY reason) FROM returns WHERE status = 'refunded' AND refunded_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND refunded_at < TIMESTAMPTZ '2024-02-01 00:00:00+00'",
       "equals": "damaged,unwanted",
       "claim": "hints[2]: January refunds cover damaged and unwanted but not wrong_item"
     }
