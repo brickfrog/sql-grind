@@ -1,0 +1,74 @@
+{
+  "patternId": "long-to-wide",
+  "title": "Reshape between long and wide by hand",
+  "skillId": "pivot",
+  "why": "A pivot is not a special operator, it is one aggregate per output column: sum(CASE WHEN reason = 'damaged' THEN qty ELSE 0 END) is the whole trick, and the reverse direction is one SELECT per source column stacked with UNION ALL. Writing the reshape by hand is what makes the ELSE branch a decision rather than an omission — drop it and a month with no damaged returns reports NULL instead of 0, which then poisons every later sum and comparison. The workshop dataset keeps the same figures in both shapes, so a reshape can be checked against the table it should have produced. Drill both directions until the missing cell is noticed while the query is being written, not after the report is read.",
+  "datasetId": "workshop",
+  "variations": [
+    {
+      "variationId": "long-to-wide-zero-fill",
+      "prompt": "Pivot return_totals into one row per month with one column per reason. Return mon, damaged, wrong_item and unwanted, each the summed qty for that reason in that month. A month with no row at all for a reason must report 0 in that cell, never NULL. Order by mon ascending.",
+      "variantId": "boundary",
+      "reference": "SELECT mon, sum(CASE WHEN reason = 'damaged' THEN qty ELSE 0 END)::BIGINT AS damaged, sum(CASE WHEN reason = 'wrong_item' THEN qty ELSE 0 END)::BIGINT AS wrong_item, sum(CASE WHEN reason = 'unwanted' THEN qty ELSE 0 END)::BIGINT AS unwanted FROM return_totals GROUP BY mon ORDER BY mon",
+      "output": {
+        "columns": [
+          { "name": "mon", "type": "DATE", "nullable": false },
+          { "name": "damaged", "type": "BIGINT", "nullable": false },
+          { "name": "wrong_item", "type": "BIGINT", "nullable": false },
+          { "name": "unwanted", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [{ "column": "mon", "direction": "ASC", "nulls": "LAST" }]
+      }
+    },
+    {
+      "variationId": "long-to-wide-with-row-total",
+      "prompt": "Pivot return_totals into one row per month with columns mon, damaged, wrong_item, unwanted and total, where each reason column is the summed qty for that reason and total is the summed qty of the month across every reason. Reasons absent from a month count as 0, not NULL. Order by mon ascending.",
+      "variantId": "variant",
+      "reference": "SELECT mon, sum(CASE WHEN reason = 'damaged' THEN qty ELSE 0 END)::BIGINT AS damaged, sum(CASE WHEN reason = 'wrong_item' THEN qty ELSE 0 END)::BIGINT AS wrong_item, sum(CASE WHEN reason = 'unwanted' THEN qty ELSE 0 END)::BIGINT AS unwanted, sum(qty)::BIGINT AS total FROM return_totals GROUP BY mon ORDER BY mon",
+      "output": {
+        "columns": [
+          { "name": "mon", "type": "DATE", "nullable": false },
+          { "name": "damaged", "type": "BIGINT", "nullable": false },
+          { "name": "wrong_item", "type": "BIGINT", "nullable": false },
+          { "name": "unwanted", "type": "BIGINT", "nullable": false },
+          { "name": "total", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [{ "column": "mon", "direction": "ASC", "nulls": "LAST" }]
+      }
+    },
+    {
+      "variationId": "wide-to-long-zero-filled",
+      "prompt": "Unstack monthly_matrix back to long form with UNION ALL rather than the UNPIVOT operator: one row per month and reason, with columns mon, reason and qty. Emit the reason strings 'damaged', 'wrong_item' and 'unwanted' exactly as spelled. An empty cell in the matrix means no returns, so report it as 0 rather than NULL, and keep all three reasons for every month. Order by mon ascending then reason ascending.",
+      "variantId": "variant",
+      "reference": "SELECT mon, reason, qty FROM (SELECT mon, 'damaged' AS reason, coalesce(damaged, 0)::BIGINT AS qty FROM monthly_matrix UNION ALL SELECT mon, 'wrong_item', coalesce(wrong_item, 0)::BIGINT FROM monthly_matrix UNION ALL SELECT mon, 'unwanted', coalesce(unwanted, 0)::BIGINT FROM monthly_matrix) stacked ORDER BY mon, reason",
+      "output": {
+        "columns": [
+          { "name": "mon", "type": "DATE", "nullable": false },
+          { "name": "reason", "type": "VARCHAR", "nullable": false },
+          { "name": "qty", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "mon", "direction": "ASC", "nulls": "LAST" },
+          { "column": "reason", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "wide-to-long-drop-empty-cells",
+      "prompt": "Unstack monthly_matrix to columns mon, reason and qty with UNION ALL, emitting the reason strings 'damaged', 'wrong_item' and 'unwanted' exactly as spelled, then keep only the cells that recorded at least one return. A cell holding 0 and a cell holding NULL both mean no returns and both must be dropped. Order by mon ascending then reason ascending.",
+      "variantId": "boundary",
+      "reference": "SELECT mon, reason, qty FROM (SELECT mon, 'damaged' AS reason, damaged::BIGINT AS qty FROM monthly_matrix UNION ALL SELECT mon, 'wrong_item', wrong_item::BIGINT FROM monthly_matrix UNION ALL SELECT mon, 'unwanted', unwanted::BIGINT FROM monthly_matrix) stacked WHERE qty > 0 ORDER BY mon, reason",
+      "output": {
+        "columns": [
+          { "name": "mon", "type": "DATE", "nullable": false },
+          { "name": "reason", "type": "VARCHAR", "nullable": false },
+          { "name": "qty", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "mon", "direction": "ASC", "nulls": "LAST" },
+          { "column": "reason", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    }
+  ]
+}

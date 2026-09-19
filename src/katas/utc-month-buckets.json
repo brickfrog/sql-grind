@@ -1,0 +1,78 @@
+{
+  "patternId": "utc-month-buckets",
+  "title": "Bucket a timestamptz into months in a named zone",
+  "skillId": "dates",
+  "why": "A TIMESTAMPTZ has no calendar month until a zone is named: date_trunc('month', ordered_at) buckets in whatever zone the session happens to hold, so an order stamped 2023-12-31 19:00:00-05 falls in December on one connection and January on another. Writing AT TIME ZONE 'UTC' before the truncation makes the month boundary a property of the query instead of the environment it ran in. The companion failure is grouping by one derivation and selecting another, so the GROUP BY key and the projected bucket disagree and rows silently merge or split. Drill the whole chain — date_trunc('month', ts AT TIME ZONE 'UTC')::DATE repeated verbatim in GROUP BY — until it arrives as one unit.",
+  "datasetId": "commerce-practice",
+  "variations": [
+    {
+      "variationId": "orders-per-utc-month",
+      "prompt": "Count orders per UTC calendar month. Return month as the first day of that month as a DATE, and orders as a BIGINT count of every order in the bucket. Order by month ascending.",
+      "variantId": "boundary",
+      "reference": "SELECT date_trunc('month', ordered_at AT TIME ZONE 'UTC')::DATE AS month, count(*)::BIGINT AS orders FROM orders GROUP BY date_trunc('month', ordered_at AT TIME ZONE 'UTC')::DATE ORDER BY month",
+      "output": {
+        "columns": [
+          { "name": "month", "type": "DATE", "nullable": false },
+          { "name": "orders", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [{ "column": "month", "direction": "ASC", "nulls": "LAST" }]
+      }
+    },
+    {
+      "variationId": "zone-moves-the-boundary",
+      "prompt": "Find the orders whose UTC calendar month is not the same as their America/New_York calendar month. Return order_id, utc_month and ny_month, each month expressed as the first day of that month as a DATE. Order by order_id ascending.",
+      "variantId": "boundary",
+      "reference": "SELECT order_id, date_trunc('month', ordered_at AT TIME ZONE 'UTC')::DATE AS utc_month, date_trunc('month', ordered_at AT TIME ZONE 'America/New_York')::DATE AS ny_month FROM orders WHERE date_trunc('month', ordered_at AT TIME ZONE 'UTC')::DATE <> date_trunc('month', ordered_at AT TIME ZONE 'America/New_York')::DATE ORDER BY order_id",
+      "output": {
+        "columns": [
+          { "name": "order_id", "type": "BIGINT", "nullable": false },
+          { "name": "utc_month", "type": "DATE", "nullable": false },
+          { "name": "ny_month", "type": "DATE", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "order_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "revenue-per-utc-month",
+      "prompt": "For orders with status 'paid', report per UTC calendar month: month as the first day of that month as a DATE, revenue as the sum of qty * unit_price over the order lines, and dearest_line_price as the largest single unit_price in the bucket. Order by month ascending.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT date_trunc('month', o.ordered_at AT TIME ZONE 'UTC')::DATE AS month, SUM(i.qty * i.unit_price) AS revenue, MAX(i.unit_price) AS dearest_line_price FROM orders o JOIN order_items i ON i.order_id = o.order_id WHERE o.status = 'paid' GROUP BY date_trunc('month', o.ordered_at AT TIME ZONE 'UTC')::DATE ORDER BY month",
+      "output": {
+        "columns": [
+          { "name": "month", "type": "DATE", "nullable": false },
+          {
+            "name": "revenue",
+            "type": "DECIMAL",
+            "nullable": false,
+            "precision": 38,
+            "scale": 2
+          },
+          {
+            "name": "dearest_line_price",
+            "type": "DECIMAL",
+            "nullable": false,
+            "precision": 18,
+            "scale": 2
+          }
+        ],
+        "ordering": [{ "column": "month", "direction": "ASC", "nulls": "LAST" }]
+      }
+    },
+    {
+      "variationId": "weeks-inside-one-utc-month",
+      "prompt": "Take the orders whose UTC calendar month is January 2024 and bucket them by UTC week, where a week begins on Monday. Return week as the Monday of that week as a DATE, orders as a BIGINT count, and units as the BIGINT sum of qty over the lines of those orders. Order by week ascending.",
+      "variantId": "seed-20240908",
+      "reference": "SELECT date_trunc('week', o.ordered_at AT TIME ZONE 'UTC')::DATE AS week, count(DISTINCT o.order_id)::BIGINT AS orders, SUM(i.qty)::BIGINT AS units FROM orders o JOIN order_items i ON i.order_id = o.order_id WHERE date_trunc('month', o.ordered_at AT TIME ZONE 'UTC')::DATE = DATE '2024-01-01' GROUP BY date_trunc('week', o.ordered_at AT TIME ZONE 'UTC')::DATE ORDER BY week",
+      "output": {
+        "columns": [
+          { "name": "week", "type": "DATE", "nullable": false },
+          { "name": "orders", "type": "BIGINT", "nullable": false },
+          { "name": "units", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [{ "column": "week", "direction": "ASC", "nulls": "LAST" }]
+      }
+    }
+  ]
+}

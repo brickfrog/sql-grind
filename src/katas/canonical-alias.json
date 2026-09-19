@@ -1,0 +1,74 @@
+{
+  "patternId": "canonical-alias",
+  "title": "Canonicalise through an alias table without losing rows",
+  "skillId": "reconcile",
+  "why": "Reconciliation fails quietly when the mapping step is an inner join: a partner spelling the alias table has never seen disappears from the report instead of showing up as work to do. The same table holds 'hw' and 'hard ware', so the key has to be normalised — lowered, trimmed, and internal runs of punctuation and whitespace collapsed — before the lookup can hit. Parsing the partner's date text has the identical shape: a single unparseable string must yield NULL for that row rather than abort the query. Drill the LEFT JOIN plus coalesce and the try_strptime cascade until neither is a decision.",
+  "datasetId": "reconciliation",
+  "variations": [
+    {
+      "variationId": "alias-lookup-keeps-unknowns",
+      "prompt": "Group every partner event by its category lookup key — category_text with trim and lower applied and nothing else — and by the canonical category that key resolves to in category_aliases. A key that is absent from category_aliases keeps its rows and reads as 'unmapped'. Return lookup_key, canonical, and events as count(*), ordered by lookup_key ascending.",
+      "variantId": "boundary-v1",
+      "reference": "SELECT lower(trim(p.category_text)) AS lookup_key, coalesce(a.canonical, 'unmapped') AS canonical, count(*)::BIGINT AS events FROM partner_events p LEFT JOIN category_aliases a ON a.alias = lower(trim(p.category_text)) GROUP BY lower(trim(p.category_text)), coalesce(a.canonical, 'unmapped') ORDER BY lookup_key ASC",
+      "output": {
+        "columns": [
+          { "name": "lookup_key", "type": "VARCHAR", "nullable": true },
+          { "name": "canonical", "type": "VARCHAR", "nullable": false },
+          { "name": "events", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "lookup_key", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "collapse-before-lookup",
+      "prompt": "Canonicalise the category before the lookup: lower category_text, trim it, replace every run of characters that is neither a letter nor a digit with a single space, then trim again. Resolve that key through category_aliases with a LEFT JOIN, reading an absent key as 'unmapped'. Return canonical, events as count(*), and spellings as the number of distinct raw category_text values behind it, ordered by canonical ascending.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT coalesce(a.canonical, 'unmapped') AS canonical, count(*)::BIGINT AS events, count(DISTINCT p.category_text)::BIGINT AS spellings FROM partner_events p LEFT JOIN category_aliases a ON a.alias = trim(regexp_replace(lower(trim(p.category_text)), '[^\\p{L}\\p{N}]+', ' ', 'g')) GROUP BY coalesce(a.canonical, 'unmapped') ORDER BY canonical ASC",
+      "output": {
+        "columns": [
+          { "name": "canonical", "type": "VARCHAR", "nullable": false },
+          { "name": "events", "type": "BIGINT", "nullable": false },
+          { "name": "spellings", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "canonical", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "parse-date-text-or-null",
+      "prompt": "Return partner_id, date_text, and parsed_date for every partner event. parsed_date is the trimmed date_text read as a DATE under the first of these formats that accepts it: %Y-%m-%d, then %m/%d/%Y, then %d %b %Y. Text that none of them accepts — including a well-formed string naming a day that does not exist — keeps its row with a NULL parsed_date rather than failing the query. Order by partner_id ascending.",
+      "variantId": "boundary-v1",
+      "reference": "SELECT partner_id, date_text, coalesce(try_strptime(trim(date_text), '%Y-%m-%d'), try_strptime(trim(date_text), '%m/%d/%Y'), try_strptime(trim(date_text), '%d %b %Y'))::DATE AS parsed_date FROM partner_events ORDER BY partner_id ASC",
+      "output": {
+        "columns": [
+          { "name": "partner_id", "type": "BIGINT", "nullable": false },
+          { "name": "date_text", "type": "VARCHAR", "nullable": true },
+          { "name": "parsed_date", "type": "DATE", "nullable": true }
+        ],
+        "ordering": [
+          { "column": "partner_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "canonical-month-rollup",
+      "prompt": "Roll partner events up by canonical category and month. The lookup key is category_text lowered, trimmed, with every run of characters that is neither a letter nor a digit replaced by a single space and then trimmed again; resolve it through category_aliases with a LEFT JOIN and read an absent key as 'unmapped'. mon is the first day of the month of date_text parsed under %Y-%m-%d, %m/%d/%Y, or %d %b %Y, and is NULL when none of those accepts the text. Return canonical, mon, and events as count(*), ordered by canonical ascending then mon ascending with NULLs last.",
+      "variantId": "seed-20240908",
+      "reference": "WITH normalised AS (SELECT coalesce(a.canonical, 'unmapped') AS canonical, date_trunc('month', coalesce(try_strptime(trim(p.date_text), '%Y-%m-%d'), try_strptime(trim(p.date_text), '%m/%d/%Y'), try_strptime(trim(p.date_text), '%d %b %Y'))::DATE)::DATE AS mon FROM partner_events p LEFT JOIN category_aliases a ON a.alias = trim(regexp_replace(lower(trim(p.category_text)), '[^\\p{L}\\p{N}]+', ' ', 'g'))) SELECT canonical, mon, count(*)::BIGINT AS events FROM normalised GROUP BY canonical, mon ORDER BY canonical ASC, mon ASC NULLS LAST",
+      "output": {
+        "columns": [
+          { "name": "canonical", "type": "VARCHAR", "nullable": false },
+          { "name": "mon", "type": "DATE", "nullable": true },
+          { "name": "events", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "canonical", "direction": "ASC", "nulls": "LAST" },
+          { "column": "mon", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    }
+  ]
+}

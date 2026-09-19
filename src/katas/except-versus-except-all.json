@@ -1,0 +1,78 @@
+{
+  "patternId": "except-versus-except-all",
+  "title": "EXCEPT deduplicates, EXCEPT ALL counts",
+  "skillId": "sets",
+  "why": "The bare set operators collapse duplicates before returning anything, so a difference computed with EXCEPT silently reports how many distinct keys differ, not how many rows do. The ALL forms cancel occurrence against occurrence and are the only correct choice when the multiplicity is the fact being measured. Set operators also match NULL against NULL, which no comparison in a WHERE clause does, so the same difference written with NOT IN gives a third answer again. Drill the pair until choosing between them is a deliberate statement about duplicates rather than a habit.",
+  "datasetId": "workshop",
+  "variations": [
+    {
+      "variationId": "except-drops-repeats",
+      "prompt": "Using EXCEPT, return the distinct customer_id values present in cohort_a and absent from cohort_b. One column, customer_id, ordered ascending with NULLs last.",
+      "variantId": "boundary",
+      "reference": "SELECT customer_id FROM (SELECT customer_id FROM cohort_a EXCEPT SELECT customer_id FROM cohort_b) difference ORDER BY customer_id ASC NULLS LAST",
+      "output": {
+        "columns": [
+          { "name": "customer_id", "type": "BIGINT", "nullable": true }
+        ],
+        "ordering": [
+          { "column": "customer_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "except-all-keeps-repeats",
+      "prompt": "Using EXCEPT ALL, return the customer_id values of cohort_a that survive cancelling each row against at most one matching row of cohort_b, so a value appearing twice in cohort_a and once in cohort_b still appears once. One column, customer_id, ordered ascending with NULLs last. This returns more rows than the EXCEPT form.",
+      "variantId": "boundary",
+      "reference": "SELECT customer_id FROM (SELECT customer_id FROM cohort_a EXCEPT ALL SELECT customer_id FROM cohort_b) difference ORDER BY customer_id ASC NULLS LAST",
+      "output": {
+        "columns": [
+          { "name": "customer_id", "type": "BIGINT", "nullable": true }
+        ],
+        "ordering": [
+          { "column": "customer_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "except-all-reverse-direction",
+      "prompt": "Reverse the operands: using EXCEPT ALL, return the customer_id values of cohort_b that survive cancelling each row against at most one matching row of cohort_a. One column, customer_id, ordered ascending with NULLs last. Because a NULL cancels another NULL, the surplus NULLs of cohort_b remain in the result.",
+      "variantId": "variant",
+      "reference": "SELECT customer_id FROM (SELECT customer_id FROM cohort_b EXCEPT ALL SELECT customer_id FROM cohort_a) difference ORDER BY customer_id ASC NULLS LAST",
+      "output": {
+        "columns": [
+          { "name": "customer_id", "type": "BIGINT", "nullable": true }
+        ],
+        "ordering": [
+          { "column": "customer_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "count-the-gap",
+      "prompt": "Return one row measuring the gap between the two forms of the same difference: dedup_rows as the number of rows returned by cohort_a EXCEPT cohort_b, and all_rows as the number returned by cohort_a EXCEPT ALL cohort_b. Both counts as BIGINT.",
+      "variantId": "variant",
+      "reference": "SELECT (SELECT count(*) FROM (SELECT customer_id FROM cohort_a EXCEPT SELECT customer_id FROM cohort_b) d)::BIGINT AS dedup_rows, (SELECT count(*) FROM (SELECT customer_id FROM cohort_a EXCEPT ALL SELECT customer_id FROM cohort_b) a)::BIGINT AS all_rows",
+      "output": {
+        "columns": [
+          { "name": "dedup_rows", "type": "BIGINT", "nullable": false },
+          { "name": "all_rows", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": []
+      }
+    },
+    {
+      "variationId": "intersect-all-keeps-pairs",
+      "prompt": "Using INTERSECT ALL, return the customer_id values common to cohort_a and cohort_b, keeping each value as many times as the smaller of its two counts. One column, customer_id, ordered ascending with NULLs last. Plain INTERSECT would return each value once.",
+      "variantId": "boundary",
+      "reference": "SELECT customer_id FROM (SELECT customer_id FROM cohort_a INTERSECT ALL SELECT customer_id FROM cohort_b) shared ORDER BY customer_id ASC NULLS LAST",
+      "output": {
+        "columns": [
+          { "name": "customer_id", "type": "BIGINT", "nullable": true }
+        ],
+        "ordering": [
+          { "column": "customer_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    }
+  ]
+}

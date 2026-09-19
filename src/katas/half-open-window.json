@@ -1,0 +1,80 @@
+{
+  "patternId": "half-open-window",
+  "title": "Half-open date intervals: >= start, < next start",
+  "skillId": "basics",
+  "why": "A timestamp column is not a date column, so BETWEEN '2024-01-01' AND '2024-12-31' silently drops every row after midnight on the last day, and the closed form also invites a hand-written last day that is wrong in February of a leap year. The half-open form names the start of the window and the start of the next one, which needs no knowledge of month lengths and loses nothing at either edge. Getting this wrong produces a report that looks plausible and is quietly short, which is why it survives review. Drill it until the second bound is written as the next boundary rather than as the last instant of this one.",
+  "datasetId": "commerce-practice",
+  "variations": [
+    {
+      "variationId": "paid-count-calendar-year",
+      "prompt": "Return one row with a single column paid_orders: the number of orders whose own status column is 'paid' and whose ordered_at is at or after 2024-01-01 00:00:00 UTC and strictly before 2025-01-01 00:00:00 UTC.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT count(*)::BIGINT AS paid_orders FROM orders WHERE status = 'paid' AND ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'",
+      "output": {
+        "columns": [
+          { "name": "paid_orders", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": []
+      }
+    },
+    {
+      "variationId": "paid-orders-one-month",
+      "prompt": "List the paid orders of June 2024: order_id and ordered_on, the UTC date of ordered_at. Include orders whose status is 'paid' with ordered_at at or after 2024-06-01 00:00:00 UTC and strictly before 2024-07-01 00:00:00 UTC. Order by order_id ascending.",
+      "variantId": "seed-20240908",
+      "reference": "SELECT order_id, ordered_at::DATE AS ordered_on FROM orders WHERE status = 'paid' AND ordered_at >= TIMESTAMPTZ '2024-06-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2024-07-01 00:00:00+00' ORDER BY order_id",
+      "output": {
+        "columns": [
+          { "name": "order_id", "type": "BIGINT", "nullable": false },
+          { "name": "ordered_on", "type": "DATE", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "order_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "next-midnight-is-excluded",
+      "prompt": "List every order of March 2024 regardless of status: order_id and status. An order counts when ordered_at is at or after 2024-03-01 00:00:00 UTC and strictly before 2024-04-01 00:00:00 UTC, so an order stamped exactly 2024-04-01 00:00:00 UTC belongs to April and must not appear. Order by order_id ascending.",
+      "variantId": "boundary",
+      "reference": "SELECT order_id, status FROM orders WHERE ordered_at >= TIMESTAMPTZ '2024-03-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2024-04-01 00:00:00+00' ORDER BY order_id",
+      "output": {
+        "columns": [
+          { "name": "order_id", "type": "BIGINT", "nullable": false },
+          { "name": "status", "type": "VARCHAR", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "order_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "leap-day-inside-february",
+      "prompt": "List the order_id of every order whose status is 'paid' and whose ordered_at is at or after 2024-02-01 00:00:00 UTC and strictly before 2024-03-01 00:00:00 UTC. February 2024 has 29 days and the month's last order is stamped one second before midnight. Order by order_id ascending.",
+      "variantId": "boundary",
+      "reference": "SELECT order_id FROM orders WHERE status = 'paid' AND ordered_at >= TIMESTAMPTZ '2024-02-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2024-03-01 00:00:00+00' ORDER BY order_id",
+      "output": {
+        "columns": [
+          { "name": "order_id", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "order_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "nullable-timestamp-in-window",
+      "prompt": "List payments whose status is 'succeeded' and whose paid_at is at or after 2024-05-01 00:00:00 UTC and strictly before 2024-05-08 00:00:00 UTC: payment_id and paid_on, the UTC date of paid_at. paid_at is nullable and a NULL is in no window. Order by payment_id ascending.",
+      "variantId": "seed-20240908",
+      "reference": "SELECT payment_id, paid_at::DATE AS paid_on FROM payments WHERE status = 'succeeded' AND paid_at >= TIMESTAMPTZ '2024-05-01 00:00:00+00' AND paid_at < TIMESTAMPTZ '2024-05-08 00:00:00+00' ORDER BY payment_id",
+      "output": {
+        "columns": [
+          { "name": "payment_id", "type": "BIGINT", "nullable": false },
+          { "name": "paid_on", "type": "DATE", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "payment_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    }
+  ]
+}

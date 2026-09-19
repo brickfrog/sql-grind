@@ -1,0 +1,70 @@
+{
+  "patternId": "recursive-descent",
+  "title": "Anchor, recursive step, stopping rule",
+  "skillId": "rec",
+  "why": "A recursive CTE is three parts that fail separately: an anchor that must be filtered to the rows the walk starts from, exactly one reference to the relation in the recursive step, and a rule that makes the walk stop. UNION ALL over a graph with a cycle never terminates on its own, so the stopping rule is either a depth bound or a path-local visited set carried in the relation itself. Depth and path columns are not decoration either — without one there is no way to say how far a node is or which way the walk arrived. Drill the skeleton until the anchor filter, the single self-reference and the guard are written together rather than debugged afterwards.",
+  "datasetId": "graphs",
+  "variations": [
+    {
+      "variationId": "descendant-depth-from-two",
+      "prompt": "Walk category_edges forward from parent_id 2, following at most 4 edges. Return every node reached and the fewest edges needed to reach it: node_id, depth. Omit the zero-edge starting row; a node reachable again through the cycle keeps its smallest depth. Order by depth ascending then node_id ascending.",
+      "variantId": "boundary",
+      "reference": "WITH RECURSIVE walk(node_id, depth) AS (SELECT 2::BIGINT, 0::BIGINT UNION ALL SELECT e.child_id, (w.depth + 1)::BIGINT FROM walk w JOIN category_edges e ON e.parent_id = w.node_id WHERE w.depth < 4) SELECT node_id, min(depth)::BIGINT AS depth FROM walk WHERE depth > 0 GROUP BY node_id ORDER BY depth ASC, node_id ASC",
+      "output": {
+        "columns": [
+          { "name": "node_id", "type": "BIGINT", "nullable": false },
+          { "name": "depth", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "depth", "direction": "ASC", "nulls": "LAST" },
+          { "column": "node_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "ancestor-paths-of-four",
+      "prompt": "Walk category_edges backwards from child_id 4 to find its ancestors. Return one row per distinct upward walk: ancestor_id, path, distance. path is the node ids from that ancestor down to 4 joined by '>', for example '2>3>4'; distance is the number of edges in path. A node must never repeat within one path. Order by distance ascending then path ascending.",
+      "variantId": "weighted",
+      "reference": "WITH RECURSIVE up(ancestor_id, visited, path, distance) AS (SELECT e.parent_id, [4::BIGINT, e.parent_id], e.parent_id::VARCHAR || '>4', 1::BIGINT FROM category_edges e WHERE e.child_id = 4 UNION ALL SELECT e.parent_id, list_append(u.visited, e.parent_id), e.parent_id::VARCHAR || '>' || u.path, (u.distance + 1)::BIGINT FROM up u JOIN category_edges e ON e.child_id = u.ancestor_id WHERE NOT list_contains(u.visited, e.parent_id)) SELECT ancestor_id, path, distance FROM up ORDER BY distance ASC, path ASC",
+      "output": {
+        "columns": [
+          { "name": "ancestor_id", "type": "BIGINT", "nullable": false },
+          { "name": "path", "type": "VARCHAR", "nullable": false },
+          { "name": "distance", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "distance", "direction": "ASC", "nulls": "LAST" },
+          { "column": "path", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "nodes-on-a-cycle",
+      "prompt": "Return every node in category_edges that can reach itself by following parent_id to child_id: node_id, one row per node, ordered by node_id ascending. A walk may return to the node it started from but must not pass through any other node twice, and a walk that has returned is not extended.",
+      "variantId": "boundary",
+      "reference": "WITH RECURSIVE walk(start_id, node_id, visited) AS (SELECT e.parent_id, e.child_id, [e.parent_id, e.child_id] FROM category_edges e UNION ALL SELECT w.start_id, e.child_id, list_append(w.visited, e.child_id) FROM walk w JOIN category_edges e ON e.parent_id = w.node_id WHERE w.node_id <> w.start_id AND (e.child_id = w.start_id OR NOT list_contains(w.visited, e.child_id))) SELECT DISTINCT w.start_id AS node_id FROM walk w WHERE w.node_id = w.start_id ORDER BY node_id ASC",
+      "output": {
+        "columns": [{ "name": "node_id", "type": "BIGINT", "nullable": false }],
+        "ordering": [
+          { "column": "node_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "cheapest-minutes-per-destination",
+      "prompt": "Walk route_edges from from_id 1 and return, for every other node reachable from it, the smallest total minutes of any walk that reaches it: destination_id, best_minutes. Exclude node 1 itself. No walk may visit a node twice. Order by best_minutes ascending then destination_id ascending.",
+      "variantId": "weighted",
+      "reference": "WITH RECURSIVE routes(destination_id, visited, total_minutes) AS (SELECT 1::BIGINT, [1::BIGINT], 0::BIGINT UNION ALL SELECT e.to_id, list_append(r.visited, e.to_id), (r.total_minutes + e.minutes)::BIGINT FROM routes r JOIN route_edges e ON e.from_id = r.destination_id WHERE NOT list_contains(r.visited, e.to_id)) SELECT destination_id, min(total_minutes)::BIGINT AS best_minutes FROM routes WHERE destination_id <> 1 GROUP BY destination_id ORDER BY best_minutes ASC, destination_id ASC",
+      "output": {
+        "columns": [
+          { "name": "destination_id", "type": "BIGINT", "nullable": false },
+          { "name": "best_minutes", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "best_minutes", "direction": "ASC", "nulls": "LAST" },
+          { "column": "destination_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    }
+  ]
+}

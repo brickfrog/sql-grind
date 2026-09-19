@@ -1,0 +1,75 @@
+{
+  "patternId": "sargable-predicate",
+  "title": "Leave the filtered column bare",
+  "skillId": "plan",
+  "why": "An index on a column is unusable the moment the column is wrapped in a function or carries arithmetic: date_trunc('month', ordered_at) = ... and unit_price * 1.2 >= 300 both force a full scan, and both have a form that leaves the column alone on one side of the comparison. The rewrite is a half-open range or a prefix bound, never a rounded-off equality — [2024-01-01, 2024-02-01) states the boundary exactly, where casting a TIMESTAMPTZ to DATE hands the month boundary to whatever session time zone happens to be set. The result set is identical either way, and that is the claim worth rehearsing: the speed comes from the shape of the predicate, not from a different answer. Drill the translation until the factor moves to the literal and the upper bound is written as < next instead of <= last.",
+  "datasetId": "commerce-practice",
+  "variations": [
+    {
+      "variationId": "month-as-half-open-range",
+      "prompt": "List the orders placed during January 2024 in UTC: order_id only, ordered by order_id ascending. Return exactly those rows without applying any function to ordered_at — no date_trunc, no CAST to DATE, no strftime, no extract. The column must stand bare on one side of each comparison, bounded by a half-open range whose upper end is the first instant of February. One order is recorded with a +01 offset that still lands inside January in UTC, so the bounds compare instants, not local calendar dates.",
+      "variantId": "boundary",
+      "reference": "SELECT order_id FROM orders WHERE ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2024-02-01 00:00:00+00' ORDER BY order_id",
+      "output": {
+        "columns": [
+          { "name": "order_id", "type": "BIGINT", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "order_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "markup-band-without-arithmetic",
+      "prompt": "Pricing quotes every product with a 20 percent markup, so the quoted price is unit_price * 1.2. List the products whose quoted price is at least 300.00 and below 360.00: product_id and unit_price as DECIMAL(18,2). Order by unit_price ascending then product_id ascending, because two products can carry the same price. Return exactly those rows with no arithmetic on unit_price — divide the bounds by 1.2 yourself so the column stands bare on one side of each comparison.",
+      "variantId": "seed-20240908",
+      "reference": "SELECT product_id, unit_price FROM products WHERE unit_price >= 250.00 AND unit_price < 300.00 ORDER BY unit_price ASC, product_id ASC",
+      "output": {
+        "columns": [
+          { "name": "product_id", "type": "BIGINT", "nullable": false },
+          {
+            "name": "unit_price",
+            "type": "DECIMAL",
+            "nullable": false,
+            "precision": 18,
+            "scale": 2
+          }
+        ],
+        "ordering": [
+          { "column": "unit_price", "direction": "ASC", "nulls": "LAST" },
+          { "column": "product_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "name-prefix-without-substr",
+      "prompt": "List the products whose product_name begins with the ten characters 'Product 12': product_id and product_name, ordered by product_id ascending. Return exactly those rows without applying any function to product_name — no left, no substr, no lower, no regexp. A prefix LIKE or a half-open string range between 'Product 12' and 'Product 13' keeps the column bare; a wildcard at the front of the pattern does not.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT product_id, product_name FROM products WHERE product_name LIKE 'Product 12%' ORDER BY product_id",
+      "output": {
+        "columns": [
+          { "name": "product_id", "type": "BIGINT", "nullable": false },
+          { "name": "product_name", "type": "VARCHAR", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "product_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    },
+    {
+      "variationId": "status-without-case-fold",
+      "prompt": "List the cancelled orders numbered 300 or below: order_id and status, ordered by order_id ascending. A check constraint already restricts status to the four lowercase literals 'pending', 'paid', 'cancelled' and 'refunded', so folding its case cannot change which rows match and only hides the column from an index. Return exactly those rows without applying any function to status — no lower, no upper, no ilike; compare the column bare to the literal 'cancelled'.",
+      "variantId": "seed-20240907",
+      "reference": "SELECT order_id, status FROM orders WHERE status = 'cancelled' AND order_id <= 300 ORDER BY order_id",
+      "output": {
+        "columns": [
+          { "name": "order_id", "type": "BIGINT", "nullable": false },
+          { "name": "status", "type": "VARCHAR", "nullable": false }
+        ],
+        "ordering": [
+          { "column": "order_id", "direction": "ASC", "nulls": "LAST" }
+        ]
+      }
+    }
+  ]
+}
