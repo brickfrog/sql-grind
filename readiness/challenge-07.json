@@ -9,7 +9,7 @@
   "brief": "Rank monthly category revenue while preserving qualifying ties.",
   "instructions": [
     "Return UTC 2024 paid gross transaction revenue by month and category identity, with category name and competition rank.",
-    "Use the half-open interval from 2024-01-01 00:00:00 UTC through, but not including, 2025-01-01 00:00:00 UTC.",
+    "A paid order is an order whose own status is 'paid'; the payments table carries a separate status that these challenges never ask about. Use the half-open interval from 2024-01-01 00:00:00 UTC through, but not including, 2025-01-01 00:00:00 UTC.",
     "Rank revenue descending within each month and retain every competition rank at most three, including all cutoff ties.",
     "Use transaction quantity times transaction price, not catalog price. Months and categories without qualifying items are absent.",
     "Sort month then rank ascending; ordering within equal month/rank peers is free."

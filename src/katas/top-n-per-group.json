@@ -7,7 +7,7 @@
   "variations": [
     {
       "variationId": "dearest-products-per-category",
-      "prompt": "For each of the five lowest category_ids, give the three dearest active products: category_id, product_id, unit_price as DECIMAL(18,2). Order by category_id ascending then unit_price descending. Break price ties on the smaller product_id and return exactly three per category.",
+      "prompt": "For every category_id of 5 or less, give the three dearest active products: category_id, product_id, unit_price as DECIMAL(18,2). Order by category_id ascending then unit_price descending. Break price ties on the smaller product_id and return exactly three per category. The filter is on the id value itself, not on the five lowest ids that happen to have products.",
       "variantId": "seed-20240907",
       "reference": "WITH ranked AS (SELECT category_id, product_id, unit_price, ROW_NUMBER() OVER (PARTITION BY category_id ORDER BY unit_price DESC, product_id ASC) AS rn FROM products WHERE active AND category_id <= 5) SELECT category_id, product_id, unit_price::DECIMAL(18,2) AS unit_price FROM ranked WHERE rn <= 3 ORDER BY category_id ASC, unit_price DESC",
       "output": {
@@ -30,7 +30,7 @@
     },
     {
       "variationId": "busiest-warehouses",
-      "prompt": "Rank warehouses by order count and return the top three: warehouse_id and orders, ordered by orders descending then warehouse_id ascending. Use a CTE for the counts.",
+      "prompt": "Rank warehouses by order count and return exactly three rows: warehouse_id and orders, ordered by orders descending then warehouse_id ascending. Warehouses tie on order count, so the cut is the first three rows in that stated order, not every warehouse sharing a top-three rank. Use a CTE for the counts.",
       "variantId": "seed-20240907",
       "reference": "WITH counted AS (SELECT warehouse_id, count(*)::BIGINT AS orders FROM orders GROUP BY warehouse_id) SELECT warehouse_id, orders FROM counted ORDER BY orders DESC, warehouse_id ASC LIMIT 3",
       "output": {

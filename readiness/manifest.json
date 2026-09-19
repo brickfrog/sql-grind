@@ -63,9 +63,9 @@
     },
     {
       "path": "../../readiness/challenge-07.json",
-      "bytes": 3372,
-      "gzipBytes": 1326,
-      "sha256": "f4e911bb67b99941f63dfdb5dd336a5bd810ea41887aabb763fef42c95e5c0e7"
+      "bytes": 3509,
+      "gzipBytes": 1394,
+      "sha256": "7b1ab47ef069d13db6eefaebc1d0ad04f2a780b6a92a4c34ff430bc09aa3340f"
     },
     {
       "path": "../../readiness/challenges/agg.01/challenge.json",
@@ -153,9 +153,9 @@
     },
     {
       "path": "../../readiness/challenges/agg.03/challenge.json",
-      "bytes": 2866,
-      "gzipBytes": 1120,
-      "sha256": "90232f6cb7ea0b51804b9919b088070820a9a7251388c33aae5a5f76b1ecaa3e"
+      "bytes": 3003,
+      "gzipBytes": 1184,
+      "sha256": "933b0d153606b994fb22f8c46586b2f9cd7efcf62aef37842601707aa8608b15"
     },
     {
       "path": "../../readiness/challenges/agg.03/checks.json",
@@ -669,9 +669,9 @@
     },
     {
       "path": "../../readiness/challenges/cte.01/challenge.json",
-      "bytes": 2439,
-      "gzipBytes": 957,
-      "sha256": "8bf5bc6807526bae7e6647d67a82f6bcd024969e248fc1714573bb601b80b2a8"
+      "bytes": 2576,
+      "gzipBytes": 1019,
+      "sha256": "aa3ab2c3dd3e5d3f2e56c30e90ad4be84b941fbadc31d01df14a050ca46523ea"
     },
     {
       "path": "../../readiness/challenges/cte.01/checks.json",
@@ -753,9 +753,9 @@
     },
     {
       "path": "../../readiness/challenges/cte.03/challenge.json",
-      "bytes": 3296,
-      "gzipBytes": 1292,
-      "sha256": "d8340c5d35806b4185c12ac19cf42729ae0819a2998cfdaf808c4a6d37cdfa82"
+      "bytes": 3433,
+      "gzipBytes": 1355,
+      "sha256": "774ffe19efaf6b31b2eace6a9e70749bbd1922dc499623af08ed15e521d77e20"
     },
     {
       "path": "../../readiness/challenges/cte.03/checks.json",
@@ -795,9 +795,9 @@
     },
     {
       "path": "../../readiness/challenges/cte.04/challenge.json",
-      "bytes": 3454,
-      "gzipBytes": 1245,
-      "sha256": "7ccd0a6ba6a7a9346fa0094c7a04624e3ed7c1bd1a82fdf99f2b3c4e03e91bf4"
+      "bytes": 3591,
+      "gzipBytes": 1308,
+      "sha256": "17245930b53436a3616408d07bdc3379d2b38fb4dd73e10e91f3be042a6d4274"
     },
     {
       "path": "../../readiness/challenges/cte.04/checks.json",
@@ -837,9 +837,9 @@
     },
     {
       "path": "../../readiness/challenges/cte.05/challenge.json",
-      "bytes": 2660,
-      "gzipBytes": 969,
-      "sha256": "19c071c89df8ab346bc5beb95ce8e53a1c8b1860d56e44d1399765d4794cfecc"
+      "bytes": 2797,
+      "gzipBytes": 1029,
+      "sha256": "772f2a92c24c06ca1bb86c574f679a0457a1b6c2382e3010a81866bf473c0c9d"
     },
     {
       "path": "../../readiness/challenges/cte.05/checks.json",
@@ -879,9 +879,9 @@
     },
     {
       "path": "../../readiness/challenges/dates.01/challenge.json",
-      "bytes": 2324,
-      "gzipBytes": 908,
-      "sha256": "0d913937f27697c3f7ab5c6ba763fe81f51519ec7f52d347d8be170ab24b413b"
+      "bytes": 2460,
+      "gzipBytes": 969,
+      "sha256": "223ef070c5f54b42c965428c2cf4a8b3a389d98a7468c840331da04b7673a639"
     },
     {
       "path": "../../readiness/challenges/dates.01/checks.json",
@@ -1089,9 +1089,9 @@
     },
     {
       "path": "../../readiness/challenges/joins.01/challenge.json",
-      "bytes": 2848,
-      "gzipBytes": 1021,
-      "sha256": "3c7b36cdde91bf0505eab314f8ffe3e4edb356879ee681cfc6482a735261129a"
+      "bytes": 3081,
+      "gzipBytes": 1127,
+      "sha256": "81cbfb85fe43e2e29aa3abe275142a250421b2336d11525335ea7a6a7532e845"
     },
     {
       "path": "../../readiness/challenges/joins.01/checks.json",
@@ -1215,9 +1215,9 @@
     },
     {
       "path": "../../readiness/challenges/joins.04/challenge.json",
-      "bytes": 2421,
-      "gzipBytes": 952,
-      "sha256": "b59b89122c0011dd89b7d758550008e27b5032c9aac24876aadd54b35ccafc5d"
+      "bytes": 2558,
+      "gzipBytes": 1015,
+      "sha256": "4a32928ac8264072d657ab2cd1a32c52c01daf86e2a6cd323a5b8435f033980b"
     },
     {
       "path": "../../readiness/challenges/joins.04/checks.json",
@@ -1539,9 +1539,9 @@
     },
     {
       "path": "../../readiness/challenges/plan.02/challenge.json",
-      "bytes": 2606,
-      "gzipBytes": 971,
-      "sha256": "48280b4bd974327dc8ef34a006dd66ba8e2260c0b87fc3fb1dbd31d7d4cd0d19"
+      "bytes": 2750,
+      "gzipBytes": 1034,
+      "sha256": "5d607367d371312032e9b93ccc0f2dd9161a0f5e310314f295f2679a5acdab3e"
     },
     {
       "path": "../../readiness/challenges/plan.02/checks.json",
@@ -1839,9 +1839,9 @@
     },
     {
       "path": "../../readiness/challenges/rec.03/challenge.json",
-      "bytes": 2271,
-      "gzipBytes": 919,
-      "sha256": "8e5775374e248027b9590c904ae2673aabe92766c29de1668498ad9d312f1ad9"
+      "bytes": 2388,
+      "gzipBytes": 980,
+      "sha256": "540d3132e483e37ef2e03dc6944a747bb05312032ae4d60ae3284e71ec58c535"
     },
     {
       "path": "../../readiness/challenges/rec.03/checks.json",
@@ -1875,9 +1875,9 @@
     },
     {
       "path": "../../readiness/challenges/rec.04/challenge.json",
-      "bytes": 2450,
-      "gzipBytes": 920,
-      "sha256": "05d263b986bbe123fd40314262d6e9e905119e9d0cf4f299606dcec8f9d704a8"
+      "bytes": 2569,
+      "gzipBytes": 967,
+      "sha256": "af0c2f0ec6bbd589dd8a719046e2fc7049441250b768e42071688c9ffdddfb21"
     },
     {
       "path": "../../readiness/challenges/rec.04/checks.json",
@@ -1911,9 +1911,9 @@
     },
     {
       "path": "../../readiness/challenges/rec.05/challenge.json",
-      "bytes": 2520,
-      "gzipBytes": 936,
-      "sha256": "12ffe63cbcc7fb10dc08922838c0e17e60c86f403c0f1a1784f5fdd4726a5e68"
+      "bytes": 2626,
+      "gzipBytes": 994,
+      "sha256": "0a53ad00734f57ef803f7d23e1ba4fdc794fc8259633cc30fca59716b2545435"
     },
     {
       "path": "../../readiness/challenges/rec.05/checks.json",
@@ -1947,9 +1947,9 @@
     },
     {
       "path": "../../readiness/challenges/reconcile.01/challenge.json",
-      "bytes": 3128,
-      "gzipBytes": 1206,
-      "sha256": "38e2ff308690754a46fe903495ff7c296b8984ae838e468f3fc317a4255bdf08"
+      "bytes": 3287,
+      "gzipBytes": 1281,
+      "sha256": "b3801fdfbea31d7a3d4f148896b59ba05e1ef83d1ea542dcf4536df7c454aed2"
     },
     {
       "path": "../../readiness/challenges/reconcile.01/checks.json",
@@ -2073,9 +2073,9 @@
     },
     {
       "path": "../../readiness/challenges/reconcile.04/challenge.json",
-      "bytes": 4483,
-      "gzipBytes": 1856,
-      "sha256": "79a49e9c7836c6841042d2557404586a0f048ac5c721624633b713e33042d4ea"
+      "bytes": 4582,
+      "gzipBytes": 1889,
+      "sha256": "a3f8389781445e94e8d49ad2ec2ea7b1da43b11be768b80194e0fabd5b01a800"
     },
     {
       "path": "../../readiness/challenges/reconcile.04/checks.json",
@@ -2403,9 +2403,9 @@
     },
     {
       "path": "../../readiness/challenges/sub.02/challenge.json",
-      "bytes": 2407,
-      "gzipBytes": 954,
-      "sha256": "4442fe575e584acf215623fdb0afcea2b1b0f4328613a995b77f3f569911fc04"
+      "bytes": 2544,
+      "gzipBytes": 1014,
+      "sha256": "b1d321f402d9ab79a1f981594da3e428df832bddc4711b129b1149b40274d00e"
     },
     {
       "path": "../../readiness/challenges/sub.02/checks.json",
@@ -2565,9 +2565,9 @@
     },
     {
       "path": "../../readiness/challenges/window.01/challenge.json",
-      "bytes": 3271,
-      "gzipBytes": 1243,
-      "sha256": "0d6ef61ce0105fa683bc9d1115fb3ed5c716465d8e588ecffde8f8e1dfb4e9c0"
+      "bytes": 3408,
+      "gzipBytes": 1313,
+      "sha256": "cc4bc8e9318f387839fb94ac367e5226e65f1b143f5950ff0421f6c636f11d3a"
     },
     {
       "path": "../../readiness/challenges/window.01/checks.json",
@@ -2673,9 +2673,9 @@
     },
     {
       "path": "../../readiness/challenges/window.04/challenge.json",
-      "bytes": 2565,
-      "gzipBytes": 938,
-      "sha256": "0ff3e6d13dba56d352d25a795ff5a77385ff97be61ab378a0e7846933fafce8e"
+      "bytes": 2702,
+      "gzipBytes": 1008,
+      "sha256": "cf939da477d859fc7f5a930cedf7f9fd0c228df0200a59ff7ba40700d9cf98a3"
     },
     {
       "path": "../../readiness/challenges/window.04/checks.json",

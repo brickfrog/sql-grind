@@ -8,7 +8,7 @@
   "title": "Simple paths through a cycle",
   "brief": "Traverse a cyclic relationship without revisiting a node.",
   "instructions": [
-    "Start at node 1. Emit every simple directed category path, including the zero-hop root. A node can occur through multiple paths but never twice within one path.",
+    "Start at node 1. Emit every simple directed category path, including the zero-hop root. A node can occur through multiple paths but never twice within one path. Write each path as its numeric node identities from node 1 outward, joined by '>', so the zero-hop root path is '1'.",
     "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
   ],
   "datasetId": "graphs",

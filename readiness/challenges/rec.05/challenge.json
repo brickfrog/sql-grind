@@ -8,7 +8,7 @@
   "title": "All cheapest routes",
   "brief": "Find cheapest routes without discarding equal-cost alternatives.",
   "instructions": [
-    "Enumerate simple directed routes from 1 to 5 with at most four edges. Return every path attaining minimum total minutes. Sort paths as text.",
+    "Enumerate simple directed routes from 1 to 5 with at most four edges. Return every path attaining minimum total minutes. Write each path as its numeric warehouse identities from 1 to 5, joined by '>', including both endpoints. Sort paths as text.",
     "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
   ],
   "datasetId": "graphs",

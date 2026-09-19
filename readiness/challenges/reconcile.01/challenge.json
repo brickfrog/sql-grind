@@ -9,7 +9,7 @@
   "brief": "Normalize known inconsistencies and expose plausible candidates without altering the reference.",
   "instructions": [
     "Normalize text with lower/trim, replace runs of non-Unicode-letter/digit characters with one space, and collapse whitespace. Do not transliterate Unicode. Account keys use lower/trim with blanks NULL; source keys use trim only with blanks NULL. Keep the smallest partner ID for each non-NULL source key; keep missing keys separate. Map hw, hard ware, and hardware to hardware; supplies remains supplies. Parse strict ISO YYYY-MM-DD, US MM/DD/YYYY, or DD Mon YYYY, in that order; invalid dates become NULL. Preserve all source rows unchanged.",
-    "Emit one row per account-block pair using the normalized partner values; sort by reference then partner."
+    "Emit one row per account-block pair using the normalized partner values; sort by reference then partner. A pair whose date text cannot be parsed still belongs in the output with a NULL date: an unparseable date is a value to report, not a reason to drop the pair."
   ],
   "datasetId": "reconciliation",
   "starterSql": "SELECT ref_id, account_key, category, event_date, description, quantity, business_unit\nFROM reference_events\nORDER BY ref_id\nLIMIT 10;",

@@ -8,7 +8,7 @@
   "title": "Bounded directed routes",
   "brief": "Enumerate bounded directed routes.",
   "instructions": [
-    "From warehouse 1 enumerate routes of one through three directed edges without revisiting a node. Return destination, numeric-ID path, hop count, and sum of minutes.",
+    "From warehouse 1 enumerate routes of one through three directed edges without revisiting a node. Return destination, path, hop count, and sum of minutes. Write each path as its numeric warehouse identities from warehouse 1 to the destination, joined by '>', including both endpoints.",
     "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
   ],
   "datasetId": "graphs",

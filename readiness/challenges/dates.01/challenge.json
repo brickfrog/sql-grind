@@ -8,7 +8,7 @@
   "title": "UTC reporting boundaries",
   "brief": "Classify events against UTC reporting boundaries.",
   "instructions": [
-    "Return every order and a Boolean indicating the UTC half-open 2024 interval. All statuses participate.",
+    "Return every order and a Boolean indicating the UTC half-open 2024 interval: true at or after 2024-01-01 00:00:00 UTC and strictly before 2025-01-01 00:00:00 UTC, so an order at exactly the 2025 instant is false. All statuses participate.",
     "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
   ],
   "datasetId": "commerce-practice",

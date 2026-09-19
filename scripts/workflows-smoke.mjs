@@ -678,11 +678,16 @@ try {
     ) + "\n",
   );
 } catch (e) {
-  console.error(
-    "STATUS",
-    await page.locator(".status-message").allTextContents(),
-  );
-  console.error("ERROR", await page.locator(".error-banner").allTextContents());
+  // Report the failure before probing the page: if the context is gone, these
+  // locator reads throw and would otherwise replace the real error.
+  console.error("FAILED", e);
+  const texts = async (selector) =>
+    page
+      .locator(selector)
+      .allTextContents()
+      .catch((probe) => `unavailable: ${probe.message}`);
+  console.error("STATUS", await texts(".status-message"));
+  console.error("ERROR", await texts(".error-banner"));
   await mkdir("readiness/evidence/application", { recursive: true });
   await page
     .screenshot({

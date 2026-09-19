@@ -9,7 +9,7 @@
   "brief": "Find customers with qualifying activity without duplicate output.",
   "instructions": [
     "Return customer identities with at least one paid order in the UTC 2024 interval. Each identity appears once.",
-    "For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
+    "A paid order is an order whose own status is 'paid'; the payments table carries a separate status that these challenges never ask about. For paid reporting activity, include timestamps at or after 2024-01-01 00:00:00 UTC and exclude timestamps at or after 2025-01-01 00:00:00 UTC.",
     "Return only the declared output columns, in their declared order and exact SQL types. Follow the output ordering contract; NULL ordering is explicit."
   ],
   "datasetId": "commerce-practice",

@@ -9,6 +9,7 @@
   "brief": "Check whether a filter reaches a scan instead of assuming it does.",
   "instructions": [
     "Return paid order IDs in the exact UTC interval [2024-01-01, 2025-01-01).",
+    "A paid order is an order whose own status is 'paid'; the payments table carries a separate status that these challenges never ask about.",
     "Express the same filter through a named relation in the secondary query.",
     "Sort both results by order_id.",
     "Measure both queries separately.",

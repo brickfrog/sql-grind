@@ -7,9 +7,9 @@
   "variations": [
     {
       "variationId": "daily-orders-running-total",
-      "prompt": "By order day, give order_day as a DATE, orders_that_day, and running_orders as the cumulative count through that day, ordered by order_day ascending. State the frame explicitly.",
+      "prompt": "By UTC order day, give order_day as a DATE, orders_that_day, and running_orders as the cumulative count through that day, ordered by order_day ascending. State the frame explicitly.",
       "variantId": "seed-20240907",
-      "reference": "SELECT order_day, orders_that_day, sum(orders_that_day) OVER (ORDER BY order_day ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)::BIGINT AS running_orders FROM (SELECT ordered_at::DATE AS order_day, count(*)::BIGINT AS orders_that_day FROM orders GROUP BY ordered_at::DATE) daily ORDER BY order_day",
+      "reference": "SELECT order_day, orders_that_day, sum(orders_that_day) OVER (ORDER BY order_day ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)::BIGINT AS running_orders FROM (SELECT (ordered_at AT TIME ZONE 'UTC')::DATE AS order_day, count(*)::BIGINT AS orders_that_day FROM orders GROUP BY (ordered_at AT TIME ZONE 'UTC')::DATE) daily ORDER BY order_day",
       "output": {
         "columns": [
           { "name": "order_day", "type": "DATE", "nullable": false },
@@ -40,9 +40,9 @@
     },
     {
       "variationId": "cumulative-revenue-by-day",
-      "prompt": "By payment day, using succeeded payments only, give pay_day as a DATE and cumulative_amount as DECIMAL(18,2) summed through that day, ordered by pay_day ascending.",
+      "prompt": "By UTC payment day, using succeeded payments only, give pay_day as a DATE and cumulative_amount as DECIMAL(18,2) summed through that day, ordered by pay_day ascending.",
       "variantId": "seed-20240907",
-      "reference": "SELECT pay_day, sum(day_amount) OVER (ORDER BY pay_day ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)::DECIMAL(18,2) AS cumulative_amount FROM (SELECT paid_at::DATE AS pay_day, sum(amount)::DECIMAL(18,2) AS day_amount FROM payments WHERE status = 'succeeded' GROUP BY paid_at::DATE) daily ORDER BY pay_day",
+      "reference": "SELECT pay_day, sum(day_amount) OVER (ORDER BY pay_day ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)::DECIMAL(18,2) AS cumulative_amount FROM (SELECT (paid_at AT TIME ZONE 'UTC')::DATE AS pay_day, sum(amount)::DECIMAL(18,2) AS day_amount FROM payments WHERE status = 'succeeded' GROUP BY (paid_at AT TIME ZONE 'UTC')::DATE) daily ORDER BY pay_day",
       "output": {
         "columns": [
           { "name": "pay_day", "type": "DATE", "nullable": false },
