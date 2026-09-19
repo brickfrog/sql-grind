@@ -666,15 +666,17 @@ function unmatchedRowReason(
           .map((key) => describeSelf(key.index))
           .join(", ")}.`
       : "";
-    // The filter theory is only available when there are in fact more rows than
-    // expected. Returning no more rows than the fixture and still holding one it
-    // does not want means a row was substituted rather than admitted, and the
-    // counts printed beside this sentence would contradict a filter that admits
-    // too much. Neither branch states a count: "expected N rows; returned M" is
-    // already structural, and a sentence that counts can disagree with it.
+    // The filter theory belongs only to a surplus. Returning no more rows than
+    // the fixture and still holding one it does not want can be a wrong label,
+    // a wrong grouping key, or a filter that is both too narrow and too loose
+    // at once — so there is no cause to name, and the identity clause above
+    // already locates the fault. This branch ends factual, like the
+    // differing-columns branch below it. Neither states a count: "expected N
+    // rows; returned M" is structural, and a sentence that counts can disagree
+    // with it.
     const theory = surplus
       ? " An extra row usually means the filter admits too much."
-      : " This row stands in place of an expected one rather than adding to them, so a wrong label or grouping key is the usual cause, not the filter.";
+      : "";
     return `Row ${position} is not in the expected result.${identity}${theory}`;
   }
   if (!near.differing.length)

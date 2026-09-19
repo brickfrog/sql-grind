@@ -5619,7 +5619,8 @@
               <p>
                 Ordering: {challenge.output.ordering
                   .map(
-                    (key) => `${key.column} ${key.direction} NULLS ${key.nulls}`,
+                    (key) =>
+                      `${key.column} ${key.direction} NULLS ${key.nulls}`,
                   )
                   .join(", ")}. Equal ordering keys may appear in either order.
               </p>

@@ -8,6 +8,8 @@
     "setup": "node scripts/setup.mjs",
     "dev": "vite --host 127.0.0.1",
     "check": "svelte-check --tsconfig ./tsconfig.json",
+    "format": "prettier --write src scripts",
+    "format:check": "prettier --check src scripts",
     "build": "vite build",
     "serve": "node scripts/serve.mjs",
     "smoke": "node scripts/smoke.mjs"
