@@ -230,7 +230,7 @@ export interface StoredProfile {
 }
 export const defaultSettings: Settings = {
   hush: false,
-  fontSize: 12,
+  fontSize: 13,
   indentation: 2,
   wordWrap: false,
   readingLayout: false,

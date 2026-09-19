@@ -6086,7 +6086,7 @@
           >Editor font size<select
             bind:value={settings.fontSize}
             onchange={updateSettings}
-            >{#each [12, 14, 16, 18, 20, 24] as size}<option value={size}
+            >{#each [12, 13, 14, 16, 18, 20, 24] as size}<option value={size}
                 >{size} px</option
               >{/each}</select
           ></label
