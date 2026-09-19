@@ -12,7 +12,11 @@
       "reference": "SELECT count(*)::BIGINT AS paid_orders FROM orders WHERE status = 'paid' AND ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2025-01-01 00:00:00+00'",
       "output": {
         "columns": [
-          { "name": "paid_orders", "type": "BIGINT", "nullable": false }
+          {
+            "name": "paid_orders",
+            "type": "BIGINT",
+            "nullable": false
+          }
         ],
         "ordering": []
       }
@@ -21,14 +25,26 @@
       "variationId": "paid-orders-one-month",
       "prompt": "List the paid orders of June 2024: order_id and ordered_on, the UTC date of ordered_at. Include orders whose status is 'paid' with ordered_at at or after 2024-06-01 00:00:00 UTC and strictly before 2024-07-01 00:00:00 UTC. Order by order_id ascending.",
       "variantId": "seed-20240908",
-      "reference": "SELECT order_id, ordered_at::DATE AS ordered_on FROM orders WHERE status = 'paid' AND ordered_at >= TIMESTAMPTZ '2024-06-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2024-07-01 00:00:00+00' ORDER BY order_id",
+      "reference": "SELECT order_id, (ordered_at AT TIME ZONE 'UTC')::DATE AS ordered_on FROM orders WHERE status = 'paid' AND ordered_at >= TIMESTAMPTZ '2024-06-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2024-07-01 00:00:00+00' ORDER BY order_id",
       "output": {
         "columns": [
-          { "name": "order_id", "type": "BIGINT", "nullable": false },
-          { "name": "ordered_on", "type": "DATE", "nullable": false }
+          {
+            "name": "order_id",
+            "type": "BIGINT",
+            "nullable": false
+          },
+          {
+            "name": "ordered_on",
+            "type": "DATE",
+            "nullable": false
+          }
         ],
         "ordering": [
-          { "column": "order_id", "direction": "ASC", "nulls": "LAST" }
+          {
+            "column": "order_id",
+            "direction": "ASC",
+            "nulls": "LAST"
+          }
         ]
       }
     },
@@ -39,11 +55,23 @@
       "reference": "SELECT order_id, status FROM orders WHERE ordered_at >= TIMESTAMPTZ '2024-03-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2024-04-01 00:00:00+00' ORDER BY order_id",
       "output": {
         "columns": [
-          { "name": "order_id", "type": "BIGINT", "nullable": false },
-          { "name": "status", "type": "VARCHAR", "nullable": false }
+          {
+            "name": "order_id",
+            "type": "BIGINT",
+            "nullable": false
+          },
+          {
+            "name": "status",
+            "type": "VARCHAR",
+            "nullable": false
+          }
         ],
         "ordering": [
-          { "column": "order_id", "direction": "ASC", "nulls": "LAST" }
+          {
+            "column": "order_id",
+            "direction": "ASC",
+            "nulls": "LAST"
+          }
         ]
       }
     },
@@ -54,10 +82,18 @@
       "reference": "SELECT order_id FROM orders WHERE status = 'paid' AND ordered_at >= TIMESTAMPTZ '2024-02-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2024-03-01 00:00:00+00' ORDER BY order_id",
       "output": {
         "columns": [
-          { "name": "order_id", "type": "BIGINT", "nullable": false }
+          {
+            "name": "order_id",
+            "type": "BIGINT",
+            "nullable": false
+          }
         ],
         "ordering": [
-          { "column": "order_id", "direction": "ASC", "nulls": "LAST" }
+          {
+            "column": "order_id",
+            "direction": "ASC",
+            "nulls": "LAST"
+          }
         ]
       }
     },
@@ -65,14 +101,26 @@
       "variationId": "nullable-timestamp-in-window",
       "prompt": "List payments whose status is 'succeeded' and whose paid_at is at or after 2024-05-01 00:00:00 UTC and strictly before 2024-05-08 00:00:00 UTC: payment_id and paid_on, the UTC date of paid_at. paid_at is nullable and a NULL is in no window. Order by payment_id ascending.",
       "variantId": "seed-20240908",
-      "reference": "SELECT payment_id, paid_at::DATE AS paid_on FROM payments WHERE status = 'succeeded' AND paid_at >= TIMESTAMPTZ '2024-05-01 00:00:00+00' AND paid_at < TIMESTAMPTZ '2024-05-08 00:00:00+00' ORDER BY payment_id",
+      "reference": "SELECT payment_id, (paid_at AT TIME ZONE 'UTC')::DATE AS paid_on FROM payments WHERE status = 'succeeded' AND paid_at >= TIMESTAMPTZ '2024-05-01 00:00:00+00' AND paid_at < TIMESTAMPTZ '2024-05-08 00:00:00+00' ORDER BY payment_id",
       "output": {
         "columns": [
-          { "name": "payment_id", "type": "BIGINT", "nullable": false },
-          { "name": "paid_on", "type": "DATE", "nullable": false }
+          {
+            "name": "payment_id",
+            "type": "BIGINT",
+            "nullable": false
+          },
+          {
+            "name": "paid_on",
+            "type": "DATE",
+            "nullable": false
+          }
         ],
         "ordering": [
-          { "column": "payment_id", "direction": "ASC", "nulls": "LAST" }
+          {
+            "column": "payment_id",
+            "direction": "ASC",
+            "nulls": "LAST"
+          }
         ]
       }
     }

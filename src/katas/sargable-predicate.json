@@ -2,7 +2,7 @@
   "patternId": "sargable-predicate",
   "title": "Leave the filtered column bare",
   "skillId": "plan",
-  "why": "An index on a column is unusable the moment the column is wrapped in a function or carries arithmetic: date_trunc('month', ordered_at) = ... and unit_price * 1.2 >= 300 both force a full scan, and both have a form that leaves the column alone on one side of the comparison. The rewrite is a half-open range or a prefix bound, never a rounded-off equality — [2024-01-01, 2024-02-01) states the boundary exactly, where casting a TIMESTAMPTZ to DATE hands the month boundary to whatever session time zone happens to be set. The result set is identical either way, and that is the claim worth rehearsing: the speed comes from the shape of the predicate, not from a different answer. Drill the translation until the factor moves to the literal and the upper bound is written as < next instead of <= last.",
+  "why": "An index on a column is unusable the moment the column is wrapped in a function or carries arithmetic: date_trunc('month', ordered_at) = ... and unit_price * 1.2 >= 300 both force a full scan, and both have a form that leaves the column alone on one side of the comparison. The rewrite is a half-open range or a prefix bound, never a rounded-off equality — [2024-01-01, 2024-02-01) states the boundary exactly, where casting a TIMESTAMPTZ to DATE hands the month boundary to whatever session time zone happens to be set. The result set is identical either way, and that is the claim worth rehearsing: the speed comes from the shape of the predicate, not from a different answer. Drill the translation until the factor moves to the literal and the upper bound is written as < next instead of <= last. A drill is graded on rows, so this pattern cannot check a plan and does not try: the plan skill's own five challenges are graded by plan labs that read cardinality, pushdown, pre-aggregation, index use and selectivity, while what is drilled here is the rewrite whose correctness rows can prove. Each prompt therefore states the constraint — leave the column bare — as part of the task, because the comparator only sees the result set and would accept the slow form.",
   "datasetId": "commerce-practice",
   "variations": [
     {
@@ -12,10 +12,18 @@
       "reference": "SELECT order_id FROM orders WHERE ordered_at >= TIMESTAMPTZ '2024-01-01 00:00:00+00' AND ordered_at < TIMESTAMPTZ '2024-02-01 00:00:00+00' ORDER BY order_id",
       "output": {
         "columns": [
-          { "name": "order_id", "type": "BIGINT", "nullable": false }
+          {
+            "name": "order_id",
+            "type": "BIGINT",
+            "nullable": false
+          }
         ],
         "ordering": [
-          { "column": "order_id", "direction": "ASC", "nulls": "LAST" }
+          {
+            "column": "order_id",
+            "direction": "ASC",
+            "nulls": "LAST"
+          }
         ]
       }
     },
@@ -26,7 +34,11 @@
       "reference": "SELECT product_id, unit_price FROM products WHERE unit_price >= 250.00 AND unit_price < 300.00 ORDER BY unit_price ASC, product_id ASC",
       "output": {
         "columns": [
-          { "name": "product_id", "type": "BIGINT", "nullable": false },
+          {
+            "name": "product_id",
+            "type": "BIGINT",
+            "nullable": false
+          },
           {
             "name": "unit_price",
             "type": "DECIMAL",
@@ -36,8 +48,16 @@
           }
         ],
         "ordering": [
-          { "column": "unit_price", "direction": "ASC", "nulls": "LAST" },
-          { "column": "product_id", "direction": "ASC", "nulls": "LAST" }
+          {
+            "column": "unit_price",
+            "direction": "ASC",
+            "nulls": "LAST"
+          },
+          {
+            "column": "product_id",
+            "direction": "ASC",
+            "nulls": "LAST"
+          }
         ]
       }
     },
@@ -48,11 +68,23 @@
       "reference": "SELECT product_id, product_name FROM products WHERE product_name LIKE 'Product 12%' ORDER BY product_id",
       "output": {
         "columns": [
-          { "name": "product_id", "type": "BIGINT", "nullable": false },
-          { "name": "product_name", "type": "VARCHAR", "nullable": false }
+          {
+            "name": "product_id",
+            "type": "BIGINT",
+            "nullable": false
+          },
+          {
+            "name": "product_name",
+            "type": "VARCHAR",
+            "nullable": false
+          }
         ],
         "ordering": [
-          { "column": "product_id", "direction": "ASC", "nulls": "LAST" }
+          {
+            "column": "product_id",
+            "direction": "ASC",
+            "nulls": "LAST"
+          }
         ]
       }
     },
@@ -63,11 +95,23 @@
       "reference": "SELECT order_id, status FROM orders WHERE status = 'cancelled' AND order_id <= 300 ORDER BY order_id",
       "output": {
         "columns": [
-          { "name": "order_id", "type": "BIGINT", "nullable": false },
-          { "name": "status", "type": "VARCHAR", "nullable": false }
+          {
+            "name": "order_id",
+            "type": "BIGINT",
+            "nullable": false
+          },
+          {
+            "name": "status",
+            "type": "VARCHAR",
+            "nullable": false
+          }
         ],
         "ordering": [
-          { "column": "order_id", "direction": "ASC", "nulls": "LAST" }
+          {
+            "column": "order_id",
+            "direction": "ASC",
+            "nulls": "LAST"
+          }
         ]
       }
     }
