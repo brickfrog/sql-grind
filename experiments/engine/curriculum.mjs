@@ -196,6 +196,27 @@ for (const skill of curriculum.skills)
         `Unknown negative-check variant: ${checksUrl}`,
       );
     }
+    // A reference that filters orders.status teaches "paid order", and the
+    // dataset makes the other reading — an order with a succeeded payment —
+    // return different rows. The grader rejects that reading without ever
+    // explaining it, so the instruction has to. Nothing else in the pipeline
+    // can see a prompt that omits the distinction.
+    //
+    // The test is the substance, not one phrasing: some instruction must name
+    // the payments table and say its own status is not what is being asked.
+    // basics.02 and the other sixteen word it differently and both pass.
+    const referenceSql = await text(definition.reference);
+    if (/\.status\s*=\s*'paid'/i.test(referenceSql))
+      assert(
+        definition.instructions.some(
+          (line) =>
+            /payments table/i.test(line) &&
+            /(never ask|does not ask|not ask|separate status|status of its own)/i.test(
+              line,
+            ),
+        ),
+        `${definition.challengeId}: reference filters orders.status='paid' but no instruction distinguishes it from a succeeded payment.`,
+      );
     definitions.push({ definition, dataset, checks });
   }
 contracts.validateCurriculum(curriculum);

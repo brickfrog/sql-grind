@@ -795,9 +795,9 @@
     },
     {
       "path": "../../readiness/challenges/cte.04/challenge.json",
-      "bytes": 3591,
-      "gzipBytes": 1308,
-      "sha256": "17245930b53436a3616408d07bdc3379d2b38fb4dd73e10e91f3be042a6d4274"
+      "bytes": 3752,
+      "gzipBytes": 1383,
+      "sha256": "57668e0c38fbfd232a248096c2756b57304da19d1e6dec67d7336c8ac7b0659c"
     },
     {
       "path": "../../readiness/challenges/cte.04/checks.json",
@@ -1299,9 +1299,9 @@
     },
     {
       "path": "../../readiness/challenges/pivot.01/challenge.json",
-      "bytes": 2735,
-      "gzipBytes": 1028,
-      "sha256": "0c8bf2fbb57c2ee42f81786750456bdc099d928c3847820a740899659052e7cc"
+      "bytes": 2733,
+      "gzipBytes": 1024,
+      "sha256": "e07d6aeea78e1f3742a23709d57012ba66641046a128fb6b93266fbde2866519"
     },
     {
       "path": "../../readiness/challenges/pivot.01/checks.json",

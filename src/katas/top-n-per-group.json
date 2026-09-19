@@ -7,9 +7,9 @@
   "variations": [
     {
       "variationId": "dearest-products-per-category",
-      "prompt": "For every category_id of 5 or less, give the three dearest active products: category_id, product_id, unit_price as DECIMAL(18,2). Order by category_id ascending then unit_price descending. Break price ties on the smaller product_id and return exactly three per category. The filter is on the id value itself, not on the five lowest ids that happen to have products.",
+      "prompt": "Take the five lowest category_ids that have active products, and for each give the three dearest of those products: category_id, product_id, unit_price as DECIMAL(18,2). Order by category_id ascending then unit_price descending. Break price ties on the smaller product_id. Every one of those five categories holds more than three active products, so return exactly three per category.",
       "variantId": "seed-20240907",
-      "reference": "WITH ranked AS (SELECT category_id, product_id, unit_price, ROW_NUMBER() OVER (PARTITION BY category_id ORDER BY unit_price DESC, product_id ASC) AS rn FROM products WHERE active AND category_id <= 5) SELECT category_id, product_id, unit_price::DECIMAL(18,2) AS unit_price FROM ranked WHERE rn <= 3 ORDER BY category_id ASC, unit_price DESC",
+      "reference": "WITH lowest AS (SELECT DISTINCT category_id FROM products WHERE active ORDER BY category_id ASC LIMIT 5), ranked AS (SELECT p.category_id, p.product_id, p.unit_price, ROW_NUMBER() OVER (PARTITION BY p.category_id ORDER BY p.unit_price DESC, p.product_id ASC) AS rn FROM products p JOIN lowest l USING (category_id) WHERE p.active) SELECT category_id, product_id, unit_price::DECIMAL(18,2) AS unit_price FROM ranked WHERE rn <= 3 ORDER BY category_id ASC, unit_price DESC",
       "output": {
         "columns": [
           { "name": "category_id", "type": "BIGINT", "nullable": false },
