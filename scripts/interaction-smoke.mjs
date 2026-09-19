@@ -701,23 +701,50 @@ try {
     await page.getByRole("menuitem", { name: "File", exact: true }).click();
     await page.locator(".menu-popup").waitFor();
     const scrolled = await page.evaluate(() => {
-      const panel = [...document.querySelectorAll("*")].find(
-        (node) =>
-          node.scrollHeight > node.clientHeight + 10 &&
-          ["auto", "scroll"].includes(getComputedStyle(node).overflowY) &&
-          node !== document.documentElement,
-      );
-      if (!panel) return false;
+      // Named explicitly: a search for any overflow:auto element can land on
+      // the popup itself, whose own scrolling is deliberately exempt, and the
+      // check would then be asserting the opposite of the contract.
+      const panel = document.querySelector(".tree.inset");
+      if (!panel || panel.scrollHeight <= panel.clientHeight + 10) return false;
       panel.scrollTop = panel.scrollTop === 0 ? 60 : 0;
       return true;
     });
-    assert.ok(scrolled, "the workbench has an inner scroller to exercise");
+    assert.ok(scrolled, "the explorer tree is a live inner scroller");
     await page.waitForTimeout(150);
     assert.equal(
       await page.locator(".menu-popup").count(),
       0,
       "an inner panel scrolling must dismiss a menu too",
     );
+    // The editor's completion list is the exception: CodeMirror holds its own
+    // tooltip against the caret, and the editor scrolls whenever the caret
+    // moves, so dismissing it on scroll took the list away mid-word.
+    await page.locator(".cm-content").click();
+    await page.keyboard.press("ControlOrMeta+a");
+    await page.keyboard.press("Delete");
+    await page.keyboard.insertText(
+      "SELECT 1;\n".repeat(60) + "SELECT * FROM customers WHERE customer_",
+    );
+    await page.keyboard.press("Backspace");
+    await page.keyboard.type("_");
+    await page.locator(".cm-tooltip-autocomplete").waitFor({ timeout: 15000 });
+    const editorScroll = await page.evaluate(() => {
+      const scroller = document.querySelector(".cm-scroller");
+      const from = scroller.scrollTop;
+      scroller.scrollTop = Math.max(0, from - 120);
+      return { from, to: scroller.scrollTop };
+    });
+    assert.ok(
+      editorScroll.to !== editorScroll.from,
+      "the editor must actually scroll for this to mean anything",
+    );
+    await page.waitForTimeout(300);
+    assert.equal(
+      await page.locator(".cm-tooltip-autocomplete").count(),
+      1,
+      "scrolling the editor must not take the completion list away",
+    );
+    await page.keyboard.press("Escape");
     await page.setViewportSize(viewport);
   }
   mark(

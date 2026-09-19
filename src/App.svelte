@@ -4090,8 +4090,7 @@
     // is a capture-phase listener because the scroller is usually an inner
     // panel — the explorer tree, the goal panel, the results grid — and those
     // events never reach the window during bubbling.
-    const POPUP_SURFACES =
-      ".menu-popup, .start-menu, .context-menu, .cm-tooltip-autocomplete";
+    const POPUP_SURFACES = ".menu-popup, .start-menu, .context-menu";
     const dismissOnScroll = (event: Event) => {
       // A tall menu scrolls itself: End on a keyboard walk through the last
       // item scrolls the popup into view, and dismissing there would make the
@@ -4101,7 +4100,11 @@
       if (origin instanceof Element && origin.closest(POPUP_SURFACES)) return;
       if (menu || startMenu || explorerMenu || goalMenu) closeChromeMenus();
       if (contextMenu) contextMenu = null;
-      editor?.dismissCompletion();
+      // The completion list is deliberately not dismissed here. CodeMirror
+      // keeps its own tooltip against the caret as the editor scrolls, and
+      // the editor scrolls while the caret moves — so dismissing on scroll
+      // took the completion away mid-word: measured with the list open, the
+      // editor moving from 731 to 611 closed it.
     };
     window.addEventListener("scroll", dismissOnScroll, {
       capture: true,

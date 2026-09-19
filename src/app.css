@@ -1144,7 +1144,6 @@ small,
 .goal-content > * {
   flex: 0 0 auto;
 }
-.goal-content .shape,
 .goal-content .scan-list,
 .goal-content .status-card dt,
 .goal-content .status-card dd,
@@ -1188,7 +1187,7 @@ small,
 }
 .shape {
   font-family: "Lucida Console", "Courier New", monospace;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.7;
   background: var(--panel);
   border: 1px solid var(--face-sunken);
